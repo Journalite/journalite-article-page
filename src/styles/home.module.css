@@ -1,0 +1,215 @@
+.article-page {
+    background-color: #fcfcfa;
+    min-height: 100vh;
+    padding: 2rem 1rem;
+    font-family: -apple-system, BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;
+    color: #111827;
+  }
+  
+  /* Header */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 960px;
+    margin: 0 auto 2rem;
+  }
+  .logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+  .nav-link {
+    margin-left: 1rem;
+    color: #2563eb;
+    text-decoration: none;
+    font-size: 1rem;
+  }
+  
+  /* Hero */
+  .hero {
+    text-align: center;
+    padding: 3rem 1rem;
+  }
+  .hero-title {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+  .hero-subtitle {
+    font-size: 1.25rem;
+    margin-bottom: 2rem;
+    color: #4b5563;
+  }
+  .cta-button {
+    display: inline-block;
+    background-color: #3b82f6;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 1rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.2s;
+  }
+  .cta-button:hover {
+    background-color: #2563eb;
+  }
+  
+  /* Two‑column grid */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    max-width: 960px;
+    margin: 0 auto 3rem;
+  }
+  
+  /* Featured */
+  .section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #111827;
+  }
+  .article-card {
+    margin-bottom: 2rem;
+  }
+  .article-card h3 {
+    font-size: 1.5rem;
+    margin: 0 0 0.5rem;
+    line-height: 1.3;
+  }
+  .article-excerpt {
+    font-size: 1rem;
+    color: #4b5563;
+    margin-bottom: 0.75rem;
+  }
+  .article-tag {
+    display: inline-block;
+    background-color: #f3f4f6;
+    color: #374151;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+  }
+  .author-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .author-avatar {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  .author-name {
+    font-size: 0.875rem;
+    color: #111827;
+  }
+  
+  /* Topics tags */
+  .topics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .topic-tag {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 9999px;
+    color: #2563eb;
+    font-size: 0.875rem;
+    text-decoration: none;
+  }
+  
+  /* Trending list */
+  .trending-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 2rem;
+  }
+  .trending-list li {
+    margin-bottom: 1.5rem;
+  }
+  .trending-list h4 {
+    margin: 0;
+    font-size: 1.125rem;
+    color: #111827;
+  }
+  .trending-list span {
+    font-size: 0.875rem;
+    color: #6b7280;
+  }
+  
+  /* Top writers */
+  .writers {
+    margin-top: 2rem;
+  }
+  .writer-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+  .writer-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .writer-avatar {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  .writer-name {
+    font-size: 0.875rem;
+    color: #111827;
+  }
+  .follow-button {
+    background: none;
+    border: none;
+    color: #2563eb;
+    font-size: 0.875rem;
+    cursor: pointer;
+  }
+  
+  /* Why Journalite */
+  .features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    max-width: 960px;
+    margin: 0 auto 3rem;
+  }
+  .feature-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  .feature-desc {
+    font-size: 0.875rem;
+    color: #6b7280;
+  }
+  
+  /* Footer */
+  .footer {
+    text-align: center;
+    font-size: 0.875rem;
+    color: #9ca3af;
+    padding: 2rem 0;
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .main-grid {
+      grid-template-columns: 1fr;
+    }
+    .features {
+      grid-template-columns: 1fr;
+    }
+    .hero-title {
+      font-size: 2.25rem;
+    }
+  }
