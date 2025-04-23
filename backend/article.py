@@ -18,7 +18,7 @@ articles = {
         "coverImageUrl": "https://images.unsplash.com/photo-1677442136019-21780ecad995",
         "tags": ["AI", "Machine Learning"],
         "content": [
-            {
+            { 
                 "paragraphId": "p1",
                 "text": "Artificial Intelligence (AI) stands at the forefront of technological innovation, promising to revolutionize every aspect of our lives. From healthcare to transportation, education to entertainment, AI's influence continues to grow exponentially. As we stand on the cusp of this technological revolution, it's crucial to understand both the potential and challenges that lie ahead.",
                 "likes": ["user123", "user234", "user345"],
@@ -284,11 +284,11 @@ def add_article_comment(slug):
     return jsonify(new_comment), 201
 
 
-# 5) Get all comments for an article
+# 5) Get all comments for an article 
 @app.route('/api/prototype/v1/article/<slug>/comments', methods=['GET'])
-def get_article_comments(slug):
-    art = articles.get(slug)
-    if not art:
+def get_article_comments(slug): 
+    art = articles.get(slug) 
+    if not art: 
         return jsonify({"error": "Article not found"}), 404
     
     return jsonify(art.get('comments', []))
