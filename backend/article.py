@@ -7,6 +7,16 @@ app = Flask(__name__)
 # Enable CORS for all routes. In production, restrict origins appropriately.
 CORS(app, origins="*")
 
+# Authors mapping - maps authorId to display name
+authors = {
+    "84b2f82c-1e93-498a-983e-3b30a8379e63": "Samuel Green",
+    "user_002": "Alex Martinez",
+    "kristen-lee-id": "Kristen Lee",
+    "alex-wen-id": "Alex Wen",
+    "hannah-cole-id": "Hannah Cole",
+    "urban-planner-id": "Jordan Urban",
+    "quote-author-id": "John Shedd"
+}
 
 # 1) In‑memory "database" of articles
 articles = {
@@ -225,6 +235,27 @@ articles = {
         "viewCount": 0,
         "createdAt": "2025-04-12T09:30:00.000Z",
         "updatedAt": "2025-04-12T09:30:00.000Z"
+    },
+    "ship-harbor-quote": {
+        "_id": "q1b2c3d4e5f6g7h8i9j0",
+        "authorId": "quote-author-id",
+        "title": "On Taking Risks",
+        "slug": "ship-harbor-quote",
+        "tags": ["inspiration"],
+        "content": [
+            {
+                "paragraphId": "p1",
+                "text": "\"A ship in harbor is safe, but that is not what a ship is built for.\"",
+                "likes": [],
+                "comments": []
+            }
+        ],
+        "likes": [],
+        "reposts": [],
+        "comments": [],
+        "viewCount": 0,
+        "createdAt": "2025-04-11T10:30:00.000Z",
+        "updatedAt": "2025-04-11T10:30:00.000Z"
     }
 }
 
@@ -243,14 +274,30 @@ def get_article(slug):
 def list_articles():
     summary = []
     for art in articles.values():
+        # Extract excerpt from the first paragraph if available
+        excerpt = ""
+        if art.get("content") and len(art["content"]) > 0:
+            # Get the first paragraph text
+            excerpt = art["content"][0].get("text", "")
+            # Truncate to 150 characters if necessary
+            if len(excerpt) > 150:
+                excerpt = excerpt[:150] + "..."
+        
+        # Get author name from mapping or use a fallback
+        authorName = authors.get(art["authorId"], "Unknown Author")
+        
         summary.append({
             "title": art["title"],
             "slug": art["slug"],
             "coverImageUrl": art.get("coverImageUrl"),
             "tags": art.get("tags", []),
-            "viewCount": art.get("viewCount", 0),
-            "createdAt": art.get("createdAt", ""),
-            "commentCount": len(art.get("comments", []))
+            "authorId": art["authorId"],
+            "authorName": authorName,
+            "excerpt": excerpt,
+            "_id": art["_id"],
+            "content": art.get("content", []),
+            "createdAt": art.get("createdAt"),
+            "updatedAt": art.get("updatedAt")
         })
     return jsonify(summary)
 

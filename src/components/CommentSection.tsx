@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { 
   ArticleComment, 
   CommentReply,
@@ -10,6 +11,8 @@ import {
   deleteComment, 
   deleteReply 
 } from '@/services/articleService';
+import { auth } from '@/firebase/clientApp';
+import { onAuthStateChanged } from 'firebase/auth';
 
 interface CommentSectionProps {
   slug: string;
@@ -26,11 +29,28 @@ const CommentSection: React.FC<CommentSectionProps> = ({ slug }) => {
   const [replyContent, setReplyContent] = useState('');
   const [submittingReply, setSubmittingReply] = useState(false);
   const [expandedReplies, setExpandedReplies] = useState<Record<string, boolean>>({});
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   
-  // This would normally come from authentication
-  const currentUser = { id: 'temp-user-id', name: 'Reader' };
+  // This user object will be updated when authenticated
+  const [currentUser, setCurrentUser] = useState({ id: '', name: 'Reader' });
 
   useEffect(() => {
+    // Check authentication status
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      const isAuth = !!user;
+      setIsAuthenticated(isAuth);
+      
+      if (isAuth && user) {
+        setCurrentUser({
+          id: user.uid,
+          name: user.displayName || user.email?.split('@')[0] || 'User'
+        });
+      } else {
+        setCurrentUser({ id: '', name: 'Reader' });
+      }
+    });
+    
     if (!slug) return;
     
     setLoading(true);
@@ -45,13 +65,19 @@ const CommentSection: React.FC<CommentSectionProps> = ({ slug }) => {
       .catch(err => {
         setError('Unable to load discussions. Please refresh the page to try again.');
         setLoading(false);
-        console.error(err);
       });
+      
+    return () => unsubscribe();
   }, [slug]);
 
   const handleCommentSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newComment.trim() || submitting) return;
+    
+    if (!isAuthenticated) {
+      setShowLoginPrompt(true);
+      return;
+    }
     
     try {
       setSubmitting(true);
@@ -61,7 +87,6 @@ const CommentSection: React.FC<CommentSectionProps> = ({ slug }) => {
       setSubmitting(false);
       setFocusState(false); // Reset focus state after submission
     } catch (err) {
-      console.error('Failed to post comment:', err);
       setError('Your response could not be posted. Please try again.');
       setSubmitting(false);
     }
@@ -69,6 +94,11 @@ const CommentSection: React.FC<CommentSectionProps> = ({ slug }) => {
 
   const handleReplySubmit = async (commentId: string) => {
     if (!replyContent.trim() || submittingReply) return;
+    
+    if (!isAuthenticated) {
+      setShowLoginPrompt(true);
+      return;
+    }
     
     try {
       setSubmittingReply(true);
@@ -97,12 +127,16 @@ const CommentSection: React.FC<CommentSectionProps> = ({ slug }) => {
         [commentId]: true
       }));
     } catch (err) {
-      console.error('Failed to post reply:', err);
       setSubmittingReply(false);
     }
   };
 
   const handleLikeComment = async (commentId: string) => {
+    if (!isAuthenticated) {
+      setShowLoginPrompt(true);
+      return;
+    }
+    
     try {
       const result = await likeComment(slug, commentId, currentUser.id);
       
@@ -115,11 +149,16 @@ const CommentSection: React.FC<CommentSectionProps> = ({ slug }) => {
         )
       );
     } catch (err) {
-      console.error('Failed to like comment:', err);
+      // Handle error silently
     }
   };
 
   const handleLikeReply = async (commentId: string, replyId: string) => {
+    if (!isAuthenticated) {
+      setShowLoginPrompt(true);
+      return;
+    }
+    
     try {
       const result = await likeReply(slug, commentId, replyId, currentUser.id);
       
@@ -139,11 +178,15 @@ const CommentSection: React.FC<CommentSectionProps> = ({ slug }) => {
         )
       );
     } catch (err) {
-      console.error('Failed to like reply:', err);
+      // Handle error silently
     }
   };
 
   const handleDeleteComment = async (commentId: string) => {
+    if (!isAuthenticated) {
+      return;
+    }
+    
     try {
       await deleteComment(slug, commentId, currentUser.id);
       
@@ -152,11 +195,15 @@ const CommentSection: React.FC<CommentSectionProps> = ({ slug }) => {
         prev.filter(comment => comment.commentId !== commentId)
       );
     } catch (err) {
-      console.error('Failed to delete comment:', err);
+      // Handle error silently
     }
   };
 
   const handleDeleteReply = async (commentId: string, replyId: string) => {
+    if (!isAuthenticated) {
+      return;
+    }
+    
     try {
       await deleteReply(slug, commentId, replyId, currentUser.id);
       
@@ -172,7 +219,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({ slug }) => {
         )
       );
     } catch (err) {
-      console.error('Failed to delete reply:', err);
+      // Handle error silently
     }
   };
 
@@ -248,210 +295,216 @@ const CommentSection: React.FC<CommentSectionProps> = ({ slug }) => {
         </div>
       )}
       
-      <form onSubmit={handleCommentSubmit} className="comment-form">
-        <div 
+      <form className="comment-form" onSubmit={handleCommentSubmit}>
+        <div
           className="comment-input-container"
-          onFocus={() => setFocusState(true)}
-          onBlur={(e) => {
-            // Only blur if not clicking within the container
-            if (!e.currentTarget.contains(e.relatedTarget as Node)) {
-              setFocusState(false);
-            }
-          }}
+          style={{ opacity: focusState ? 1 : 0.85 }}
         >
-          <div className="comment-avatar">
-            {getUserAvatar(currentUser.id)}
-          </div>
-          <textarea
-            className="comment-input"
-            placeholder="Share your perspective..."
-            value={newComment}
-            onChange={(e) => setNewComment(e.target.value)}
-            rows={focusState ? 4 : 3}
-          />
-          <button 
-            type="submit" 
-            className="comment-submit"
-            disabled={submitting || !newComment.trim()}
-          >
-            {submitting ? 'Posting...' : 'Post'}
-          </button>
+          {isAuthenticated ? (
+            <>
+              <div className="comment-avatar">
+                {getUserAvatar(currentUser.id)}
+              </div>
+              <textarea
+                className="comment-input"
+                placeholder="Share your thoughts..."
+                value={newComment}
+                onChange={e => setNewComment(e.target.value)}
+                onFocus={() => setFocusState(true)}
+                onBlur={() => {
+                  if (!newComment.trim()) {
+                    setFocusState(false);
+                  }
+                }}
+              />
+              <button
+                className="comment-submit"
+                type="submit"
+                disabled={!newComment.trim() || submitting}
+              >
+                {submitting ? 'Posting...' : 'Post'}
+              </button>
+            </>
+          ) : (
+            <div className="login-prompt-container" onClick={() => setShowLoginPrompt(true)}>
+              <textarea
+                className="comment-input"
+                placeholder="Login to join the discussion..."
+                disabled
+              />
+              <button
+                className="comment-submit login-button"
+                type="button"
+                onClick={() => setShowLoginPrompt(true)}
+              >
+                Login to comment
+              </button>
+            </div>
+          )}
         </div>
       </form>
       
+      {/* Login Prompt Modal */}
+      {showLoginPrompt && (
+        <div className="login-modal-overlay" onClick={() => setShowLoginPrompt(false)}>
+          <div className="login-modal" onClick={e => e.stopPropagation()}>
+            <button className="login-modal-close" onClick={() => setShowLoginPrompt(false)}>×</button>
+            <h3 className="login-modal-title">Join the conversation</h3>
+            <p className="login-modal-text">
+              Sign in to Journalite to share your thoughts and join the discussion.
+            </p>
+            <div className="login-modal-buttons">
+              <Link href="/login" className="login-modal-button primary">
+                Log In
+              </Link>
+              <Link href="/register" className="login-modal-button secondary">
+                Create Account
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+      
       {loading ? (
         <div className="comment-loading">
-          <div>Loading discussions</div>
+          <p>Loading comments...</p>
           <div className="loading-dots">
             <div className="loading-dot"></div>
             <div className="loading-dot"></div>
             <div className="loading-dot"></div>
           </div>
         </div>
+      ) : comments.length === 0 ? (
+        <div className="no-comments">
+          Be the first to share your thoughts on this article.
+        </div>
       ) : (
         <div className="comments-list">
-          {comments.length === 0 ? (
-            <div className="no-comments">Start the conversation by sharing your thoughts.</div>
-          ) : (
-            comments.map((comment, index) => (
-              <div 
-                key={comment.commentId} 
-                className="comment-item"
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                <div className="comment-header">
-                  {getUserAvatar(comment.userId)}
-                  <div className="comment-user">{comment.userId}</div>
-                  <div className="comment-date">{formatDate(comment.createdAt)}</div>
-                </div>
-                <div className="comment-content">{comment.content}</div>
+          {comments.map(comment => (
+            <div key={comment.commentId} className="comment-item">
+              <div className="comment-header">
+                {getUserAvatar(comment.userId)}
+                <span className="comment-user">{comment.userId}</span>
+                <span className="comment-date">{formatDate(comment.createdAt)}</span>
+              </div>
+              <div className="comment-content">
+                {comment.content}
+              </div>
+              <div className="comment-actions">
+                <button
+                  className={`comment-like-btn ${comment.likes.includes(currentUser.id) ? 'liked' : ''}`}
+                  onClick={() => handleLikeComment(comment.commentId)}
+                >
+                  <span>❤</span>
+                  <span>{comment.likes.length || ''}</span>
+                </button>
                 
-                <div className="comment-actions">
-                  <button 
-                    className="reply-toggle"
-                    onClick={() => setReplyingTo(replyingTo === comment.commentId ? null : comment.commentId)}
+                <button
+                  className="reply-toggle"
+                  onClick={() => {
+                    if (isAuthenticated) {
+                      setReplyingTo(replyingTo === comment.commentId ? null : comment.commentId);
+                    } else {
+                      setShowLoginPrompt(true);
+                    }
+                  }}
+                >
+                  <span>↩</span>
+                  <span>Reply</span>
+                </button>
+                
+                {/* Only show delete button for the user's own comments */}
+                {comment.userId === currentUser.id && (
+                  <button
+                    className="comment-delete-btn"
+                    onClick={() => handleDeleteComment(comment.commentId)}
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M3 10h10a8 8 0 0 1 8 8v-3"></path>
-                      <path d="M21 7v3h-3"></path>
-                    </svg>
-                    Reply
+                    <span>🗑</span>
+                    <span>Delete</span>
                   </button>
-                  
-                  <button 
-                    className={`comment-like-btn ${comment.likes.includes(currentUser.id) ? 'liked' : ''}`}
-                    onClick={() => handleLikeComment(comment.commentId)}
-                    aria-label={comment.likes.includes(currentUser.id) ? 'Unlike' : 'Like'}
-                  >
-                    {comment.likes.includes(currentUser.id) ? (
-                      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                      </svg>
-                    ) : (
-                      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                      </svg>
-                    )}
-                    <span>{comment.likes.length > 0 ? comment.likes.length : ''}</span>
-                  </button>
-                  
-                  {comment.userId === currentUser.id && (
-                    <button 
-                      className="comment-delete-btn"
-                      onClick={() => handleDeleteComment(comment.commentId)}
-                      aria-label="Delete response"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
-                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                      </svg>
-                      <span>Remove</span>
-                    </button>
-                  )}
-                </div>
-                
-                {/* Replies section */}
-                {comment.replies && comment.replies.length > 0 && (
-                  <>
-                    <button 
-                      className="replies-toggle" 
-                      onClick={() => toggleReplies(comment.commentId)}
-                    >
-                      <span className={`replies-toggle-icon ${expandedReplies[comment.commentId] ? 'open' : ''}`}>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <polyline points="9 18 15 12 9 6"></polyline>
-                        </svg>
-                      </span>
-                      {comment.replies.length} {comment.replies.length === 1 ? 'reply' : 'replies'}
-                    </button>
-                    
-                    {expandedReplies[comment.commentId] && (
-                      <div className="reply-section">
-                        <div className="replies-list">
-                          {comment.replies.map((reply, replyIndex) => (
-                            <div 
-                              key={reply.replyId} 
-                              className="reply-item"
-                              style={{ animationDelay: `${replyIndex * 0.1}s` }}
-                            >
-                              <div className="reply-header">
-                                {getUserAvatar(reply.userId, true)}
-                                <div className="reply-user">{reply.userId}</div>
-                                <div className="reply-date">{formatDate(reply.createdAt)}</div>
-                              </div>
-                              <div className="reply-content">{reply.content}</div>
-                              <div className="reply-actions">
-                                <button 
-                                  className={`comment-like-btn ${reply.likes.includes(currentUser.id) ? 'liked' : ''}`}
-                                  onClick={() => handleLikeReply(comment.commentId, reply.replyId)}
-                                  aria-label={reply.likes.includes(currentUser.id) ? 'Unlike' : 'Like'}
-                                >
-                                  {reply.likes.includes(currentUser.id) ? (
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
-                                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                                    </svg>
-                                  ) : (
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                                    </svg>
-                                  )}
-                                  <span>{reply.likes.length > 0 ? reply.likes.length : ''}</span>
-                                </button>
-                                
-                                {reply.userId === currentUser.id && (
-                                  <button 
-                                    className="comment-delete-btn"
-                                    onClick={() => handleDeleteReply(comment.commentId, reply.replyId)}
-                                    aria-label="Delete reply"
-                                  >
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
-                                      <line x1="18" y1="6" x2="6" y2="18"></line>
-                                      <line x1="6" y1="6" x2="18" y2="18"></line>
-                                    </svg>
-                                    <span>Remove</span>
-                                  </button>
-                                )}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </>
-                )}
-                
-                {/* Reply form - moved below replies */}
-                {replyingTo === comment.commentId && (
-                  <div className={`reply-form ${comment.replies && comment.replies.length > 0 && expandedReplies[comment.commentId] ? 'in-thread' : ''}`}>
-                    <textarea
-                      className="reply-input"
-                      placeholder="Write your reply..."
-                      value={replyContent}
-                      onChange={(e) => setReplyContent(e.target.value)}
-                    />
-                    <div className="reply-buttons">
-                      <button
-                        className="reply-cancel"
-                        onClick={() => {
-                          setReplyingTo(null);
-                          setReplyContent('');
-                        }}
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        className="reply-submit"
-                        onClick={() => handleReplySubmit(comment.commentId)}
-                        disabled={submittingReply || !replyContent.trim()}
-                      >
-                        {submittingReply ? 'Posting...' : 'Reply'}
-                      </button>
-                    </div>
-                  </div>
                 )}
               </div>
-            ))
-          )}
+              
+              {/* Replies */}
+              {comment.replies && comment.replies.length > 0 && (
+                <>
+                  <button
+                    className="replies-toggle"
+                    onClick={() => toggleReplies(comment.commentId)}
+                  >
+                    <span className={`replies-toggle-icon ${expandedReplies[comment.commentId] ? 'open' : ''}`}>
+                      ▷
+                    </span>
+                    {`${comment.replies.length} ${comment.replies.length === 1 ? 'reply' : 'replies'}`}
+                  </button>
+                  
+                  {expandedReplies[comment.commentId] && (
+                    <div className="reply-section">
+                      {comment.replies.map(reply => (
+                        <div key={reply.replyId} className="reply-item">
+                          <div className="reply-header">
+                            {getUserAvatar(reply.userId, true)}
+                            <span className="reply-user">{reply.userId}</span>
+                            <span className="reply-date">{formatDate(reply.createdAt)}</span>
+                          </div>
+                          <div className="reply-content">
+                            {reply.content}
+                          </div>
+                          <div className="reply-actions">
+                            <button
+                              className={`${reply.likes.includes(currentUser.id) ? 'liked' : ''}`}
+                              onClick={() => handleLikeReply(comment.commentId, reply.replyId)}
+                            >
+                              ❤ {reply.likes.length || ''}
+                            </button>
+                            
+                            {/* Only show delete button for the user's own replies */}
+                            {reply.userId === currentUser.id && (
+                              <button
+                                onClick={() => handleDeleteReply(comment.commentId, reply.replyId)}
+                              >
+                                🗑 Delete
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </>
+              )}
+              
+              {/* Reply form */}
+              {replyingTo === comment.commentId && (
+                <div className={`reply-form ${comment.replies && comment.replies.length > 0 ? 'in-thread' : ''}`}>
+                  <textarea
+                    className="reply-input"
+                    placeholder="Write a reply..."
+                    value={replyContent}
+                    onChange={e => setReplyContent(e.target.value)}
+                  />
+                  <div className="reply-buttons">
+                    <button
+                      className="reply-cancel"
+                      onClick={() => {
+                        setReplyingTo(null);
+                        setReplyContent('');
+                      }}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      className="reply-submit"
+                      disabled={!replyContent.trim() || submittingReply}
+                      onClick={() => handleReplySubmit(comment.commentId)}
+                    >
+                      {submittingReply ? 'Posting...' : 'Post Reply'}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
         </div>
       )}
     </section>

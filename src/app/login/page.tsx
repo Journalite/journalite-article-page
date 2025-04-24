@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { auth } from '../../firebase/clientApp';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -27,6 +29,18 @@ export default function Login() {
         ...customValidation, 
         [name]: name === 'email' ? 'Please enter your email address' : 'Please enter your password' 
       });
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+      const result = await signInWithPopup(auth, provider);
+      console.log('Google sign-in successful', result.user);
+      router.push('/');
+    } catch (error) {
+      console.error('Google sign-in failed', error);
+      setError('Google sign-in failed. Please try again.');
     }
   };
 
@@ -64,13 +78,14 @@ export default function Login() {
     setError('');
     
     try {
-      // Mock login functionality - replace with actual auth implementation
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Firebase Auth login
+      await signInWithEmailAndPassword(auth, email, password);
       
       // Redirect to homepage on successful login
       router.push('/');
-    } catch (err) {
+    } catch (err: unknown) {
       setError('Invalid email or password. Please try again.');
+      console.error(err);
     } finally {
       setIsLoading(false);
     }
@@ -175,7 +190,7 @@ export default function Login() {
           <div className="mt-8 space-y-3">
             <button 
               className="w-full flex items-center justify-center px-4 py-3 border border-[#e8e1d1] bg-[#f8f5ec] rounded-md hover:bg-[#f0ece3] transition-colors"
-              onClick={() => console.log('Google login')}
+              onClick={handleGoogleSignIn}
             >
               <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>

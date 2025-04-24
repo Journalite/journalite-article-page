@@ -3,9 +3,36 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { createUserWithEmailAndPassword, sendEmailVerification, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { auth } from '../../firebase/clientApp';
+
+async function handleEmailSignUp(email: string, password: string) {
+  try {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    if (auth.currentUser) {
+      await sendEmailVerification(auth.currentUser);
+    }
+    console.log('Sign-up successful', userCredential.user);
+    return userCredential;
+  } catch (error) {
+    console.error('Sign-up failed', error);
+    throw error;
+  }
+}
+
+async function handleGoogleSignUp() {
+  const provider = new GoogleAuthProvider();
+  try {
+    const result = await signInWithPopup(auth, provider);
+    console.log('Google sign-up successful', result.user);
+    return result;
+  } catch (error) {
+    console.error('Google sign-up failed', error);
+    throw error;
+  }
+}
 
 export default function Register() {
-  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -25,69 +52,43 @@ export default function Register() {
     
     // Add a custom validation message if empty
     if (validity.valueMissing) {
-      let message = '';
-      switch(name) {
-        case 'name': 
-          message = 'Please enter your full name';
-          break;
-        case 'email':
-          message = 'Please enter your email address';
-          break;
-        case 'password':
-          message = 'Please enter your password';
-          break;
-        case 'confirmPassword':
-          message = 'Please confirm your password';
-          break;
-        default:
-          message = 'This field is required';
-      }
+      let message = 'This field is required';
+      if (name === 'email') message = 'Please enter your email address';
+      if (name === 'password') message = 'Please enter a password';
+      if (name === 'confirmPassword') message = 'Please confirm your password';
+      
       setCustomValidation({ ...customValidation, [name]: message });
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    
-    // Mark all fields as touched on submit
-    const form = e.currentTarget;
-    const formElements = Array.from(form.elements) as HTMLInputElement[];
-    
-    const newTouchedFields: Record<string, boolean> = {};
+  const validateForm = () => {
     const newValidation: Record<string, string> = {};
-    
+    const newTouchedFields: Record<string, boolean> = {};
     let isValid = true;
     
-    formElements.forEach(el => {
-      if (el.name && el.required) {
-        newTouchedFields[el.name] = true;
-        
-        if (!el.value.trim()) {
-          let message = '';
-          switch(el.name) {
-            case 'name': 
-              message = 'Please enter your full name';
-              break;
-            case 'email':
-              message = 'Please enter your email address';
-              break;
-            case 'password':
-              message = 'Please enter your password';
-              break;
-            case 'confirmPassword':
-              message = 'Please confirm your password';
-              break;
-            default:
-              message = 'This field is required';
-          }
-          newValidation[el.name] = message;
-          isValid = false;
-        }
-      }
-    });
+    // Email validation
+    newTouchedFields.email = true;
+    if (!email.trim()) {
+      newValidation.email = 'Please enter your email address';
+      isValid = false;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      newValidation.email = 'Please enter a valid email address';
+      isValid = false;
+    }
     
-    // Check if passwords match
-    if (password !== confirmPassword && password && confirmPassword) {
+    // Password validation
+    newTouchedFields.password = true;
+    if (!password) {
+      newValidation.password = 'Please enter a password';
+      isValid = false;
+    } else if (password.length < 6) {
+      newValidation.password = 'Password must be at least 6 characters';
+      isValid = false;
+    }
+    
+    // Confirm password validation
+    newTouchedFields.confirmPassword = true;
+    if (password !== confirmPassword) {
       newValidation.confirmPassword = 'Passwords do not match';
       isValid = false;
     }
@@ -95,25 +96,37 @@ export default function Register() {
     setTouchedFields({ ...touchedFields, ...newTouchedFields });
     setCustomValidation({ ...customValidation, ...newValidation });
     
-    if (!isValid) return;
+    return isValid;
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     
-    // Validate password match
-    if (password !== confirmPassword) {
-      setError('Passwords do not match');
-      return;
-    }
+    if (!validateForm()) return;
     
     setIsLoading(true);
     setError('');
     
     try {
-      // Mock registration functionality - replace with actual implementation
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Use the new handleEmailSignUp function instead
+      await handleEmailSignUp(email, password);
       
       // Redirect to login page on successful registration
       router.push('/login');
-    } catch (err) {
-      setError('Registration failed. Please try again.');
+    } catch (err: unknown) {
+      let errorMessage = 'Failed to create account';
+      if (err instanceof Error) {
+        // Handle specific Firebase errors
+        if (err.message.includes('email-already-in-use')) {
+          errorMessage = 'This email is already registered';
+        } else if (err.message.includes('invalid-email')) {
+          errorMessage = 'Please enter a valid email address';
+        } else if (err.message.includes('weak-password')) {
+          errorMessage = 'Password is too weak';
+        }
+      }
+      setError(errorMessage);
+      console.error(err);
     } finally {
       setIsLoading(false);
     }
@@ -139,8 +152,8 @@ export default function Register() {
           <div className="mb-12">
             <h1 className="text-5xl md:text-6xl font-serif font-normal text-slate-900">Journalite</h1>
             <div className="mt-4 text-lg md:text-xl text-slate-800 italic">
-              <p>Create your doorway to</p>
-              <p>the Thoughtspace.</p>
+              <p>Every thought has a doorway.</p>
+              <p>This is yours.</p>
             </div>
           </div>
 
@@ -153,23 +166,6 @@ export default function Register() {
 
           {/* Registration form */}
           <form onSubmit={handleSubmit} className="space-y-4 w-full" noValidate>
-            <div>
-              <input
-                id="name"
-                name="name"
-                type="text"
-                className={getInputClasses('name')}
-                placeholder="Full name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                onBlur={handleBlur}
-                required
-              />
-              {touchedFields.name && customValidation.name && (
-                <p className="mt-1 text-sm text-red-500">{customValidation.name}</p>
-              )}
-            </div>
-
             <div>
               <input
                 id="email"
@@ -198,7 +194,6 @@ export default function Register() {
                 onChange={(e) => setPassword(e.target.value)}
                 onBlur={handleBlur}
                 required
-                minLength={8}
               />
               {touchedFields.password && customValidation.password && (
                 <p className="mt-1 text-sm text-red-500">{customValidation.password}</p>
@@ -207,7 +202,7 @@ export default function Register() {
 
             <div>
               <input
-                id="confirm-password"
+                id="confirmPassword"
                 name="confirmPassword"
                 type="password"
                 className={getInputClasses('confirmPassword')}
@@ -229,28 +224,41 @@ export default function Register() {
                 disabled={isLoading}
               >
                 {isLoading ? (
-                  "Creating account..."
+                  "Creating your account..."
                 ) : (
                   <div className="flex items-center">
                     <span className="mr-2">→</span>
-                    <span>Create account</span>
+                    <span>Create your account</span>
                   </div>
                 )}
               </button>
             </div>
 
-            <div className="flex justify-center pt-2 text-sm text-slate-700">
+            <div className="flex justify-center pt-2 text-slate-700 text-sm">
+              <span className="mr-2">Already have an account?</span>
               <Link href="/login" className="hover:text-slate-900">
-                Already have an account? Sign in
+                Sign in
               </Link>
             </div>
           </form>
 
-          {/* Social registration options */}
+          {/* Social login options */}
           <div className="mt-8 space-y-3">
             <button 
               className="w-full flex items-center justify-center px-4 py-3 border border-[#e8e1d1] bg-[#f8f5ec] rounded-md hover:bg-[#f0ece3] transition-colors"
-              onClick={() => console.log('Google signup')}
+              onClick={async () => {
+                try {
+                  setIsLoading(true);
+                  setError('');
+                  await handleGoogleSignUp();
+                  router.push('/');
+                } catch (err) {
+                  setError('Google sign-up failed. Please try again.');
+                  console.error(err);
+                } finally {
+                  setIsLoading(false);
+                }
+              }}
             >
               <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -260,30 +268,10 @@ export default function Register() {
               </svg>
               <span className="text-slate-800">Sign up with Google</span>
             </button>
-            
-            <button 
-              className="w-full flex items-center justify-center px-4 py-3 border border-[#e8e1d1] bg-[#f8f5ec] rounded-md hover:bg-[#f0ece3] transition-colors"
-              onClick={() => console.log('Instagram signup')}
-            >
-              <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069z" fill="url(#paint0_radial)"/>
-                <path d="M12 6.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11zm0 9a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z" fill="#fff"/>
-                <circle cx="17.5" cy="6.5" r="1.5" fill="#fff"/>
-                <defs>
-                  <radialGradient id="paint0_radial" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(0 -23.0951 21.4696 0 12 23.9773)">
-                    <stop stopColor="#FFDD55"/>
-                    <stop offset=".1" stopColor="#FFDD55"/>
-                    <stop offset=".5" stopColor="#FF543E"/>
-                    <stop offset="1" stopColor="#C837AB"/>
-                  </radialGradient>
-                </defs>
-              </svg>
-              <span className="text-slate-800">Sign up with Instagram</span>
-            </button>
           </div>
 
           {/* Bottom tagline */}
-          <div className="mt-16 mb-8 text-slate-700 italic">
+          <div className="mt-20 mb-8 text-slate-700 italic">
             <p>Words are the threads of thought.</p>
           </div>
         </div>

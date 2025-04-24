@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { sendPasswordResetEmail } from 'firebase/auth';
+import { auth } from '@/firebase/clientApp';
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
@@ -30,7 +32,7 @@ export default function ForgotPassword() {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handlePasswordReset = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
     // Mark all fields as touched on submit
@@ -63,13 +65,22 @@ export default function ForgotPassword() {
     setSuccess(false);
     
     try {
-      // Mock password reset email functionality - replace with actual implementation
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Send password reset email using Firebase
+      await sendPasswordResetEmail(auth, email);
       
       // Show success message
       setSuccess(true);
-    } catch (err) {
-      setError('Failed to send reset email. Please try again.');
+    } catch (err: any) {
+      // Extract and display error message
+      let errorMessage = 'Failed to send reset email. Please try again.';
+      if (err.message) {
+        if (err.message.includes('user-not-found')) {
+          errorMessage = 'No account found with this email address.';
+        } else if (err.message.includes('invalid-email')) {
+          errorMessage = 'Please enter a valid email address.';
+        }
+      }
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -124,7 +135,7 @@ export default function ForgotPassword() {
           ) : (
             <>
               {/* Reset form */}
-              <form onSubmit={handleSubmit} className="space-y-4 w-full" noValidate>
+              <form onSubmit={handlePasswordReset} className="space-y-4 w-full" noValidate>
                 <div>
                   <input
                     id="email"
