@@ -1,6 +1,30 @@
 {
   "version": 4,
   "routes": {
+    "/register": {
+      "experimentalBypassFor": [
+        {
+          "type": "header",
+          "key": "Next-Action"
+        },
+        {
+          "type": "header",
+          "key": "content-type",
+          "value": "multipart/form-data;.*"
+        }
+      ],
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/register",
+      "dataRoute": "/register.rsc",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
     "/forgot-password": {
       "experimentalBypassFor": [
         {
@@ -16,30 +40,6 @@
       "initialRevalidateSeconds": false,
       "srcRoute": "/forgot-password",
       "dataRoute": "/forgot-password.rsc",
-      "allowHeader": [
-        "host",
-        "x-matched-path",
-        "x-prerender-revalidate",
-        "x-prerender-revalidate-if-generated",
-        "x-next-revalidated-tags",
-        "x-next-revalidate-tag-token"
-      ]
-    },
-    "/": {
-      "experimentalBypassFor": [
-        {
-          "type": "header",
-          "key": "Next-Action"
-        },
-        {
-          "type": "header",
-          "key": "content-type",
-          "value": "multipart/form-data;.*"
-        }
-      ],
-      "initialRevalidateSeconds": false,
-      "srcRoute": "/",
-      "dataRoute": "/index.rsc",
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -73,7 +73,7 @@
         "x-next-revalidate-tag-token"
       ]
     },
-    "/register": {
+    "/": {
       "experimentalBypassFor": [
         {
           "type": "header",
@@ -86,8 +86,8 @@
         }
       ],
       "initialRevalidateSeconds": false,
-      "srcRoute": "/register",
-      "dataRoute": "/register.rsc",
+      "srcRoute": "/",
+      "dataRoute": "/index.rsc",
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -101,8 +101,8 @@
   "dynamicRoutes": {},
   "notFoundRoutes": [],
   "preview": {
-    "previewModeId": "b32e2ec3d33ae45fa472368df8c8b93a",
-    "previewModeSigningKey": "bdd2590a68bcd396788c98773e8f50477386b186408d1ef066d70e5752c6bd16",
-    "previewModeEncryptionKey": "7a61e9e8b42c585e4fc5ee59f54f63e91d083d32540fe88e93d77ee616510575"
+    "previewModeId": "aca04c179cc4646931d9180176260412",
+    "previewModeSigningKey": "b6426d03fdb65527257096fbd841c53f8a5b899784dd8818ba75c7a4e241d092",
+    "previewModeEncryptionKey": "3ec6545bed9352f1e5e9e0e065fadcc9472d407d1b9992a2fa22cff7b76a6ca5"
   }
 }
