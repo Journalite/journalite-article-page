@@ -142,7 +142,7 @@ export default function Register() {
   };
 
   const checkUsername = async (username: string) => {
-    if (username.length < 3) {
+    if (username.length < 2) {
       setUsernameAvailable(null);
       return;
     }
@@ -164,7 +164,7 @@ export default function Register() {
     
     // Debounce the username check
     const timeoutId = setTimeout(() => {
-      if (value.length >= 3) {
+      if (value.length >= 2) {
         checkUsername(value);
       } else {
         setUsernameAvailable(null);
@@ -225,8 +225,8 @@ export default function Register() {
     if (!username.trim()) {
       newValidation.username = 'Please choose a username';
       isValid = false;
-    } else if (username.length < 3) {
-      newValidation.username = 'Username must be at least 3 characters';
+    } else if (username.length < 2) {
+      newValidation.username = 'Username must be at least 2 characters';
       isValid = false;
     } else if (usernameAvailable === false) {
       newValidation.username = 'This username is already taken';
@@ -303,7 +303,7 @@ export default function Register() {
     }
     
     // Add green border for valid username
-    if (fieldName === 'username' && username.length >= 3 && usernameAvailable === true) {
+    if (fieldName === 'username' && username.length >= 2 && usernameAvailable === true) {
       return `${baseClasses} border-green-300 bg-green-50`;
     }
     
@@ -387,7 +387,7 @@ export default function Register() {
                     <div className="animate-spin h-5 w-5 border-2 border-slate-500 rounded-full border-t-transparent"></div>
                   </div>
                 )}
-                {!isCheckingUsername && username.length >= 3 && usernameAvailable === true && (
+                {!isCheckingUsername && username.length >= 2 && usernameAvailable === true && (
                   <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-green-500">
                     ✓
                   </div>
@@ -396,10 +396,10 @@ export default function Register() {
               {touchedFields.username && customValidation.username && (
                 <p className="mt-1 text-sm text-red-500">{customValidation.username}</p>
               )}
-              {!customValidation.username && username.length >= 3 && usernameAvailable === true && (
+              {!customValidation.username && username.length >= 2 && usernameAvailable === true && (
                 <p className="mt-1 text-sm text-green-500">Username is available</p>
               )}
-              {!customValidation.username && username.length >= 3 && usernameAvailable === false && (
+              {!customValidation.username && username.length >= 2 && usernameAvailable === false && (
                 <p className="mt-1 text-sm text-red-500">Username is already taken</p>
               )}
             </div>
