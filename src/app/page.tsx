@@ -126,19 +126,41 @@ const mockArticles: Article[] = [
 
 export default function HomePage() {
   // Initialize with empty arrays/null instead of stub objects
-  const [featuredArticle, setFeaturedArticle] = useState<Article | null>(null);
   const [articles, setArticles] = useState<Article[]>([]);
-  const [tags, setTags] = useState<string[]>([]);
+  const [featuredArticle, setFeaturedArticle] = useState<Article | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false); // Initialize as false
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true); // Default to collapsed on mobile
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 0);
+  
+  // Trending tags (static list, no need for state)
+  const tags = ['Journalism', 'Technology', 'Politics', 'Science', 'Culture'];
 
+  // Check authentication status on component mount
   useEffect(() => {
-    // Check Firebase authentication status
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setIsAuthenticated(!!user); // Set to true if user exists
+      setIsAuthenticated(!!user);
     });
     
+    return () => unsubscribe();
+  }, []);
+
+  // Set up window resize listener
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Use different default sidebar state based on screen size
+  useEffect(() => {
+    setIsSidebarCollapsed(windowWidth < 768);
+  }, [windowWidth]);
+
+  useEffect(() => {
     // Fetch articles data
     const fetchArticles = async () => {
       try {
@@ -179,12 +201,8 @@ export default function HomePage() {
               
             setArticles(nonFeaturedArticles);
             
-            // Extract all unique tags
-            const allTags = articlesData
-              .flatMap((article: Article) => article.tags || [])
-              .filter((tag: string, index: number, self: string[]) => self.indexOf(tag) === index);
-              
-            setTags(allTags);
+            // We're using a static tags list now, so we don't need to extract tags
+            // from articles anymore
           }
         } catch (apiError) {
           console.error('API not available, using mock data:', apiError);
@@ -196,12 +214,7 @@ export default function HomePage() {
           // Use the rest for the article list
           setArticles(mockArticles.slice(1));
           
-          // Extract unique tags from mock data
-          const allTags = mockArticles
-            .flatMap(article => article.tags || [])
-            .filter((tag, index, self) => self.indexOf(tag) === index);
-            
-          setTags(allTags);
+          // Using static tags list now, no need to extract tags
         }
       } catch (error) {
         console.error('Error fetching articles:', error);
@@ -211,9 +224,6 @@ export default function HomePage() {
     };
 
     fetchArticles();
-    
-    // Clean up the auth listener on unmount
-    return () => unsubscribe();
   }, []);
 
   // Get author name from authorId, preferring the API-provided authorName if available
@@ -270,17 +280,24 @@ export default function HomePage() {
 
   return (
     <div className={styles['three-column-layout']}>
+      {/* Background overlay for mobile */}
+      {windowWidth < 768 && !isSidebarCollapsed && (
+        <div className={`${styles['menu-overlay']} ${styles['active']}`} onClick={toggleSidebar}></div>
+      )}
+    
       {/* LEFT SIDEBAR */}
       <aside className={`${styles['left-sidebar']} ${isSidebarCollapsed ? styles['collapsed'] : ''}`}>
         <div className={styles['sidebar-header']}>
           <div className={styles.logo}>Journalite</div>
-          <button 
-            className={styles['toggle-button']} 
-            onClick={toggleSidebar}
-            aria-label={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-          >
-            {isSidebarCollapsed ? "→" : "←"}
-          </button>
+          {windowWidth >= 768 && (
+            <button 
+              className={styles['toggle-button']} 
+              onClick={toggleSidebar}
+              aria-label={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+            >
+              {isSidebarCollapsed ? "→" : "←"}
+            </button>
+          )}
         </div>
         
         <nav className={styles['vertical-nav']}>
@@ -339,8 +356,19 @@ export default function HomePage() {
         </nav>
       </aside>
 
-      {/* CENTER COLUMN */}
-      <main className={styles['center-column']}>
+      {/* Mobile sidebar toggle button - only shown on mobile */}
+      {windowWidth < 768 && (
+        <button 
+          className={styles['toggle-button']} 
+          onClick={toggleSidebar}
+          aria-label={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+        >
+          {isSidebarCollapsed ? "☰" : "✕"}
+        </button>
+      )}
+
+      {/* MAIN CONTENT */}
+      <main className={`${styles['center-column']} ${isSidebarCollapsed && windowWidth >= 768 ? styles['expanded'] : ''}`}>
         {/* Daily Prompt Banner */}
         <div className={styles['prompt-banner']}>
           <div className={styles['prompt-icon']}>💡</div>

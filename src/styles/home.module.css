@@ -14,6 +14,8 @@
     color: #000000;
     min-height: 100vh;
     font-family: 'Inter', sans-serif;
+    overflow-x: hidden; /* Prevent horizontal scroll */
+    width: 100%;
   }
   
   /* Left sidebar */
@@ -544,54 +546,59 @@
   @media (max-width: 768px) {
     .three-column-layout {
       grid-template-columns: 1fr;
+      width: 100vw;
+      overflow-x: hidden;
+      position: relative;
     }
     
     .left-sidebar {
       position: fixed;
       z-index: 100;
       left: 0;
+      top: 0;
       width: 240px;
-      transform: translateX(0);
+      height: 100%;
+      transform: translateX(-100%);
       transition: transform 0.3s ease;
       border-right: 1px solid rgba(0, 0, 0, 0.05);
+      background-color: #FDFDFB;
     }
     
-    .left-sidebar.collapsed {
-      transform: translateX(-240px);
-      width: 240px;
+    .left-sidebar:not(.collapsed) {
+      transform: translateX(0);
     }
     
-    /* Restore the full logo even when collapsed on mobile */
-    .collapsed .logo {
-      display: block;
-      font-size: 1.75rem;
-      text-align: left;
+    .center-column {
+      width: 100%;
+      max-width: 100%;
+      padding: 1rem;
+      margin-left: 0;
     }
     
-    .collapsed .logo::before {
-      content: "Journalite";
-    }
-    
-    .sidebar-header {
-      margin-bottom: 1.5rem;
-    }
-    
+    /* Toggle button styling for mobile */
     .toggle-button {
       display: block;
-      position: absolute;
-      right: -40px;
-      top: 20px;
+      position: fixed;
+      z-index: 101;
+      left: 10px;
+      top: 10px;
       background-color: #FDFDFB;
-      border: 1px solid rgba(0, 0, 0, 0.05);
+      border: 1px solid rgba(0, 0, 0, 0.1);
       border-radius: 50%;
-      width: 32px;
-      height: 32px;
+      width: 40px;
+      height: 40px;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
     
+    .sidebar-header {
+      margin-top: 2.5rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    /* Mobile article layout improvements */
     .article-grid {
       grid-template-columns: 1fr;
     }
@@ -602,6 +609,7 @@
     
     .featured-image {
       height: 200px;
+      width: 100%;
       order: -1;
     }
     
@@ -617,8 +625,32 @@
       margin: 0 auto;
     }
     
-    .sidebar-footer {
-      display: none;
+    /* Improve readability of text elements on mobile */
+    .featured-title {
+      font-size: 1.5rem;
+      line-height: 1.3;
+    }
+    
+    .article-title {
+      font-size: 1.3rem;
+      line-height: 1.3;
+    }
+    
+    .featured-excerpt,
+    .article-excerpt {
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+    
+    /* Adjust reaction bar on mobile */
+    .reaction-bar {
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    
+    .reaction-button {
+      padding: 0.4rem 0.6rem;
+      font-size: 0.85rem;
     }
   }
   
@@ -830,5 +862,30 @@
     }
     .hero-title {
       font-size: 2.25rem;
+    }
+  }
+  
+  /* Mobile menu background overlay */
+  .menu-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 99;
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* Show overlay when sidebar is expanded on mobile */
+  @media (max-width: 768px) {
+    .menu-overlay.active {
+      display: block;
     }
   }
