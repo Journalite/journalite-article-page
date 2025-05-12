@@ -366,7 +366,7 @@ export default function HomePage() {
                   <p className={styles['featured-excerpt']}>
                     {getExcerpt(featuredArticle)}
                   </p>
-                  <Link href={`/articles/${featuredArticle.slug}`} className={styles['read-link']}>
+                  <Link href={`/articles?slug=${encodeURIComponent(featuredArticle.slug)}`} className={styles['read-link']}>
                     Read →
                   </Link>
                 </div>
