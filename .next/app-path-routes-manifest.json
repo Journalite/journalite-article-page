@@ -1,0 +1,8 @@
+{
+  "/_not-found/page": "/_not-found",
+  "/forgot-password/page": "/forgot-password",
+  "/login/page": "/login",
+  "/register/page": "/register",
+  "/articles/[slug]/page": "/articles/[slug]",
+  "/page": "/"
+}

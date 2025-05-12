@@ -32,9 +32,9 @@ if (typeof window !== 'undefined') {
 // Initialize Firebase Authentication
 const auth = getAuth(app);
 
-// Connect to Auth Emulator in development
-if (process.env.NODE_ENV === 'development') {
-    connectAuthEmulator(auth, "http://localhost:9099", { disableWarnings: true });
-}
+// Comment out or remove the following emulator connection code:
+// if (process.env.NODE_ENV === 'development') {
+//     connectAuthEmulator(auth, "http://localhost:9099", { disableWarnings: true });
+// }
 
 export { app, analytics, auth };

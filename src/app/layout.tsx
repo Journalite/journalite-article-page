@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Journalite - Your Trusted News Source",
-  description: "A modern news platform delivering reliable journalism",
+  title: "Journalite - Your Trusted Journalism Source",
+  description: "A revolutionary social platform delivering reliable journalism",
 };
 
 export default function RootLayout({
