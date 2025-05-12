@@ -299,7 +299,7 @@ export default function HomePage() {
                 <span className={styles['nav-icon']}>•</span>
                 <span className={styles['nav-text']}>Explore</span>
               </Link>
-              <Link href="/profile" className={`${styles['nav-link']} ${styles['nav-profile']}`}>
+              <Link href="/my-profile" className={`${styles['nav-link']} ${styles['nav-profile']}`}>
                 <span className={styles['nav-icon']}>•</span>
                 <span className={styles['nav-text']}>My Profile</span>
               </Link>

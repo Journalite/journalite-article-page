@@ -125,7 +125,7 @@ function Article () {
                 <span className={styles['nav-text']}>Explore</span>
               </Link>
               <Link
-                href='/profile'
+                href='/my-profile'
                 className={`${styles['nav-link']} ${styles['nav-profile']}`}
               >
                 <span className={styles['nav-icon']}>•</span>

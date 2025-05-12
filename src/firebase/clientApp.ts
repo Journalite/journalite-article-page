@@ -2,6 +2,7 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth, connectAuthEmulator } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -32,9 +33,12 @@ if (typeof window !== 'undefined') {
 // Initialize Firebase Authentication
 const auth = getAuth(app);
 
-// Comment out or remove the following emulator connection code:
+// Initialize Firestore
+const db = getFirestore(app);
+
+// // Connect to Auth Emulator in development
 // if (process.env.NODE_ENV === 'development') {
-//     connectAuthEmulator(auth, "http://localhost:9099", { disableWarnings: true });
+//     // connectAuthEmulator(auth, "http://localhost:9099", { disableWarnings: true });
 // }
 
-export { app, analytics, auth };
+export { app, analytics, auth, db };

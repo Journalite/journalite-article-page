@@ -3,8 +3,9 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { createUserWithEmailAndPassword, sendEmailVerification, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { createUserWithEmailAndPassword, sendEmailVerification, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../../firebase/clientApp';
+import { createUserProfile, isUsernameTaken, getUserProfile } from '../../services/userService';
 
 async function handleEmailSignUp(email: string, password: string) {
   try {
@@ -23,10 +24,81 @@ async function handleEmailSignUp(email: string, password: string) {
 async function handleGoogleSignUp() {
   const provider = new GoogleAuthProvider();
   try {
+    // Before attempting sign-in, we'll set up auth state change handling
+    let authInProgress = true;
+    let existingAccount = false;
+    
+    // Set up one-time auth state listener to detect if this is a sign-in to existing account
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user && authInProgress) {
+        authInProgress = false;
+        existingAccount = true;
+        unsubscribe();
+      }
+    });
+    
+    // Attempt sign-in with Google
     const result = await signInWithPopup(auth, provider);
-    console.log('Google sign-up successful', result.user);
+    authInProgress = false;
+    unsubscribe();
+    
+    const user = result.user;
+    
+    // Check if this was an existing user that just signed in
+    if (existingAccount) {
+      console.log('User already exists, signed in with existing account');
+      return result;
+    }
+    
+    // If we got here, it's a new user - check for existing profile just to be safe
+    const existingProfile = await getUserProfile(user.uid);
+    
+    // If a profile exists, user has signed in before 
+    if (existingProfile) {
+      console.log('User already has a profile, proceeding to app');
+      return result;
+    }
+    
+    // New user needs a profile - prepare data from Google account info
+    const userDisplayName = user.displayName || '';
+    const nameParts = userDisplayName.split(' ');
+    const firstName = nameParts[0] || '';
+    const lastName = nameParts.slice(1).join(' ') || '';
+    
+    // Generate a username from the email address (before the @ symbol)
+    const emailUsername = user.email?.split('@')[0] || '';
+    
+    // Check if the username is already taken
+    const isUsernameAvailable = !(await isUsernameTaken(emailUsername));
+    
+    if (isUsernameAvailable) {
+      // Username is available, create profile with it
+      await createUserProfile(user.uid, {
+        firstName,
+        lastName,
+        username: emailUsername,
+        email: user.email || ''
+      });
+    } else {
+      // Username is taken, we'll let the user choose a new one in the profile setup page
+      // But we still create a temporary profile with a random suffix
+      const randomSuffix = Math.floor(Math.random() * 10000);
+      await createUserProfile(user.uid, {
+        firstName,
+        lastName,
+        username: `${emailUsername}${randomSuffix}`,
+        email: user.email || ''
+      });
+    }
+    
+    console.log('Google sign-up successful', user);
     return result;
-  } catch (error) {
+  } catch (error: any) {
+    // Check specific Firebase error codes
+    if (error.code === 'auth/account-exists-with-different-credential') {
+      throw new Error('An account already exists with the same email address but different sign-in credentials. Please sign in using the original method.');
+    }
+    
     console.error('Google sign-up failed', error);
     throw error;
   }
@@ -36,10 +108,15 @@ export default function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [username, setUsername] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [touchedFields, setTouchedFields] = useState<Record<string, boolean>>({});
   const [customValidation, setCustomValidation] = useState<Record<string, string>>({});
+  const [usernameAvailable, setUsernameAvailable] = useState<boolean | null>(null);
+  const [isCheckingUsername, setIsCheckingUsername] = useState(false);
   
   const router = useRouter();
 
@@ -56,9 +133,45 @@ export default function Register() {
       if (name === 'email') message = 'Please enter your email address';
       if (name === 'password') message = 'Please enter a password';
       if (name === 'confirmPassword') message = 'Please confirm your password';
+      if (name === 'firstName') message = 'Please enter your first name';
+      if (name === 'lastName') message = 'Please enter your last name';
+      if (name === 'username') message = 'Please choose a username';
       
       setCustomValidation({ ...customValidation, [name]: message });
     }
+  };
+
+  const checkUsername = async (username: string) => {
+    if (username.length < 3) {
+      setUsernameAvailable(null);
+      return;
+    }
+    
+    try {
+      setIsCheckingUsername(true);
+      const taken = await isUsernameTaken(username);
+      setUsernameAvailable(!taken);
+    } catch (error) {
+      console.error('Error checking username:', error);
+    } finally {
+      setIsCheckingUsername(false);
+    }
+  };
+
+  const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setUsername(value);
+    
+    // Debounce the username check
+    const timeoutId = setTimeout(() => {
+      if (value.length >= 3) {
+        checkUsername(value);
+      } else {
+        setUsernameAvailable(null);
+      }
+    }, 500);
+    
+    return () => clearTimeout(timeoutId);
   };
 
   const validateForm = () => {
@@ -93,6 +206,33 @@ export default function Register() {
       isValid = false;
     }
     
+    // First name validation
+    newTouchedFields.firstName = true;
+    if (!firstName.trim()) {
+      newValidation.firstName = 'Please enter your first name';
+      isValid = false;
+    }
+    
+    // Last name validation
+    newTouchedFields.lastName = true;
+    if (!lastName.trim()) {
+      newValidation.lastName = 'Please enter your last name';
+      isValid = false;
+    }
+    
+    // Username validation
+    newTouchedFields.username = true;
+    if (!username.trim()) {
+      newValidation.username = 'Please choose a username';
+      isValid = false;
+    } else if (username.length < 3) {
+      newValidation.username = 'Username must be at least 3 characters';
+      isValid = false;
+    } else if (usernameAvailable === false) {
+      newValidation.username = 'This username is already taken';
+      isValid = false;
+    }
+    
     setTouchedFields({ ...touchedFields, ...newTouchedFields });
     setCustomValidation({ ...customValidation, ...newValidation });
     
@@ -108,8 +248,24 @@ export default function Register() {
     setError('');
     
     try {
-      // Use the new handleEmailSignUp function instead
-      await handleEmailSignUp(email, password);
+      // First, check if the username is available before trying to create auth account
+      const isUsernameAvailable = !(await isUsernameTaken(username));
+      
+      if (!isUsernameAvailable) {
+        setCustomValidation({ ...customValidation, username: 'This username is already taken' });
+        throw new Error('Username is already taken');
+      }
+      
+      // Create the authentication account
+      const userCredential = await handleEmailSignUp(email, password);
+      
+      // Create the user profile in Firestore
+      await createUserProfile(userCredential.user.uid, {
+        firstName,
+        lastName,
+        username,
+        email
+      });
       
       // Redirect to login page on successful registration
       router.push('/login');
@@ -118,11 +274,17 @@ export default function Register() {
       if (err instanceof Error) {
         // Handle specific Firebase errors
         if (err.message.includes('email-already-in-use')) {
-          errorMessage = 'This email is already registered';
+          errorMessage = 'This email is already registered. Please use a different email or sign in.';
+          setCustomValidation({ ...customValidation, email: 'This email is already registered' });
         } else if (err.message.includes('invalid-email')) {
           errorMessage = 'Please enter a valid email address';
+          setCustomValidation({ ...customValidation, email: 'Please enter a valid email address' });
         } else if (err.message.includes('weak-password')) {
-          errorMessage = 'Password is too weak';
+          errorMessage = 'Password is too weak. Please use at least 6 characters.';
+          setCustomValidation({ ...customValidation, password: 'Password is too weak' });
+        } else if (err.message.includes('Username is already taken')) {
+          errorMessage = 'This username is already taken. Please choose a different username.';
+          setCustomValidation({ ...customValidation, username: 'This username is already taken' });
         }
       }
       setError(errorMessage);
@@ -138,6 +300,11 @@ export default function Register() {
     
     if (touchedFields[fieldName] && customValidation[fieldName]) {
       return `${baseClasses} border-red-300 bg-red-50`;
+    }
+    
+    // Add green border for valid username
+    if (fieldName === 'username' && username.length >= 3 && usernameAvailable === true) {
+      return `${baseClasses} border-green-300 bg-green-50`;
     }
     
     return baseClasses;
@@ -166,6 +333,77 @@ export default function Register() {
 
           {/* Registration form */}
           <form onSubmit={handleSubmit} className="space-y-4 w-full" noValidate>
+            <div className="flex gap-4">
+              <div className="w-1/2">
+                <input
+                  id="firstName"
+                  name="firstName"
+                  type="text"
+                  className={getInputClasses('firstName')}
+                  placeholder="First name"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  onBlur={handleBlur}
+                  required
+                />
+                {touchedFields.firstName && customValidation.firstName && (
+                  <p className="mt-1 text-sm text-red-500">{customValidation.firstName}</p>
+                )}
+              </div>
+              
+              <div className="w-1/2">
+                <input
+                  id="lastName"
+                  name="lastName"
+                  type="text"
+                  className={getInputClasses('lastName')}
+                  placeholder="Last name"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  onBlur={handleBlur}
+                  required
+                />
+                {touchedFields.lastName && customValidation.lastName && (
+                  <p className="mt-1 text-sm text-red-500">{customValidation.lastName}</p>
+                )}
+              </div>
+            </div>
+            
+            <div>
+              <div className="relative">
+                <input
+                  id="username"
+                  name="username"
+                  type="text"
+                  className={getInputClasses('username')}
+                  placeholder="Username"
+                  value={username}
+                  onChange={handleUsernameChange}
+                  onBlur={handleBlur}
+                  required
+                />
+                {isCheckingUsername && (
+                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                    <div className="animate-spin h-5 w-5 border-2 border-slate-500 rounded-full border-t-transparent"></div>
+                  </div>
+                )}
+                {!isCheckingUsername && username.length >= 3 && usernameAvailable === true && (
+                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-green-500">
+                    ✓
+                  </div>
+                )}
+              </div>
+              {touchedFields.username && customValidation.username && (
+                <p className="mt-1 text-sm text-red-500">{customValidation.username}</p>
+              )}
+              {!customValidation.username && username.length >= 3 && usernameAvailable === true && (
+                <p className="mt-1 text-sm text-green-500">Username is available</p>
+              )}
+              {!customValidation.username && username.length >= 3 && usernameAvailable === false && (
+                <p className="mt-1 text-sm text-red-500">Username is already taken</p>
+              )}
+            </div>
+
             <div>
               <input
                 id="email"
@@ -251,10 +489,20 @@ export default function Register() {
                   setIsLoading(true);
                   setError('');
                   await handleGoogleSignUp();
-                  router.push('/');
-                } catch (err) {
-                  setError('Google sign-up failed. Please try again.');
-                  console.error(err);
+                  router.push('/profile-setup');
+                } catch (err: any) {
+                  console.error('Google sign-up error:', err);
+                  
+                  // Handle specific errors with user-friendly messages
+                  if (err.message?.includes('account already exists')) {
+                    setError('An account with this email already exists. Please use the sign-in page or a different email.');
+                  } else if (err.code === 'auth/popup-closed-by-user') {
+                    setError('Sign-in was cancelled. Please try again.');
+                  } else if (err.code === 'auth/network-request-failed') {
+                    setError('Network error. Please check your internet connection and try again.');
+                  } else {
+                    setError('Google sign-up failed. Please try again or use email registration.');
+                  }
                 } finally {
                   setIsLoading(false);
                 }

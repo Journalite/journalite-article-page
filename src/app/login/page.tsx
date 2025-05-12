@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { auth } from '../../firebase/clientApp';
+import { getUserProfile } from '../../services/userService';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -35,12 +36,38 @@ export default function Login() {
   const handleGoogleSignIn = async () => {
     const provider = new GoogleAuthProvider();
     try {
+      setIsLoading(true);
+      setError('');
+      
       const result = await signInWithPopup(auth, provider);
       console.log('Google sign-in successful', result.user);
+      
+      // Check if user has a profile
+      const profile = await getUserProfile(result.user.uid);
+      
+      // If no profile exists, redirect to profile setup
+      if (!profile) {
+        router.push('/profile-setup');
+        return;
+      }
+      
+      // User has a profile, redirect to home
       router.push('/');
-    } catch (error) {
-      console.error('Google sign-in failed', error);
-      setError('Google sign-in failed. Please try again.');
+    } catch (err: any) {
+      console.error('Google sign-in failed', err);
+      
+      // Handle specific errors with user-friendly messages
+      if (err.code === 'auth/account-exists-with-different-credential') {
+        setError('An account already exists with the same email address but different sign-in credentials. Please sign in using the original method.');
+      } else if (err.code === 'auth/popup-closed-by-user') {
+        setError('Sign-in was cancelled. Please try again.');
+      } else if (err.code === 'auth/network-request-failed') {
+        setError('Network error. Please check your internet connection and try again.');
+      } else {
+        setError('Google sign-in failed. Please try again or use email sign-in.');
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
