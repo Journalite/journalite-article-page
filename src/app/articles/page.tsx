@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { useParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import styles from '@/styles/home.module.css'
 import { auth } from '@/firebase/clientApp'
 import { onAuthStateChanged, signOut } from 'firebase/auth'
+
 
 // Import the original article components
 import { getArticle, Article as ArticleType } from '@/services/articleService'
@@ -21,9 +22,10 @@ const authorMapping: {[key: string]: string} = {
 };
 
 export default function ArticlePage() {
-  const params = useParams();
-  const slug = params?.slug as string;
-  
+  // const params = useParams();
+  // const slug = params?.slug as string;
+  const params = useSearchParams()
+  const slug = params.get('slug') || ''
   const [article, setArticle] = useState<ArticleType | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');

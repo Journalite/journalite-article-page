@@ -413,7 +413,7 @@ export default function HomePage() {
                     <button className={styles['reaction-button']}>❤️ Echo</button>
                     <button className={styles['reaction-button']}>🔁 Resonate</button>
                     <button className={styles['reaction-button']}>💬 Comment</button>
-                    <Link href={`/articles/${article.slug}`} className={styles['read-link']}>
+                    <Link href={`/articles?slug=${encodeURIComponent(article.slug)}`} className={styles['read-link']}>
                       Read →
                     </Link>
                   </div>
