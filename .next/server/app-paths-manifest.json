@@ -1,7 +1,0 @@
-{
-  "/login/page": "app/login/page.js",
-  "/my-profile/page": "app/my-profile/page.js",
-  "/page": "app/page.js",
-  "/profile-setup/page": "app/profile-setup/page.js",
-  "/register/page": "app/register/page.js"
-}
