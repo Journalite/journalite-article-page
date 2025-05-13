@@ -1,0 +1,20 @@
+{
+  "src/app/forgot-password/page.tsx -> @/components/ForgotPasswordForm": {
+    "id": 2832,
+    "files": [
+      "static/chunks/bc9e92e6-995cd9bf3551f3e8.js",
+      "static/chunks/aa35ee89-c9df90b041e97d2a.js",
+      "static/chunks/117-889b986ffdcd93d7.js",
+      "static/chunks/832.2b38c5891d44b722.js"
+    ]
+  },
+  "src/app/login/page.tsx -> @/components/LoginForm": {
+    "id": 4325,
+    "files": [
+      "static/chunks/bc9e92e6-995cd9bf3551f3e8.js",
+      "static/chunks/aa35ee89-c9df90b041e97d2a.js",
+      "static/chunks/117-889b986ffdcd93d7.js",
+      "static/chunks/325.da8f4a1e3dc5c35e.js"
+    ]
+  }
+}
