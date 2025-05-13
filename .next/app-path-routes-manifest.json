@@ -1,10 +1,11 @@
 {
   "/_not-found/page": "/_not-found",
-  "/articles/page": "/articles",
-  "/forgot-password/page": "/forgot-password",
-  "/login/page": "/login",
-  "/register/page": "/register",
+  "/my-profile/page": "/my-profile",
   "/page": "/",
   "/profile-setup/page": "/profile-setup",
-  "/my-profile/page": "/my-profile"
+  "/register/page": "/register",
+  "/articles/page": "/articles",
+  "/login/page": "/login",
+  "/forgot-password/page": "/forgot-password",
+  "/reset-password/page": "/reset-password"
 }
