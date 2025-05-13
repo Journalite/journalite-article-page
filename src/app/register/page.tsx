@@ -8,9 +8,13 @@ import { auth } from '../../firebase/clientApp';
 import { createUserProfile, isUsernameTaken, getUserProfile } from '../../services/userService';
 
 async function handleEmailSignUp(email: string, password: string) {
+  if (!auth) {
+    throw new Error('Authentication is not initialized');
+  }
+  
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    if (auth.currentUser) {
+    if (auth && auth.currentUser) {
       await sendEmailVerification(auth.currentUser);
     }
     console.log('Sign-up successful', userCredential.user);
@@ -22,6 +26,10 @@ async function handleEmailSignUp(email: string, password: string) {
 }
 
 async function handleGoogleSignUp() {
+  if (!auth) {
+    throw new Error('Authentication is not initialized');
+  }
+  
   const provider = new GoogleAuthProvider();
   try {
     // Before attempting sign-in, we'll set up auth state change handling

@@ -190,7 +190,7 @@ export default function ProfileSetup() {
       });
       
       // Update the display name in Firebase Auth
-      if (auth.currentUser) {
+      if (auth && auth.currentUser) {
         await updateProfile(auth.currentUser, {
           displayName: username
         });
