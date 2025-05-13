@@ -26,6 +26,11 @@ export default function ProfileSetup() {
   const router = useRouter();
 
   useEffect(() => {
+    if (!auth) {
+      router.push('/login');
+      return () => {};
+    }
+    
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         setCurrentUserUid(user.uid);
