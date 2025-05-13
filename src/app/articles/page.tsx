@@ -25,7 +25,7 @@ function Article () {
   // const params = useParams();
   // const slug = params?.slug as string;
   const params = useSearchParams()
-  const slug = params.get('slug') || ''
+  const slug = params?.get('slug') || ''
   const [article, setArticle] = useState<ArticleType | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
