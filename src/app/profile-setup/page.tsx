@@ -26,11 +26,6 @@ export default function ProfileSetup() {
   const router = useRouter();
 
   useEffect(() => {
-    if (!auth) {
-      router.push('/login');
-      return () => {};
-    }
-    
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         setCurrentUserUid(user.uid);
@@ -190,7 +185,7 @@ export default function ProfileSetup() {
       });
       
       // Update the display name in Firebase Auth
-      if (auth && auth.currentUser) {
+      if (auth.currentUser) {
         await updateProfile(auth.currentUser, {
           displayName: username
         });

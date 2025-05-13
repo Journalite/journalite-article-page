@@ -25,7 +25,7 @@ function Article () {
   // const params = useParams();
   // const slug = params?.slug as string;
   const params = useSearchParams()
-  const slug = params?.get('slug') || ''
+  const slug = params.get('slug') || ''
   const [article, setArticle] = useState<ArticleType | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
@@ -35,7 +35,7 @@ function Article () {
 
   useEffect(() => {
     // Check Firebase authentication status
-    const unsubscribe = onAuthStateChanged(auth!, user => {
+    const unsubscribe = onAuthStateChanged(auth, user => {
       setIsAuthenticated(!!user)
     })
 
@@ -72,9 +72,7 @@ function Article () {
   // Handle user logout
   const handleLogout = async () => {
     try {
-      if (auth) {
-        await signOut(auth)
-      }
+      await signOut(auth)
     } catch (error) {
       // Error handling for logout
     }

@@ -5,8 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import styles from '@/styles/home.module.css'
 import { auth } from '../firebase/clientApp'
-import { signOut } from 'firebase/auth'
-import { safeAuthStateChange } from '../utils/authHelpers'
+import { onAuthStateChanged, signOut } from 'firebase/auth'
 
 // Types for our article data based on actual API structure
 interface Article {
@@ -139,9 +138,7 @@ export default function HomePage() {
 
   // Check authentication status on component mount
   useEffect(() => {
-    if (!auth) return () => {};
-    
-    const unsubscribe = safeAuthStateChange(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
       setIsAuthenticated(!!user);
     });
     
@@ -275,9 +272,7 @@ export default function HomePage() {
   // Handle user logout
   const handleLogout = async () => {
     try {
-      if (auth) {
-        await signOut(auth);
-      }
+      await signOut(auth);
     } catch (error) {
       // Error handling for logout failure
     }

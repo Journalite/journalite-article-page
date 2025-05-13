@@ -7,7 +7,6 @@ import {
   User
 } from 'firebase/auth';
 import { auth } from '../firebase/clientApp';
-import { safeAuthStateChange } from '../utils/authHelpers';
 
 const AuthForm: React.FC = () => {
   const [email, setEmail] = useState<string>('');
@@ -16,7 +15,7 @@ const AuthForm: React.FC = () => {
   const [authMode, setAuthMode] = useState<'signup' | 'signin'>('signin');
 
   useEffect(() => {
-    const unsubscribe = safeAuthStateChange(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
     });
     
@@ -25,11 +24,6 @@ const AuthForm: React.FC = () => {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!auth) {
-      console.error('Authentication is not initialized');
-      return;
-    }
     
     try {
       await createUserWithEmailAndPassword(auth, email, password);
@@ -44,11 +38,6 @@ const AuthForm: React.FC = () => {
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!auth) {
-      console.error('Authentication is not initialized');
-      return;
-    }
-    
     try {
       await signInWithEmailAndPassword(auth, email, password);
       // Reset form
@@ -60,11 +49,6 @@ const AuthForm: React.FC = () => {
   };
 
   const handleSignOut = async () => {
-    if (!auth) {
-      console.error('Authentication is not initialized');
-      return;
-    }
-    
     try {
       await signOut(auth);
     } catch (error) {
