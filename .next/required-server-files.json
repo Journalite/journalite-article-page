@@ -1,21 +1,13 @@
 {
   "version": 1,
   "config": {
-    "env": {
-      "NEXT_PUBLIC_FIREBASE_API_KEY": "AIzaSyCFpybhLt43iKUw6lNahU1n2zjYv0BXmf4",
-      "NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN": "journalitev1.firebaseapp.com",
-      "NEXT_PUBLIC_FIREBASE_PROJECT_ID": "journalitev1",
-      "NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET": "journalitev1.firebasestorage.app",
-      "NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID": "897263211529",
-      "NEXT_PUBLIC_FIREBASE_APP_ID": "1:897263211529:web:bae4a00910a2236d6d54d8",
-      "NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID": "G-ZYT8PRMT0D"
-    },
+    "env": {},
     "webpack": null,
     "eslint": {
       "ignoreDuringBuilds": true
     },
     "typescript": {
-      "ignoreBuildErrors": true,
+      "ignoreBuildErrors": false,
       "tsconfigPath": "tsconfig.json"
     },
     "distDir": ".next",
