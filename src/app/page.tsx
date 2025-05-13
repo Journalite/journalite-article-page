@@ -275,7 +275,9 @@ export default function HomePage() {
   // Handle user logout
   const handleLogout = async () => {
     try {
-      await signOut(auth);
+      if (auth) {
+        await signOut(auth);
+      }
     } catch (error) {
       // Error handling for logout failure
     }
