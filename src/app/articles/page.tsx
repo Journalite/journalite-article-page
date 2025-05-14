@@ -218,7 +218,9 @@ function Article () {
 }
 
 export default function ArticlePage () {
-  <Suspense>
-    <Article></Article>
-  </Suspense>
+  return (
+    <Suspense fallback={<div>Loading article...</div>}>
+      <Article />
+    </Suspense>
+  )
 }
