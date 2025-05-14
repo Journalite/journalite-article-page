@@ -65,8 +65,16 @@ export default function ForgotPassword() {
     setSuccess(false);
     
     try {
-      // Send password reset email using Firebase
-      await sendPasswordResetEmail(auth, email);
+      // Configure action code settings for custom UI
+      const actionCodeSettings = {
+        // URL you want to redirect back to after password reset
+        url: `${window.location.origin}/reset-password`,
+        // Handle the link in the mobile app if installed
+        handleCodeInApp: true
+      };
+
+      // Send password reset email using Firebase with actionCodeSettings
+      await sendPasswordResetEmail(auth, email, actionCodeSettings);
       
       // Show success message
       setSuccess(true);
@@ -131,6 +139,22 @@ export default function ForgotPassword() {
                 <span className="mr-2">→</span>
                 <span>Return to login</span>
               </Link>
+              
+              {/* Admin note - only visible during development */}
+              {process.env.NODE_ENV === 'development' && (
+                <div className="mt-8 p-4 bg-blue-50 text-blue-800 text-sm rounded-md">
+                  <p className="font-medium mb-1">Note for Developers/Admins:</p>
+                  <p className="mb-2">
+                    To customize the email template design, go to the Firebase Console:
+                  </p>
+                  <ol className="list-decimal pl-4 space-y-1">
+                    <li>Navigate to Authentication &gt; Templates</li>
+                    <li>Select "Password reset" template</li>
+                    <li>Customize the email design, colors, and content</li>
+                    <li>Update the action URL to point to your custom domain</li>
+                  </ol>
+                </div>
+              )}
             </div>
           ) : (
             <>

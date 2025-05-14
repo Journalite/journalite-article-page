@@ -5,6 +5,7 @@
   "/profile-setup/page": "/profile-setup",
   "/register/page": "/register",
   "/articles/page": "/articles",
+  "/email-verified/page": "/email-verified",
   "/login/page": "/login",
   "/forgot-password/page": "/forgot-password",
   "/reset-password/page": "/reset-password"

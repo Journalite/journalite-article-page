@@ -22,9 +22,11 @@ function ResetPasswordForm() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    // Get the oobCode (action code) from the URL
+    // Get the oobCode (action code) and mode from the URL
     const oobCode = searchParams?.get('oobCode');
+    const mode = searchParams?.get('mode');
     
+    // Also check for apiKey and other parameters Firebase might send
     if (!oobCode) {
       setVerifying(false);
       setError('Invalid password reset link. Please request a new one.');

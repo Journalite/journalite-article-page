@@ -37,6 +37,16 @@ const auth = getAuth(app);
 // Initialize Firestore
 const db = getFirestore(app);
 
+// Configure custom auth actions URL
+if (typeof window !== 'undefined') {
+    const actionCodeSettings = {
+        url: `${window.location.origin}/reset-password`,
+        handleCodeInApp: true,
+    };
+
+    // We need to update this in the forgot-password component when sending the reset email
+}
+
 // // Connect to Auth Emulator in development
 // if (process.env.NODE_ENV === 'development') {
 //     // connectAuthEmulator(auth, "http://localhost:9099", { disableWarnings: true });

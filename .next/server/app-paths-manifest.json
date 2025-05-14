@@ -5,6 +5,7 @@
   "/profile-setup/page": "app/profile-setup/page.js",
   "/register/page": "app/register/page.js",
   "/articles/page": "app/articles/page.js",
+  "/email-verified/page": "app/email-verified/page.js",
   "/login/page": "app/login/page.js",
   "/forgot-password/page": "app/forgot-password/page.js",
   "/reset-password/page": "app/reset-password/page.js"
