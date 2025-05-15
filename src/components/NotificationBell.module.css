@@ -1,0 +1,196 @@
+.notificationContainer {
+  position: relative;
+  display: inline-block;
+  z-index: 900;
+  width: 100%;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.bellButton {
+  background: #f8f9fa;
+  border: 1px solid #e5e7eb;
+  cursor: pointer;
+  padding: 8px;
+  position: relative;
+  border-radius: 50%;
+  transition: all 0.2s;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+}
+
+.bellButton:hover {
+  background-color: #f1f5f9;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.bellIcon {
+  font-size: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #4b5563;
+}
+
+.unreadBadge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: #ef4444;
+  color: white;
+  border-radius: 50%;
+  padding: 0;
+  font-size: 0.7rem;
+  min-width: 16px;
+  min-height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  border: 2px solid white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.notificationDropdown {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 280px;
+  max-height: 480px;
+  overflow-y: auto;
+  background-color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+  z-index: 1000;
+  margin-top: 12px;
+}
+
+.notificationDropdown::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  width: 12px;
+  height: 12px;
+  background-color: white;
+  box-shadow: -2px -2px 5px rgba(0, 0, 0, 0.04);
+}
+
+.notificationHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.notificationHeader h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.viewAllLink {
+  font-size: 0.8rem;
+  color: #0066cc;
+  text-decoration: none;
+}
+
+.viewAllLink:hover {
+  text-decoration: underline;
+}
+
+.notificationList {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.notificationItem {
+  display: flex;
+  padding: 10px 14px;
+  border-bottom: 1px solid #f5f5f5;
+  text-decoration: none;
+  color: inherit;
+  transition: background-color 0.2s;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.notificationItem:hover {
+  background-color: #f9f9f9;
+}
+
+.notificationItem.unread {
+  background-color: #f0f8ff;
+}
+
+.notificationItem.unread:hover {
+  background-color: #e0f0ff;
+}
+
+.notificationContent {
+  flex: 1;
+}
+
+.notificationMessage {
+  margin: 0 0 4px 0;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  color: #333;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.notificationTime {
+  font-size: 0.75rem;
+  color: #666;
+  display: block;
+}
+
+.unreadDot {
+  width: 8px;
+  height: 8px;
+  background-color: #0066cc;
+  border-radius: 50%;
+  margin-left: 8px;
+}
+
+.notificationFooter {
+  padding: 10px 14px;
+  text-align: center;
+  border-top: 1px solid #eaeaea;
+}
+
+.seeMoreLink {
+  font-size: 0.9rem;
+  color: #0066cc;
+  text-decoration: none;
+}
+
+.seeMoreLink:hover {
+  text-decoration: underline;
+}
+
+.emptyState {
+  padding: 24px 16px;
+  text-align: center;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+  .notificationDropdown {
+    width: 280px;
+    max-width: calc(100vw - 32px);
+    left: 50%;
+    transform: translateX(-50%);
+  }
+} 

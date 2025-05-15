@@ -6,6 +6,8 @@ import Image from 'next/image'
 import styles from '@/styles/home.module.css'
 import { auth } from '../firebase/clientApp'
 import { onAuthStateChanged, signOut } from 'firebase/auth'
+import { getArticles, Article as FirestoreArticle } from '../firebase/articles'
+import NotificationBell from '@/components/NotificationBell'
 
 // Types for our article data based on actual API structure
 interface Article {
@@ -31,13 +33,39 @@ interface Article {
   updatedAt: string;
 }
 
-// Author mapping for using authorId to display author name
+// Author mapping for using authorId to display author name - legacy system
 const authorMapping: {[key: string]: string} = {
   "84b2f82c-1e93-498a-983e-3b30a8379e63": "Samuel Green",
   "user_002": "Alex Martinez",
   "kristen-lee-id": "Kristen Lee",
   "alex-wen-id": "Alex Wen",
   "hannah-cole-id": "Hannah Cole"
+};
+
+// Adapter function to convert Firestore articles to match our UI format
+const adaptFirestoreArticle = (firestoreArticle: FirestoreArticle): Article => {
+  return {
+    _id: firestoreArticle.id || '',
+    title: firestoreArticle.title,
+    slug: firestoreArticle.slug || firestoreArticle.title.toLowerCase().replace(/[^\w\s]/gi, '').replace(/\s+/g, '-'),
+    authorId: firestoreArticle.authorId,
+    authorName: firestoreArticle.authorName,
+    coverImageUrl: firestoreArticle.coverImage,
+    tags: firestoreArticle.tags,
+    content: [
+      {
+        paragraphId: 'p1',
+        text: firestoreArticle.body,
+        likes: [],
+        comments: []
+      }
+    ],
+    likes: [],
+    reposts: [],
+    comments: [],
+    createdAt: firestoreArticle.createdAt.toDate().toISOString(),
+    updatedAt: firestoreArticle.createdAt.toDate().toISOString()
+  };
 };
 
 // Fallback mock data only used when API is unavailable
@@ -166,55 +194,22 @@ export default function HomePage() {
       try {
         setIsLoading(true);
         
-        // Backend Flask API URL 
-        const API_BASE_URL = 'http://127.0.0.1:5001';
+        // Fetch from Firestore - don't include drafts for the homepage
+        const firestoreArticles = await getArticles();
         
-        // Try to fetch from API first
-        try {
-          // Get featured article
-          const featuredResponse = await fetch(`${API_BASE_URL}/api/prototype/v1/articles?featured=true`);
+        if (firestoreArticles && firestoreArticles.length > 0) {
+          const adaptedArticles = firestoreArticles.map(adaptFirestoreArticle);
           
-          if (!featuredResponse.ok) {
-            throw new Error(`API error: ${featuredResponse.status}`);
+          // Set the first article as featured
+          if (adaptedArticles.length > 0) {
+            setFeaturedArticle(adaptedArticles[0]);
+            // Set the rest as regular articles
+            setArticles(adaptedArticles.slice(1));
+          } else {
+            setArticles([]);
           }
-          
-          const featuredData = await featuredResponse.json();
-          
-          if (featuredData && featuredData.length > 0) {
-            setFeaturedArticle(featuredData[0]);
-          }
-          
-          // Get all articles
-          const articlesResponse = await fetch(`${API_BASE_URL}/api/prototype/v1/articles`);
-          
-          if (!articlesResponse.ok) {
-            throw new Error(`API error: ${articlesResponse.status}`);
-          }
-          
-          const articlesData = await articlesResponse.json();
-          
-          if (articlesData) {
-            // Filter out the featured article from the main list
-            const nonFeaturedArticles = featuredArticle 
-              ? articlesData.filter((article: Article) => article.slug !== featuredArticle.slug)
-              : articlesData;
-              
-            setArticles(nonFeaturedArticles);
-            
-            // We're using a static tags list now, so we don't need to extract tags
-            // from articles anymore
-          }
-        } catch (apiError) {
-          console.error('API not available, using mock data:', apiError);
-          
-          // Use mock data if API fails
-          // Set featured article as the first one
-          setFeaturedArticle(mockArticles[0]);
-          
-          // Use the rest for the article list
-          setArticles(mockArticles.slice(1));
-          
-          // Using static tags list now, no need to extract tags
+        } else {
+          setArticles([]);
         }
       } catch (error) {
         console.error('Error fetching articles:', error);
@@ -222,7 +217,7 @@ export default function HomePage() {
         setIsLoading(false);
       }
     };
-
+    
     fetchArticles();
   }, []);
 
@@ -312,6 +307,10 @@ export default function HomePage() {
                 <span className={styles['nav-icon']}>•</span>
                 <span className={styles['nav-text']}>My Thoughts</span>
               </Link>
+              <Link href="/create-article" className={`${styles['nav-link']} ${styles['nav-create']}`}>
+                <span className={styles['nav-icon']}>•</span>
+                <span className={styles['nav-text']}>Create Article</span>
+              </Link>
               <Link href="/explore" className={`${styles['nav-link']} ${styles['nav-explore']}`}>
                 <span className={styles['nav-icon']}>•</span>
                 <span className={styles['nav-text']}>Explore</span>
@@ -323,6 +322,10 @@ export default function HomePage() {
               <Link href="/settings" className={`${styles['nav-link']} ${styles['nav-settings']}`}>
                 <span className={styles['nav-icon']}>•</span>
                 <span className={styles['nav-text']}>Settings</span>
+              </Link>
+              <Link href="/notifications" className={`${styles['nav-link']} ${styles['nav-notifications']}`}>
+                <span className={styles['nav-icon']}>•</span>
+                <span className={styles['nav-text']}>Notifications</span>
               </Link>
               <button 
                 onClick={handleLogout}
@@ -455,6 +458,7 @@ export default function HomePage() {
       {/* RIGHT SIDEBAR */}
       <aside className={styles['right-sidebar']}>
         <h2 className={styles['sidebar-heading']}>Trending</h2>
+        {isAuthenticated && <NotificationBell />}
         <div className={styles['tag-list']}>
           {tags.map(tag => (
             <Link key={tag} href={`/tag/${tag.toLowerCase()}`} className={styles['trending-tag']}>

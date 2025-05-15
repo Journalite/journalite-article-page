@@ -7,9 +7,10 @@ import { Suspense } from 'react'
 import styles from '@/styles/home.module.css'
 import { auth } from '@/firebase/clientApp'
 import { onAuthStateChanged, signOut } from 'firebase/auth'
+import NotificationBell from '@/components/NotificationBell'
 
-// Import the original article components
-import { getArticle, Article as ArticleType } from '@/services/articleService'
+// Import Firestore article service
+import { getArticleBySlug, Article as FirestoreArticle } from '@/firebase/articles'
 import RenderArticle from '@/components/RenderArticle'
 
 // Author mapping from homepage for consistency
@@ -21,12 +22,37 @@ const authorMapping: { [key: string]: string } = {
   'hannah-cole-id': 'Hannah Cole'
 }
 
+// Convert Firestore article to UI format
+const adaptFirestoreArticle = (firestoreArticle: FirestoreArticle): any => {
+  return {
+    _id: firestoreArticle.id || '',
+    title: firestoreArticle.title,
+    slug: firestoreArticle.slug || '',
+    authorId: firestoreArticle.authorId,
+    authorName: firestoreArticle.authorName,
+    coverImageUrl: firestoreArticle.coverImage,
+    tags: firestoreArticle.tags,
+    status: firestoreArticle.status || 'published',
+    content: [
+      {
+        paragraphId: 'p1',
+        text: firestoreArticle.body,
+        likes: [],
+        comments: []
+      }
+    ],
+    likes: [],
+    reposts: [],
+    comments: [],
+    createdAt: firestoreArticle.createdAt.toDate().toISOString(),
+    updatedAt: firestoreArticle.createdAt.toDate().toISOString()
+  };
+};
+
 function Article () {
-  // const params = useParams();
-  // const slug = params?.slug as string;
   const params = useSearchParams()
   const slug = params?.get('slug') || ''
-  const [article, setArticle] = useState<ArticleType | null>(null)
+  const [article, setArticle] = useState<any | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -45,14 +71,29 @@ function Article () {
         setIsLoading(true)
         if (!slug) return
 
-        const articleData = await getArticle(slug)
-        setArticle(articleData)
+        // Get article from Firestore
+        const firestoreArticle = await getArticleBySlug(slug)
+        
+        // Check if article is a draft and if current user is not the author
+        if (firestoreArticle.status === 'drafts') {
+          const currentUser = auth.currentUser
+          if (!currentUser || currentUser.uid !== firestoreArticle.authorId) {
+            setError('This article is not available')
+            setIsLoading(false)
+            return
+          }
+        }
+        
+        const adaptedArticle = adaptFirestoreArticle(firestoreArticle)
+        
+        setArticle(adaptedArticle)
 
         // Set tags for the right sidebar
-        if (articleData && articleData.tags) {
-          setTags(articleData.tags)
+        if (adaptedArticle && adaptedArticle.tags) {
+          setTags(adaptedArticle.tags)
         }
       } catch (error) {
+        console.error('Error loading article:', error)
         setError('Failed to load article')
       } finally {
         setIsLoading(false)
@@ -198,6 +239,7 @@ function Article () {
       {/* RIGHT SIDEBAR - Same structure as homepage */}
       <aside className={styles['right-sidebar']}>
         <h2 className={styles['sidebar-heading']}>Related Tags</h2>
+        {isAuthenticated && <NotificationBell />}
         <div className={styles['tag-list']}>
           {tags.map(tag => (
             <Link
@@ -209,6 +251,17 @@ function Article () {
             </Link>
           ))}
         </div>
+        
+        {/* Show Edit button only if user is the author */}
+        {isAuthenticated && article && auth.currentUser?.uid === article.authorId && (
+          <Link 
+            href={`/edit-article?id=${article._id}`} 
+            className={styles['edit-button']}
+          >
+            Edit Article
+          </Link>
+        )}
+        
         <Link href='/write' className={styles['write-button']}>
           Write
         </Link>

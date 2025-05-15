@@ -1,0 +1,212 @@
+/* Notifications Page Styles */
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #333;
+  margin: 0;
+}
+
+.markAllButton {
+  background-color: transparent;
+  border: 1px solid #0066cc;
+  color: #0066cc;
+  padding: 0.6rem 1.2rem;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.markAllButton:hover {
+  background-color: #f0f8ff;
+}
+
+/* Empty state */
+.emptyState {
+  text-align: center;
+  padding: 4rem 2rem;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+
+.emptyIcon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: #ccc;
+}
+
+.emptyState h2 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.5rem;
+  color: #666;
+}
+
+.emptyState p {
+  margin: 0;
+  color: #888;
+}
+
+/* Notifications list */
+.notificationsList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.notificationCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #fff;
+  border: 1px solid #eaeaea;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.2s;
+}
+
+.notificationCard:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.notificationCard.unread {
+  background-color: #f0f8ff;
+  border-left: 4px solid #0066cc;
+}
+
+.notificationContent {
+  flex: 1;
+  padding-right: 1rem;
+}
+
+.message {
+  margin: 0 0 0.5rem 0;
+  font-size: 1rem;
+  color: #333;
+  line-height: 1.5;
+}
+
+.time {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #888;
+}
+
+.notificationActions {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.viewButton,
+.readButton,
+.deleteButton {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  white-space: nowrap;
+}
+
+.viewButton {
+  background-color: #0066cc;
+  color: white;
+  text-decoration: none;
+  border: none;
+}
+
+.viewButton:hover {
+  background-color: #0055aa;
+}
+
+.readButton {
+  background-color: transparent;
+  color: #0066cc;
+  border: 1px solid #0066cc;
+}
+
+.readButton:hover {
+  background-color: #f0f8ff;
+}
+
+.deleteButton {
+  background-color: transparent;
+  color: #e53e3e;
+  border: 1px solid #e53e3e;
+}
+
+.deleteButton:hover {
+  background-color: #fff5f5;
+}
+
+/* Summary stats */
+.summary {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.statCard {
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.statValue {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #333;
+}
+
+.statLabel {
+  color: #666;
+  font-size: 1rem;
+  margin-top: 0.5rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .notificationCard {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .notificationContent {
+    padding-right: 0;
+    margin-bottom: 1rem;
+    width: 100%;
+  }
+  
+  .notificationActions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+  
+  .summary {
+    flex-direction: row;
+  }
+  
+  .statCard {
+    flex: 1;
+  }
+} 
