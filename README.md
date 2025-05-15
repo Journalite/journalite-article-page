@@ -37,12 +37,8 @@ Journalite is a React/Next.js application with Firebase integration that allows 
 - **Notification management**: Mark as read and delete functionality
 - **Dedicated notifications page**: Full list of all notifications
 
-### UI/UX Improvements
-- **Responsive design**: Mobile-friendly layouts
-- **CSS modules**: Scoped styling to prevent conflicts
-- **Loading states**: Visual feedback during data fetching
-- **Confirmation dialogs**: Prevent accidental deletions
-- **Error handling**: Graceful error management
+### UI/UX Improvements for Mobile
+I need to really look into fix this after getting the PC and regular computer side done first!!!!!!!!!
 
 ## Code Snippets
 
