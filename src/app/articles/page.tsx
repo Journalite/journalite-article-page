@@ -8,6 +8,7 @@ import styles from '@/styles/home.module.css'
 import { auth } from '@/firebase/clientApp'
 import { onAuthStateChanged, signOut } from 'firebase/auth'
 import NotificationBell from '@/components/NotificationBell'
+import LeftSidebar from '@/components/LeftSidebar'
 
 // Import Firestore article service
 import { getArticleBySlug, Article as FirestoreArticle } from '@/firebase/articles'
@@ -58,6 +59,8 @@ function Article () {
   const [error, setError] = useState<string | null>(null)
   const [tags, setTags] = useState<string[]>([])
   const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth)
   
   // Check if user is authenticated
   useEffect(() => {
@@ -110,88 +113,54 @@ function Article () {
     }
   }
   
+  const toggleSidebar = () => {
+    setIsSidebarCollapsed(!isSidebarCollapsed)
+  }
+
+  // Add resize listener for responsive behavior
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+      // Auto-collapse on small screens
+      if (window.innerWidth < 768) {
+        setIsSidebarCollapsed(true);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    // Initial check
+    handleResize();
+    
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
   return (
     <div className={styles['three-column-layout']}>
-      {/* LEFT SIDEBAR - Similar to homepage but with different nav items */}
-      <aside className={styles['left-sidebar']}>
-        <div className={styles['sidebar-header']}>
-          <div className={styles.logo}>Journalite</div>
-        </div>
-        <nav className={styles['vertical-nav']}>
-          {isAuthenticated ? (
-            // Navigation for authenticated users
-            <>
-              <Link
-                href='/'
-                className={`${styles['nav-link']} ${styles['nav-home']}`}
-              >
-                <span className={styles['nav-icon']}>•</span>
-                <span className={styles['nav-text']}>Home</span>
-              </Link>
-              <Link
-                href='/my-thoughts'
-                className={`${styles['nav-link']} ${styles['nav-thoughts']}`}
-              >
-                <span className={styles['nav-icon']}>•</span>
-                <span className={styles['nav-text']}>My Articles</span>
-              </Link>
-              <Link
-                href='/my-profile'
-                className={`${styles['nav-link']} ${styles['nav-profile']}`}
-              >
-                <span className={styles['nav-icon']}>•</span>
-                <span className={styles['nav-text']}>Profile</span>
-              </Link>
-              <Link
-                href='/bookmarks'
-                className={`${styles['nav-link']} ${styles['nav-bookmarks']}`}
-              >
-                <span className={styles['nav-icon']}>•</span>
-                <span className={styles['nav-text']}>Bookmarks</span>
-              </Link>
-              <button
-                onClick={handleSignOut}
-                className={`${styles['nav-link']} ${styles['nav-logout']}`}
-              >
-                <span className={styles['nav-icon']}>•</span>
-                <span className={styles['nav-text']}>Sign Out</span>
-              </button>
-            </>
-          ) : (
-            // Navigation for non-authenticated users
-            <>
-              <Link
-                href='/'
-                className={`${styles['nav-link']} ${styles['nav-home']}`}
-              >
-                <span className={styles['nav-icon']}>•</span>
-                <span className={styles['nav-text']}>Home</span>
-              </Link>
-              <Link
-                href='/login'
-                className={`${styles['nav-link']} ${styles['nav-login']}`}
-              >
-                <span className={styles['nav-icon']}>•</span>
-                <span className={styles['nav-text']}>Login</span>
-              </Link>
-              <Link
-                href='/learn'
-                className={`${styles['nav-link']} ${styles['nav-learn']}`}
-              >
-                <span className={styles['nav-icon']}>•</span>
-                <span className={styles['nav-text']}>Learn More</span>
-              </Link>
-              <Link
-                href='/plans'
-                className={`${styles['nav-link']} ${styles['nav-plans']}`}
-              >
-                <span className={styles['nav-icon']}>•</span>
-                <span className={styles['nav-text']}>Plans</span>
-              </Link>
-            </>
-          )}
-        </nav>
-      </aside>
+      {/* Background overlay for mobile */}
+      {windowWidth < 768 && !isSidebarCollapsed && (
+        <div className={`${styles['menu-overlay']} ${styles['active']}`} onClick={toggleSidebar}></div>
+      )}
+      
+      {/* LEFT SIDEBAR */}
+      <LeftSidebar 
+        isAuthenticated={isAuthenticated} 
+        handleLogout={handleSignOut} 
+        toggleSidebar={toggleSidebar} 
+        isSidebarCollapsed={isSidebarCollapsed}
+      />
+
+      {/* Mobile sidebar toggle button - only shown on mobile */}
+      {windowWidth < 768 && (
+        <button 
+          className={styles['toggle-button']} 
+          onClick={toggleSidebar}
+          aria-label={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+        >
+          {isSidebarCollapsed ? "☰" : "✕"}
+        </button>
+      )}
 
       {/* CENTER COLUMN - Use the original RenderArticle component */}
       <main className={styles['center-column']}>

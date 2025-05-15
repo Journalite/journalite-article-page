@@ -24,6 +24,14 @@ Journalite is a React/Next.js application with Firebase integration that allows 
 - **Article management**: Edit and delete functionality
 - **Content preview**: Truncated previews of article content
 
+### User Search and Profiles
+- **Author search functionality**: Search users by name or username
+- **Real-time search results**: Dynamic search with debounced queries
+- **Profile navigation**: Click search results to view author profiles
+- **Responsive design**: Search works across all device sizes
+- **Consistent user cards**: Unified display of user information with avatars
+- **User profiles**: Detailed view of author information and their published articles
+
 ### Comment System
 - **Nested comments**: Support for main comments and replies
 - **Real-time updates**: Comments appear immediately after posting
@@ -290,6 +298,112 @@ export default function NotificationBell() {
 }
 ```
 
+### User Search Implementation
+```tsx
+// User search service function
+export async function searchUsers(searchTerm: string): Promise<UserProfile[]> {
+  try {
+    if (!searchTerm || searchTerm.trim().length < 2) {
+      return [];
+    }
+
+    const searchTermLower = searchTerm.toLowerCase().trim();
+    
+    // Query Firestore for all users
+    const usersRef = collection(db, 'users');
+    const usersSnapshot = await getDocs(usersRef);
+    
+    // Filter users locally since Firestore doesn't support contains queries directly
+    const matchingUsers = usersSnapshot.docs
+      .map(doc => {
+        // Get user data and ensure it has the correct UserProfile shape
+        const userData = doc.data() as UserProfile;
+        return userData;
+      })
+      .filter(user => {
+        const usernameLower = user.username.toLowerCase();
+        const firstNameLower = user.firstName.toLowerCase();
+        const lastNameLower = user.lastName.toLowerCase();
+        const fullNameLower = `${firstNameLower} ${lastNameLower}`;
+        
+        // Match on username, first name, last name, or full name
+        return usernameLower.includes(searchTermLower) || 
+               firstNameLower.includes(searchTermLower) ||
+               lastNameLower.includes(searchTermLower) ||
+               fullNameLower.includes(searchTermLower);
+      });
+    
+    return matchingUsers;
+  } catch (error) {
+    console.error('Error searching users:', error);
+    return [];
+  }
+}
+
+// User search component with debouncing and dropdown results
+const UserSearch: React.FC = () => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchResults, setSearchResults] = useState<UserProfile[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [showResults, setShowResults] = useState(false);
+  
+  // Debounced search effect
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(async () => {
+      if (searchTerm.trim().length >= 2) {
+        setIsSearching(true);
+        try {
+          const results = await searchUsers(searchTerm);
+          setSearchResults(results);
+          setShowResults(true);
+        } catch (error) {
+          console.error('Error searching users:', error);
+        } finally {
+          setIsSearching(false);
+        }
+      } else {
+        setSearchResults([]);
+        setShowResults(false);
+      }
+    }, 300);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchTerm]);
+  
+  return (
+    <div className={styles.searchContainer}>
+      <input
+        type="text"
+        className={styles.searchInput}
+        placeholder="Search users by name or username..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+      />
+      
+      {showResults && searchResults.length > 0 && (
+        <div className={styles.searchResults}>
+          {searchResults.map((user) => (
+            <Link 
+              key={user.uid} 
+              href={`/user/${encodeURIComponent(user.username.toLowerCase())}`}
+              className={styles.searchResultItem}
+            >
+              <div className={styles.userAvatar}>
+                {user.firstName.charAt(0)}{user.lastName.charAt(0)}
+              </div>
+              <div className={styles.userInfo}>
+                <div className={styles.userName}>{user.firstName} {user.lastName}</div>
+                <div className={styles.userUsername}>@{user.username}</div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+```
+
 ## Technical Implementations
 
 ### Firebase Integration
@@ -310,6 +424,13 @@ export default function NotificationBell() {
 - **Index creation**: Added composite indexes for complex Firestore queries
 - **Author verification**: Added checks to ensure only authors can view their drafts
 - **Author display in articles**: Fixed article rendering to show the author's display name instead of their userId
+- **User search feature**: Added comprehensive user search functionality:
+  - Implemented search by username, first name, last name, or full name
+  - Created debounced search to minimize database queries
+  - Added dropdown results with user avatars and profile information
+  - Fixed TypeScript errors in user data handling
+  - Integrated search in the sidebar for easy access across the site
+  - Added responsive design for all device sizes
 - **User profiles and bios**: Added user profile features:
   - Added bio field to user profiles
   - Created user profile page to display user information and articles

@@ -8,11 +8,11 @@
   "/create-article/page": "/create-article",
   "/my-thoughts/page": "/my-thoughts",
   "/articles/page": "/articles",
-  "/forgot-password/page": "/forgot-password",
-  "/email-verified/page": "/email-verified",
-  "/login/page": "/login",
   "/edit-article/page": "/edit-article",
+  "/email-verified/page": "/email-verified",
   "/my-profile/page": "/my-profile",
-  "/reset-password/page": "/reset-password",
-  "/user/[username]/page": "/user/[username]"
+  "/login/page": "/login",
+  "/forgot-password/page": "/forgot-password",
+  "/user/[username]/page": "/user/[username]",
+  "/reset-password/page": "/reset-password"
 }

@@ -153,4 +153,47 @@ export async function updateUserBio(uid: string, bio: string): Promise<void> {
         console.error('Error updating user bio:', error);
         throw error;
     }
+}
+
+/**
+ * Search for users by username or name
+ * @param searchTerm The search term to find users
+ * @returns Array of matching users
+ */
+export async function searchUsers(searchTerm: string): Promise<UserProfile[]> {
+    try {
+        if (!searchTerm || searchTerm.trim().length < 2) {
+            return [];
+        }
+
+        const searchTermLower = searchTerm.toLowerCase().trim();
+
+        // Create a query to find users whose username contains the search term
+        const usersRef = collection(db, 'users');
+        const usersSnapshot = await getDocs(usersRef);
+
+        // Filter users locally since Firestore doesn't support contains or regexp queries directly
+        const matchingUsers = usersSnapshot.docs
+            .map(doc => {
+                // Get all data from the document and ensure it has the correct UserProfile shape
+                const userData = doc.data() as UserProfile;
+                return userData;
+            })
+            .filter(user => {
+                const usernameLower = user.username.toLowerCase();
+                const firstNameLower = user.firstName.toLowerCase();
+                const lastNameLower = user.lastName.toLowerCase();
+                const fullNameLower = `${firstNameLower} ${lastNameLower}`;
+
+                return usernameLower.includes(searchTermLower) ||
+                    firstNameLower.includes(searchTermLower) ||
+                    lastNameLower.includes(searchTermLower) ||
+                    fullNameLower.includes(searchTermLower);
+            });
+
+        return matchingUsers;
+    } catch (error) {
+        console.error('Error searching users:', error);
+        return [];
+    }
 } 
