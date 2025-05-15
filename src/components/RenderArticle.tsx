@@ -72,6 +72,23 @@ const RenderArticle: React.FC<RenderArticleProps> = ({ article }) => {
   const [visibleParagraphs, setVisibleParagraphs] = useState<Record<string, boolean>>({});
   const paragraphRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
+  // Set initial paragraph visibility state
+  useEffect(() => {
+    if (!Array.isArray((article as ComplexArticle).content)) return;
+    
+    // Initialize all paragraphs as visible after a short delay to ensure content is visible in Safari
+    const initialVisibility = (article as ComplexArticle).content.reduce((acc, para) => {
+      acc[para.paragraphId] = true;
+      return acc;
+    }, {} as Record<string, boolean>);
+    
+    const timer = setTimeout(() => {
+      setVisibleParagraphs(initialVisibility);
+    }, 100);
+    
+    return () => clearTimeout(timer);
+  }, [article]);
+
   // IntersectionObserver for fade‑in
   useEffect(() => {
     if (!Array.isArray((article as ComplexArticle).content)) return;

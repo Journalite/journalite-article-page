@@ -2943,6 +2943,21 @@ const prepareUsernameForUrl = (name)=>{
 const RenderArticle = ({ article })=>{
     const [visibleParagraphs, setVisibleParagraphs] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])({});
     const paragraphRefs = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])({});
+    // Set initial paragraph visibility state
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
+        if (!Array.isArray(article.content)) return;
+        // Initialize all paragraphs as visible after a short delay to ensure content is visible in Safari
+        const initialVisibility = article.content.reduce((acc, para)=>{
+            acc[para.paragraphId] = true;
+            return acc;
+        }, {});
+        const timer = setTimeout(()=>{
+            setVisibleParagraphs(initialVisibility);
+        }, 100);
+        return ()=>clearTimeout(timer);
+    }, [
+        article
+    ]);
     // IntersectionObserver for fade‑in
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         if (!Array.isArray(article.content)) return;
@@ -2995,7 +3010,7 @@ const RenderArticle = ({ article })=>{
                             children: article.title
                         }, void 0, false, {
                             fileName: "[project]/src/components/RenderArticle.tsx",
-                            lineNumber: 125,
+                            lineNumber: 142,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3011,12 +3026,12 @@ const RenderArticle = ({ article })=>{
                                         className: "author-image"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/RenderArticle.tsx",
-                                        lineNumber: 129,
+                                        lineNumber: 146,
                                         columnNumber: 15
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/RenderArticle.tsx",
-                                    lineNumber: 128,
+                                    lineNumber: 145,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -3028,7 +3043,7 @@ const RenderArticle = ({ article })=>{
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/RenderArticle.tsx",
-                                    lineNumber: 137,
+                                    lineNumber: 154,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -3036,7 +3051,7 @@ const RenderArticle = ({ article })=>{
                                     children: "•"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/RenderArticle.tsx",
-                                    lineNumber: 140,
+                                    lineNumber: 157,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -3044,13 +3059,13 @@ const RenderArticle = ({ article })=>{
                                     children: formattedDate
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/RenderArticle.tsx",
-                                    lineNumber: 141,
+                                    lineNumber: 158,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/RenderArticle.tsx",
-                            lineNumber: 126,
+                            lineNumber: 143,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3060,18 +3075,18 @@ const RenderArticle = ({ article })=>{
                                     children: tag
                                 }, tag, false, {
                                     fileName: "[project]/src/components/RenderArticle.tsx",
-                                    lineNumber: 145,
+                                    lineNumber: 162,
                                     columnNumber: 15
                                 }, this))
                         }, void 0, false, {
                             fileName: "[project]/src/components/RenderArticle.tsx",
-                            lineNumber: 143,
+                            lineNumber: 160,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/components/RenderArticle.tsx",
-                    lineNumber: 124,
+                    lineNumber: 141,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
@@ -3088,40 +3103,40 @@ const RenderArticle = ({ article })=>{
                                     children: para.text
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/RenderArticle.tsx",
-                                    lineNumber: 165,
+                                    lineNumber: 182,
                                     columnNumber: 17
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/components/RenderArticle.tsx",
-                                lineNumber: 164,
+                                lineNumber: 181,
                                 columnNumber: 15
                             }, this)
                         }, para.paragraphId, false, {
                             fileName: "[project]/src/components/RenderArticle.tsx",
-                            lineNumber: 154,
+                            lineNumber: 171,
                             columnNumber: 13
                         }, this))
                 }, void 0, false, {
                     fileName: "[project]/src/components/RenderArticle.tsx",
-                    lineNumber: 152,
+                    lineNumber: 169,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$CommentSection$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
                     slug: article.slug
                 }, void 0, false, {
                     fileName: "[project]/src/components/RenderArticle.tsx",
-                    lineNumber: 171,
+                    lineNumber: 188,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/src/components/RenderArticle.tsx",
-            lineNumber: 123,
+            lineNumber: 140,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/src/components/RenderArticle.tsx",
-        lineNumber: 122,
+        lineNumber: 139,
         columnNumber: 5
     }, this);
 };

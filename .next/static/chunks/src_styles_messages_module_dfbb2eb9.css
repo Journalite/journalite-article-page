@@ -1,0 +1,216 @@
+/* [project]/src/styles/messages.module.css [app-client] (css) */
+.messages-module__rpXMyq__container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.messages-module__rpXMyq__messagesHeader {
+  border-bottom: 1px solid #e0e0e0;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  display: flex;
+}
+
+.messages-module__rpXMyq__messagesHeader h1 {
+  color: #333;
+  margin: 0;
+  font-size: 1.8rem;
+}
+
+.messages-module__rpXMyq__newConversationButton {
+  color: #fff;
+  cursor: pointer;
+  background-color: #6366f1;
+  border: none;
+  border-radius: 6px;
+  align-items: center;
+  padding: .6rem 1.2rem;
+  font-size: .9rem;
+  font-weight: 500;
+  transition: background-color .2s;
+  display: flex;
+}
+
+.messages-module__rpXMyq__newConversationButton:hover {
+  background-color: #4f46e5;
+}
+
+.messages-module__rpXMyq__newConversationButton:before {
+  content: "+";
+  margin-right: .5rem;
+  font-size: 1.2rem;
+  font-weight: 300;
+}
+
+.messages-module__rpXMyq__conversationsList {
+  flex-direction: column;
+  gap: 1rem;
+  display: flex;
+}
+
+.messages-module__rpXMyq__conversationItem {
+  color: #333;
+  background-color: #fff;
+  border-radius: 8px;
+  align-items: center;
+  padding: 1rem;
+  text-decoration: none;
+  transition: all .2s;
+  display: flex;
+  box-shadow: 0 2px 4px #0000000d;
+}
+
+.messages-module__rpXMyq__conversationItem:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px #0000001a;
+}
+
+.messages-module__rpXMyq__unreadConversation {
+  background-color: #f0f4ff;
+  border-left: 4px solid #6366f1;
+}
+
+.messages-module__rpXMyq__avatarContainer {
+  margin-right: 1rem;
+  position: relative;
+}
+
+.messages-module__rpXMyq__avatar {
+  -o-object-fit: cover;
+  object-fit: cover;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+}
+
+.messages-module__rpXMyq__avatarPlaceholder {
+  color: #fff;
+  border-radius: 50%;
+  justify-content: center;
+  align-items: center;
+  width: 48px;
+  height: 48px;
+  font-size: 1rem;
+  font-weight: 600;
+  display: flex;
+}
+
+.messages-module__rpXMyq__unreadBadge {
+  color: #fff;
+  background-color: #ef4444;
+  border-radius: 50%;
+  justify-content: center;
+  align-items: center;
+  width: 20px;
+  height: 20px;
+  font-size: .8rem;
+  display: flex;
+  position: absolute;
+  top: -5px;
+  right: -5px;
+}
+
+.messages-module__rpXMyq__conversationDetails {
+  flex: 1;
+}
+
+.messages-module__rpXMyq__conversationHeader {
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: .5rem;
+  display: flex;
+}
+
+.messages-module__rpXMyq__conversationName {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.messages-module__rpXMyq__unreadName {
+  font-weight: 700;
+}
+
+.messages-module__rpXMyq__conversationTime {
+  color: #666;
+  font-size: .8rem;
+}
+
+.messages-module__rpXMyq__conversationPreview {
+  color: #666;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 300px;
+  margin: 0;
+  font-size: .9rem;
+  overflow: hidden;
+}
+
+.messages-module__rpXMyq__unreadPreview {
+  color: #333;
+  font-weight: 500;
+}
+
+.messages-module__rpXMyq__sentMessagePrefix {
+  opacity: .8;
+  font-weight: normal;
+}
+
+.messages-module__rpXMyq__emptyState {
+  text-align: center;
+  color: #666;
+  background-color: #f9fafb;
+  border: 1px dashed #e0e0e0;
+  border-radius: 8px;
+  padding: 3rem;
+}
+
+.messages-module__rpXMyq__loadingContainer {
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 60vh;
+  display: flex;
+}
+
+.messages-module__rpXMyq__loadingSpinner {
+  border: 4px solid #f3f3f3;
+  border-top-color: #6366f1;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  margin-bottom: 1rem;
+  animation: 1s linear infinite messages-module__rpXMyq__spin;
+}
+
+.messages-module__rpXMyq__emptyActionButton {
+  color: #fff;
+  background-color: #6366f1;
+  border-radius: 4px;
+  margin-top: 1rem;
+  padding: .5rem 1rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background-color .2s;
+  display: inline-block;
+}
+
+.messages-module__rpXMyq__emptyActionButton:hover {
+  background-color: #4f46e5;
+}
+
+@keyframes messages-module__rpXMyq__spin {
+  0% {
+    transform: rotate(0);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+
+/*# sourceMappingURL=src_styles_messages_module_dfbb2eb9.css.map*/

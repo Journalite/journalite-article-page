@@ -87,7 +87,9 @@
 }
 
 .paragraph-block {
-  opacity: 0;
+  opacity: .01;
+  will-change: opacity, transform;
+  -webkit-font-smoothing: antialiased;
   margin-bottom: 1.75rem;
   transition: opacity .4s, transform .4s;
   transform: translateY(10px);
@@ -100,6 +102,14 @@
 
 .paragraph-text p {
   margin-bottom: 1.25rem;
+}
+
+@media not all and (-webkit-device-pixel-ratio >= 0), not all and (resolution >= .001dpcm) {
+  @supports ((-webkit-appearance: none)) {
+    .paragraph-block {
+      opacity: 1 !important;
+    }
+  }
 }
 
 .comment-section {

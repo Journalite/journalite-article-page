@@ -86,9 +86,11 @@
 
 .paragraph-block {
   margin-bottom: 1.75rem;
-  opacity: 0;
+  opacity: 0.01;
   transform: translateY(10px);
   transition: opacity 0.4s ease, transform 0.4s ease;
+  will-change: opacity, transform;
+  -webkit-font-smoothing: antialiased;
 }
 
 .paragraph-block.visible {
@@ -98,6 +100,15 @@
 
 .paragraph-text p {
   margin-bottom: 1.25rem;
+}
+
+/* Safari-specific fix */
+@media not all and (min-resolution:.001dpcm) { 
+  @supports (-webkit-appearance:none) {
+    .paragraph-block {
+      opacity: 1 !important; /* Force paragraphs to be visible in Safari */
+    }
+  }
 }
 
 /* Comment Section Styles */
