@@ -34,23 +34,24 @@ export const viewport: Viewport = {
 }
 
 // This generates the static paths for pre-rendering
-// We provide at least some placeholder values for static generation
 export async function generateStaticParams() {
   try {
-    // For actual implementation, we could query the database for usernames
-    // const usersRef = collection(db, 'users');
-    // const querySnapshot = await getDocs(usersRef);
-    // const usernames = querySnapshot.docs.map(doc => ({
-    //   username: doc.data().username
-    // }));
-    // return usernames;
+    // Query all users from Firestore to generate static paths for all user profiles
+    const usersRef = collection(db, 'users');
+    const querySnapshot = await getDocs(usersRef);
     
-    // For simplicity and to avoid too many builds, return placeholder usernames
-    // You can replace these with actual common usernames or leave empty for ISR
-    return [
-      { username: 'default' },
-      { username: 'admin' }
-    ];
+    // Map all usernames to params for static generation
+    const usernames = querySnapshot.docs.map(doc => ({
+      username: doc.data().username
+    }));
+    
+    console.log(`Generating static paths for ${usernames.length} users`);
+    
+    // Return all usernames to be statically generated
+    // Add a fallback to ensure we always have at least one static path
+    return usernames.length > 0 
+      ? usernames 
+      : [{ username: 'default' }];
   } catch (error) {
     console.error('Error generating static params:', error);
     return [{ username: 'default' }];
