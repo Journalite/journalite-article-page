@@ -6,7 +6,8 @@ import {
     collection,
     where,
     getDocs,
-    serverTimestamp
+    serverTimestamp,
+    updateDoc
 } from 'firebase/firestore';
 import { updateProfile } from 'firebase/auth';
 import { auth, db } from '../firebase/clientApp';
@@ -17,6 +18,7 @@ export interface UserProfile {
     lastName: string;
     username: string;
     email: string;
+    bio?: string;
     createdAt: any;
 }
 
@@ -50,7 +52,25 @@ export async function createUserProfile(uid: string, profile: Omit<UserProfile, 
         // First check if this user ID already has a profile
         const existingUserProfile = await getUserProfile(uid);
         if (existingUserProfile) {
-            console.log('User profile already exists, skipping creation');
+            console.log('User profile already exists, updating instead of creating');
+
+            // Update existing profile
+            const userRef = doc(db, 'users', uid);
+            await updateDoc(userRef, {
+                firstName: profile.firstName,
+                lastName: profile.lastName,
+                username: profile.username.toLowerCase(),
+                email: profile.email.toLowerCase(),
+                bio: profile.bio || existingUserProfile.bio || ''
+            });
+
+            // Update the user's display name in Firebase Auth
+            if (auth.currentUser) {
+                await updateProfile(auth.currentUser, {
+                    displayName: profile.username
+                });
+            }
+
             return;
         }
 
@@ -80,6 +100,7 @@ export async function createUserProfile(uid: string, profile: Omit<UserProfile, 
             lastName: profile.lastName,
             username: profile.username.toLowerCase(),
             email: profile.email.toLowerCase(),
+            bio: profile.bio || '',
             createdAt: serverTimestamp()
         });
 
@@ -112,6 +133,24 @@ export async function getUserProfile(uid: string): Promise<UserProfile | null> {
         return null;
     } catch (error) {
         console.error('Error fetching user profile:', error);
+        throw error;
+    }
+}
+
+/**
+ * Updates a user's bio
+ * @param uid User's Firebase Auth UID
+ * @param bio User's new bio
+ * @returns A promise that resolves when the bio is updated
+ */
+export async function updateUserBio(uid: string, bio: string): Promise<void> {
+    try {
+        const userRef = doc(db, 'users', uid);
+        await updateDoc(userRef, {
+            bio
+        });
+    } catch (error) {
+        console.error('Error updating user bio:', error);
         throw error;
     }
 } 

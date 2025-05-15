@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 7, "column": 0}, "map": {"version":3,"sources":["file:///Users/sirabdisalam/journalite-article-page/src/app/user/%5Busername%5D/layout.tsx"],"sourcesContent":["import { Viewport } from 'next'\n\nexport const viewport: Viewport = {\n  width: 'device-width',\n  initialScale: 1\n}\n\nexport default function UserLayout({\n  children,\n}: {\n  children: React.ReactNode\n}) {\n  return children\n} "],"names":[],"mappings":";;;;AAEO,MAAM,WAAqB;IAChC,OAAO;IACP,cAAc;AAChB;AAEe,SAAS,WAAW,EACjC,QAAQ,EAGT;IACC,OAAO;AACT","debugId":null}}]
+}

@@ -1,11 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createArticle } from '@/firebase/articles'
 import { auth } from '@/firebase/clientApp'
-import styles from '@/styles/home.module.css'
+import styles from '@/styles/ArticleForm.module.css'
 
 const ArticleForm = () => {
   const [title, setTitle] = useState('')
@@ -15,7 +15,13 @@ const ArticleForm = () => {
   const [status, setStatus] = useState<'published' | 'drafts'>('published')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
+  const [bodyCharCount, setBodyCharCount] = useState(0)
   const router = useRouter()
+
+  useEffect(() => {
+    // Update character count when body changes
+    setBodyCharCount(body.length);
+  }, [body]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -70,11 +76,22 @@ const ArticleForm = () => {
     }
   }
 
+  // Writing tips
+  const writingTips = [
+    "Use a clear, compelling title that captures interest",
+    "Break your content into smaller paragraphs for readability",
+    "Add relevant tags to help readers discover your article",
+    "Consider adding a cover image to make your article stand out"
+  ];
+
+  // Get a random tip to display
+  const randomTip = writingTips[Math.floor(Math.random() * writingTips.length)];
+
   return (
     <div className={styles.articleFormContainer}>
       <div className={styles.articleFormHeader}>
-        <h1 className={styles.articleFormTitle}>Create New Article</h1>
-        <p className={styles.articleFormSubtitle}>Share your thoughts with the world</p>
+        <h1 className={styles.articleFormTitle}>Create Your Story</h1>
+        <p className={styles.articleFormSubtitle}>Share your thoughts, ideas, and insights with the world</p>
       </div>
       
       {error && (
@@ -93,13 +110,17 @@ const ArticleForm = () => {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
-            placeholder="Enter a captivating title"
+            placeholder="Enter a captivating title for your article..."
             className={styles.formControl}
+            maxLength={100}
           />
+          <div className={styles.formHint}>A good title is clear, specific, and engaging</div>
         </div>
         
         <div className={styles.formGroup}>
-          <label htmlFor="coverImage" className={styles.formLabel}>Cover Image URL <span className={styles.optionalLabel}>(optional)</span></label>
+          <label htmlFor="coverImage" className={styles.formLabel}>
+            Cover Image URL <span className={styles.optionalLabel}>optional</span>
+          </label>
           <input
             type="url"
             id="coverImage"
@@ -108,6 +129,7 @@ const ArticleForm = () => {
             placeholder="https://example.com/image.jpg"
             className={styles.formControl}
           />
+          <div className={styles.formHint}>Add a cover image to make your article visually appealing</div>
           {coverImage && (
             <div className={styles.imagePreview}>
               <img src={coverImage} alt="Cover preview" />
@@ -116,15 +138,18 @@ const ArticleForm = () => {
         </div>
         
         <div className={styles.formGroup}>
-          <label htmlFor="tags" className={styles.formLabel}>Tags <span className={styles.optionalLabel}>(comma separated)</span></label>
+          <label htmlFor="tags" className={styles.formLabel}>
+            Tags <span className={styles.optionalLabel}>comma separated</span>
+          </label>
           <input
             type="text"
             id="tags"
             value={tags}
             onChange={(e) => setTags(e.target.value)}
-            placeholder="technology, news, science"
+            placeholder="technology, news, science, learning"
             className={styles.formControl}
           />
+          <div className={styles.formHint}>Tags help readers discover your content</div>
           {tags && (
             <div className={styles.tagsPreview}>
               {tags.split(',').map((tag, index) => tag.trim() && (
@@ -134,7 +159,7 @@ const ArticleForm = () => {
           )}
         </div>
         
-        <div className={styles.formGroup}>
+        <div className={`${styles.formGroup} ${styles.statusDropdown}`}>
           <label htmlFor="status" className={styles.formLabel}>Status</label>
           <select
             id="status"
@@ -142,8 +167,8 @@ const ArticleForm = () => {
             onChange={(e) => setStatus(e.target.value as 'published' | 'drafts')}
             className={styles.formControl}
           >
-            <option value="published">Published</option>
-            <option value="drafts">Save as Draft</option>
+            <option value="published">Published (visible to everyone)</option>
+            <option value="drafts">Save as Draft (only visible to you)</option>
           </select>
         </div>
         
@@ -154,10 +179,18 @@ const ArticleForm = () => {
             value={body}
             onChange={(e) => setBody(e.target.value)}
             required
-            placeholder="Write your article content here..."
+            placeholder="Write your article content here. Provide valuable insights, share your experience, or tell a compelling story..."
             className={styles.formTextarea}
             rows={15}
           />
+          <div className={styles.characterCount}>
+            <span className={bodyCharCount > 3000 ? styles.characterWarning : ''}>
+              {bodyCharCount} characters
+            </span>
+          </div>
+          <div className={styles.formHint}>
+            <span>✨ Tip: {randomTip}</span>
+          </div>
         </div>
         
         <div className={styles.formActions}>

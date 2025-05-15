@@ -12,6 +12,7 @@ export default function MyProfile() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [username, setUsername] = useState('');
+  const [bio, setBio] = useState('');
   const [originalUsername, setOriginalUsername] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -23,8 +24,10 @@ export default function MyProfile() {
   const [isCheckingUsername, setIsCheckingUsername] = useState(false);
   const [currentUserUid, setCurrentUserUid] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string>('');
+  const [bioCharCount, setBioCharCount] = useState(0);
   
   const router = useRouter();
+  const MAX_BIO_LENGTH = 250;
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -40,6 +43,8 @@ export default function MyProfile() {
             setLastName(profile.lastName);
             setUsername(profile.username);
             setOriginalUsername(profile.username);
+            setBio(profile.bio || '');
+            setBioCharCount(profile.bio?.length || 0);
             // No need to check username initially as user already owns this username
             setUsernameAvailable(true);
           } else {
@@ -66,8 +71,8 @@ export default function MyProfile() {
     return () => unsubscribe();
   }, [router]);
 
-  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    const { name, value, validity } = e.target;
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value, validity } = e.target as HTMLInputElement;
     setTouchedFields({ ...touchedFields, [name]: true });
     
     // Clear previous validation message
@@ -81,6 +86,14 @@ export default function MyProfile() {
       if (name === 'username') message = 'Please choose a username';
       
       setCustomValidation({ ...customValidation, [name]: message });
+    }
+  };
+
+  const handleBioChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value;
+    if (value.length <= MAX_BIO_LENGTH) {
+      setBio(value);
+      setBioCharCount(value.length);
     }
   };
 
@@ -182,7 +195,8 @@ export default function MyProfile() {
         firstName,
         lastName,
         username,
-        email: userEmail
+        email: userEmail,
+        bio
       });
       
       // Update the display name in Firebase Auth
@@ -249,129 +263,146 @@ export default function MyProfile() {
             <h1 className="text-4xl md:text-5xl font-serif font-normal text-slate-900">My Profile</h1>
             <p className="mt-2 text-slate-700">Update your personal information</p>
           </div>
-
-          {/* Error message */}
-          {error && (
-            <div className="mb-6 p-4 bg-red-50 text-red-700 text-sm rounded-md">
-              {error}
-            </div>
-          )}
-
-          {/* Success message */}
-          {success && (
-            <div className="mb-6 p-4 bg-green-50 text-green-700 text-sm rounded-md">
-              Your profile has been updated successfully
-            </div>
-          )}
-
-          {/* Profile form */}
-          <form onSubmit={handleSubmit} className="space-y-6 w-full bg-white rounded-xl p-8 shadow-sm" noValidate>
-            <div className="flex flex-col md:flex-row md:gap-6">
-              <div className="w-full md:w-1/2 mb-6 md:mb-0">
-                <label htmlFor="firstName" className="block mb-2 text-sm font-medium text-slate-700">First Name</label>
-                <input
-                  id="firstName"
-                  name="firstName"
-                  type="text"
-                  className={getInputClasses('firstName')}
-                  placeholder="First name"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  onBlur={handleBlur}
-                  required
-                />
-                {touchedFields.firstName && customValidation.firstName && (
-                  <p className="mt-1 text-sm text-red-500">{customValidation.firstName}</p>
-                )}
-              </div>
-              
-              <div className="w-full md:w-1/2">
-                <label htmlFor="lastName" className="block mb-2 text-sm font-medium text-slate-700">Last Name</label>
-                <input
-                  id="lastName"
-                  name="lastName"
-                  type="text"
-                  className={getInputClasses('lastName')}
-                  placeholder="Last name"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  onBlur={handleBlur}
-                  required
-                />
-                {touchedFields.lastName && customValidation.lastName && (
-                  <p className="mt-1 text-sm text-red-500">{customValidation.lastName}</p>
-                )}
-              </div>
+          
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* First name field */}
+            <div>
+              <label htmlFor="firstName" className="block mb-2 text-sm font-medium text-slate-700">
+                First Name
+              </label>
+              <input
+                id="firstName"
+                name="firstName"
+                type="text"
+                required
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                onBlur={handleBlur}
+                className={getInputClasses('firstName')}
+              />
+              {touchedFields.firstName && customValidation.firstName && (
+                <p className="mt-1 text-sm text-red-500">{customValidation.firstName}</p>
+              )}
             </div>
             
+            {/* Last name field */}
             <div>
-              <label htmlFor="username" className="block mb-2 text-sm font-medium text-slate-700">Username</label>
-              <div className="relative">
-                <input
-                  id="username"
-                  name="username"
-                  type="text"
-                  className={getInputClasses('username')}
-                  placeholder="Username"
-                  value={username}
-                  onChange={handleUsernameChange}
-                  onBlur={handleBlur}
-                  required
-                />
+              <label htmlFor="lastName" className="block mb-2 text-sm font-medium text-slate-700">
+                Last Name
+              </label>
+              <input
+                id="lastName"
+                name="lastName"
+                type="text"
+                required
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                onBlur={handleBlur}
+                className={getInputClasses('lastName')}
+              />
+              {touchedFields.lastName && customValidation.lastName && (
+                <p className="mt-1 text-sm text-red-500">{customValidation.lastName}</p>
+              )}
+            </div>
+            
+            {/* Username field */}
+            <div>
+              <div className="flex justify-between items-center mb-2">
+                <label htmlFor="username" className="block text-sm font-medium text-slate-700">
+                  Username
+                </label>
                 {isCheckingUsername && (
-                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                    <div className="animate-spin h-5 w-5 border-2 border-slate-500 rounded-full border-t-transparent"></div>
-                  </div>
-                )}
-                {!isCheckingUsername && username.length >= 2 && usernameAvailable === true && (
-                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-green-500">
-                    ✓
+                  <div className="text-xs text-slate-500 flex items-center">
+                    <div className="mr-1 w-3 h-3 border-2 border-slate-500 border-t-transparent rounded-full animate-spin"></div>
+                    Checking...
                   </div>
                 )}
               </div>
-              {touchedFields.username && customValidation.username && (
+              <input
+                id="username"
+                name="username"
+                type="text"
+                required
+                value={username}
+                onChange={handleUsernameChange}
+                onBlur={handleBlur}
+                className={getInputClasses('username')}
+              />
+              {touchedFields.username && customValidation.username ? (
                 <p className="mt-1 text-sm text-red-500">{customValidation.username}</p>
-              )}
-              {!customValidation.username && username.length >= 2 && usernameAvailable === true && username !== originalUsername && (
-                <p className="mt-1 text-sm text-green-500">Username is available</p>
-              )}
-              {!customValidation.username && username.length >= 2 && usernameAvailable === false && (
+              ) : username && username.length >= 2 && usernameAvailable === true ? (
+                <p className="mt-1 text-sm text-green-600">Username is available</p>
+              ) : username && username.length >= 2 && usernameAvailable === false ? (
                 <p className="mt-1 text-sm text-red-500">Username is already taken</p>
-              )}
+              ) : null}
             </div>
-
-            <div className="pt-4">
-              <label className="block mb-2 text-sm font-medium text-slate-700">Email Address</label>
-              <div className="w-full px-5 py-3.5 bg-[#f8f5ec] border border-[#e8e1d1] rounded-md text-slate-500">
-                {userEmail}
+            
+            {/* Bio field */}
+            <div>
+              <div className="flex justify-between items-center mb-2">
+                <label htmlFor="bio" className="block text-sm font-medium text-slate-700">
+                  Bio
+                </label>
+                <span className={`text-xs ${bioCharCount >= MAX_BIO_LENGTH * 0.9 ? 'text-amber-600' : 'text-slate-500'}`}>
+                  {bioCharCount}/{MAX_BIO_LENGTH}
+                </span>
               </div>
-              <p className="mt-2 text-xs text-slate-600">Email address cannot be changed</p>
+              <textarea
+                id="bio"
+                name="bio"
+                value={bio}
+                onChange={handleBioChange}
+                onBlur={handleBlur}
+                placeholder="Tell us a little about yourself..."
+                rows={4}
+                maxLength={MAX_BIO_LENGTH}
+                className="w-full px-5 py-3.5 bg-[#f8f5ec] border border-[#e8e1d1] rounded-md focus:outline-none focus:ring-1 focus:ring-slate-500 resize-none"
+              />
+              <p className="mt-1 text-xs text-slate-500">
+                Your bio will be displayed on your public profile and articles
+              </p>
             </div>
-
-            <div className="pt-4">
+            
+            {/* Status messages */}
+            {error && (
+              <div className="p-3 bg-red-50 border border-red-200 rounded-md text-sm text-red-600">
+                {error}
+              </div>
+            )}
+            
+            {success && (
+              <div className="p-3 bg-green-50 border border-green-200 rounded-md text-sm text-green-600">
+                Your profile has been updated successfully!
+              </div>
+            )}
+            
+            {/* Form actions */}
+            <div className="flex justify-between items-center mt-8">
+              <Link
+                href="/"
+                className="inline-flex justify-center py-3 px-5 border border-slate-300 rounded-md bg-white text-sm font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500"
+              >
+                Back to Home
+              </Link>
               <button
                 type="submit"
-                className="w-full flex items-center justify-center px-4 py-3.5 bg-[#1a1a19] text-white rounded-md hover:bg-[#2a2a29] focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 transition duration-200"
                 disabled={isSaving}
+                className={`inline-flex justify-center py-3 px-5 border border-transparent rounded-md shadow-sm text-sm font-medium text-white 
+                  ${isSaving ? 'bg-slate-400 cursor-not-allowed' : 'bg-slate-800 hover:bg-slate-700'} 
+                  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500`}
               >
                 {isSaving ? (
-                  <span className="flex items-center">
-                    <div className="animate-spin mr-2 h-4 w-4 border-2 border-white rounded-full border-t-transparent"></div>
-                    Saving changes...
-                  </span>
+                  <>
+                    <span className="mr-2 h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                    Saving...
+                  </>
                 ) : (
-                  <span>Save changes</span>
+                  'Save Changes'
                 )}
               </button>
             </div>
           </form>
-
-          {/* Back link */}
-          <div className="mt-6 text-center">
-            <Link href="/" className="text-slate-700 hover:text-slate-900 text-sm">
-              ← Back to home
-            </Link>
-          </div>
         </div>
       </div>
     </div>

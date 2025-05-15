@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { getArticleById, updateArticle } from '@/firebase/articles'
 import { auth } from '@/firebase/clientApp'
-import styles from '@/styles/home.module.css'
+import styles from '@/styles/ArticleForm.module.css'
 
 interface EditArticleFormProps {
   articleId: string
@@ -20,7 +20,14 @@ const EditArticleForm = ({ articleId }: EditArticleFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
+  const [bodyCharCount, setBodyCharCount] = useState(0)
+  const [originalSlug, setOriginalSlug] = useState('')
   const router = useRouter()
+
+  // Update character count when body changes
+  useEffect(() => {
+    setBodyCharCount(body.length);
+  }, [body]);
 
   // Load the article data when the component mounts
   useEffect(() => {
@@ -35,6 +42,8 @@ const EditArticleForm = ({ articleId }: EditArticleFormProps) => {
         setTags(article.tags?.join(', ') || '')
         setCoverImage(article.coverImage || '')
         setStatus(article.status || 'published')
+        setOriginalSlug(article.slug || '')
+        setBodyCharCount(article.body.length)
       } catch (error) {
         console.error('Error loading article:', error)
         setError('Failed to load article data')
@@ -101,10 +110,24 @@ const EditArticleForm = ({ articleId }: EditArticleFormProps) => {
     }
   }
 
+  // Writing tips
+  const editingTips = [
+    "Consider adding more details to make your content more engaging",
+    "Re-read your article for clarity before publishing",
+    "Use descriptive language to paint a picture for your readers",
+    "Update your tags to reach a wider audience"
+  ];
+
+  // Get a random tip to display
+  const randomTip = editingTips[Math.floor(Math.random() * editingTips.length)];
+
   if (isLoading) {
     return (
       <div className={styles.articleFormContainer}>
-        <div className={styles.loading}>Loading article data...</div>
+        <div className={styles.loading}>
+          <div className={styles.loadingSpinner}></div>
+          <span>Loading article data...</span>
+        </div>
       </div>
     )
   }
@@ -112,8 +135,8 @@ const EditArticleForm = ({ articleId }: EditArticleFormProps) => {
   return (
     <div className={styles.articleFormContainer}>
       <div className={styles.articleFormHeader}>
-        <h1 className={styles.articleFormTitle}>Edit Article</h1>
-        <p className={styles.articleFormSubtitle}>Update your thoughts</p>
+        <h1 className={styles.articleFormTitle}>Edit Your Story</h1>
+        <p className={styles.articleFormSubtitle}>Refine your thoughts and make your article shine</p>
       </div>
       
       {error && (
@@ -132,13 +155,17 @@ const EditArticleForm = ({ articleId }: EditArticleFormProps) => {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
-            placeholder="Enter a captivating title"
+            placeholder="Enter a captivating title for your article..."
             className={styles.formControl}
+            maxLength={100}
           />
+          <div className={styles.formHint}>A good title is clear, specific, and engaging</div>
         </div>
         
         <div className={styles.formGroup}>
-          <label htmlFor="coverImage" className={styles.formLabel}>Cover Image URL <span className={styles.optionalLabel}>(optional)</span></label>
+          <label htmlFor="coverImage" className={styles.formLabel}>
+            Cover Image URL <span className={styles.optionalLabel}>optional</span>
+          </label>
           <input
             type="url"
             id="coverImage"
@@ -147,6 +174,7 @@ const EditArticleForm = ({ articleId }: EditArticleFormProps) => {
             placeholder="https://example.com/image.jpg"
             className={styles.formControl}
           />
+          <div className={styles.formHint}>A striking image can increase engagement with your article</div>
           {coverImage && (
             <div className={styles.imagePreview}>
               <img src={coverImage} alt="Cover preview" />
@@ -155,15 +183,18 @@ const EditArticleForm = ({ articleId }: EditArticleFormProps) => {
         </div>
         
         <div className={styles.formGroup}>
-          <label htmlFor="tags" className={styles.formLabel}>Tags <span className={styles.optionalLabel}>(comma separated)</span></label>
+          <label htmlFor="tags" className={styles.formLabel}>
+            Tags <span className={styles.optionalLabel}>comma separated</span>
+          </label>
           <input
             type="text"
             id="tags"
             value={tags}
             onChange={(e) => setTags(e.target.value)}
-            placeholder="technology, news, science"
+            placeholder="technology, news, science, learning"
             className={styles.formControl}
           />
+          <div className={styles.formHint}>Tags help readers discover your content</div>
           {tags && (
             <div className={styles.tagsPreview}>
               {tags.split(',').map((tag, index) => tag.trim() && (
@@ -173,7 +204,7 @@ const EditArticleForm = ({ articleId }: EditArticleFormProps) => {
           )}
         </div>
         
-        <div className={styles.formGroup}>
+        <div className={`${styles.formGroup} ${styles.statusDropdown}`}>
           <label htmlFor="status" className={styles.formLabel}>Status</label>
           <select
             id="status"
@@ -181,9 +212,14 @@ const EditArticleForm = ({ articleId }: EditArticleFormProps) => {
             onChange={(e) => setStatus(e.target.value as 'published' | 'drafts')}
             className={styles.formControl}
           >
-            <option value="published">Published</option>
-            <option value="drafts">Save as Draft</option>
+            <option value="published">Published (visible to everyone)</option>
+            <option value="drafts">Save as Draft (only visible to you)</option>
           </select>
+          <div className={styles.formHint}>
+            {status === 'published' 
+              ? 'Your article will be visible to all users' 
+              : 'Only you can see your draft until you publish it'}
+          </div>
         </div>
         
         <div className={styles.formGroup}>
@@ -193,10 +229,18 @@ const EditArticleForm = ({ articleId }: EditArticleFormProps) => {
             value={body}
             onChange={(e) => setBody(e.target.value)}
             required
-            placeholder="Write your article content here..."
+            placeholder="Write your article content here. Provide valuable insights, share your experience, or tell a compelling story..."
             className={styles.formTextarea}
             rows={15}
           />
+          <div className={styles.characterCount}>
+            <span className={bodyCharCount > 3000 ? styles.characterWarning : ''}>
+              {bodyCharCount} characters
+            </span>
+          </div>
+          <div className={styles.formHint}>
+            <span>✨ Tip: {randomTip}</span>
+          </div>
         </div>
         
         <div className={styles.formActions}>

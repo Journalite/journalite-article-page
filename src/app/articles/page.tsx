@@ -29,7 +29,7 @@ const adaptFirestoreArticle = (firestoreArticle: FirestoreArticle): any => {
     title: firestoreArticle.title,
     slug: firestoreArticle.slug || '',
     authorId: firestoreArticle.authorId,
-    authorName: firestoreArticle.authorName,
+    authorName: firestoreArticle.authorName || 'Unknown Author',
     coverImageUrl: firestoreArticle.coverImage,
     tags: firestoreArticle.tags,
     status: firestoreArticle.status || 'published',
@@ -51,95 +51,72 @@ const adaptFirestoreArticle = (firestoreArticle: FirestoreArticle): any => {
 
 function Article () {
   const params = useSearchParams()
-  const slug = params?.get('slug') || ''
-  const [article, setArticle] = useState<any | null>(null)
+  const slug = params?.get('slug')
+  
+  const [article, setArticle] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState('')
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const [tags, setTags] = useState<string[]>([])
-
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  
+  // Check if user is authenticated
   useEffect(() => {
-    // Check Firebase authentication status
-    const unsubscribe = onAuthStateChanged(auth, user => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
       setIsAuthenticated(!!user)
     })
-
-    // Fetch article data
+    
+    return () => unsubscribe()
+  }, [])
+  
+  // Fetch article data
+  useEffect(() => {
     const fetchArticle = async () => {
+      if (!slug) {
+        setError('No article slug provided')
+        setIsLoading(false)
+        return
+      }
+      
       try {
-        setIsLoading(true)
-        if (!slug) return
-
-        // Get article from Firestore
         const firestoreArticle = await getArticleBySlug(slug)
         
-        // Check if article is a draft and if current user is not the author
-        if (firestoreArticle.status === 'drafts') {
-          const currentUser = auth.currentUser
-          if (!currentUser || currentUser.uid !== firestoreArticle.authorId) {
-            setError('This article is not available')
-            setIsLoading(false)
-            return
-          }
+        if (!firestoreArticle) {
+          setError('Article not found')
+          setIsLoading(false)
+          return
         }
         
-        const adaptedArticle = adaptFirestoreArticle(firestoreArticle)
+        // Transform the data format for the RenderArticle component
+        const transformedArticle = adaptFirestoreArticle(firestoreArticle)
         
-        setArticle(adaptedArticle)
-
-        // Set tags for the right sidebar
-        if (adaptedArticle && adaptedArticle.tags) {
-          setTags(adaptedArticle.tags)
-        }
+        setArticle(transformedArticle)
+        setTags(firestoreArticle.tags || [])
+        setIsLoading(false)
       } catch (error) {
-        console.error('Error loading article:', error)
+        console.error('Error fetching article:', error)
         setError('Failed to load article')
-      } finally {
         setIsLoading(false)
       }
     }
-
+    
     fetchArticle()
-
-    // Clean up the auth listener on unmount
-    return () => unsubscribe()
   }, [slug])
-
-  const toggleSidebar = () => {
-    setIsSidebarCollapsed(!isSidebarCollapsed)
-  }
-
-  // Handle user logout
-  const handleLogout = async () => {
+  
+  const handleSignOut = async () => {
     try {
       await signOut(auth)
     } catch (error) {
-      // Error handling for logout
+      console.error('Error signing out:', error)
     }
   }
-
+  
   return (
     <div className={styles['three-column-layout']}>
-      {/* LEFT SIDEBAR - Same as homepage */}
-      <aside
-        className={`${styles['left-sidebar']} ${
-          isSidebarCollapsed ? styles['collapsed'] : ''
-        }`}
-      >
+      {/* LEFT SIDEBAR - Similar to homepage but with different nav items */}
+      <aside className={styles['left-sidebar']}>
         <div className={styles['sidebar-header']}>
           <div className={styles.logo}>Journalite</div>
-          <button
-            className={styles['toggle-button']}
-            onClick={toggleSidebar}
-            aria-label={
-              isSidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'
-            }
-          >
-            {isSidebarCollapsed ? '→' : '←'}
-          </button>
         </div>
-
         <nav className={styles['vertical-nav']}>
           {isAuthenticated ? (
             // Navigation for authenticated users
@@ -156,35 +133,28 @@ function Article () {
                 className={`${styles['nav-link']} ${styles['nav-thoughts']}`}
               >
                 <span className={styles['nav-icon']}>•</span>
-                <span className={styles['nav-text']}>My Thoughts</span>
-              </Link>
-              <Link
-                href='/explore'
-                className={`${styles['nav-link']} ${styles['nav-explore']}`}
-              >
-                <span className={styles['nav-icon']}>•</span>
-                <span className={styles['nav-text']}>Explore</span>
+                <span className={styles['nav-text']}>My Articles</span>
               </Link>
               <Link
                 href='/my-profile'
                 className={`${styles['nav-link']} ${styles['nav-profile']}`}
               >
                 <span className={styles['nav-icon']}>•</span>
-                <span className={styles['nav-text']}>My Profile</span>
+                <span className={styles['nav-text']}>Profile</span>
               </Link>
               <Link
-                href='/settings'
-                className={`${styles['nav-link']} ${styles['nav-settings']}`}
+                href='/bookmarks'
+                className={`${styles['nav-link']} ${styles['nav-bookmarks']}`}
               >
                 <span className={styles['nav-icon']}>•</span>
-                <span className={styles['nav-text']}>Settings</span>
+                <span className={styles['nav-text']}>Bookmarks</span>
               </Link>
               <button
-                onClick={handleLogout}
+                onClick={handleSignOut}
                 className={`${styles['nav-link']} ${styles['nav-logout']}`}
               >
                 <span className={styles['nav-icon']}>•</span>
-                <span className={styles['nav-text']}>Log out</span>
+                <span className={styles['nav-text']}>Sign Out</span>
               </button>
             </>
           ) : (

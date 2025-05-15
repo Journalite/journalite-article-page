@@ -313,11 +313,57 @@ export default function NotificationBell() {
 - **Draft visibility**: Prevented draft articles from appearing in public feeds
 - **Index creation**: Added composite indexes for complex Firestore queries
 - **Author verification**: Added checks to ensure only authors can view their drafts
+- **Author display in articles**: Fixed article rendering to show the author's display name instead of their userId
+- **User profiles and bios**: Added user profile features:
+  - Added bio field to user profiles
+  - Created user profile page to display user information and articles
+  - Added author links on articles to navigate to author profiles
+  - Updated profile editing form to include bio with character counter
+  - Added responsive styling for profile pages
+- **Enhanced article form**: Redesigned article creation and editing forms with:
+  - Creative, minimalist UI with subtle animations and modern styling
+  - Character count indicator for article content
+  - Random writing tips to guide authors
+  - Improved input fields with helpful hints
+  - Better status selection with clear visibility explanations
+  - Interactive tag preview with hover effects
+  - Responsive design for mobile devices
 - **Next.js build errors**: Fixed Next.js 15.3.0 build issues:
-  - Fixed critical build error in edit-article page by moving viewport configuration from client component to a separate layout.tsx file
-  - Wrapped useSearchParams() in Suspense boundary to prevent CSR bailout errors
-  - Improved component structure to follow Next.js best practices
-  - Note: There are still viewport configuration warnings in other pages, but they don't prevent successful builds
+  - Fixed critical build error in edit-article page by moving viewport configuration to layout files
+  - Fixed CSR bailout errors by wrapping useSearchParams() in Suspense boundaries
+  - Improved component structure to follow Next.js practices
+  - Fixed error "missing exported function generateStaticParams()" by:
+    - Adding proper metadata and generateStaticParams to dynamic routes
+    - Updating the output configuration to 'standalone' mode for SSR support
+    - Updating layout components with proper Viewport typing and imports
+  - Used Image component instead of img tags for better performance
+  - Known issue: There's a type incompatibility between Next.js 15.3.0's built-in PageProps typing and dynamic routes that prevents a fully clean build. This appears to be a Next.js framework issue.
+  - Added proper layout files with viewport configuration to fix related warnings
+  - Implemented proper TypeScript typing for dynamic routes using a custom DynamicPageProps helper:
+    ```typescript
+    // src/types/next.ts
+    export type DynamicPageProps<T extends string> = {
+      params: {
+        [K in T]: string
+      }
+    }
+    
+    // Usage in page component:
+    export default function Page({ params }: DynamicPageProps<'username'>) {
+      const { username } = params;
+      // ...
+    }
+    ```
+
+- **Author Profile Navigation Fixes**: Resolved hydration and navigation issues:
+  - Fixed hydration error with author links by ensuring consistent date formatting between server and client
+  - Added proper awaiting of dynamic page parameters in user profile page
+  - Ensured consistent username case handling for profile links (standardized to lowercase)
+  - Implemented proper viewport configuration in all layout files to remove warnings
+  - Added support for additional image domains in next.config.js
+  - Fixed inconsistent HTML structure between server and client rendering
+  - Created consistent date formatting functions with fixed locale ('en-US') and timezone ('UTC')
+  - Replaced HTML img tags with Next.js Image components with proper configuration
 
 ## Setup and Installation - This is for Abdul and Hikmat, and Theo. 
 To set up this project locally:

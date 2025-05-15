@@ -213,27 +213,13 @@ const CommentSection: React.FC<CommentSectionProps> = ({ slug }) => {
 
   // Helper to format dates
   const formatDate = (timestamp: any) => {
-    if (!timestamp) return 'Just now';
+    if (!timestamp) return 'Unknown date';
     
-    let date;
-    
-    // Handle Firestore Timestamp objects
-    if (timestamp && typeof timestamp.toDate === 'function') {
-      date = timestamp.toDate();
-    } 
-    // Handle ISO strings
-    else if (typeof timestamp === 'string') {
-      date = new Date(timestamp);
-    }
-    // Use current date as fallback
-    else {
-      date = new Date();
-    }
-    
-    // Format the date
+    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
     const now = new Date();
     const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
     
+    // For recent dates, use relative time (which is less prone to hydration issues)
     if (diffInSeconds < 60) {
       return 'Just now';
     } else if (diffInSeconds < 3600) {
@@ -246,11 +232,20 @@ const CommentSection: React.FC<CommentSectionProps> = ({ slug }) => {
       const days = Math.floor(diffInSeconds / 86400);
       return `${days} ${days === 1 ? 'day' : 'days'} ago`;
     } else {
-      return date.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
-      });
+      // Use consistent UTC timezone and locale for older dates
+      try {
+        const options: Intl.DateTimeFormatOptions = { 
+          year: 'numeric', 
+          month: 'short', 
+          day: 'numeric',
+          timeZone: 'UTC'
+        };
+        
+        return date.toLocaleDateString('en-US', options);
+      } catch (error) {
+        console.error('Error formatting date:', error);
+        return 'Unknown date';
+      }
     }
   };
 
