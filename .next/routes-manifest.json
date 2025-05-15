@@ -21,6 +21,14 @@
         "nxtPusername": "nxtPusername"
       },
       "namedRegex": "^/user/(?<nxtPusername>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/[...firebase_auth]",
+      "regex": "^/(.+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPfirebase_auth": "nxtPfirebase_auth"
+      },
+      "namedRegex": "^/(?<nxtPfirebase_auth>.+?)(?:/)?$"
     }
   ],
   "staticRoutes": [

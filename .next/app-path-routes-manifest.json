@@ -1,17 +1,18 @@
 {
   "/_not-found/page": "/_not-found",
   "/notifications/page": "/notifications",
-  "/profile-setup/page": "/profile-setup",
   "/page": "/",
+  "/profile-setup/page": "/profile-setup",
   "/register/page": "/register",
-  "/my-thoughts/page": "/my-thoughts",
+  "/[...firebase_auth]/page": "/[...firebase_auth]",
   "/create-article/page": "/create-article",
-  "/edit-article/page": "/edit-article",
-  "/login/page": "/login",
+  "/my-thoughts/page": "/my-thoughts",
   "/articles/page": "/articles",
-  "/forgot-password/page": "/forgot-password",
+  "/edit-article/page": "/edit-article",
   "/email-verified/page": "/email-verified",
   "/my-profile/page": "/my-profile",
+  "/forgot-password/page": "/forgot-password",
+  "/login/page": "/login",
   "/reset-password/page": "/reset-password",
   "/user/[username]/page": "/user/[username]"
 }

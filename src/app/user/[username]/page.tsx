@@ -34,9 +34,27 @@ export const viewport: Viewport = {
 }
 
 // This generates the static paths for pre-rendering
-// Empty array makes this a dynamic route that will be rendered on-demand
-export function generateStaticParams() {
-  return []
+// We provide at least some placeholder values for static generation
+export async function generateStaticParams() {
+  try {
+    // For actual implementation, we could query the database for usernames
+    // const usersRef = collection(db, 'users');
+    // const querySnapshot = await getDocs(usersRef);
+    // const usernames = querySnapshot.docs.map(doc => ({
+    //   username: doc.data().username
+    // }));
+    // return usernames;
+    
+    // For simplicity and to avoid too many builds, return placeholder usernames
+    // You can replace these with actual common usernames or leave empty for ISR
+    return [
+      { username: 'default' },
+      { username: 'admin' }
+    ];
+  } catch (error) {
+    console.error('Error generating static params:', error);
+    return [{ username: 'default' }];
+  }
 }
 
 // Format date in a consistent way that doesn't depend on user's locale
