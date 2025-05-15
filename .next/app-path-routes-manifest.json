@@ -8,12 +8,14 @@
   "/dev/page": "/dev",
   "/create-article/page": "/create-article",
   "/my-thoughts/page": "/my-thoughts",
-  "/articles/page": "/articles",
   "/edit-article/page": "/edit-article",
+  "/articles/page": "/articles",
   "/email-verified/page": "/email-verified",
   "/forgot-password/page": "/forgot-password",
-  "/my-profile/page": "/my-profile",
   "/login/page": "/login",
   "/reset-password/page": "/reset-password",
-  "/user/[username]/page": "/user/[username]"
+  "/my-profile/page": "/my-profile",
+  "/user/[username]/page": "/user/[username]",
+  "/user/[username]/followers/page": "/user/[username]/followers",
+  "/user/[username]/following/page": "/user/[username]/following"
 }

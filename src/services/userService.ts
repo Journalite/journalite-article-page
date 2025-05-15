@@ -7,10 +7,15 @@ import {
     where,
     getDocs,
     serverTimestamp,
-    updateDoc
+    updateDoc,
+    arrayUnion,
+    arrayRemove,
+    increment,
+    limit
 } from 'firebase/firestore';
 import { updateProfile } from 'firebase/auth';
 import { auth, db } from '../firebase/clientApp';
+import { createFollowNotification } from '../firebase/notifications';
 
 export interface UserProfile {
     uid: string;
@@ -20,6 +25,10 @@ export interface UserProfile {
     email: string;
     bio?: string;
     createdAt: any;
+    following?: string[];
+    followers?: string[];
+    followersCount?: number;
+    followingCount?: number;
 }
 
 /**
@@ -195,5 +204,188 @@ export async function searchUsers(searchTerm: string): Promise<UserProfile[]> {
     } catch (error) {
         console.error('Error searching users:', error);
         return [];
+    }
+}
+
+/**
+ * Follows a user
+ * @param followerUid UID of the user who wants to follow
+ * @param followingUid UID of the user to be followed
+ * @returns A promise that resolves when the follow relationship is created
+ */
+export async function followUser(followerUid: string, followingUid: string): Promise<void> {
+    try {
+        // Don't allow users to follow themselves
+        if (followerUid === followingUid) {
+            throw new Error('You cannot follow yourself');
+        }
+
+        // Update the follower's following list
+        const followerRef = doc(db, 'users', followerUid);
+        await updateDoc(followerRef, {
+            following: arrayUnion(followingUid),
+            followingCount: increment(1)
+        });
+
+        // Update the following's followers list
+        const followingRef = doc(db, 'users', followingUid);
+        await updateDoc(followingRef, {
+            followers: arrayUnion(followerUid),
+            followersCount: increment(1)
+        });
+
+        // Get the follower's profile to use their name for the notification
+        const followerDoc = await getDoc(followerRef);
+        if (followerDoc.exists()) {
+            const followerData = followerDoc.data() as UserProfile;
+            // Create a notification for the user being followed
+            await createFollowNotification(
+                followingUid,
+                `${followerData.firstName} ${followerData.lastName}`,
+                followerUid,
+                followerData.username
+            );
+        }
+    } catch (error) {
+        console.error('Error following user:', error);
+        throw error;
+    }
+}
+
+/**
+ * Unfollows a user
+ * @param followerUid UID of the user who wants to unfollow
+ * @param followingUid UID of the user to be unfollowed
+ * @returns A promise that resolves when the follow relationship is removed
+ */
+export async function unfollowUser(followerUid: string, followingUid: string): Promise<void> {
+    try {
+        // Update the follower's following list
+        const followerRef = doc(db, 'users', followerUid);
+        await updateDoc(followerRef, {
+            following: arrayRemove(followingUid),
+            followingCount: increment(-1)
+        });
+
+        // Update the following's followers list
+        const followingRef = doc(db, 'users', followingUid);
+        await updateDoc(followingRef, {
+            followers: arrayRemove(followerUid),
+            followersCount: increment(-1)
+        });
+    } catch (error) {
+        console.error('Error unfollowing user:', error);
+        throw error;
+    }
+}
+
+/**
+ * Checks if a user is following another user
+ * @param followerUid UID of the potential follower
+ * @param followingUid UID of the user who might be followed
+ * @returns Promise resolving to a boolean indicating if follower follows following
+ */
+export async function isFollowing(followerUid: string, followingUid: string): Promise<boolean> {
+    try {
+        const followerRef = doc(db, 'users', followerUid);
+        const followerDoc = await getDoc(followerRef);
+
+        if (!followerDoc.exists()) {
+            return false;
+        }
+
+        const userData = followerDoc.data() as UserProfile;
+        return userData.following?.includes(followingUid) || false;
+    } catch (error) {
+        console.error('Error checking follow status:', error);
+        throw error;
+    }
+}
+
+/**
+ * Gets a list of users that a user is following
+ * @param uid User's Firebase Auth UID
+ * @param maxLimit Maximum number of results to return
+ * @returns Promise resolving to an array of user profiles
+ */
+export async function getFollowing(uid: string, maxLimit = 50): Promise<UserProfile[]> {
+    try {
+        // First get the user to access their following list
+        const userRef = doc(db, 'users', uid);
+        const userDoc = await getDoc(userRef);
+
+        if (!userDoc.exists()) {
+            return [];
+        }
+
+        const userData = userDoc.data() as UserProfile;
+        const followingList = userData.following || [];
+
+        if (followingList.length === 0) {
+            return [];
+        }
+
+        // Fetch each following user's profile
+        const followingUsers: UserProfile[] = [];
+        const batchLimit = Math.min(followingList.length, maxLimit);
+
+        for (let i = 0; i < batchLimit; i++) {
+            const followingId = followingList[i];
+            const followingUserRef = doc(db, 'users', followingId);
+            const followingUserDoc = await getDoc(followingUserRef);
+
+            if (followingUserDoc.exists()) {
+                followingUsers.push(followingUserDoc.data() as UserProfile);
+            }
+        }
+
+        return followingUsers;
+    } catch (error) {
+        console.error('Error getting following list:', error);
+        throw error;
+    }
+}
+
+/**
+ * Gets a list of users following a user
+ * @param uid User's Firebase Auth UID
+ * @param maxLimit Maximum number of results to return
+ * @returns Promise resolving to an array of user profiles
+ */
+export async function getFollowers(uid: string, maxLimit = 50): Promise<UserProfile[]> {
+    try {
+        // First get the user to access their followers list
+        const userRef = doc(db, 'users', uid);
+        const userDoc = await getDoc(userRef);
+
+        if (!userDoc.exists()) {
+            return [];
+        }
+
+        const userData = userDoc.data() as UserProfile;
+        const followersList = userData.followers || [];
+
+        if (followersList.length === 0) {
+            return [];
+        }
+
+        // Fetch each follower's profile
+        const followers: UserProfile[] = [];
+        const batchLimit = Math.min(followersList.length, maxLimit);
+
+        for (let i = 0; i < batchLimit; i++) {
+            const followerId = followersList[i];
+            const followerUserRef = doc(db, 'users', followerId);
+            const followerUserDoc = await getDoc(followerUserRef);
+
+            if (followerUserDoc.exists()) {
+                followers.push(followerUserDoc.data() as UserProfile);
+            }
+        }
+
+        return followers;
+    } catch (error) {
+        console.error('Error getting followers list:', error);
+        throw error;
     }
 } 

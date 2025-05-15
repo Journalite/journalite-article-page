@@ -32,6 +32,14 @@ Journalite is a React/Next.js application with Firebase integration that allows 
 - **Consistent user cards**: Unified display of user information with avatars
 - **User profiles**: Detailed view of author information and their published articles
 
+### User Following System
+- **Follow/unfollow functionality**: Users can follow and unfollow other users
+- **Followers/following lists**: View who a user follows and who follows them
+- **Profile sidebar preview**: Shows a preview of followers and following on profile
+- **Expandable lists**: "See all" links to view complete follower/following lists
+- **Responsive layout**: Properly handles long usernames and maintains consistent layout
+- **Visual feedback**: Clearly shows follow relationship status
+
 ### Comment System
 - **Nested comments**: Support for main comments and replies
 - **Real-time updates**: Comments appear immediately after posting

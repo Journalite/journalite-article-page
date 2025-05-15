@@ -36,6 +36,22 @@
       "namedRegex": "^/user/(?<nxtPusername>[^/]+?)(?:/)?$"
     },
     {
+      "page": "/user/[username]/followers",
+      "regex": "^/user/([^/]+?)/followers(?:/)?$",
+      "routeKeys": {
+        "nxtPusername": "nxtPusername"
+      },
+      "namedRegex": "^/user/(?<nxtPusername>[^/]+?)/followers(?:/)?$"
+    },
+    {
+      "page": "/user/[username]/following",
+      "regex": "^/user/([^/]+?)/following(?:/)?$",
+      "routeKeys": {
+        "nxtPusername": "nxtPusername"
+      },
+      "namedRegex": "^/user/(?<nxtPusername>[^/]+?)/following(?:/)?$"
+    },
+    {
       "page": "/[...firebase_auth]",
       "regex": "^/(.+?)(?:/)?$",
       "routeKeys": {

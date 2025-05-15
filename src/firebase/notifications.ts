@@ -18,10 +18,10 @@ import { db, auth } from './clientApp';
 export interface Notification {
     id?: string;
     userId: string;
-    type: 'comment' | 'reply' | 'like';
+    type: 'comment' | 'reply' | 'like' | 'follow';
     read: boolean;
     sourceId: string; // ID of the article/comment
-    sourceType: 'article' | 'comment';
+    sourceType: 'article' | 'comment' | 'user';
     message: string;
     fromUser: {
         id: string;
@@ -76,6 +76,49 @@ export async function createCommentNotification(
         };
     } catch (error) {
         console.error('Error creating notification:', error);
+        return null;
+    }
+}
+
+/**
+ * Create a new notification when someone follows a user
+ */
+export async function createFollowNotification(
+    targetUserId: string,
+    followerName: string,
+    followerId: string,
+    followerUsername: string
+) {
+    try {
+        // Skip if user is following themselves (shouldn't happen due to checks in followUser)
+        if (targetUserId === followerId) {
+            return null;
+        }
+
+        // Create notification object
+        const notification: Omit<Notification, 'id'> = {
+            userId: targetUserId, // Who will receive the notification
+            type: 'follow',
+            read: false,
+            sourceId: followerId,
+            sourceType: 'user',
+            message: `${followerName} (@${followerUsername}) started following you`,
+            fromUser: {
+                id: followerId,
+                name: followerName
+            },
+            createdAt: Timestamp.now()
+        };
+
+        // Add to Firestore
+        const docRef = await addDoc(collection(db, 'notifications'), notification);
+
+        return {
+            id: docRef.id,
+            ...notification
+        };
+    } catch (error) {
+        console.error('Error creating follow notification:', error);
         return null;
     }
 }

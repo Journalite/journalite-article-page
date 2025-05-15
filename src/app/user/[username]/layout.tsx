@@ -1,8 +1,15 @@
-import { Viewport } from 'next'
+import { Metadata, Viewport } from 'next'
 
+// Export metadata for better SEO
+export const metadata: Metadata = {
+  title: 'User Profile | Journalite',
+  description: 'View user profile and articles',
+}
+
+// Export viewport configuration
 export const viewport: Viewport = {
   width: 'device-width',
-  initialScale: 1
+  initialScale: 1,
 }
 
 export default function UserLayout({
@@ -10,5 +17,9 @@ export default function UserLayout({
 }: {
   children: React.ReactNode
 }) {
-  return children
+  return (
+    <>
+      {children}
+    </>
+  )
 } 

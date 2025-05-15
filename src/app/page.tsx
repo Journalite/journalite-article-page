@@ -280,7 +280,7 @@ export default function HomePage() {
       {windowWidth < 768 && !isSidebarCollapsed && (
         <div className={`${styles['menu-overlay']} ${styles['active']}`} onClick={toggleSidebar}></div>
       )}
-      
+    
       {/* LEFT SIDEBAR */}
       <LeftSidebar 
         isAuthenticated={isAuthenticated} 

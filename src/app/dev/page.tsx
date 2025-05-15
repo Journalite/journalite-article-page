@@ -6,6 +6,7 @@ import { doc, getDoc, collection, getDocs, query, limit, updateDoc } from 'fireb
 import { auth, db } from '@/firebase/clientApp';
 import { onAuthStateChanged } from 'firebase/auth';
 import styles from '@/styles/home.module.css';
+import Link from 'next/link';
 
 // Define types for user data
 type UserRole = 'user' | 'developer' | 'admin';
@@ -381,270 +382,184 @@ Each article has a comment section allowing:
 
 const userProfilesDoc: DocSection = {
   id: 'user-profiles',
-  title: 'User Profiles',
+  title: 'User Profiles & Social Features',
   content: `
-## User Creation & Authentication
+## User Profile System
 
-When a user signs up in Journalite:
-1. Firebase Auth creates an authentication record
-2. A corresponding Firestore document is created in \`users/{uid}\`
-3. Email verification is sent automatically
-4. The user is directed to complete their profile with additional information
+The user profile system in Journalite provides comprehensive functionality for viewing user information, their published articles, and social connections.
 
-\`\`\`tsx
-// Registration flow from AuthForm.tsx
-import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
-import { setDoc, doc } from 'firebase/firestore';
-import { auth, db } from '@/firebase/clientApp';
-import { generateUsername } from '@/utils/userHelpers';
+### Profile Pages Structure
 
-const registerUser = async (email: string, password: string, name: string) => {
-  try {
-    // Step 1: Create Firebase Auth user
-    const userCredential = await createUserWithEmailAndPassword(
-      auth, 
-      email, 
-      password
-    );
-    
-    const user = userCredential.user;
-    
-    // Step 2: Generate a unique username from their name
-    const username = await generateUsername(name);
-    
-    // Step 3: Create Firestore profile document
-    await setDoc(doc(db, 'users', user.uid), {
-      name,
-      email,
-      username,
-      role: 'user',
-      bio: '',
-      createdAt: new Date(),
-      articleCount: 0,
-      followersCount: 0,
-      followingCount: 0,
-      photoURL: null
-    });
-    
-    // Step 4: Send email verification
-    await sendEmailVerification(user, {
-      url: window.location.origin + '/email-verified'
-    });
-    
-    return {
-      user,
-      username
-    };
-  } catch (error) {
-    console.error('Error registering user:', error);
-    const errorCode = error.code;
-    switch(errorCode) {
-      case 'auth/email-already-in-use':
-        throw new Error('Email is already registered');
-      case 'auth/weak-password':
-        throw new Error('Password is too weak');
-      default:
-        throw new Error('Failed to register: ' + error.message);
-    }
-  }
-};
-\`\`\`
+- **Main Profile Page**: Displays user info, articles, and sidebar with followers/following
+- **Followers Page**: Shows all users who follow the profile owner
+- **Following Page**: Shows all users the profile owner follows
 
-## User Data Structure
+### Components Structure
 
-User profiles store comprehensive data:
+1. \`ProfileClient\`: Main profile page client component
+   - Fetches and displays user data and their articles
+   - Includes sidebar with followers/following preview
+
+2. \`FollowersClient\` & \`FollowingClient\`: Full pages for followers/following
+   - Show complete lists with pagination
+   - Include follow buttons for each user
+
+3. \`FollowersList\` & \`FollowingList\`: Reusable components for profile sidebar
+   - Show preview of followers/following (limited to 5)
+   - Include "See all" links to full pages
+   - Handle proper truncation of long usernames
+
+### Profile Page Implementation
 
 \`\`\`tsx
-interface UserProfile {
-  // Basic info
-  name: string;        // Display name
-  username: string;    // Unique handle
-  email: string;       // Email address
-  bio?: string;        // Optional bio
-  photoURL?: string;   // Profile photo URL
-  
-  // Role & permissions
-  role: 'user' | 'developer' | 'admin';
-  
-  // Statistics
-  articleCount: number;
-  followersCount: number;
-  followingCount: number;
-  
-  // Metadata
-  createdAt: Timestamp;
-  lastActive?: Timestamp;
+// Simple version of the profile page server component
+import ProfileClient from '@/components/ProfileClient';
+
+export default function UserProfilePage({ params }: { params: { username: string } }) {
+  return <ProfileClient username={params.username} />;
 }
 \`\`\`
 
-## Username Generation
+## Following System
 
-Usernames are automatically generated with these rules:
-- Derived from the user's display name
-- Converted to lowercase
-- Spaces replaced with underscores
-- Special characters removed
-- If already taken, suffixed with random digits
+The following system allows users to follow other users, creating a social network aspect to the platform.
 
-\`\`\`tsx
-// Username generation utility
-import { collection, query, where, getDocs } from 'firebase/firestore';
-import { db } from '@/firebase/clientApp';
+### Database Structure
 
-export async function generateUsername(name: string): Promise<string> {
-  // Convert name to lowercase, replace spaces with underscores
-  let baseUsername = name.toLowerCase().replace(/\\s+/g, '_');
-  
-  // Remove special characters
-  baseUsername = baseUsername.replace(/[^a-z0-9_]/g, '');
-  
-  // Check if username exists
-  const usersRef = collection(db, 'users');
-  const q = query(usersRef, where('username', '==', baseUsername));
-  const snapshot = await getDocs(q);
-  
-  // If username is available, use it
-  if (snapshot.empty) {
-    return baseUsername;
-  }
-  
-  // Otherwise, add random digits until we find an available username
-  let isAvailable = false;
-  let candidateUsername = '';
-  
-  while (!isAvailable) {
-    // Add 3 random digits
-    const randomSuffix = Math.floor(Math.random() * 900) + 100;
-    candidateUsername = \`\${baseUsername}_\${randomSuffix}\`;
-    
-    // Check if this version is available
-    const q2 = query(usersRef, where('username', '==', candidateUsername));
-    const snapshot2 = await getDocs(q2);
-    
-    if (snapshot2.empty) {
-      isAvailable = true;
-    }
-  }
-  
-  return candidateUsername;
-}
-\`\`\`
+1. \`users/{userId}/following/{followedUserId}\`: Documents tracking who a user follows
+2. \`users/{userId}/followers/{followerUserId}\`: Documents tracking who follows a user
+3. \`users/{userId}.followingCount\` & \`users/{userId}.followersCount\`: Counter fields for quick access
 
-## User Search Implementation
-
-The user search functionality is implemented with these features:
-- Real-time search as you type
-- Debounced input to minimize database queries
-- Case-insensitive matching on name and username
-- Clean UI with profile pictures and usernames
-- Caching of recent results for performance
+### Following List Component
 
 \`\`\`tsx
-// UserSearch.tsx component
-import { useState, useEffect } from 'react';
-import { collection, query, where, getDocs, orderBy, limit } from 'firebase/firestore';
-import { db } from '@/firebase/clientApp';
-import useDebounce from '@/hooks/useDebounce';
-
-export default function UserSearch() {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(false);
+// Simplified FollowingList component
+const FollowingList = ({ userId, maxDisplay = 5, username }) => {
+  const [following, setFollowing] = useState([]);
+  const [totalCount, setTotalCount] = useState(0);
   
-  // Debounce search term to avoid too many queries
-  const debouncedSearchTerm = useDebounce(searchTerm, 300);
-  
+  // Fetch following users
   useEffect(() => {
-    // Don't search until we have at least 2 characters
-    if (!debouncedSearchTerm || debouncedSearchTerm.length < 2) {
-      setUsers([]);
-      return;
-    }
-    
-    const searchUsers = async () => {
-      setLoading(true);
-      
+    const fetchFollowing = async () => {
       try {
-        const usersRef = collection(db, 'users');
+        const followingList = await getFollowing(userId, maxDisplay);
+        setFollowing(followingList);
         
-        // Query for users by name (case insensitive)
-        const nameQuery = query(
-          usersRef,
-          where('name', '>=', debouncedSearchTerm),
-          where('name', '<=', debouncedSearchTerm + '\\uf8ff'),
-          limit(5)
-        );
-        
-        // Query for users by username
-        const usernameQuery = query(
-          usersRef,
-          where('username', '>=', debouncedSearchTerm),
-          where('username', '<=', debouncedSearchTerm + '\\uf8ff'),
-          limit(5)
-        );
-        
-        // Execute both queries
-        const [nameSnapshot, usernameSnapshot] = await Promise.all([
-          getDocs(nameQuery),
-          getDocs(usernameQuery)
-        ]);
-        
-        // Combine results, remove duplicates
-        const usersMap = new Map();
-        
-        // Add users from name query
-        nameSnapshot.docs.forEach(doc => {
-          usersMap.set(doc.id, {
-            id: doc.id,
-            ...doc.data()
-          });
-        });
-        
-        // Add users from username query
-        usernameSnapshot.docs.forEach(doc => {
-          usersMap.set(doc.id, {
-            id: doc.id,
-            ...doc.data()
-          });
-        });
-        
-        // Convert map to array
-        setUsers(Array.from(usersMap.values()));
-      } catch (error) {
-        console.error('Error searching users:', error);
-      } finally {
-        setLoading(false);
+        // Get total count for "See all" logic
+        if (followingList.length > 0 && 'followingCount' in followingList[0]) {
+          setTotalCount(followingList[0].followingCount || 0);
+        } else {
+          setTotalCount(Math.max(maxDisplay, followingList.length));
+        }
+      } catch (err) {
+        console.error('Error fetching following:', err);
       }
     };
-    
-    searchUsers();
-  }, [debouncedSearchTerm]);
+
+    fetchFollowing();
+  }, [userId, maxDisplay]);
   
-  // Render search input and results
+  // Get the display username for the See More link
+  const displayUsername = username || (following.length > 0 ? following[0].username : '');
+  
   return (
-    <div className="searchContainer">
-      <input
-        type="text"
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        placeholder="Search users..."
-      />
-      
-      {loading && <div>Searching...</div>}
-      
-      {!loading && users.length > 0 && (
-        <div className="searchResults">
-          {users.map(user => (
-            <a href={\`/user/\${user.username}\`} key={user.id} className="searchResultItem">
-              {/* User search result display */}
-            </a>
-          ))}
+    <div className="space-y-4">
+      {following.map((user) => (
+        <div key={user.uid} className="flex items-center justify-between">
+          {/* User info */}
+          <Link href={\`/user/\${user.username}\`} className="flex items-center group flex-1 min-w-0 mr-2 overflow-hidden">
+            <div className="avatar">
+              {user.firstName.charAt(0)}{user.lastName.charAt(0)}
+            </div>
+            <div className="overflow-hidden max-w-[calc(100%-45px)]">
+              <div className="truncate">{user.firstName} {user.lastName}</div>
+              <div className="truncate">@{user.username}</div>
+            </div>
+          </Link>
+          
+          {/* Follow button */}
+          <FollowButton 
+            targetUserId={user.uid} 
+            targetUsername={user.username}
+            className="flex-shrink-0 min-w-[70px]"
+          />
         </div>
+      ))}
+      
+      {/* "See all" link when there are more to show */}
+      {displayUsername && totalCount > maxDisplay && (
+        <Link href={\`/user/\${displayUsername}/following\`} className="text-blue-600">
+          See all {totalCount} following →
+        </Link>
       )}
     </div>
   );
-}
+};
 \`\`\`
+
+### Follow Button Implementation
+
+\`\`\`tsx
+// Simplified FollowButton component
+const FollowButton = ({ targetUserId, targetUsername }) => {
+  const [currentUserId, setCurrentUserId] = useState(null);
+  const [isCurrentUserFollowing, setIsCurrentUserFollowing] = useState(false);
+  
+  // Check if current user is signed in and get their ID
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        setCurrentUserId(user.uid);
+        // Check if current user is following the target user
+        const following = await isFollowing(user.uid, targetUserId);
+        setIsCurrentUserFollowing(following);
+      }
+    });
+
+    return () => unsubscribe();
+  }, [targetUserId]);
+
+  // Follow/unfollow handler
+  const handleFollowAction = async () => {
+    if (!currentUserId) {
+      router.push('/login');
+      return;
+    }
+
+    try {
+      if (isCurrentUserFollowing) {
+        await unfollowUser(currentUserId, targetUserId);
+        setIsCurrentUserFollowing(false);
+      } else {
+        await followUser(currentUserId, targetUserId);
+        setIsCurrentUserFollowing(true);
+      }
+    } catch (error) {
+      console.error('Error with follow/unfollow action:', error);
+    }
+  };
+  
+  return (
+    <button 
+      onClick={handleFollowAction} 
+      className={isCurrentUserFollowing ? 'following-style' : 'follow-style'}
+    >
+      {isCurrentUserFollowing ? 'Following' : 'Follow'}
+    </button>
+  );
+};
+\`\`\`
+
+### Responsive Design Considerations
+
+The followers/following lists implement these key responsive features:
+1. **Proper text truncation**: Long usernames are truncated with ellipsis
+2. **Min-width on buttons**: Follow buttons maintain consistent size
+3. **Flexible containers**: Use of flexbox for proper alignment
+4. **Responsive spacing**: Different padding on mobile vs. desktop
+5. **Overflow handling**: Proper containment of overflowing text
+
+These considerations ensure a good user experience across all device sizes.
   `
 };
 

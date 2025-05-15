@@ -101,6 +101,20 @@ const NotificationBell = () => {
     return date.toLocaleDateString()
   }
 
+  // Get the appropriate link for different notification types
+  const getNotificationLink = (notification: Notification) => {
+    if (notification.type === 'follow') {
+      // For follow notifications, link to the user's profile
+      return `/user/${notification.fromUser.name.split(' ')[0]}`;
+    } else if (notification.articleSlug) {
+      // For article-related notifications (comments, likes, etc.)
+      return `/articles?slug=${notification.articleSlug}`;
+    } else {
+      // Default to notifications page
+      return '/notifications';
+    }
+  }
+
   return (
     <div className={styles.notificationContainer} ref={notificationRef}>
       <button className={styles.bellButton} onClick={handleToggle}>
@@ -129,7 +143,7 @@ const NotificationBell = () => {
             ) : (
               notifications.slice(0, 5).map((notification) => (
                 <Link 
-                  href={`/articles?slug=${notification.articleSlug}`} 
+                  href={getNotificationLink(notification)} 
                   key={notification.id}
                   className={`${styles.notificationItem} ${!notification.read ? styles.unread : ''}`}
                   onClick={() => handleNotificationClick(notification)}

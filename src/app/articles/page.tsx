@@ -135,7 +135,7 @@ function Article () {
       window.removeEventListener('resize', handleResize);
     };
   }, []);
-
+  
   return (
     <div className={styles['three-column-layout']}>
       {/* Background overlay for mobile */}
@@ -153,13 +153,13 @@ function Article () {
 
       {/* Mobile sidebar toggle button - only shown on mobile */}
       {windowWidth < 768 && (
-        <button 
+              <button
           className={styles['toggle-button']} 
           onClick={toggleSidebar}
           aria-label={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-        >
+              >
           {isSidebarCollapsed ? "☰" : "✕"}
-        </button>
+              </button>
       )}
 
       {/* CENTER COLUMN - Use the original RenderArticle component */}

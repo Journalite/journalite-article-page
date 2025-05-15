@@ -115,6 +115,23 @@ export default function NotificationsPage() {
     }
   }
 
+  // Get the appropriate link for different notification types
+  const getNotificationLink = (notification: Notification) => {
+    if (notification.type === 'follow') {
+      // For follow notifications, link to the user profile
+      // Extract username from the message or use the user ID
+      const usernameMatch = notification.message.match(/@([a-zA-Z0-9_]+)/);
+      const username = usernameMatch ? usernameMatch[1] : notification.fromUser.name.split(' ')[0];
+      return `/user/${username}`;
+    } else if (notification.articleSlug) {
+      // For article-related notifications (comments, likes, etc.)
+      return `/articles?slug=${notification.articleSlug}`;
+    } else {
+      // Default to notifications page
+      return '#';
+    }
+  }
+
   if (isLoading) {
     return (
       <div className={styles.container}>
@@ -224,7 +241,7 @@ export default function NotificationsPage() {
                 </div>
                 <div className={notificationStyles.notificationActions}>
                   <Link
-                    href={`/articles?slug=${notification.articleSlug}`}
+                    href={getNotificationLink(notification)}
                     className={notificationStyles.viewButton}
                     onClick={() => handleMarkAsRead(notification)}
                   >
