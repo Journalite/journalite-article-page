@@ -1196,6 +1196,7 @@ function UserManagement() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [showSearchResults, setShowSearchResults] = useState<boolean>(false);
   const [stats, setStats] = useState<UserStats>({
     total: 0,
     admins: 0,
@@ -1244,6 +1245,7 @@ function UserManagement() {
   useEffect(() => {
     if (!searchQuery.trim()) {
       setFilteredUsers(users);
+      setShowSearchResults(false);
     } else {
       const lowerQuery = searchQuery.toLowerCase();
       const filtered = users.filter(user => 
@@ -1252,6 +1254,7 @@ function UserManagement() {
         (user.username?.toLowerCase().includes(lowerQuery) || false)
       );
       setFilteredUsers(filtered);
+      setShowSearchResults(true);
     }
   }, [searchQuery, users]);
 
@@ -1298,8 +1301,55 @@ function UserManagement() {
     }
   };
 
-  if (loading) return <div>Loading users...</div>;
-  if (error) return <div>{error}</div>;
+  // Get initials for avatar
+  const getInitials = (name: string | undefined): string => {
+    if (!name) return '?';
+    return name
+      .split(' ')
+      .map(part => part.charAt(0))
+      .join('')
+      .toUpperCase()
+      .substring(0, 2);
+  };
+
+  // Get first letter for avatar coloring
+  const getFirstLetter = (name: string | undefined): string => {
+    if (!name) return '?';
+    return name.charAt(0).toUpperCase();
+  };
+
+  // Get avatar class based on user role
+  const getAvatarClass = (role: UserRole | undefined): string => {
+    switch (role) {
+      case 'admin':
+        return styles.adminAvatar;
+      case 'developer':
+        return styles.developerAvatar;
+      default:
+        return '';
+    }
+  };
+
+  // Get role style class
+  const getRoleClass = (role: UserRole | undefined): string => {
+    switch (role) {
+      case 'admin':
+        return styles.searchResultRoleAdmin;
+      case 'developer':
+        return styles.searchResultRoleDeveloper;
+      default:
+        return styles.searchResultRoleUser;
+    }
+  };
+
+  // Clear search
+  const clearSearch = () => {
+    setSearchQuery('');
+    setShowSearchResults(false);
+  };
+
+  if (loading) return <div className={styles.loading}><div className={styles.loadingSpinner}></div>Loading users...</div>;
+  if (error) return <div className={styles.errorMessage}>{error}</div>;
 
   return (
     <div className={styles.userManagementContainer}>
@@ -1325,55 +1375,135 @@ function UserManagement() {
       </div>
       
       <div className={styles.searchContainer}>
-        <input
-          type="text"
-          placeholder="Search users by name, email, or username..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className={styles.searchInput}
-        />
+        <div className={styles.searchInputWrapper}>
+          <input
+            type="text"
+            placeholder="Search users by name, email, or username..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className={styles.searchInput}
+          />
+          {searchQuery && (
+            <button 
+              onClick={clearSearch}
+              className={styles.clearSearchButton}
+              aria-label="Clear search"
+            >
+              ×
+            </button>
+          )}
+        </div>
       </div>
       
-      <div className={styles.usersTableContainer}>
-        <table className={styles.usersTable}>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Username</th>
-              <th>Role</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredUsers.length === 0 ? (
-              <tr>
-                <td colSpan={5} className={styles.noResults}>No users found</td>
-              </tr>
-            ) : (
-              filteredUsers.map(user => (
-                <tr key={user.id}>
-                  <td>{user.name || 'N/A'}</td>
-                  <td>{user.email || 'N/A'}</td>
-                  <td>{user.username || 'N/A'}</td>
-                  <td>{user.role || 'user'}</td>
-                  <td>
-                    <select
-                      value={user.role || 'user'}
-                      onChange={(e) => updateUserRole(user.id, e.target.value as UserRole)}
-                      className={styles.roleSelect}
-                    >
-                      <option value="user">User</option>
-                      <option value="developer">Developer</option>
-                      <option value="admin">Admin</option>
-                    </select>
-                  </td>
-                </tr>
-              ))
+      {showSearchResults ? (
+        <div className={styles.searchResultsContainer}>
+          <h3 className={styles.searchResultsTitle}>
+            Search Results ({filteredUsers.length})
+            {filteredUsers.length > 0 && (
+              <button 
+                className={styles.backToAllButton}
+                onClick={clearSearch}
+              >
+                Back to all users
+              </button>
             )}
-          </tbody>
-        </table>
-      </div>
+          </h3>
+          
+          {filteredUsers.length === 0 ? (
+            <div className={styles.noResults}>
+              No users found matching "{searchQuery}"
+            </div>
+          ) : (
+            <div className={styles.searchResults}>
+              {filteredUsers.map(user => (
+                <div key={user.id} className={styles.searchResultItem}>
+                  <div 
+                    className={`${styles.searchResultAvatar} ${getAvatarClass(user.role)}`}
+                    data-initial={getFirstLetter(user.name)}
+                  >
+                    {getInitials(user.name)}
+                  </div>
+                  <div className={styles.searchResultInfo}>
+                    <div className={styles.searchResultName}>
+                      {user.name || 'Unnamed User'}
+                    </div>
+                    <div className={styles.searchResultUsername}>
+                      {user.email || user.username || 'No contact info'}
+                    </div>
+                  </div>
+                  <div className={`${styles.searchResultRole} ${getRoleClass(user.role)}`}>
+                    {user.role || 'user'}
+                  </div>
+                  <select
+                    value={user.role || 'user'}
+                    onChange={(e) => updateUserRole(user.id, e.target.value as UserRole)}
+                    className={styles.roleSelect}
+                  >
+                    <option value="user">User</option>
+                    <option value="developer">Developer</option>
+                    <option value="admin">Admin</option>
+                  </select>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className={styles.usersTableContainer}>
+          <table className={styles.usersTable}>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Username</th>
+                <th>Role</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredUsers.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className={styles.noResults}>No users found</td>
+                </tr>
+              ) : (
+                filteredUsers.map(user => (
+                  <tr key={user.id}>
+                    <td>
+                      <div className={styles.userTableCell}>
+                        <span 
+                          className={`${styles.userAvatar} ${getAvatarClass(user.role)}`}
+                          data-initial={getFirstLetter(user.name)}
+                        >
+                          {getInitials(user.name)}
+                        </span>
+                        {user.name || 'N/A'}
+                      </div>
+                    </td>
+                    <td>{user.email || 'N/A'}</td>
+                    <td>{user.username || 'N/A'}</td>
+                    <td>
+                      <span className={`${styles.roleTag} ${getRoleClass(user.role)}`}>
+                        {user.role || 'user'}
+                      </span>
+                    </td>
+                    <td>
+                      <select
+                        value={user.role || 'user'}
+                        onChange={(e) => updateUserRole(user.id, e.target.value as UserRole)}
+                        className={styles.roleSelect}
+                      >
+                        <option value="user">User</option>
+                        <option value="developer">Developer</option>
+                        <option value="admin">Admin</option>
+                      </select>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }

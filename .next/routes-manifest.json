@@ -70,6 +70,12 @@
       "namedRegex": "^/create\\-article(?:/)?$"
     },
     {
+      "page": "/dev",
+      "regex": "^/dev(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dev(?:/)?$"
+    },
+    {
       "page": "/edit-article",
       "regex": "^/edit\\-article(?:/)?$",
       "routeKeys": {},
