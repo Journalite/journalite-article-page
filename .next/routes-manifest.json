@@ -47,6 +47,18 @@
       "namedRegex": "^/articles(?:/)?$"
     },
     {
+      "page": "/create-article",
+      "regex": "^/create\\-article(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/create\\-article(?:/)?$"
+    },
+    {
+      "page": "/edit-article",
+      "regex": "^/edit\\-article(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/edit\\-article(?:/)?$"
+    },
+    {
       "page": "/email-verified",
       "regex": "^/email\\-verified(?:/)?$",
       "routeKeys": {},
@@ -69,6 +81,18 @@
       "regex": "^/my\\-profile(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/my\\-profile(?:/)?$"
+    },
+    {
+      "page": "/my-thoughts",
+      "regex": "^/my\\-thoughts(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/my\\-thoughts(?:/)?$"
+    },
+    {
+      "page": "/notifications",
+      "regex": "^/notifications(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/notifications(?:/)?$"
     },
     {
       "page": "/profile-setup",

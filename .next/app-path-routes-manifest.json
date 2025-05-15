@@ -4,9 +4,13 @@
   "/page": "/",
   "/profile-setup/page": "/profile-setup",
   "/register/page": "/register",
-  "/articles/page": "/articles",
+  "/notifications/page": "/notifications",
+  "/create-article/page": "/create-article",
+  "/my-thoughts/page": "/my-thoughts",
   "/email-verified/page": "/email-verified",
+  "/edit-article/page": "/edit-article",
   "/login/page": "/login",
+  "/articles/page": "/articles",
   "/forgot-password/page": "/forgot-password",
   "/reset-password/page": "/reset-password"
 }

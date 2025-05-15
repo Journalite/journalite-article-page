@@ -313,6 +313,11 @@ export default function NotificationBell() {
 - **Draft visibility**: Prevented draft articles from appearing in public feeds
 - **Index creation**: Added composite indexes for complex Firestore queries
 - **Author verification**: Added checks to ensure only authors can view their drafts
+- **Next.js build errors**: Fixed Next.js 15.3.0 build issues:
+  - Fixed critical build error in edit-article page by moving viewport configuration from client component to a separate layout.tsx file
+  - Wrapped useSearchParams() in Suspense boundary to prevent CSR bailout errors
+  - Improved component structure to follow Next.js best practices
+  - Note: There are still viewport configuration warnings in other pages, but they don't prevent successful builds
 
 ## Setup and Installation - This is for Abdul and Hikmat, and Theo. 
 To set up this project locally:
@@ -341,4 +346,4 @@ To set up this project locally:
 4. Push to the branch: `git push origin feature/your-feature-name`
 5. Open a Pull Request
 
-Please ensure your code follows the existing coding patterns and includes appropriate tests. 
+Please make sure your code follows the existing coding patterns and includes appropriate tests. 

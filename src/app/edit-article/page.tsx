@@ -1,13 +1,14 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { onAuthStateChanged } from 'firebase/auth'
 import { auth } from '@/firebase/clientApp'
 import EditArticleForm from '@/components/EditArticleForm'
 import styles from '@/styles/home.module.css'
 
-export default function EditArticlePage() {
+// Component to safely use search params inside Suspense
+function EditArticleContent() {
   const params = useSearchParams()
   const articleId = params?.get('id') || ''
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -62,4 +63,13 @@ export default function EditArticlePage() {
   }
 
   return <EditArticleForm articleId={articleId} />
+}
+
+export default function EditArticlePage() {
+  // Wrap the component that uses useSearchParams in Suspense
+  return (
+    <Suspense fallback={<div className={styles.container}><div className={styles.loading}>Loading...</div></div>}>
+      <EditArticleContent />
+    </Suspense>
+  )
 } 
