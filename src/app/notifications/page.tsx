@@ -118,11 +118,17 @@ export default function NotificationsPage() {
   // Get the appropriate link for different notification types
   const getNotificationLink = (notification: Notification) => {
     if (notification.type === 'follow') {
-      // For follow notifications, link to the user profile
-      // Extract username from the message or use the user ID
+      // For follow notifications, link to the user profile using their username
+      if (notification.fromUser?.username) {
+        return `/user/${notification.fromUser.username}`;
+      }
+      // Fallback to extracting username from message if not available in fromUser
       const usernameMatch = notification.message.match(/@([a-zA-Z0-9_]+)/);
-      const username = usernameMatch ? usernameMatch[1] : notification.fromUser.name.split(' ')[0];
-      return `/user/${username}`;
+      if (usernameMatch) {
+        return `/user/${usernameMatch[1]}`;
+      }
+      // Default fallback
+      return '/notifications';
     } else if (notification.articleSlug) {
       // For article-related notifications (comments, likes, etc.)
       return `/articles?slug=${notification.articleSlug}`;

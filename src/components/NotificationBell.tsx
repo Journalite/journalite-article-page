@@ -104,8 +104,12 @@ const NotificationBell = () => {
   // Get the appropriate link for different notification types
   const getNotificationLink = (notification: Notification) => {
     if (notification.type === 'follow') {
-      // For follow notifications, link to the user's profile
-      return `/user/${notification.fromUser.name.split(' ')[0]}`;
+      // For follow notifications, link to the user's profile using the fromUser's username
+      if (notification.fromUser?.username) {
+        return `/user/${notification.fromUser.username}`;
+      }
+      // Fallback to notifications page if username is missing
+      return '/notifications';
     } else if (notification.articleSlug) {
       // For article-related notifications (comments, likes, etc.)
       return `/articles?slug=${notification.articleSlug}`;

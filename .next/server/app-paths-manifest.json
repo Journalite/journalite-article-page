@@ -1,9 +1,5 @@
 {
-  "/dev/page": "app/dev/page.js",
-  "/login/page": "app/login/page.js",
-  "/my-profile/page": "app/my-profile/page.js",
+  "/notifications/page": "app/notifications/page.js",
   "/page": "app/page.js",
-  "/user/[username]/followers/page": "app/user/[username]/followers/page.js",
-  "/user/[username]/following/page": "app/user/[username]/following/page.js",
   "/user/[username]/page": "app/user/[username]/page.js"
 }

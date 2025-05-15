@@ -26,6 +26,7 @@ export interface Notification {
     fromUser: {
         id: string;
         name: string;
+        username?: string; // Add username field for profile links
     };
     createdAt: Timestamp;
     articleSlug?: string; // Optional slug to link directly to the article
@@ -105,7 +106,8 @@ export async function createFollowNotification(
             message: `${followerName} (@${followerUsername}) started following you`,
             fromUser: {
                 id: followerId,
-                name: followerName
+                name: followerName,
+                username: followerUsername
             },
             createdAt: Timestamp.now()
         };
