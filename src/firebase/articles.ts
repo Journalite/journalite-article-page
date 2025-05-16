@@ -468,4 +468,35 @@ export async function deleteArticle(articleId: string) {
         console.error('Error deleting article:', error);
         throw error;
     }
+}
+
+// Get articles by tag
+export async function getArticlesByTag(tag: string) {
+    try {
+        const articlesRef = collection(db, 'articles');
+
+        // Query for articles that have the specified tag and are published
+        const q = query(
+            articlesRef,
+            where('tags', 'array-contains', tag),
+            where('status', '==', 'published'),
+            orderBy('createdAt', 'desc')
+        );
+
+        const querySnapshot = await getDocs(q);
+
+        const articles: Article[] = [];
+        querySnapshot.forEach((doc) => {
+            const articleData = doc.data() as Omit<Article, 'id'>;
+            articles.push({
+                id: doc.id,
+                ...articleData
+            });
+        });
+
+        return articles;
+    } catch (error) {
+        console.error('Error getting articles by tag:', error);
+        throw error;
+    }
 } 

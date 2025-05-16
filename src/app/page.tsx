@@ -364,7 +364,13 @@ export default function HomePage() {
                   {article.tags && article.tags.length > 0 && (
                     <div className={styles['article-tags']}>
                       {article.tags.map((tag, tagIndex) => (
-                        <span key={`${article.slug}-tag-${tagIndex}`} className={styles['tag']}>{tag}</span>
+                        <Link
+                          key={`${article.slug}-tag-${tagIndex}`}
+                          href={`/tag/${tag.toLowerCase()}`}
+                          className={styles['tag']}
+                        >
+                          #{tag}
+                        </Link>
                       ))}
                     </div>
                   )}

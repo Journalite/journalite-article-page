@@ -28,6 +28,14 @@
   "headers": [],
   "dynamicRoutes": [
     {
+      "page": "/tag/[tag]",
+      "regex": "^/tag/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPtag": "nxtPtag"
+      },
+      "namedRegex": "^/tag/(?<nxtPtag>[^/]+?)(?:/)?$"
+    },
+    {
       "page": "/user/[username]",
       "regex": "^/user/([^/]+?)(?:/)?$",
       "routeKeys": {

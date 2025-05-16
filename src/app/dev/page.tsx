@@ -1093,6 +1093,43 @@ Always follow accessibility best practices:
   `
 };
 
+const tagFeatureDoc: DocSection = {
+  id: 'tag-feature',
+  title: 'Tag Feature Integration',
+  content: `
+## Tag Feature Integration
+
+The application now supports a tag feature that allows users to categorize and filter articles based on tags. This feature enhances content discoverability and user engagement.
+
+### Key Components
+
+- **Tag Page**: A dedicated page for each tag that displays all articles associated with that tag.
+- **Clickable Tags**: Tags are now clickable links that redirect users to the respective tag page.
+
+### Implementation Details
+
+- **Firebase Query**: Articles are fetched from Firestore using a query that filters by the selected tag.
+- **UI Components**: The tag page and article components have been updated to support and display tags effectively.
+
+### Usage
+
+- Users can click on any tag in an article to view all related articles.
+- Developers can extend this feature by adding more tag-related functionalities, such as trending tags or tag-based notifications.
+
+### Example
+
+\`tsx
+// Example of fetching articles by tag
+import { getArticlesByTag } from '@/firebase/articles';
+
+const fetchArticles = async (tag: string) => {
+  const articles = await getArticlesByTag(tag);
+  console.log(articles);
+};
+\`
+  `
+};
+
 // Collection of all documentation sections
 const docSections: DocSection[] = [
   projectStructureDoc,
@@ -1101,7 +1138,8 @@ const docSections: DocSection[] = [
   userProfilesDoc,
   routingDoc,
   deploymentDoc,
-  bestPracticesDoc
+  bestPracticesDoc,
+  tagFeatureDoc
 ];
 
 // User Management Component

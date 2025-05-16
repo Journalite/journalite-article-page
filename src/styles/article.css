@@ -72,6 +72,8 @@
   padding: 0.35rem 0.75rem;
   border-radius: 9999px;
   transition: background-color 0.2s;
+  text-decoration: none;
+  display: inline-block;
 }
 
 .tag:hover {

@@ -159,9 +159,13 @@ const RenderArticle: React.FC<RenderArticleProps> = ({ article }) => {
           </div>
           <div className="article-tags">
             {article.tags.map(tag => (
-              <span key={tag} className="tag">
-                {tag}
-              </span>
+              <Link 
+                key={tag} 
+                href={`/tag/${tag.toLowerCase()}`}
+                className="tag"
+              >
+                #{tag}
+              </Link>
             ))}
           </div>
         </header>

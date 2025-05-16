@@ -370,6 +370,15 @@
     display: inline-block;
     color: #000000;
     font-size: 0.75rem;
+    text-decoration: none;
+    background-color: #f3f4f6;
+    padding: 0.25rem 0.65rem;
+    border-radius: 9999px;
+    transition: background-color 0.2s;
+  }
+  
+  .tag:hover {
+    background-color: #e5e7eb;
   }
   
   .reaction-bar {
@@ -2476,4 +2485,48 @@
     background-image: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
     background-size: 4px 4px;
     opacity: 0.3;
+  }
+
+  /* Tag Page Specific Styles */
+  .tag-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  }
+
+  .tag-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #111827;
+  }
+
+  .highlight {
+    color: #0066cc;
+  }
+
+  .tag-description {
+    background-color: #f9fafb;
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .back-link {
+    display: inline-block;
+    color: #0066cc;
+    text-decoration: none;
+    font-size: 0.95rem;
+    margin-top: 1.5rem;
+  }
+
+  .back-link:hover {
+    text-decoration: underline;
+  }
+
+  .no-results {
+    background-color: #f9fafb;
+    padding: 3rem 2rem;
+    text-align: center;
+    border-radius: 0.75rem;
+    margin: 2rem 0;
   }
