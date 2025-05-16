@@ -1,0 +1,148 @@
+.shortcutsContainer {
+  position: relative;
+}
+
+.shortcutsButton {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.2s;
+}
+
+.shortcutsButton:hover {
+  background-color: #edf2f7;
+  transform: translateY(-2px);
+}
+
+.shortcutsModal {
+  position: absolute;
+  top: 40px;
+  right: 0;
+  width: 450px;
+  max-height: 400px;
+  overflow-y: auto;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  border: 1px solid #e2e8f0;
+}
+
+.shortcutsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e2e8f0;
+  background-color: #f8fafc;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.shortcutsHeader h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #2d3748;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #718096;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+}
+
+.closeButton:hover {
+  background-color: #edf2f7;
+  color: #4a5568;
+}
+
+.shortcutsList {
+  padding: 8px 0;
+}
+
+.shortcutItem {
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.2s;
+  border-bottom: 1px solid #f7fafc;
+}
+
+.shortcutItem:hover {
+  background-color: #f8fafc;
+}
+
+.shortcutName {
+  width: 110px;
+  font-weight: 500;
+  color: #4a5568;
+}
+
+.shortcutKeys {
+  display: flex;
+  align-items: center;
+  width: 160px;
+}
+
+.keyboardKey {
+  background-color: #edf2f7;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 0.8rem;
+  color: #4a5568;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.keySeparator {
+  margin: 0 4px;
+  color: #718096;
+}
+
+.shortcutDescription {
+  flex: 1;
+  color: #718096;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 500px) {
+  .shortcutsModal {
+    width: 100%;
+    right: 0;
+  }
+  
+  .shortcutItem {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .shortcutName {
+    width: 100%;
+    margin-bottom: 4px;
+  }
+  
+  .shortcutKeys {
+    width: 100%;
+    margin-bottom: 4px;
+  }
+  
+  .shortcutDescription {
+    width: 100%;
+  }
+} 

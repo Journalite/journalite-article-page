@@ -61,10 +61,20 @@ const getExcerpt = (article: any) => {
     ? article.content[0].text 
     : article.excerpt || '';
   
+  // Strip HTML tags if present
+  const stripHtml = (html: string) => {
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+    return tempDiv.textContent || tempDiv.innerText || '';
+  };
+  
+  // Check if the content appears to be HTML
+  const cleanText = content.includes('<') && content.includes('>') ? stripHtml(content) : content;
+  
   // Limit to 150 characters and add ellipsis if needed
-  return content.length > 150 
-    ? content.substring(0, 150) + '...' 
-    : content;
+  return cleanText.length > 150 
+    ? cleanText.substring(0, 150) + '...' 
+    : cleanText;
 };
 
 export default function TagPageClient({ tag }: TagPageClientProps) {

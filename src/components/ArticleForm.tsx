@@ -1,11 +1,20 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createArticle } from '@/firebase/articles'
 import { auth } from '@/firebase/clientApp'
 import styles from '@/styles/ArticleForm.module.css'
+import { useEditor, EditorContent } from '@tiptap/react'
+import StarterKit from '@tiptap/starter-kit'
+import Heading from '@tiptap/extension-heading'
+import Bold from '@tiptap/extension-bold'
+import Italic from '@tiptap/extension-italic'
+import Code from '@tiptap/extension-code'
+import Image from '@tiptap/extension-image'
+import { Link as TiptapLink } from '@tiptap/extension-link'
+import KeyboardShortcutsHelp from './KeyboardShortcutsHelp'
 
 const ArticleForm = () => {
   const [title, setTitle] = useState('')
@@ -16,12 +25,192 @@ const ArticleForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
   const [bodyCharCount, setBodyCharCount] = useState(0)
+  const [showPasteOptions, setShowPasteOptions] = useState(false)
+  const [clipboardContent, setClipboardContent] = useState<string>('')
+  const pasteOptionsRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
+  const [isMac, setIsMac] = useState(false)
+  const [randomTip, setRandomTip] = useState('')
+
+  // Editor tips to show randomly
+  const editorTips = [
+    "Use Cmd+B (Mac) or Ctrl+B (Windows) for bold text",
+    "Press Cmd+K (Mac) or Ctrl+K (Windows) to insert a link",
+    "You can create headings with Cmd+Option+1-3 (Mac) or Ctrl+Alt+1-3 (Windows)",
+    "Use bullet lists with Cmd+Shift+8 (Mac) or Ctrl+Shift+8 (Windows)",
+    "Press Cmd+Shift+I (Mac) or Ctrl+Shift+I (Windows) to insert an image"
+  ]
+
+  // Initialize TipTap editor
+  const editor = useEditor({
+    extensions: [
+      StarterKit.configure({
+        heading: {
+          levels: [1, 2, 3]
+        },
+        // Explicitly disable these to avoid duplication with standalone extensions
+        bold: false,
+        italic: false,
+        code: false,
+      }),
+      Bold,
+      Italic,
+      Code,
+      Image,
+      TiptapLink.configure({
+        openOnClick: false,
+      }),
+    ],
+    content: '',
+    onUpdate: ({ editor }) => {
+      const html = editor.getHTML();
+      setBody(html);
+      // Count approximate characters (excluding HTML tags)
+      const textContent = editor.getText();
+      setBodyCharCount(textContent.length);
+    },
+    // Enable keyboard shortcuts
+    enableInputRules: true,
+    enablePasteRules: true,
+    // Fix SSR issue
+    immediatelyRender: false,
+  })
+  
+  // Helper function to set link
+  const setLink = useCallback(() => {
+    const url = window.prompt('URL');
+    if (url) {
+      editor?.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
+    }
+  }, [editor]);
+
+  // Helper function to add image
+  const addImage = useCallback(() => {
+    const url = window.prompt('Image URL');
+    if (url) {
+      editor?.chain().focus().setImage({ src: url }).run();
+    }
+  }, [editor]);
+
+  // Handle custom paste with formatting options
+  const handlePaste = useCallback(async (e: React.ClipboardEvent) => {
+    if (editor) {
+      // Prevent default paste behavior
+      e.preventDefault();
+      
+      // Get clipboard content in both HTML and plain text formats
+      const htmlContent = e.clipboardData.getData('text/html');
+      const textContent = e.clipboardData.getData('text/plain');
+      
+      // Store clipboard content - prefer HTML if available
+      if (htmlContent && htmlContent.trim()) {
+        setClipboardContent(htmlContent);
+      } else {
+        setClipboardContent(textContent);
+      }
+      
+      // Show paste options
+      setShowPasteOptions(true);
+    }
+  }, [editor]);
+
+  // Paste with formatting
+  const pasteWithFormatting = useCallback(() => {
+    if (editor && clipboardContent) {
+      // If HTML content is available, use it to preserve formatting
+      if (clipboardContent.includes('<')) {
+        // Insert HTML content
+        editor.commands.insertContent(clipboardContent);
+      } else {
+        // If only plain text, use it directly
+        editor.commands.insertContent(clipboardContent);
+      }
+      
+      // Hide paste options after pasting
+      setShowPasteOptions(false);
+    }
+  }, [editor, clipboardContent]);
+
+  // Paste as plain text
+  const pasteAsPlainText = useCallback(() => {
+    if (editor && clipboardContent) {
+      // Extract plain text from HTML or use plain text directly
+      let plainText = clipboardContent;
+      
+      // If content is HTML, create a temporary element to extract text
+      if (clipboardContent.startsWith('<')) {
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = clipboardContent;
+        plainText = tempDiv.textContent || tempDiv.innerText || '';
+      }
+      
+      // Insert as plain text
+      editor.commands.insertContent(plainText);
+      
+      // Hide paste options after pasting
+      setShowPasteOptions(false);
+    }
+  }, [editor, clipboardContent]);
+  
+  // Custom keyboard shortcut handler
+  const handleKeyDown = useCallback((event: React.KeyboardEvent) => {
+    // Check if user is on macOS (Command key) or other OS (Ctrl key)
+    const mainModifier = isMac ? event.metaKey : event.ctrlKey;
+    
+    // Image insertion: Cmd+Shift+I (Mac) or Ctrl+Shift+I (Windows/Linux)
+    if (mainModifier && event.shiftKey && event.key === 'I') {
+      event.preventDefault();
+      addImage();
+    }
+    
+    // Paste shortcuts when clipboard has content
+    if (showPasteOptions && clipboardContent) {
+      // Paste with formatting: Cmd+Shift+V (Mac) or Ctrl+Shift+V (Windows/Linux)
+      if (mainModifier && event.shiftKey && event.key === 'V') {
+        event.preventDefault();
+        pasteWithFormatting();
+      }
+      
+      // Paste as plain text: Cmd+Shift+X (Mac) or Ctrl+Shift+X (Windows/Linux)
+      if (mainModifier && event.shiftKey && event.key === 'X') {
+        event.preventDefault();
+        pasteAsPlainText();
+      }
+    }
+  }, [addImage, showPasteOptions, clipboardContent, pasteWithFormatting, pasteAsPlainText, isMac]);
+
+  // Close paste options when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (pasteOptionsRef.current && !pasteOptionsRef.current.contains(event.target as Node)) {
+        setShowPasteOptions(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   useEffect(() => {
-    // Update character count when body changes
-    setBodyCharCount(body.length);
-  }, [body]);
+    // Clean up editor on unmount
+    return () => {
+      editor?.destroy();
+    }
+  }, [editor]);
+
+  // Set the initial content and check OS platform after component mounts
+  useEffect(() => {
+    // Check if user is on macOS
+    if (typeof navigator !== 'undefined') {
+      setIsMac(navigator.platform.toUpperCase().indexOf('MAC') >= 0);
+    }
+    
+    // Generate a random tip on mount
+    const tipIndex = Math.floor(Math.random() * editorTips.length);
+    setRandomTip(editorTips[tipIndex]);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -75,17 +264,6 @@ const ArticleForm = () => {
       setIsSubmitting(false)
     }
   }
-
-  // Writing tips
-  const writingTips = [
-    "Use a clear, compelling title that captures interest",
-    "Break your content into smaller paragraphs for readability",
-    "Add relevant tags to help readers discover your article",
-    "Consider adding a cover image to make your article stand out"
-  ];
-
-  // Get a random tip to display
-  const randomTip = writingTips[Math.floor(Math.random() * writingTips.length)];
 
   return (
     <div className={styles.articleFormContainer}>
@@ -174,15 +352,124 @@ const ArticleForm = () => {
         
         <div className={styles.formGroup}>
           <label htmlFor="body" className={styles.formLabel}>Content</label>
-          <textarea
-            id="body"
-            value={body}
-            onChange={(e) => setBody(e.target.value)}
-            required
-            placeholder="Write your article content here. Provide valuable insights, share your experience, or tell a compelling story..."
-            className={styles.formTextarea}
-            rows={15}
+          
+          {/* Rich Text Editor Toolbar */}
+          <div className={styles.editorToolbar}>
+            <button 
+              type="button" 
+              onClick={() => editor?.chain().focus().toggleHeading({ level: 1 }).run()}
+              className={editor?.isActive('heading', { level: 1 }) ? styles.activeButton : styles.toolbarButton}
+              title={`Heading 1 (${isMac ? '⌘+Option+1' : 'Ctrl+Alt+1'})`}
+            >
+              H1
+            </button>
+            <button 
+              type="button" 
+              onClick={() => editor?.chain().focus().toggleHeading({ level: 2 }).run()}
+              className={editor?.isActive('heading', { level: 2 }) ? styles.activeButton : styles.toolbarButton}
+              title={`Heading 2 (${isMac ? '⌘+Option+2' : 'Ctrl+Alt+2'})`}
+            >
+              H2
+            </button>
+            <button 
+              type="button" 
+              onClick={() => editor?.chain().focus().toggleHeading({ level: 3 }).run()}
+              className={editor?.isActive('heading', { level: 3 }) ? styles.activeButton : styles.toolbarButton}
+              title={`Heading 3 (${isMac ? '⌘+Option+3' : 'Ctrl+Alt+3'})`}
+            >
+              H3
+            </button>
+            <button 
+              type="button" 
+              onClick={() => editor?.chain().focus().toggleBold().run()}
+              className={editor?.isActive('bold') ? styles.activeButton : styles.toolbarButton}
+              title={`Bold (${isMac ? '⌘+B' : 'Ctrl+B'})`}
+            >
+              Bold
+            </button>
+            <button 
+              type="button" 
+              onClick={() => editor?.chain().focus().toggleItalic().run()}
+              className={editor?.isActive('italic') ? styles.activeButton : styles.toolbarButton}
+              title={`Italic (${isMac ? '⌘+I' : 'Ctrl+I'})`}
+            >
+              Italic
+            </button>
+            <button 
+              type="button" 
+              onClick={() => editor?.chain().focus().toggleCode().run()}
+              className={editor?.isActive('code') ? styles.activeButton : styles.toolbarButton}
+              title={`Code (${isMac ? '⌘+E' : 'Ctrl+E'})`}
+            >
+              Code
+            </button>
+            <button 
+              type="button" 
+              onClick={setLink}
+              className={editor?.isActive('link') ? styles.activeButton : styles.toolbarButton}
+              title={`Link (${isMac ? '⌘+K' : 'Ctrl+K'})`}
+            >
+              Link
+            </button>
+            <button 
+              type="button" 
+              onClick={addImage}
+              className={styles.toolbarButton}
+              title={`Insert Image (${isMac ? '⌘+Shift+I' : 'Ctrl+Shift+I'})`}
+            >
+              Image
+            </button>
+            <button 
+              type="button" 
+              onClick={() => editor?.chain().focus().toggleBulletList().run()}
+              className={editor?.isActive('bulletList') ? styles.activeButton : styles.toolbarButton}
+              title={`Bullet List (${isMac ? '⌘+Shift+8' : 'Ctrl+Shift+8'})`}
+            >
+              Bullet List
+            </button>
+            <button 
+              type="button" 
+              onClick={() => editor?.chain().focus().toggleOrderedList().run()}
+              className={editor?.isActive('orderedList') ? styles.activeButton : styles.toolbarButton}
+              title={`Numbered List (${isMac ? '⌘+Shift+7' : 'Ctrl+Shift+7'})`}
+            >
+              Numbered List
+            </button>
+            
+            <div className={styles.toolbarSpacer}></div>
+            
+            <KeyboardShortcutsHelp />
+          </div>
+          
+          {/* TipTap Editor */}
+          <EditorContent 
+            editor={editor} 
+            className={styles.richTextEditor}
+            onKeyDown={handleKeyDown}
+            onPaste={handlePaste}
           />
+          
+          {/* Paste Options Popup */}
+          {showPasteOptions && (
+            <div ref={pasteOptionsRef} className={styles.pasteOptionsContainer}>
+              <div className={styles.pasteOptionsHeader}>Paste Options</div>
+              <button 
+                type="button" 
+                className={styles.pasteOptionButton}
+                onClick={pasteWithFormatting}
+              >
+                Keep Formatting ({isMac ? '⌘+Shift+V' : 'Ctrl+Shift+V'})
+              </button>
+              <button 
+                type="button" 
+                className={styles.pasteOptionButton}
+                onClick={pasteAsPlainText}
+              >
+                Paste as Plain Text ({isMac ? '⌘+Shift+X' : 'Ctrl+Shift+X'})
+              </button>
+            </div>
+          )}
+          
           <div className={styles.characterCount}>
             <span className={bodyCharCount > 3000 ? styles.characterWarning : ''}>
               {bodyCharCount} characters

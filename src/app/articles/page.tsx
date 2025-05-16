@@ -60,7 +60,19 @@ function Article () {
   const [tags, setTags] = useState<string[]>([])
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth)
+  const [windowWidth, setWindowWidth] = useState(0)
+  
+  // Initialize window width on client side
+  useEffect(() => {
+    setWindowWidth(window.innerWidth)
+    
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth)
+    }
+    
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
   
   // Check if user is authenticated
   useEffect(() => {
@@ -116,25 +128,6 @@ function Article () {
   const toggleSidebar = () => {
     setIsSidebarCollapsed(!isSidebarCollapsed)
   }
-
-  // Add resize listener for responsive behavior
-  useEffect(() => {
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth);
-      // Auto-collapse on small screens
-      if (window.innerWidth < 768) {
-        setIsSidebarCollapsed(true);
-      }
-    };
-
-    window.addEventListener('resize', handleResize);
-    // Initial check
-    handleResize();
-    
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
   
   return (
     <div className={styles['three-column-layout']}>

@@ -256,9 +256,20 @@ export default function HomePage() {
     }
     
     const text = content[0]?.text || '';
-    if (text.length <= maxLength) return text;
     
-    return text.substring(0, maxLength).trim() + '...';
+    // Handle HTML content by stripping tags
+    const stripHtml = (html: string) => {
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = html;
+      return tempDiv.textContent || tempDiv.innerText || '';
+    };
+    
+    // Strip HTML tags if the content appears to be HTML
+    const cleanText = text.includes('<') && text.includes('>') ? stripHtml(text) : text;
+    
+    if (cleanText.length <= maxLength) return cleanText;
+    
+    return cleanText.substring(0, maxLength).trim() + '...';
   };
 
   const toggleSidebar = () => {

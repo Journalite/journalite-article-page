@@ -177,12 +177,23 @@ export default function MyThoughtsPage() {
     })
   }
 
-  const getExcerpt = (body: string, maxLength = 150) => {
-    if (!body) return ''
-    if (body.length <= maxLength) return body
+  const getExcerpt = (text: string, maxLength = 120) => {
+    if (!text) return '';
     
-    return body.substring(0, maxLength).trim() + '...'
-  }
+    // Strip HTML tags if present
+    const stripHtml = (html: string) => {
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = html;
+      return tempDiv.textContent || tempDiv.innerText || '';
+    };
+    
+    // Check if the text appears to be HTML
+    const cleanText = text.includes('<') && text.includes('>') ? stripHtml(text) : text;
+    
+    if (cleanText.length <= maxLength) return cleanText;
+    
+    return cleanText.substring(0, maxLength).trim() + '...';
+  };
 
   if (isLoading) {
     return (

@@ -125,6 +125,170 @@
   font-style: italic;
 }
 
+/* Rich Text Editor Styles */
+.editorToolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  padding: 0.7rem;
+  margin-bottom: -1px;
+}
+
+.toolbarButton,
+.activeButton {
+  position: relative;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  background-color: white;
+  border: 1px solid #e2e8f0;
+}
+
+.toolbarButton:hover,
+.activeButton:hover {
+  background-color: #edf2f7;
+}
+
+.toolbarButton:hover::after,
+.activeButton:hover::after {
+  content: attr(title);
+  position: absolute;
+  bottom: -35px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #2d3748;
+  color: white;
+  padding: 5px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  z-index: 10;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.toolbarButton:hover::before,
+.activeButton:hover::before {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent #2d3748 transparent;
+  z-index: 10;
+}
+
+.activeButton {
+  background-color: #ebf4ff;
+  color: #4c51bf;
+  border-color: #c3dafe;
+}
+
+.richTextEditor {
+  border: 1px solid #e2e8f0;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  min-height: 350px;
+  padding: 1.2rem;
+  background-color: #fff;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+  overflow-y: auto;
+}
+
+.richTextEditor:focus-within {
+  outline: none;
+  border-color: #6c63ff;
+  box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.15);
+}
+
+/* TipTap Content Styles */
+.richTextEditor :global(.ProseMirror) {
+  outline: none;
+  min-height: 350px;
+}
+
+.richTextEditor :global(.ProseMirror p) {
+  margin-bottom: 1rem;
+  line-height: 1.7;
+}
+
+.richTextEditor :global(.ProseMirror h1) {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 1.5rem 0 1rem;
+  color: #2d3748;
+}
+
+.richTextEditor :global(.ProseMirror h2) {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 1.5rem 0 1rem;
+  color: #2d3748;
+}
+
+.richTextEditor :global(.ProseMirror h3) {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin: 1.2rem 0 0.8rem;
+  color: #2d3748;
+}
+
+.richTextEditor :global(.ProseMirror a) {
+  color: #5a67d8;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.richTextEditor :global(.ProseMirror strong) {
+  font-weight: 700;
+}
+
+.richTextEditor :global(.ProseMirror em) {
+  font-style: italic;
+}
+
+.richTextEditor :global(.ProseMirror img) {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 1rem 0;
+}
+
+.richTextEditor :global(.ProseMirror code) {
+  background-color: #f7fafc;
+  border-radius: 4px;
+  padding: 0.2rem 0.4rem;
+  font-family: monospace;
+  font-size: 0.9em;
+}
+
+.richTextEditor :global(.ProseMirror ul),
+.richTextEditor :global(.ProseMirror ol) {
+  padding-left: 1.5rem;
+  margin: 1rem 0;
+}
+
+.richTextEditor :global(.ProseMirror li) {
+  margin-bottom: 0.5rem;
+}
+
+.richTextEditor :global(.ProseMirror blockquote) {
+  border-left: 4px solid #e2e8f0;
+  padding-left: 1rem;
+  margin-left: 0;
+  margin-right: 0;
+  font-style: italic;
+  color: #4a5568;
+}
+
 .formActions {
   display: flex;
   justify-content: space-between;
@@ -316,5 +480,69 @@
   
   .submitButton, .cancelButton {
     width: 100%;
+  }
+}
+
+.toolbarSpacer {
+  flex: 1;
+  min-width: 10px;
+}
+
+/* Paste Options Styles */
+.pasteOptionsContainer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+  width: 300px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.pasteOptionsHeader {
+  padding: 12px 16px;
+  background-color: #f8fafc;
+  font-weight: 600;
+  color: #2d3748;
+  border-bottom: 1px solid #e2e8f0;
+  text-align: center;
+}
+
+.pasteOptionButton {
+  display: block;
+  width: 100%;
+  padding: 12px 16px;
+  text-align: left;
+  background: none;
+  border: none;
+  font-size: 0.95rem;
+  color: #4a5568;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  border-bottom: 1px solid #f7fafc;
+}
+
+.pasteOptionButton:last-child {
+  border-bottom: none;
+}
+
+.pasteOptionButton:hover {
+  background-color: #f8fafc;
+  color: #2d3748;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -45%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
   }
 } 
