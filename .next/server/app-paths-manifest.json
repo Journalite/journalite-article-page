@@ -1,22 +1,6 @@
 {
-  "/_not-found/page": "app/_not-found/page.js",
-  "/page": "app/page.js",
-  "/notifications/page": "app/notifications/page.js",
-  "/profile-setup/page": "app/profile-setup/page.js",
-  "/register/page": "app/register/page.js",
-  "/tag/[tag]/page": "app/tag/[tag]/page.js",
   "/[...firebase_auth]/page": "app/[...firebase_auth]/page.js",
-  "/dev/page": "app/dev/page.js",
-  "/create-article/page": "app/create-article/page.js",
-  "/my-thoughts/page": "app/my-thoughts/page.js",
-  "/articles/page": "app/articles/page.js",
-  "/email-verified/page": "app/email-verified/page.js",
-  "/forgot-password/page": "app/forgot-password/page.js",
-  "/edit-article/page": "app/edit-article/page.js",
   "/my-profile/page": "app/my-profile/page.js",
-  "/login/page": "app/login/page.js",
-  "/reset-password/page": "app/reset-password/page.js",
-  "/user/[username]/following/page": "app/user/[username]/following/page.js",
-  "/user/[username]/page": "app/user/[username]/page.js",
-  "/user/[username]/followers/page": "app/user/[username]/followers/page.js"
+  "/page": "app/page.js",
+  "/tag/[tag]/page": "app/tag/[tag]/page.js"
 }
