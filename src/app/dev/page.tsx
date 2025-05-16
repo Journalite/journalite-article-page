@@ -1110,11 +1110,14 @@ The application now supports a tag feature that allows users to categorize and f
 
 - **Firebase Query**: Articles are fetched from Firestore using a query that filters by the selected tag.
 - **UI Components**: The tag page and article components have been updated to support and display tags effectively.
+- **Static Generation**: Tag pages are statically generated at build time using \`generateStaticParams()\`.
+- **Scheduled Rebuilds**: The site is automatically rebuilt weekly to capture new tags created by users.
 
 ### Usage
 
 - Users can click on any tag in an article to view all related articles.
 - Developers can extend this feature by adding more tag-related functionalities, such as trending tags or tag-based notifications.
+- New tags created by users will be available after the next scheduled rebuild (weekly).
 
 ### Example
 
