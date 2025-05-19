@@ -149,6 +149,31 @@ export async function getUserProfile(uid: string): Promise<UserProfile | null> {
 }
 
 /**
+ * Gets a user's profile from Firestore based on their email
+ * @param email User's email address
+ * @returns A promise that resolves to the user's profile or null if not found
+ */
+export async function getUserProfileByEmail(email: string): Promise<UserProfile | null> {
+    if (!email) return null;
+    try {
+        const emailQuery = query(
+            collection(db, 'users'),
+            where('email', '==', email.toLowerCase()),
+            limit(1)
+        );
+        const querySnapshot = await getDocs(emailQuery);
+        if (!querySnapshot.empty) {
+            // Should only be one user with a unique email
+            return querySnapshot.docs[0].data() as UserProfile;
+        }
+        return null;
+    } catch (error) {
+        console.error('Error fetching user profile by email:', error);
+        throw error; // Re-throw to be handled by the caller
+    }
+}
+
+/**
  * Updates a user's bio
  * @param uid User's Firebase Auth UID
  * @param bio User's new bio

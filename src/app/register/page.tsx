@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { createUserWithEmailAndPassword, sendEmailVerification, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../../firebase/clientApp';
-import { createUserProfile, isUsernameTaken, getUserProfile } from '../../services/userService';
+import { createUserProfile, isUsernameTaken, getUserProfile, getUserProfileByEmail } from '../../services/userService';
 
 async function handleEmailSignUp(email: string, password: string) {
   try {
@@ -24,41 +24,30 @@ async function handleEmailSignUp(email: string, password: string) {
 async function handleGoogleSignUp(router: any) {
   const provider = new GoogleAuthProvider();
   try {
-    // Before attempting sign-in, we'll set up auth state change handling
-    let authInProgress = true;
-    let existingAccount = false;
-    
-    // Set up one-time auth state listener to detect if this is a sign-in to existing account
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user && authInProgress) {
-        authInProgress = false;
-        existingAccount = true;
-        unsubscribe();
-      }
-    });
-    
-    // Attempt sign-in with Google
     const result = await signInWithPopup(auth, provider);
-    authInProgress = false;
-    unsubscribe();
-    
     const user = result.user;
-    
-    // Check if this was an existing user that just signed in
-    if (existingAccount) {
-      console.log('User already exists, signed in with existing account');
-      return result;
+
+    if (!user.email) {
+      console.error('Google sign-up error: No email associated with the Google account.');
+      throw new Error('Google account has no email. Please try a different account or method.');
     }
-    
-    // If we got here, it's a new user - check for existing profile just to be safe
-    const existingProfile = await getUserProfile(user.uid);
-    
-    // If a profile exists, user has signed in before 
-    if (existingProfile) {
-      console.log('User already has a profile, proceeding to app');
-      return result;
+
+    // Check if a profile already exists for this email
+    const existingProfileByEmail = await getUserProfileByEmail(user.email);
+
+    if (existingProfileByEmail) {
+      // User already exists in Firestore (likely signed up via email/password or previously with Google)
+      // Simply log them in by redirecting to the homepage.
+      // Firebase Auth signInWithPopup would have already signed them into their Firebase Auth account.
+      console.log('Google sign-up attempt for existing email. Logging in instead.', user.email);
+      router.push('/');
+      return; // Stop further processing for new user creation
     }
-    
+
+    // If no profile by email, it's a truly new user to our system.
+    // Proceed to create a profile for them.
+    console.log('New user via Google sign-up, proceeding with profile creation.');
+
     // New user needs a profile - prepare data from Google account info
     const userDisplayName = user.displayName || '';
     const nameParts = userDisplayName.split(' ');
@@ -314,8 +303,8 @@ export default function Register() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-100 to-amber-100 flex font-sans">
       {/* Left content area */}
-      <div className="w-full md:w-1/2 flex flex-col justify-center p-8 md:p-12">
-        <div className="w-full max-w-md mx-auto">
+      <div className="w-full md:w-1/2 flex flex-col justify-center p-6 sm:p-8 md:p-12 overflow-y-auto">
+        <div className="w-full max-w-lg mx-auto">
           {/* Logo and tagline */}
           <div className="mb-10 text-center md:text-left">
             <h1 className="text-5xl md:text-6xl font-serif font-medium text-stone-800">Journalite</h1>
@@ -531,16 +520,12 @@ export default function Register() {
         </div>
       </div>
 
-      {/* Right image area - converted to background div */}
-      <div className="hidden md:block w-1/2 relative bg-cover bg-center bg-no-repeat" 
-        style={{ 
-          backgroundImage: 'url("/images/login.png")',
-          // A more subtle, perhaps illustrative background might be better if available
-        }}
-        aria-hidden="true"
+      {/* Right image area - Modified to be a background */}
+      <div 
+        className="hidden md:block md:w-1/2 bg-cover bg-center bg-[url('/images/auth-bg.jpg')]"
+        // style={{ backgroundImage: "url('/images/auth-bg.jpg')" }} // Alternative for specific path
       >
-        {/* Overlay for a slight gradient or darkening effect if needed */}
-        {/* <div className="absolute inset-0 bg-gradient-to-br from-black/10 to-black/30"></div> */}
+        {/* Content inside this div will overlay the background image if any. Usually empty for pure background. */}
       </div>
     </div>
   );
