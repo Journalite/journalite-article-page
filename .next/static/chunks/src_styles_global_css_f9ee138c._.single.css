@@ -1307,6 +1307,10 @@ h1, h2, h3, h4, h5, h6 {
   background-image: linear-gradient(to right, var(--tw-gradient-stops));
 }
 
+.bg-\[url\(\'\/images\/login\.png\'\)\] {
+  background-image: url("/images/login.png");
+}
+
 .from-amber-500 {
   --tw-gradient-from: #f59e0b var(--tw-gradient-from-position);
   --tw-gradient-to: #f59e0b00 var(--tw-gradient-to-position);
