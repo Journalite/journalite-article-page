@@ -120,38 +120,37 @@ export default function Login() {
 
   // Show validation styling only if field is touched
   const getInputClasses = (fieldName: string) => {
-    const baseClasses = "w-full px-5 py-3.5 bg-[#f8f5ec] border border-[#e8e1d1] rounded-md focus:outline-none focus:ring-1 focus:ring-slate-500";
+    const baseClasses = "w-full px-4 py-3 bg-white border border-neutral-300 rounded-lg shadow-sm transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-amber-500 focus:border-amber-500 placeholder-neutral-400 text-neutral-700";
     
     if (touchedFields[fieldName] && customValidation[fieldName]) {
-      return `${baseClasses} border-red-300 bg-red-50`;
+      return `${baseClasses} border-red-400 focus:ring-red-400 focus:border-red-400 bg-red-50 text-red-700 placeholder-red-400`;
     }
     
-    return baseClasses;
+    return `${baseClasses} hover:border-neutral-400`;
   };
 
   return (
-    <div className="min-h-screen bg-[#f5efe0] flex">
+    <div className="min-h-screen bg-gradient-to-br from-stone-100 to-amber-100 flex font-sans">
       {/* Left content area */}
-      <div className="w-full md:w-1/2 flex flex-col justify-center">
-        <div className="w-full max-w-sm mx-auto px-6 md:px-0 md:ml-20 xl:ml-32">
+      <div className="w-full md:w-1/2 flex flex-col justify-center p-8 md:p-12">
+        <div className="w-full max-w-md mx-auto">
           {/* Logo and tagline */}
-          <div className="mb-12">
-            <h1 className="text-5xl md:text-6xl font-serif font-normal text-slate-900">Journalite</h1>
-            <div className="mt-4 text-lg md:text-xl text-slate-800 italic">
-              <p>Every thought has a doorway.</p>
-              <p>This is yours.</p>
+          <div className="mb-10 text-center md:text-left">
+            <h1 className="text-5xl md:text-6xl font-serif font-medium text-stone-800">Journalite</h1>
+            <div className="mt-3 text-lg text-stone-600">
+              <p>Welcome back. Your thoughts await.</p>
             </div>
           </div>
 
           {/* Error message */}
           {error && (
-            <div className="mb-6 p-3 bg-red-50 text-red-700 text-sm rounded-md">
+            <div className="mb-6 p-3.5 bg-red-100 text-red-700 text-sm rounded-lg border border-red-200 transition-all duration-300 ease-in-out animate-fadeIn">
               {error}
             </div>
           )}
 
           {/* Login form */}
-          <form onSubmit={handleSubmit} className="space-y-4 w-full" noValidate>
+          <form onSubmit={handleSubmit} className="space-y-5 w-full" noValidate>
             <div>
               <input
                 id="email"
@@ -189,11 +188,17 @@ export default function Login() {
             <div>
               <button
                 type="submit"
-                className="w-full flex items-center justify-center px-4 py-3.5 bg-[#1a1a19] text-white rounded-md hover:bg-[#2a2a29] focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2"
+                className="w-full flex items-center justify-center px-4 py-3.5 bg-stone-800 text-white rounded-lg shadow-md hover:bg-stone-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 transition-all duration-200 ease-in-out transform hover:scale-[1.01] active:scale-[0.99] disabled:opacity-70 disabled:cursor-not-allowed"
                 disabled={isLoading}
               >
                 {isLoading ? (
-                  "Signing in..."
+                  <>
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Signing in...
+                  </>
                 ) : (
                   <div className="flex items-center">
                     <span className="mr-2">→</span>
@@ -203,20 +208,25 @@ export default function Login() {
               </button>
             </div>
 
-            <div className="flex justify-between pt-2 text-slate-700 text-sm">
-              <Link href="/forgot-password" className="hover:text-slate-900">
-                Forgot password?
-              </Link>
-              <Link href="/register" className="hover:text-slate-900">
-                Create account
+            <div className="flex justify-between items-center pt-1">
+                <Link href="/forgot-password" className="text-sm text-amber-600 hover:text-amber-700 hover:underline transition-colors duration-150">
+                    Forgot password?
+                </Link>
+            </div>
+
+            <div className="pt-2 text-center text-sm text-stone-600">
+              <span className="mr-1.5">Don't have an account?</span>
+              <Link href="/register" className="font-medium text-amber-600 hover:text-amber-700 hover:underline transition-colors duration-150">
+                Create one
               </Link>
             </div>
           </form>
 
           {/* Social login options */}
-          <div className="mt-8 space-y-3">
+          <div className="mt-8 space-y-4">
+             <p className="text-center text-xs text-stone-500">OR</p>
             <button 
-              className="w-full flex items-center justify-center px-4 py-3 border border-[#e8e1d1] bg-[#f8f5ec] rounded-md hover:bg-[#f0ece3] transition-colors"
+              className="w-full flex items-center justify-center px-4 py-3 border border-stone-300 bg-white text-stone-700 rounded-lg shadow-sm hover:bg-stone-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 transition-all duration-200 ease-in-out transform hover:scale-[1.01] active:scale-[0.99]"
               onClick={handleGoogleSignIn}
             >
               <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -257,15 +267,13 @@ export default function Login() {
       </div>
 
       {/* Right image area - converted to background div */}
-      <div className="hidden md:block w-1/2 relative bg-[#f5efe0]">
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat" 
-          style={{ 
-            backgroundImage: 'url("/images/login.png")',
-            pointerEvents: 'none'
-          }}
-          aria-hidden="true"
-        ></div>
+      <div className="hidden md:block w-1/2 relative bg-cover bg-center bg-no-repeat" 
+        style={{ 
+          backgroundImage: 'url("/images/login.png")',
+        }}
+        aria-hidden="true"
+      >
+        {/* <div className="absolute inset-0 bg-gradient-to-br from-black/10 to-black/30"></div> */}
       </div>
     </div>
   );

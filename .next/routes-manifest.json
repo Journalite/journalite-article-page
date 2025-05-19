@@ -158,6 +158,18 @@
       "regex": "^/reset\\-password(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/reset\\-password(?:/)?$"
+    },
+    {
+      "page": "/select-interests",
+      "regex": "^/select\\-interests(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/select\\-interests(?:/)?$"
+    },
+    {
+      "page": "/settings",
+      "regex": "^/settings(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/settings(?:/)?$"
     }
   ],
   "dataRoutes": [],

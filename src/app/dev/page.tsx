@@ -200,6 +200,113 @@ const fetchUserArticles = async (userId) => {
   `
 };
 
+const userOnboardingImprovementsDoc: DocSection = {
+  id: 'user-onboarding-improvements',
+  title: 'User Onboarding Flow & Interest Selection',
+  content: `
+## User Onboarding Flow & Interest Selection
+
+The user onboarding process has been enhanced to include an interest selection step, aiming to personalize the user\\'s initial experience. This is a new area and is open to future tweaks and improvements.
+
+### Onboarding Steps:
+
+1.  **Registration (\`/register\`):**
+    *   Users can sign up via Email/Password or Google.
+    *   **Email/Password:** Upon successful form submission and profile data creation (\`firstName\`, \`lastName\`, \`username\`, \`email\`), users are redirected to \`/select-interests\`. Email verification is still sent but is a parallel step.
+    *   **Google Sign-up:**
+        *   If a new user\\'s Google email can be used to form an available username, their basic profile is created, and they are redirected to \`/select-interests\`.
+        *   If the auto-generated username is taken, a temporary profile is created, and the user is redirected to \`/profile-setup\` to choose a username. Upon completion, they are then redirected to \`/select-interests\`.
+
+2.  **Profile Setup (\`/profile-setup\`):**
+    *   This page is primarily for users (especially new Google sign-ups with clashing usernames) to set or confirm their \`firstName\`, \`lastName\`, and \`username\`.
+    *   Their \`email\` is pre-filled.
+    *   Upon successful submission, the user profile is updated/created in Firestore, and the user is redirected to \`/select-interests\`.
+
+3.  **Interest Selection (\`/select-interests\`):**
+    *   Accessible at \`/select-interests\`.
+    *   Users are prompted to select a minimum number of interests (e.g., 3) from a predefined list.
+    *   Selected interests are saved to the user\\'s profile in Firestore via the \`updateUserInterests\` function in \`userService.ts\`. The \`UserProfile\` interface now includes an \`interests?: string[]\` field.
+    *   After submitting interests, users are redirected to the homepage (\`/\`).
+
+### Key Files & Logic:
+
+*   **\`src/app/register/page.tsx\`**: Handles initial registration and redirection logic.
+*   **\`src/app/profile-setup/page.tsx\`**: Handles user profile finalization.
+*   **\`src/app/select-interests/page.tsx\`**: New page for interest selection UI and logic.
+*   **\`src/services/userService.ts\`**:
+    *   \`UserProfile\` interface updated with \`interests\`.
+    *   \`updateUserInterests(uid, interests)\` function added.
+*   **Redirection Flow:** Carefully orchestrated to guide new users through profile creation/confirmation and then interest selection before landing on the main application.
+
+### Future Considerations:
+
+*   Making the list of interests dynamic (fetched from Firestore).
+*   Allowing users to skip interest selection.
+*   Enabling users to edit their interests later (e.g., in their profile settings).
+*   Refining the email verification step in relation to the new flow.
+  `
+};
+
+const authStylingEnhancementsDoc: DocSection = {
+  id: 'auth-styling-enhancements',
+  title: 'Authentication Pages UI/UX Enhancements',
+  content: `
+## Authentication Pages UI/UX Enhancements
+
+Significant UI/UX improvements have been implemented across all authentication and user onboarding pages (\`/login\`, \`/register\`, \`/profile-setup\`, \`/select-interests\`). The goal was to create a more modern, cohesive, and engaging user experience. This area is open to future design iterations and animation refinements.
+
+### Key Enhancements:
+
+1.  **Consistent Design Language (Tailwind CSS):**
+    *   All pages now utilize a unified design language built with Tailwind CSS.
+    *   The previous CSS module for interest selection (\`src/styles/selectInterests.module.css\`) has been removed, and its styles migrated to Tailwind classes within the component.
+    *   **Shared Styles:**
+        *   **Background:** A subtle gradient (\`bg-gradient-to-br from-stone-100 to-amber-100\`) is used for page backgrounds.
+        *   **Typography:** Consistent \`font-sans\` with updated text colors (variants of \`text-stone-xxx\`) for a softer look.
+        *   **Layout:** Form-based pages (\`login\`, \`register\`) use a two-column layout (form on left, static image on right). Profile setup and interest selection use centered card layouts for focus.
+
+2.  **Improved Form Elements:**
+    *   **Input Fields:**
+        *   White background, neutral borders, rounded corners (\`rounded-lg\`), and subtle shadows (\`shadow-sm\`).
+        *   Clear focus states with an amber ring (\`focus:ring-amber-500 focus:border-amber-500\`).
+        *   Distinct validation state styling (e.g., red for errors, green for username availability) with appropriate background and border colors.
+        *   Hover effects on default input state.
+    *   **Buttons (Submit & Social Login):**
+        *   Rounded corners (\`rounded-lg\`) and slight shadows (\`shadow-md\`).
+        *   Smooth transitions (\`transition-all duration-200 ease-in-out\`).
+        *   Hover effects: Darker background for primary buttons, lighter for secondary/social buttons.
+        *   Subtle scale transform on hover (\`hover:scale-[1.01]\`) and active (\`active:scale-[0.99]\`) states for tactile feedback.
+        *   **Loading State:** Submit buttons now display an SVG spinner animation and loading text (e.g., \\"Creating your account...\\") when \`isLoading\` or \`isSubmitting\` is true, maintaining button dimensions.
+        *   **Links:** Styled with an accent color (amber) and underline on hover for better visibility.
+
+3.  **Interest Selection Page (\`/select-interests\`):**
+    *   **Interest Buttons:**
+        *   Pill-shaped, responsive buttons.
+        *   Clear visual distinction between selected (amber background, white text, scaled up) and unselected (white background, stone text/border) states.
+        *   Interactive hover and active state animations.
+    *   **Layout:** Centered, responsive design with clear instructions.
+
+4.  **Messages (Error, Success, Info):**
+    *   Styled with distinct background colors (light red, green, sky blue), borders, and rounded corners.
+    *   A fade-in animation (\`animate-fadeIn\`) is applied for smoother appearance (requires \`fadeIn\` keyframes in global CSS).
+
+5.  **Loading States:**
+    *   Page-level loading (e.g., on \`profile-setup\` and \`select-interests\` while checking auth state) now uses a consistent, centered amber spinner.
+
+### Animation Details:
+
+*   **CSS Transitions:** Utilized for smooth changes in \`background-color\`, \`border-color\`, \`transform\` (scale), etc.
+*   **SVG Spinners:** Inline SVG used for loading states in buttons.
+*   **\`animate-fadeIn\`:** A custom keyframe animation for message pop-ups (to be defined in \`globals.css\`).
+
+### Future Tweaks:
+
+*   More sophisticated page transition animations.
+*   Micro-interactions on form validation.
+*   Further refinement of the right-hand image/graphic on login/register pages.
+  `
+};
+
 const articleSystemDoc: DocSection = {
   id: 'article-system',
   title: 'Article System',
@@ -1137,6 +1244,8 @@ const fetchArticles = async (tag: string) => {
 const docSections: DocSection[] = [
   projectStructureDoc,
   firebaseLogicDoc,
+  userOnboardingImprovementsDoc,
+  authStylingEnhancementsDoc,
   articleSystemDoc,
   userProfilesDoc,
   routingDoc,

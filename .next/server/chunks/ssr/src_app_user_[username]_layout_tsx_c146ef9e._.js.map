@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 7, "column": 0}, "map": {"version":3,"sources":["file:///Users/sirabdisalam/journalite-article-page/src/app/user/%5Busername%5D/layout.tsx"],"sourcesContent":["import { Metadata, Viewport } from 'next'\n\n// Export metadata for better SEO\nexport const metadata: Metadata = {\n  title: 'User Profile | Journalite',\n  description: 'View user profile and articles',\n}\n\n// Export viewport configuration\nexport const viewport: Viewport = {\n  width: 'device-width',\n  initialScale: 1,\n}\n\nexport default function UserLayout({\n  children,\n}: {\n  children: React.ReactNode\n}) {\n  return (\n    <>\n      {children}\n    </>\n  )\n} "],"names":[],"mappings":";;;;;;;AAGO,MAAM,WAAqB;IAChC,OAAO;IACP,aAAa;AACf;AAGO,MAAM,WAAqB;IAChC,OAAO;IACP,cAAc;AAChB;AAEe,SAAS,WAAW,EACjC,QAAQ,EAGT;IACC,qBACE;kBACG;;AAGP","debugId":null}}]
-}

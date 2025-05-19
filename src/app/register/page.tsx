@@ -21,7 +21,7 @@ async function handleEmailSignUp(email: string, password: string) {
   }
 }
 
-async function handleGoogleSignUp() {
+async function handleGoogleSignUp(router: any) {
   const provider = new GoogleAuthProvider();
   try {
     // Before attempting sign-in, we'll set up auth state change handling
@@ -79,6 +79,7 @@ async function handleGoogleSignUp() {
         username: emailUsername,
         email: user.email || ''
       });
+      router.push('/select-interests');
     } else {
       // Username is taken, we'll let the user choose a new one in the profile setup page
       // But we still create a temporary profile with a random suffix
@@ -89,10 +90,10 @@ async function handleGoogleSignUp() {
         username: `${emailUsername}${randomSuffix}`,
         email: user.email || ''
       });
+      router.push('/profile-setup');
     }
     
     console.log('Google sign-up successful', user);
-    return result;
   } catch (error: any) {
     // Check specific Firebase error codes
     if (error.code === 'auth/account-exists-with-different-credential') {
@@ -241,54 +242,54 @@ export default function Register() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
-    if (!validateForm()) return;
-    
-    setIsLoading(true);
     setError('');
-    
+    setIsLoading(true);
+
+    if (!validateForm()) {
+      setIsLoading(false);
+      return;
+    }
+
+    if (usernameAvailable === false) {
+      setCustomValidation({ ...customValidation, username: 'This username is already taken.' });
+      setIsLoading(false);
+      return;
+    }
+
     try {
-      // First, check if the username is available before trying to create auth account
-      const isUsernameAvailable = !(await isUsernameTaken(username));
-      
-      if (!isUsernameAvailable) {
-        setCustomValidation({ ...customValidation, username: 'This username is already taken' });
-        throw new Error('Username is already taken');
-      }
-      
-      // Create the authentication account
       const userCredential = await handleEmailSignUp(email, password);
       
-      // Create the user profile in Firestore
-      await createUserProfile(userCredential.user.uid, {
-        firstName,
-        lastName,
-        username,
-        email
-      });
-      
-      // Redirect to login page on successful registration
-      router.push('/login');
-    } catch (err: unknown) {
+      if (userCredential && userCredential.user) {
+        await createUserProfile(userCredential.user.uid, { 
+          firstName, 
+          lastName, 
+          username, 
+          email 
+        });
+        router.push('/select-interests');
+      } else {
+        setError('Registration failed. Please try again.');
+      }
+    } catch (error: any) {
       let errorMessage = 'Failed to create account';
-      if (err instanceof Error) {
+      if (error instanceof Error) {
         // Handle specific Firebase errors
-        if (err.message.includes('email-already-in-use')) {
+        if (error.message.includes('email-already-in-use')) {
           errorMessage = 'This email is already registered. Please use a different email or sign in.';
           setCustomValidation({ ...customValidation, email: 'This email is already registered' });
-        } else if (err.message.includes('invalid-email')) {
+        } else if (error.message.includes('invalid-email')) {
           errorMessage = 'Please enter a valid email address';
           setCustomValidation({ ...customValidation, email: 'Please enter a valid email address' });
-        } else if (err.message.includes('weak-password')) {
+        } else if (error.message.includes('weak-password')) {
           errorMessage = 'Password is too weak. Please use at least 6 characters.';
           setCustomValidation({ ...customValidation, password: 'Password is too weak' });
-        } else if (err.message.includes('Username is already taken')) {
+        } else if (error.message.includes('Username is already taken')) {
           errorMessage = 'This username is already taken. Please choose a different username.';
           setCustomValidation({ ...customValidation, username: 'This username is already taken' });
         }
       }
       setError(errorMessage);
-      console.error(err);
+      console.error(error);
     } finally {
       setIsLoading(false);
     }
@@ -296,43 +297,42 @@ export default function Register() {
 
   // Show validation styling only if field is touched
   const getInputClasses = (fieldName: string) => {
-    const baseClasses = "w-full px-5 py-3.5 bg-[#f8f5ec] border border-[#e8e1d1] rounded-md focus:outline-none focus:ring-1 focus:ring-slate-500";
+    const baseClasses = "w-full px-4 py-3 bg-white border border-neutral-300 rounded-lg shadow-sm transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-amber-500 focus:border-amber-500 placeholder-neutral-400 text-neutral-700";
     
     if (touchedFields[fieldName] && customValidation[fieldName]) {
-      return `${baseClasses} border-red-300 bg-red-50`;
+      return `${baseClasses} border-red-400 focus:ring-red-400 focus:border-red-400 bg-red-50 text-red-700 placeholder-red-400`;
     }
     
     // Add green border for valid username
     if (fieldName === 'username' && username.length >= 2 && usernameAvailable === true) {
-      return `${baseClasses} border-green-300 bg-green-50`;
+      return `${baseClasses} border-green-400 focus:ring-green-400 focus:border-green-400 bg-green-50 text-green-700 placeholder-green-400`;
     }
     
-    return baseClasses;
+    return `${baseClasses} hover:border-neutral-400`;
   };
 
   return (
-    <div className="min-h-screen bg-[#f5efe0] flex">
+    <div className="min-h-screen bg-gradient-to-br from-stone-100 to-amber-100 flex font-sans">
       {/* Left content area */}
-      <div className="w-full md:w-1/2 flex flex-col justify-center">
-        <div className="w-full max-w-sm mx-auto px-6 md:px-0 md:ml-20 xl:ml-32">
+      <div className="w-full md:w-1/2 flex flex-col justify-center p-8 md:p-12">
+        <div className="w-full max-w-md mx-auto">
           {/* Logo and tagline */}
-          <div className="mb-12">
-            <h1 className="text-5xl md:text-6xl font-serif font-normal text-slate-900">Journalite</h1>
-            <div className="mt-4 text-lg md:text-xl text-slate-800 italic">
-              <p>Every thought has a doorway.</p>
-              <p>This is yours.</p>
+          <div className="mb-10 text-center md:text-left">
+            <h1 className="text-5xl md:text-6xl font-serif font-medium text-stone-800">Journalite</h1>
+            <div className="mt-3 text-lg text-stone-600">
+              <p>Every thought has a doorway. This is yours.</p>
             </div>
           </div>
 
           {/* Error message */}
           {error && (
-            <div className="mb-6 p-3 bg-red-50 text-red-700 text-sm rounded-md">
+            <div className="mb-6 p-3.5 bg-red-100 text-red-700 text-sm rounded-lg border border-red-200 transition-all duration-300 ease-in-out animate-fadeIn">
               {error}
             </div>
           )}
 
           {/* Registration form */}
-          <form onSubmit={handleSubmit} className="space-y-4 w-full" noValidate>
+          <form onSubmit={handleSubmit} className="space-y-5 w-full" noValidate>
             <div className="flex gap-4">
               <div className="w-1/2">
                 <input
@@ -458,11 +458,17 @@ export default function Register() {
             <div>
               <button
                 type="submit"
-                className="w-full flex items-center justify-center px-4 py-3.5 bg-[#1a1a19] text-white rounded-md hover:bg-[#2a2a29] focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2"
+                className="w-full flex items-center justify-center px-4 py-3.5 bg-stone-800 text-white rounded-lg shadow-md hover:bg-stone-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 transition-all duration-200 ease-in-out transform hover:scale-[1.01] active:scale-[0.99] disabled:opacity-70 disabled:cursor-not-allowed"
                 disabled={isLoading}
               >
                 {isLoading ? (
-                  "Creating your account..."
+                  <>
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Creating your account...
+                  </>
                 ) : (
                   <div className="flex items-center">
                     <span className="mr-2">→</span>
@@ -472,24 +478,24 @@ export default function Register() {
               </button>
             </div>
 
-            <div className="flex justify-center pt-2 text-slate-700 text-sm">
-              <span className="mr-2">Already have an account?</span>
-              <Link href="/login" className="hover:text-slate-900">
+            <div className="pt-2 text-center text-sm text-stone-600">
+              <span className="mr-1.5">Already have an account?</span>
+              <Link href="/login" className="font-medium text-amber-600 hover:text-amber-700 hover:underline transition-colors duration-150">
                 Sign in
               </Link>
             </div>
           </form>
 
           {/* Social login options */}
-          <div className="mt-8 space-y-3">
+          <div className="mt-8 space-y-4">
+            <p className="text-center text-xs text-stone-500">OR</p>
             <button 
-              className="w-full flex items-center justify-center px-4 py-3 border border-[#e8e1d1] bg-[#f8f5ec] rounded-md hover:bg-[#f0ece3] transition-colors"
+              className="w-full flex items-center justify-center px-4 py-3 border border-stone-300 bg-white text-stone-700 rounded-lg shadow-sm hover:bg-stone-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 transition-all duration-200 ease-in-out transform hover:scale-[1.01] active:scale-[0.99]"
               onClick={async () => {
                 try {
                   setIsLoading(true);
                   setError('');
-                  await handleGoogleSignUp();
-                  router.push('/profile-setup');
+                  await handleGoogleSignUp(router);
                 } catch (err: any) {
                   console.error('Google sign-up error:', err);
                   
@@ -526,15 +532,15 @@ export default function Register() {
       </div>
 
       {/* Right image area - converted to background div */}
-      <div className="hidden md:block w-1/2 relative bg-[#f5efe0]">
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat" 
-          style={{ 
-            backgroundImage: 'url("/images/login.png")',
-            pointerEvents: 'none'
-          }}
-          aria-hidden="true"
-        ></div>
+      <div className="hidden md:block w-1/2 relative bg-cover bg-center bg-no-repeat" 
+        style={{ 
+          backgroundImage: 'url("/images/login.png")',
+          // A more subtle, perhaps illustrative background might be better if available
+        }}
+        aria-hidden="true"
+      >
+        {/* Overlay for a slight gradient or darkening effect if needed */}
+        {/* <div className="absolute inset-0 bg-gradient-to-br from-black/10 to-black/30"></div> */}
       </div>
     </div>
   );

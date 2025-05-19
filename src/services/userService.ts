@@ -11,9 +11,10 @@ import {
     arrayUnion,
     arrayRemove,
     increment,
-    limit
+    limit,
+    deleteDoc
 } from 'firebase/firestore';
-import { updateProfile } from 'firebase/auth';
+import { updateProfile, deleteUser as deleteFirebaseAuthUser } from 'firebase/auth';
 import { auth, db } from '../firebase/clientApp';
 import { createFollowNotification } from '../firebase/notifications';
 
@@ -29,6 +30,7 @@ export interface UserProfile {
     followers?: string[];
     followersCount?: number;
     followingCount?: number;
+    interests?: string[];
 }
 
 /**
@@ -160,6 +162,25 @@ export async function updateUserBio(uid: string, bio: string): Promise<void> {
         });
     } catch (error) {
         console.error('Error updating user bio:', error);
+        throw error;
+    }
+}
+
+/**
+ * Updates a user's selected interests
+ * @param uid User's Firebase Auth UID
+ * @param interests Array of selected interests
+ * @returns A promise that resolves when the interests are updated
+ */
+export async function updateUserInterests(uid: string, interests: string[]): Promise<void> {
+    try {
+        const userRef = doc(db, 'users', uid);
+        await updateDoc(userRef, {
+            interests
+        });
+        console.log(`Interests updated for user ${uid}:`, interests);
+    } catch (error) {
+        console.error('Error updating user interests:', error);
         throw error;
     }
 }
@@ -387,5 +408,47 @@ export async function getFollowers(uid: string, maxLimit = 50): Promise<UserProf
     } catch (error) {
         console.error('Error getting followers list:', error);
         throw error;
+    }
+}
+
+/**
+ * Deletes a user's account from Firebase Authentication and their profile from Firestore.
+ * IMPORTANT: Deleting a user from Firebase Auth requires recent sign-in. 
+ * If this operation fails due to 'auth/requires-recent-login', 
+ * the client-side must handle re-authentication before retrying.
+ * @param uid User's Firebase Auth UID
+ * @returns A promise that resolves when the account and profile are deleted.
+ */
+export async function deleteUserAccount(uid: string): Promise<void> {
+    try {
+        // 1. Delete user profile from Firestore
+        const userProfileRef = doc(db, 'users', uid);
+        await deleteDoc(userProfileRef);
+        console.log(`User profile for UID ${uid} deleted from Firestore.`);
+
+        // 2. Delete user from Firebase Authentication
+        // This requires the current user to be the one being deleted.
+        // And the user must have signed in recently.
+        const currentUser = auth.currentUser;
+        if (currentUser && currentUser.uid === uid) {
+            await deleteFirebaseAuthUser(currentUser);
+            console.log(`User account for UID ${uid} deleted from Firebase Authentication.`);
+        } else if (!currentUser) {
+            console.error('No current user authenticated. Cannot delete Firebase Auth user.');
+            throw new Error('Authentication required to delete account.');
+        } else {
+            // This case (currentUser.uid !== uid) should ideally not happen if the function
+            // is called correctly from the client for the logged-in user.
+            console.error('Current authenticated user does not match UID to be deleted.');
+            throw new Error('Mismatch between authenticated user and account to be deleted.');
+        }
+
+    } catch (error: any) {
+        console.error('Error deleting user account:', error);
+        // Specific check for re-authentication requirement
+        if (error.code === 'auth/requires-recent-login') {
+            throw new Error('This operation is sensitive and requires recent authentication. Please sign out and sign back in, then try again.');
+        }
+        throw new Error('Failed to delete user account. ' + error.message);
     }
 } 
