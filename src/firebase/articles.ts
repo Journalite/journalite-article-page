@@ -1,4 +1,4 @@
-import { collection, addDoc, getDocs, getDoc, doc, query, orderBy, Timestamp, where, DocumentData, DocumentSnapshot, deleteDoc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
+import { collection, addDoc, getDocs, getDoc, doc, query, orderBy, Timestamp, where, DocumentData, DocumentSnapshot, deleteDoc, updateDoc, arrayUnion, arrayRemove, limit as firestoreLimit, QueryConstraint } from 'firebase/firestore';
 import { db, auth } from './clientApp';
 import { createCommentNotification } from './notifications';
 
@@ -8,12 +8,18 @@ export interface Article {
     title: string;
     body: string;
     createdAt: Timestamp;
+    updatedAt?: Timestamp;
     authorId: string;
     authorName: string;
-    tags: string[];
-    coverImage?: string;
+    tags?: string[];
+    coverImage?: string | null;
     slug?: string;
     status?: 'published' | 'drafts';
+    likes?: string[];
+    excerpt?: string;
+    viewCount?: number;
+    reposts?: string[];
+    comments?: any[];
 }
 
 // Comment interfaces for Firestore
@@ -37,41 +43,42 @@ export interface CommentReply {
     likes: string[];
 }
 
-// Get all articles from Firestore, ordered by createdAt desc
-export async function getArticles(includeDrafts = false) {
+// Get articles from Firestore, ordered by createdAt desc, with optional limit and draft inclusion
+export async function getArticles(options: { limit?: number; includeDrafts?: boolean } = {}) {
+    const { limit, includeDrafts = false } = options;
+    console.log('getArticles called with limit:', limit);
     try {
         const articlesRef = collection(db, 'articles');
-        let q;
+        const queryConstraints = [];
 
-        if (includeDrafts) {
-            // Return all articles regardless of status
-            q = query(articlesRef, orderBy('createdAt', 'desc'));
-        } else {
-            // Only return published articles
-            q = query(
-                articlesRef,
-                orderBy('createdAt', 'desc')
-            );
+        if (!includeDrafts) {
+            // If status is explicitly 'published' OR if status field does not exist (older data might not have it)
+            // Firestore doesn't easily support "OR" across different fields or "field not exists" in combination with other `where` on same field.
+            // A common approach is to ensure all articles have a status.
+            // For now, we'll explicitly query for 'published'. If you need to include articles where 'status' is undefined
+            // as 'published', you might need two separate queries or adjust your data model to always include a 'status'.
+            queryConstraints.push(where('status', '==', 'published'));
+        }
+        // Always order by creation date
+        queryConstraints.push(orderBy('createdAt', 'desc'));
+
+        if (limit && limit > 0) {
+            console.log('Adding limit constraint:', limit);
+            queryConstraints.push(firestoreLimit(limit));
         }
 
+        const q = query(articlesRef, ...queryConstraints);
         const querySnapshot = await getDocs(q);
+        console.log('Query returned document count:', querySnapshot.size);
 
         const articles: Article[] = [];
-        querySnapshot.forEach((doc) => {
-            const articleData = doc.data() as Omit<Article, 'id'>;
+        querySnapshot.forEach((docSnapshot) => {
+            const articleData = docSnapshot.data() as Omit<Article, 'id'>;
 
-            // Include documents where status is 'published' or not set at all
-            if (!includeDrafts && articleData.status === 'drafts') {
-                return;
-            }
-
-            // Include articles with status='published' or no status field
-            if (!includeDrafts && articleData.status !== undefined && articleData.status !== 'published') {
-                return;
-            }
-
+            // The query now handles filtering for published status if includeDrafts is false.
+            // If includeDrafts is true, no status filter is applied in the query.
             articles.push({
-                id: doc.id,
+                id: docSnapshot.id,
                 ...articleData
             });
         });
@@ -84,7 +91,7 @@ export async function getArticles(includeDrafts = false) {
 }
 
 // Get a single article by ID
-export async function getArticleById(id: string) {
+export async function getArticleById(id: string): Promise<Article | null> {
     try {
         const docRef = doc(db, 'articles', id);
         const docSnap = await getDoc(docRef);
@@ -92,10 +99,10 @@ export async function getArticleById(id: string) {
         if (docSnap.exists()) {
             return {
                 id: docSnap.id,
-                ...docSnap.data() as Omit<Article, 'id'>
-            };
+                ...docSnap.data()
+            } as Article;
         } else {
-            throw new Error('Article not found');
+            return null;
         }
     } catch (error) {
         console.error('Error getting article:', error);
@@ -104,21 +111,21 @@ export async function getArticleById(id: string) {
 }
 
 // Get a single article by slug
-export async function getArticleBySlug(slug: string) {
+export async function getArticleBySlug(slug: string): Promise<Article | null> {
     try {
         const articlesRef = collection(db, 'articles');
-        const q = query(articlesRef, where('slug', '==', slug));
+        const q = query(articlesRef, where('slug', '==', slug), where('status', '==', 'published'));
         const querySnapshot = await getDocs(q);
 
         if (querySnapshot.empty) {
-            throw new Error('Article not found');
+            return null;
         }
 
         const docSnap = querySnapshot.docs[0];
         return {
             id: docSnap.id,
-            ...docSnap.data() as Omit<Article, 'id'>
-        };
+            ...docSnap.data()
+        } as Article;
     } catch (error) {
         console.error('Error getting article by slug:', error);
         throw error;
@@ -126,38 +133,38 @@ export async function getArticleBySlug(slug: string) {
 }
 
 // Create a new article
-export async function createArticle(article: Omit<Article, 'id' | 'createdAt' | 'authorId' | 'authorName'>) {
+export async function createArticle(articleInput: Partial<Omit<Article, 'id' | 'createdAt' | 'authorId' | 'authorName'>> & { title: string; body: string; }) {
     try {
         const user = auth.currentUser;
         if (!user) {
             throw new Error('You must be logged in to create an article');
         }
 
-        // Create the basic article object with required fields
-        const newArticle: any = {
-            title: article.title,
-            body: article.body,
-            slug: article.slug || article.title
+        const newArticleData: Omit<Article, 'id'> = {
+            title: articleInput.title,
+            body: articleInput.body,
+            slug: articleInput.slug || articleInput.title
                 .toLowerCase()
-                .replace(/[^\w\s]/gi, '')
-                .replace(/\s+/g, '-'),
+                .replace(/[\s\W-]+/g, '-')
+                .replace(/^-+|-+$/g, ''),
             createdAt: Timestamp.now(),
             authorId: user.uid,
-            authorName: user.displayName || 'Anonymous',
-            tags: article.tags || [],
-            status: article.status || 'published' // Default to published if not specified
+            authorName: user.displayName || user.email?.split('@')[0] || 'Anonymous',
+            tags: articleInput.tags || [],
+            status: articleInput.status || 'published',
+            coverImage: articleInput.coverImage || null,
+            likes: [],
+            excerpt: articleInput.excerpt || '',
+            viewCount: 0,
+            reposts: [],
+            comments: []
         };
 
-        // Only add optional fields if they exist and have values
-        if (article.coverImage) {
-            newArticle.coverImage = article.coverImage;
-        }
-
-        const docRef = await addDoc(collection(db, 'articles'), newArticle);
+        const docRef = await addDoc(collection(db, 'articles'), newArticleData);
         return {
             id: docRef.id,
-            ...newArticle
-        };
+            ...newArticleData
+        } as Article;
     } catch (error) {
         console.error('Error creating article:', error);
         throw error;
@@ -172,7 +179,6 @@ export async function updateArticle(articleId: string, articleData: Partial<Omit
             throw new Error('You must be logged in to edit an article');
         }
 
-        // First check if the article exists and belongs to the current user
         const articleRef = doc(db, 'articles', articleId);
         const articleSnap = await getDoc(articleRef);
 
@@ -180,56 +186,28 @@ export async function updateArticle(articleId: string, articleData: Partial<Omit
             throw new Error('Article not found');
         }
 
-        const articleData1 = articleSnap.data();
-        if (articleData1.authorId !== user.uid) {
+        const existingArticleData = articleSnap.data() as Article;
+        if (existingArticleData.authorId !== user.uid) {
             throw new Error('You can only edit your own articles');
         }
 
-        // Create the update object
-        const updateData: any = {};
+        const updateData: Partial<Article> = { ...articleData };
 
-        // Only include fields that were provided
-        if (articleData.title !== undefined) {
-            updateData.title = articleData.title;
-
-            // If title changed, update slug as well (unless slug is explicitly provided)
-            if (articleData.slug === undefined) {
-                updateData.slug = articleData.title
-                    .toLowerCase()
-                    .replace(/[^\w\s]/gi, '')
-                    .replace(/\s+/g, '-');
-            }
+        if (articleData.title && !articleData.slug) {
+            updateData.slug = articleData.title
+                .toLowerCase()
+                .replace(/[\s\W-]+/g, '-')
+                .replace(/^-+|-+$/g, '');
         }
+        updateData.updatedAt = Timestamp.now();
 
-        if (articleData.body !== undefined) {
-            updateData.body = articleData.body;
-        }
-
-        if (articleData.tags !== undefined) {
-            updateData.tags = articleData.tags;
-        }
-
-        if (articleData.status !== undefined) {
-            updateData.status = articleData.status;
-        }
-
-        if (articleData.coverImage !== undefined) {
-            updateData.coverImage = articleData.coverImage;
-        }
-
-        if (articleData.slug !== undefined) {
-            updateData.slug = articleData.slug;
-        }
-
-        // Update the article
         await updateDoc(articleRef, updateData);
 
-        // Return the updated article
         const updatedArticleSnap = await getDoc(articleRef);
         return {
             id: updatedArticleSnap.id,
-            ...updatedArticleSnap.data() as Omit<Article, 'id'>
-        };
+            ...updatedArticleSnap.data()
+        } as Article;
     } catch (error) {
         console.error('Error updating article:', error);
         throw error;
@@ -248,7 +226,7 @@ export async function getArticleComments(articleId: string) {
             const commentData = doc.data() as Omit<ArticleComment, 'id' | 'commentId'>;
             comments.push({
                 id: doc.id,
-                commentId: doc.id, // Add commentId for compatibility with existing UI
+                commentId: doc.id,
                 ...commentData,
                 replies: commentData.replies || []
             });
@@ -268,7 +246,7 @@ export async function addComment(articleId: string, content: string) {
             throw new Error('You must be logged in to comment');
         }
 
-        const newComment = {
+        const newComment: Omit<ArticleComment, 'id' | 'commentId'> = {
             userId: user.uid,
             userName: user.displayName || user.email?.split('@')[0] || 'Anonymous',
             content,
@@ -279,18 +257,13 @@ export async function addComment(articleId: string, content: string) {
 
         const docRef = await addDoc(collection(db, 'articles', articleId, 'comments'), newComment);
 
-        // Get article information for the notification
-        const articleRef = doc(db, 'articles', articleId);
-        const articleSnap = await getDoc(articleRef);
-
-        if (articleSnap.exists()) {
-            const articleData = articleSnap.data();
-            // Trigger notification to the article owner
+        const articleInfoForNotification = await getArticleById(articleId);
+        if (articleInfoForNotification && articleInfoForNotification.authorId !== user.uid) {
             await createCommentNotification(
-                articleData.authorId,
+                articleInfoForNotification.authorId,
                 articleId,
-                articleData.slug || '',
-                articleData.title || 'Article',
+                articleInfoForNotification.slug || '',
+                articleInfoForNotification.title || 'Article',
                 docRef.id,
                 content
             );
@@ -298,16 +271,16 @@ export async function addComment(articleId: string, content: string) {
 
         return {
             id: docRef.id,
-            commentId: docRef.id, // Add commentId for compatibility
+            commentId: docRef.id,
             ...newComment
-        };
+        } as ArticleComment;
     } catch (error) {
         console.error('Error adding comment:', error);
         throw error;
     }
 }
 
-export async function addReply(articleId: string, commentId: string, content: string) {
+export async function addReply(articleId: string, commentId: string, content: string): Promise<CommentReply> {
     try {
         const user = auth.currentUser;
         if (!user) {
@@ -321,8 +294,8 @@ export async function addReply(articleId: string, commentId: string, content: st
             throw new Error('Comment not found');
         }
 
-        const newReply = {
-            replyId: Math.random().toString(36).substring(2, 15), // Generate a unique ID
+        const newReply: CommentReply = {
+            replyId: Math.random().toString(36).substring(2, 15),
             userId: user.uid,
             userName: user.displayName || user.email?.split('@')[0] || 'Anonymous',
             content,
@@ -330,10 +303,15 @@ export async function addReply(articleId: string, commentId: string, content: st
             likes: []
         };
 
-        // Add the reply to the replies array
         await updateDoc(commentRef, {
             replies: arrayUnion(newReply)
         });
+
+        const commentData = commentSnap.data() as ArticleComment;
+        if (commentData.userId !== user.uid) {
+            const articleInfo = await getArticleById(articleId);
+            console.log(`User ${user.uid} replied to comment ${commentId} by ${commentData.userId} on article ${articleInfo?.title}`);
+        }
 
         return newReply;
     } catch (error) {
@@ -359,43 +337,22 @@ export async function likeComment(articleId: string, commentId: string) {
         const commentData = commentSnap.data() as ArticleComment;
         const userId = user.uid;
 
-        // Check if the user already liked the comment
         const likes = commentData.likes || [];
         const hasLiked = likes.includes(userId);
 
-        if (hasLiked) {
-            // Remove the like
-            await updateDoc(commentRef, {
-                likes: arrayRemove(userId)
-            });
+        await updateDoc(commentRef, {
+            likes: hasLiked ? arrayRemove(userId) : arrayUnion(userId)
+        });
 
-            // Get updated likes
-            const updatedSnap = await getDoc(commentRef);
-            const updatedData = updatedSnap.data() as ArticleComment;
+        const updatedSnap = await getDoc(commentRef);
+        const updatedData = updatedSnap.data() as ArticleComment;
 
-            return {
-                success: true,
-                action: 'unliked',
-                likes: updatedData.likes,
-                count: updatedData.likes.length
-            };
-        } else {
-            // Add the like
-            await updateDoc(commentRef, {
-                likes: arrayUnion(userId)
-            });
-
-            // Get updated likes
-            const updatedSnap = await getDoc(commentRef);
-            const updatedData = updatedSnap.data() as ArticleComment;
-
-            return {
-                success: true,
-                action: 'liked',
-                likes: updatedData.likes,
-                count: updatedData.likes.length
-            };
-        }
+        return {
+            success: true,
+            action: hasLiked ? 'unliked' : 'liked',
+            likes: updatedData.likes,
+            count: updatedData.likes.length
+        };
     } catch (error) {
         console.error('Error liking comment:', error);
         throw error;
@@ -418,7 +375,6 @@ export async function deleteComment(articleId: string, commentId: string) {
 
         const commentData = commentSnap.data() as ArticleComment;
 
-        // Check if the user is the comment author
         if (commentData.userId !== user.uid) {
             throw new Error('You can only delete your own comments');
         }
@@ -443,22 +399,20 @@ export async function deleteArticle(articleId: string) {
             throw new Error('You must be logged in to delete an article');
         }
 
-        // Get the article to check ownership
-        const articleDoc = await getDoc(doc(db, 'articles', articleId));
+        const articleRef = doc(db, 'articles', articleId);
+        const articleDoc = await getDoc(articleRef);
 
         if (!articleDoc.exists()) {
             throw new Error('Article not found');
         }
 
-        const articleData = articleDoc.data();
+        const articleData = articleDoc.data() as Article;
 
-        // Only the author can delete their article
         if (articleData.authorId !== user.uid) {
             throw new Error('You can only delete your own articles');
         }
 
-        // Delete the article
-        await deleteDoc(doc(db, 'articles', articleId));
+        await deleteDoc(articleRef);
 
         return {
             success: true,
@@ -471,27 +425,29 @@ export async function deleteArticle(articleId: string) {
 }
 
 // Get articles by tag
-export async function getArticlesByTag(tag: string) {
+export async function getArticlesByTag(tag: string, options: { limit?: number } = {}) {
+    const { limit: queryLimit } = options;
     try {
         const articlesRef = collection(db, 'articles');
-
-        // Query for articles that have the specified tag and are published
-        const q = query(
-            articlesRef,
+        const queryConstraints: QueryConstraint[] = [
             where('tags', 'array-contains', tag),
             where('status', '==', 'published'),
             orderBy('createdAt', 'desc')
-        );
+        ];
 
+        if (queryLimit && queryLimit > 0) {
+            queryConstraints.push(firestoreLimit(queryLimit));
+        }
+
+        const q = query(articlesRef, ...queryConstraints);
         const querySnapshot = await getDocs(q);
 
         const articles: Article[] = [];
-        querySnapshot.forEach((doc) => {
-            const articleData = doc.data() as Omit<Article, 'id'>;
+        querySnapshot.forEach((docSnapshot) => {
             articles.push({
-                id: doc.id,
-                ...articleData
-            });
+                id: docSnapshot.id,
+                ...docSnapshot.data()
+            } as Article);
         });
 
         return articles;

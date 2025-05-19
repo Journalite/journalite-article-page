@@ -1,409 +1,270 @@
-"use client";
+'use client';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { updateProfile } from 'firebase/auth';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '../../firebase/clientApp';
-import { getUserProfile, isUsernameTaken, createUserProfile } from '../../services/userService';
+import { auth, db } from '@/firebase/clientApp';
+import { doc, getDoc, collection, query, where, getDocs, orderBy, Timestamp } from 'firebase/firestore';
+import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 import Link from 'next/link';
+import Image from 'next/image'; // For profile picture
 
-export default function MyProfile() {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [username, setUsername] = useState('');
-  const [bio, setBio] = useState('');
-  const [originalUsername, setOriginalUsername] = useState('');
+interface UserProfile {
+  firstName?: string;
+  lastName?: string;
+  username?: string;
+  email?: string;
+  bio?: string;
+  photoURL?: string; // Assuming you might store a photoURL
+  createdAt?: any; // Or a more specific date type
+}
+
+// Updated Article interface based on src/firebase/articles.ts
+interface Article {
+  id: string;
+  title: string;
+  body: string; 
+  coverImage?: string | null;
+  createdAt: Timestamp;
+  slug?: string; // For linking
+  tags?: string[];
+  status: 'published' | 'draft' | 'drafts'; // Allow 'drafts' as seen in firebase/articles.ts
+}
+
+// Function to strip HTML tags for preview text
+const stripHtmlTags = (html: string): string => {
+  if (!html) return '';
+  return html.replace(/<\/?[^>]+(>|$)/g, '');
+};
+
+export default function MyProfilePage() {
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
+  const [userArticles, setUserArticles] = useState<Article[]>([]); // State for user articles
   const [isLoading, setIsLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState(false);
-  const [touchedFields, setTouchedFields] = useState<Record<string, boolean>>({});
-  const [customValidation, setCustomValidation] = useState<Record<string, string>>({});
-  const [usernameAvailable, setUsernameAvailable] = useState<boolean | null>(null);
-  const [isCheckingUsername, setIsCheckingUsername] = useState(false);
-  const [currentUserUid, setCurrentUserUid] = useState<string | null>(null);
-  const [userEmail, setUserEmail] = useState<string>('');
-  const [bioCharCount, setBioCharCount] = useState(0);
-  
+  const [isLoadingArticles, setIsLoadingArticles] = useState(true); // State for loading articles
   const router = useRouter();
-  const MAX_BIO_LENGTH = 250;
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        setCurrentUserUid(user.uid);
-        setUserEmail(user.email || '');
-        
-        // Try to get existing profile
+        setFirebaseUser(user);
         try {
-          const profile = await getUserProfile(user.uid);
-          if (profile) {
-            setFirstName(profile.firstName);
-            setLastName(profile.lastName);
-            setUsername(profile.username);
-            setOriginalUsername(profile.username);
-            setBio(profile.bio || '');
-            setBioCharCount(profile.bio?.length || 0);
-            // No need to check username initially as user already owns this username
-            setUsernameAvailable(true);
+          // Fetch user profile
+          const userDocRef = doc(db, 'users', user.uid);
+          const userDocSnap = await getDoc(userDocRef);
+
+          if (userDocSnap.exists()) {
+            const userData = userDocSnap.data() as UserProfile;
+            setUserProfile({
+              ...userData,
+              email: user.email || userData.email, // Prioritize auth email
+              photoURL: user.photoURL || userData.photoURL, // Prioritize auth photoURL
+            });
           } else {
-            // No profile exists, set default values from auth
-            const displayName = user.displayName || '';
-            const nameParts = displayName.split(' ');
-            setFirstName(nameParts[0] || '');
-            setLastName(nameParts.slice(1).join(' ') || '');
-            setUsername(user.email?.split('@')[0] || '');
-            setOriginalUsername(user.email?.split('@')[0] || '');
+            // Fallback if Firestore doc doesn't exist but user is authenticated
+            setUserProfile({
+              firstName: user.displayName?.split(' ')[0] || '',
+              lastName: user.displayName?.split(' ').slice(1).join(' ') || '',
+              username: user.displayName || user.email?.split('@')[0] || 'User',
+              email: user.email || '',
+              photoURL: user.photoURL || '',
+            });
           }
+
+          // Fetch user articles
+          setIsLoadingArticles(true);
+          const articlesRef = collection(db, 'articles');
+          const q = query(
+            articlesRef,
+            where('authorId', '==', user.uid),
+            orderBy('createdAt', 'desc')
+          );
+          const querySnapshot = await getDocs(q);
+          const articlesData = querySnapshot.docs.map(doc => {
+            const data = doc.data();
+            return {
+              id: doc.id,
+              title: data.title || 'Untitled Article',
+              body: data.body || '',
+              coverImage: data.coverImage || null,
+              createdAt: data.createdAt, // Assuming createdAt is always a Timestamp
+              slug: data.slug, 
+              tags: data.tags || [],
+              status: data.status || 'published',
+            } as Article;
+          });
+          setUserArticles(articlesData);
+
         } catch (error) {
-          console.error('Error fetching user profile:', error);
-          setError('Failed to load your profile. Please try refreshing the page.');
+          console.error("Error fetching user data or articles:", error);
         } finally {
           setIsLoading(false);
+          setIsLoadingArticles(false);
         }
       } else {
-        // Not signed in, redirect to login
         router.push('/login');
       }
     });
-    
+
     return () => unsubscribe();
   }, [router]);
 
-  const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value, validity } = e.target as HTMLInputElement;
-    setTouchedFields({ ...touchedFields, [name]: true });
-    
-    // Clear previous validation message
-    setCustomValidation({ ...customValidation, [name]: '' });
-    
-    // Add a custom validation message if empty
-    if (validity.valueMissing) {
-      let message = 'This field is required';
-      if (name === 'firstName') message = 'Please enter your first name';
-      if (name === 'lastName') message = 'Please enter your last name';
-      if (name === 'username') message = 'Please choose a username';
-      
-      setCustomValidation({ ...customValidation, [name]: message });
-    }
-  };
-
-  const handleBioChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const value = e.target.value;
-    if (value.length <= MAX_BIO_LENGTH) {
-      setBio(value);
-      setBioCharCount(value.length);
-    }
-  };
-
-  const checkUsername = async (username: string) => {
-    // If username hasn't changed, it's still available
-    if (username === originalUsername) {
-      setUsernameAvailable(true);
-      return;
-    }
-    
-    if (username.length < 2) {
-      setUsernameAvailable(null);
-      return;
-    }
-    
-    try {
-      setIsCheckingUsername(true);
-      const taken = await isUsernameTaken(username);
-      setUsernameAvailable(!taken);
-    } catch (error) {
-      console.error('Error checking username:', error);
-    } finally {
-      setIsCheckingUsername(false);
-    }
-  };
-
-  const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setUsername(value);
-    
-    // If the username is the same as the original, it's available
-    if (value === originalUsername) {
-      setUsernameAvailable(true);
-      return;
-    }
-    
-    // Debounce the username check
-    const timeoutId = setTimeout(() => {
-      if (value.length >= 2) {
-        checkUsername(value);
-      } else {
-        setUsernameAvailable(null);
-      }
-    }, 500);
-    
-    return () => clearTimeout(timeoutId);
-  };
-
-  const validateForm = () => {
-    const newValidation: Record<string, string> = {};
-    const newTouchedFields: Record<string, boolean> = {};
-    let isValid = true;
-    
-    // First name validation
-    newTouchedFields.firstName = true;
-    if (!firstName.trim()) {
-      newValidation.firstName = 'Please enter your first name';
-      isValid = false;
-    }
-    
-    // Last name validation
-    newTouchedFields.lastName = true;
-    if (!lastName.trim()) {
-      newValidation.lastName = 'Please enter your last name';
-      isValid = false;
-    }
-    
-    // Username validation
-    newTouchedFields.username = true;
-    if (!username.trim()) {
-      newValidation.username = 'Please choose a username';
-      isValid = false;
-    } else if (username.length < 2) {
-      newValidation.username = 'Username must be at least 2 characters';
-      isValid = false;
-    } else if (username !== originalUsername && usernameAvailable === false) {
-      newValidation.username = 'This username is already taken';
-      isValid = false;
-    }
-    
-    setTouchedFields({ ...touchedFields, ...newTouchedFields });
-    setCustomValidation({ ...customValidation, ...newValidation });
-    
-    return isValid;
-  };
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    
-    if (!validateForm() || !currentUserUid) return;
-    
-    setIsSaving(true);
-    setError('');
-    setSuccess(false);
-    
-    try {
-      // Update the user profile in Firestore
-      await createUserProfile(currentUserUid, {
-        firstName,
-        lastName,
-        username,
-        email: userEmail,
-        bio
-      });
-      
-      // Update the display name in Firebase Auth
-      if (auth.currentUser) {
-        await updateProfile(auth.currentUser, {
-          displayName: username
-        });
-      }
-      
-      // Update the original username to reflect the new value
-      setOriginalUsername(username);
-      
-      setSuccess(true);
-      
-      // Hide success message after a few seconds
-      setTimeout(() => {
-        setSuccess(false);
-      }, 3000);
-    } catch (err: unknown) {
-      let errorMessage = 'Failed to update your profile';
-      if (err instanceof Error) {
-        if (err.message.includes('Username is already taken')) {
-          errorMessage = 'This username is already taken';
-          setCustomValidation({ ...customValidation, username: 'This username is already taken' });
-        }
-      }
-      setError(errorMessage);
-      console.error(err);
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  // Show validation styling only if field is touched
-  const getInputClasses = (fieldName: string) => {
-    const baseClasses = "w-full px-5 py-3.5 bg-[#f8f5ec] border border-[#e8e1d1] rounded-md focus:outline-none focus:ring-1 focus:ring-slate-500";
-    
-    if (touchedFields[fieldName] && customValidation[fieldName]) {
-      return `${baseClasses} border-red-300 bg-red-50`;
-    }
-    
-    // Add green border for valid username
-    if (fieldName === 'username' && username.length >= 2 && usernameAvailable === true) {
-      return `${baseClasses} border-green-300 bg-green-50`;
-    }
-    
-    return baseClasses;
-  };
-
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#f5efe0] flex items-center justify-center">
-        <div className="animate-spin h-8 w-8 border-4 border-slate-500 rounded-full border-t-transparent"></div>
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-stone-100 to-amber-100">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-amber-600"></div>
+        <p className="ml-4 text-stone-700 text-lg">Loading Profile...</p>
       </div>
     );
   }
 
+  if (!userProfile || !firebaseUser) {
+    // This case should ideally be handled by the redirect in onAuthStateChanged
+    // or by a global auth guard.
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-stone-100 to-amber-100 p-6">
+        <p className="text-stone-700 text-lg mb-4">Could not load profile information.</p>
+        <Link href="/login" className="px-6 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors">
+          Go to Login
+        </Link>
+      </div>
+    );
+  }
+
+  const displayName = userProfile.firstName && userProfile.lastName 
+    ? `${userProfile.firstName} ${userProfile.lastName}` 
+    : userProfile.firstName || userProfile.lastName || firebaseUser.displayName || 'User';
+
+  const initials = (userProfile.firstName?.charAt(0) || '') + (userProfile.lastName?.charAt(0) || '');
+
   return (
-    <div className="min-h-screen bg-[#f5efe0] flex flex-col">
-      <div className="py-12 px-6 flex-1 flex flex-col items-center">
-        <div className="w-full max-w-lg mx-auto">
-          {/* Page header */}
-          <div className="mb-12 text-center">
-            <h1 className="text-4xl md:text-5xl font-serif font-normal text-slate-900">My Profile</h1>
-            <p className="mt-2 text-slate-700">Update your personal information</p>
+    <div className="min-h-screen bg-gradient-to-br from-stone-100 to-amber-100 py-8 px-4 sm:px-6 lg:px-8 flex flex-col items-center">
+      <Link href="/" className="self-start mb-4 text-amber-600 hover:text-amber-800 transition-colors">
+        &larr; Go Back to Homepage
+      </Link>
+      <div className="w-full max-w-2xl bg-white shadow-xl rounded-xl overflow-hidden mt-10 relative">
+        <div className="bg-stone-800 p-6 sm:p-8">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start">
+            {/* Always show initials avatar for now */}
+            <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white text-4xl sm:text-5xl font-semibold border-4 border-amber-300 shadow-md">
+              {initials || displayName.charAt(0)}
+            </div>
+            <div className="mt-4 sm:mt-0 sm:ml-6 text-center sm:text-left">
+              <h1 className="text-3xl sm:text-4xl font-bold text-white">{displayName}</h1>
+              {userProfile.username && (
+                <p className="text-amber-300 text-lg mt-1">@{userProfile.username}</p>
+              )}
+              <p className="text-stone-300 text-sm mt-1">{userProfile.email}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="p-6 sm:p-8">
+          {userProfile.bio && (
+            <div className="mb-8">
+              <h2 className="text-xl font-semibold text-stone-700 mb-2">Bio</h2>
+              <p className="text-stone-600 whitespace-pre-wrap">{userProfile.bio}</p>
+            </div>
+          )}
+
+          <div className="mb-8">
+            <h2 className="text-xl font-semibold text-stone-700 mb-2">Account Details</h2>
+            <ul className="space-y-2 text-stone-600">
+              <li>
+                <strong>Joined:</strong> {firebaseUser.metadata.creationTime ? new Date(firebaseUser.metadata.creationTime).toLocaleDateString() : 'N/A'}
+              </li>
+              {/* Add more details as needed, e.g., number of articles, followers, etc. */}
+            </ul>
           </div>
           
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* First name field */}
-            <div>
-              <label htmlFor="firstName" className="block mb-2 text-sm font-medium text-slate-700">
-                First Name
-              </label>
-              <input
-                id="firstName"
-                name="firstName"
-                type="text"
-                required
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                onBlur={handleBlur}
-                className={getInputClasses('firstName')}
-              />
-              {touchedFields.firstName && customValidation.firstName && (
-                <p className="mt-1 text-sm text-red-500">{customValidation.firstName}</p>
-              )}
-            </div>
-            
-            {/* Last name field */}
-            <div>
-              <label htmlFor="lastName" className="block mb-2 text-sm font-medium text-slate-700">
-                Last Name
-              </label>
-              <input
-                id="lastName"
-                name="lastName"
-                type="text"
-                required
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                onBlur={handleBlur}
-                className={getInputClasses('lastName')}
-              />
-              {touchedFields.lastName && customValidation.lastName && (
-                <p className="mt-1 text-sm text-red-500">{customValidation.lastName}</p>
-              )}
-            </div>
-            
-            {/* Username field */}
-            <div>
-              <div className="flex justify-between items-center mb-2">
-                <label htmlFor="username" className="block text-sm font-medium text-slate-700">
-                  Username
-                </label>
-                {isCheckingUsername && (
-                  <div className="text-xs text-slate-500 flex items-center">
-                    <div className="mr-1 w-3 h-3 border-2 border-slate-500 border-t-transparent rounded-full animate-spin"></div>
-                    Checking...
-                  </div>
-                )}
-              </div>
-              <input
-                id="username"
-                name="username"
-                type="text"
-                required
-                value={username}
-                onChange={handleUsernameChange}
-                onBlur={handleBlur}
-                className={getInputClasses('username')}
-              />
-              {touchedFields.username && customValidation.username ? (
-                <p className="mt-1 text-sm text-red-500">{customValidation.username}</p>
-              ) : username && username.length >= 2 && usernameAvailable === true ? (
-                <p className="mt-1 text-sm text-green-600">Username is available</p>
-              ) : username && username.length >= 2 && usernameAvailable === false ? (
-                <p className="mt-1 text-sm text-red-500">Username is already taken</p>
-              ) : null}
-            </div>
-            
-            {/* Bio field */}
-            <div>
-              <div className="flex justify-between items-center mb-2">
-                <label htmlFor="bio" className="block text-sm font-medium text-slate-700">
-                  Bio
-                </label>
-                <span className={`text-xs ${bioCharCount >= MAX_BIO_LENGTH * 0.9 ? 'text-amber-600' : 'text-slate-500'}`}>
-                  {bioCharCount}/{MAX_BIO_LENGTH}
-                </span>
-              </div>
-              <textarea
-                id="bio"
-                name="bio"
-                value={bio}
-                onChange={handleBioChange}
-                onBlur={handleBlur}
-                placeholder="Tell us a little about yourself..."
-                rows={4}
-                maxLength={MAX_BIO_LENGTH}
-                className="w-full px-5 py-3.5 bg-[#f8f5ec] border border-[#e8e1d1] rounded-md focus:outline-none focus:ring-1 focus:ring-slate-500 resize-none"
-              />
-              <p className="mt-1 text-xs text-slate-500">
-                Your bio will be displayed on your public profile and articles
-              </p>
-            </div>
-            
-            {/* Status messages */}
-            {error && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded-md text-sm text-red-600">
-                {error}
-              </div>
-            )}
-            
-            {success && (
-              <div className="p-3 bg-green-50 border border-green-200 rounded-md text-sm text-green-600">
-                Your profile has been updated successfully!
-              </div>
-            )}
-            
-            {/* Form actions */}
-            <div className="flex justify-between items-center mt-8">
-              <Link
-                href="/"
-                className="inline-flex justify-center py-3 px-5 border border-slate-300 rounded-md bg-white text-sm font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500"
-              >
-                Back to Home
-              </Link>
-              <button
-                type="submit"
-                disabled={isSaving}
-                className={`inline-flex justify-center py-3 px-5 border border-transparent rounded-md shadow-sm text-sm font-medium text-white 
-                  ${isSaving ? 'bg-slate-400 cursor-not-allowed' : 'bg-slate-800 hover:bg-slate-700'} 
-                  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500`}
-              >
-                {isSaving ? (
-                  <>
-                    <span className="mr-2 h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                    Saving...
-                  </>
-                ) : (
-                  'Save Changes'
-                )}
-              </button>
-            </div>
-          </form>
+          <div className="mt-8 flex flex-col sm:flex-row justify-end items-center gap-4">
+            <Link href="/my-profile/edit" className="w-full sm:w-auto px-6 py-3 bg-amber-600 text-white text-center font-medium rounded-lg hover:bg-amber-700 transition-all duration-200 ease-in-out shadow-md hover:shadow-lg">
+              Edit Profile
+            </Link>
+             <Link href={`/user/${userProfile.username}`} className="w-full sm:w-auto px-6 py-3 bg-stone-600 text-white text-center font-medium rounded-lg hover:bg-stone-700 transition-all duration-200 ease-in-out shadow-md hover:shadow-lg">
+              View Public Profile
+            </Link>
+          </div>
         </div>
+      </div>
+      
+      {/* Placeholder for user's articles or other content */}
+      <div className="w-full max-w-2xl mt-10">
+        <h2 className="text-2xl font-semibold text-stone-800 mb-6 text-center">My Content</h2>
+        {isLoadingArticles ? (
+          <div className="bg-white shadow-lg rounded-lg p-6 text-center text-stone-500">
+            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-amber-600 mx-auto mb-4"></div>
+            <p>Loading your articles...</p>
+          </div>
+        ) : userArticles.length > 0 ? (
+          <div className="space-y-8">
+            {userArticles.map(article => (
+              <Link 
+                href={article.slug ? `/articles?slug=${article.slug}` : `/articles?slug=${article.id}`} 
+                key={article.id} 
+                className="block bg-white shadow-lg rounded-xl overflow-hidden hover:shadow-2xl transition-all duration-300 ease-in-out group"
+              >
+                <div className="md:flex">
+                  {/* Cover Image */}
+                  <div className="md:w-1/3 h-48 md:h-auto relative overflow-hidden">
+                    {article.coverImage ? (
+                      <Image 
+                        src={article.coverImage} 
+                        alt={article.title} 
+                        layout="fill"
+                        objectFit="cover"
+                        className="transition-transform duration-500 ease-in-out group-hover:scale-105"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-stone-200 to-stone-300 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-stone-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Content */}
+                  <div className="p-6 md:w-2/3 flex flex-col justify-between">
+                    <div>
+                      <h3 className="text-2xl font-semibold text-stone-800 group-hover:text-amber-700 transition-colors duration-200 mb-2 leading-tight">{article.title}</h3>
+                      <p className="text-sm text-stone-500 mb-3">
+                        {new Date(article.createdAt.seconds * 1000).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                        {(article.status === 'draft' || article.status === 'drafts') && 
+                          <span className="ml-3 px-2.5 py-1 bg-amber-100 text-amber-800 text-xs font-medium rounded-full">Draft</span>}
+                      </p>
+                      <p className="text-stone-600 text-sm mb-4 leading-relaxed line-clamp-3">
+                        {stripHtmlTags(article.body)}
+                      </p>
+                    </div>
+                    <div>
+                      {article.tags && article.tags.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mb-1">
+                          {article.tags.slice(0, 3).map(tag => (
+                            <span key={tag} className="px-3 py-1 bg-stone-100 text-stone-700 text-xs font-medium rounded-full">
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <div className="bg-white shadow-lg rounded-lg p-8 text-center text-stone-500">
+            <svg xmlns="http://www.w3.org/2000/svg" className="mx-auto h-16 w-16 text-stone-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <h3 className="text-xl font-semibold text-stone-700 mb-2">No Articles Yet</h3>
+            <p className="mb-6">You haven\'t published any articles. Why not share your thoughts?</p>
+            <Link href="/create-article" className="mt-4 inline-block px-8 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors shadow-md hover:shadow-lg">
+              Create New Article
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   );

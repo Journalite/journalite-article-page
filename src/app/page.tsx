@@ -9,6 +9,8 @@ import { onAuthStateChanged, signOut } from 'firebase/auth'
 import { getArticles, Article as FirestoreArticle } from '../firebase/articles'
 import NotificationBell from '@/components/NotificationBell'
 import LeftSidebar from '@/components/LeftSidebar'
+import ShareModal from '@/components/ShareModal'
+import Head from 'next/head'
 
 // Types for our article data based on actual API structure
 interface Article {
@@ -18,7 +20,7 @@ interface Article {
   authorId: string;
   authorName?: string;
   excerpt?: string;
-  coverImageUrl?: string;
+  coverImageUrl?: string | null;
   tags?: string[];
   content: {
     paragraphId: string;
@@ -32,6 +34,14 @@ interface Article {
   viewCount?: number;
   createdAt: string;
   updatedAt: string;
+}
+
+// Interface for article details to be passed to the modal
+interface SharingArticleDetails {
+  title: string;
+  slug: string;
+  coverImageUrl?: string | null;
+  excerpt?: string;
 }
 
 // Author mapping for using authorId to display author name - legacy system
@@ -51,7 +61,7 @@ const adaptFirestoreArticle = (firestoreArticle: FirestoreArticle): Article => {
     slug: firestoreArticle.slug || firestoreArticle.title.toLowerCase().replace(/[^\w\s]/gi, '').replace(/\s+/g, '-'),
     authorId: firestoreArticle.authorId,
     authorName: firestoreArticle.authorName,
-    coverImageUrl: firestoreArticle.coverImage,
+    coverImageUrl: firestoreArticle.coverImage || null,
     tags: firestoreArticle.tags,
     content: [
       {
@@ -165,6 +175,10 @@ export default function HomePage() {
   // Trending tags (static list, no need for state)
   const tags = ['Journalism', 'Technology', 'Politics', 'Science', 'Culture'];
 
+  // State for ShareModal
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [sharingArticleDetails, setSharingArticleDetails] = useState<SharingArticleDetails | null>(null);
+
   // Check authentication status on component mount
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -195,25 +209,32 @@ export default function HomePage() {
       try {
         setIsLoading(true);
         
-        // Fetch from Firestore - don't include drafts for the homepage
-        const firestoreArticles = await getArticles();
+        // Pass a higher limit parameter to ensure we get enough articles
+        const firestoreArticles = await getArticles({ limit: 50 }); 
+        
+        console.log('Articles fetched from Firestore:', firestoreArticles.length);
         
         if (firestoreArticles && firestoreArticles.length > 0) {
           const adaptedArticles = firestoreArticles.map(adaptFirestoreArticle);
           
-          // Set the first article as featured
+          console.log('Adapted articles:', adaptedArticles.length);
+          
           if (adaptedArticles.length > 0) {
             setFeaturedArticle(adaptedArticles[0]);
-            // Set the rest as regular articles
-            setArticles(adaptedArticles.slice(1));
+            setArticles(adaptedArticles.length > 1 ? adaptedArticles.slice(1) : []);
+            console.log('Articles in grid:', adaptedArticles.length > 1 ? adaptedArticles.length - 1 : 0);
           } else {
+            setFeaturedArticle(null);
             setArticles([]);
           }
         } else {
+          setFeaturedArticle(null);
           setArticles([]);
         }
       } catch (error) {
         console.error('Error fetching articles:', error);
+        setFeaturedArticle(null);
+        setArticles([]);
       } finally {
         setIsLoading(false);
       }
@@ -285,138 +306,202 @@ export default function HomePage() {
     }
   };
 
+  const handleOpenShareModal = (article: Article) => {
+    setSharingArticleDetails({
+      title: article.title,
+      slug: article.slug,
+      coverImageUrl: article.coverImageUrl,
+      excerpt: getExcerpt(article, 100) // Shorter excerpt for modal
+    });
+    setIsShareModalOpen(true);
+  };
+
+  const handleCloseShareModal = () => {
+    setIsShareModalOpen(false);
+    setSharingArticleDetails(null);
+  };
+
+  // Determine base URL for sharing
+  const [baseUrl, setBaseUrl] = useState('');
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setBaseUrl(window.location.origin);
+    }
+  }, []);
+
   return (
-    <div className={styles['three-column-layout']}>
-      {/* Background overlay for mobile */}
-      {windowWidth < 768 && !isSidebarCollapsed && (
-        <div className={`${styles['menu-overlay']} ${styles['active']}`} onClick={toggleSidebar}></div>
-      )}
-    
-      {/* LEFT SIDEBAR */}
-      <LeftSidebar 
-        isAuthenticated={isAuthenticated} 
-        handleLogout={handleLogout} 
-        toggleSidebar={toggleSidebar} 
-        isSidebarCollapsed={isSidebarCollapsed}
-      />
-
-      {/* Mobile sidebar toggle button - only shown on mobile */}
-      {windowWidth < 768 && (
-        <button 
-          className={styles['toggle-button']} 
-          onClick={toggleSidebar}
-          aria-label={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-        >
-          {isSidebarCollapsed ? "☰" : "✕"}
-        </button>
-      )}
-
-      {/* MAIN CONTENT */}
-      <main className={`${styles['center-column']} ${isSidebarCollapsed && windowWidth >= 768 ? styles['expanded'] : ''}`}>
-        {/* Daily Prompt Banner */}
-        <div className={styles['prompt-banner']}>
-          <div className={styles['prompt-icon']}>💡</div>
-          <div className={styles['prompt-text']}>What's an idea that changed your life?</div>
-          <Link href="/write" className={styles['prompt-button']}>
-            Write now →
-          </Link>
-        </div>
-
-        {isLoading ? (
-          <div className={styles['loading']}>Loading articles...</div>
-        ) : (
+    <>
+      <Head>
+        {sharingArticleDetails && (
           <>
-            {/* Featured Thought */}
-            {featuredArticle && (
-              <article className={styles['featured-card']}>
-                <div className={styles['featured-content']}>
-                  <div className={styles['featured-label']}>FEATURED THOUGHT</div>
-                  <h2 className={styles['featured-title']}>{featuredArticle.title}</h2>
-                  <div className={styles['featured-meta']}>
-                    by {getAuthorName(featuredArticle)} • {getReadingTime(featuredArticle.content)} min read
-                  </div>
-                  <p className={styles['featured-excerpt']}>
-                    {getExcerpt(featuredArticle)}
-                  </p>
-                  <Link href={`/articles?slug=${encodeURIComponent(featuredArticle.slug)}`} className={styles['read-link']}>
-                    Read →
-                  </Link>
-                </div>
-                {featuredArticle.coverImageUrl && (
-                  <div className={styles['featured-image']}>
-                    <img 
-                      src={featuredArticle.coverImageUrl} 
-                      alt={featuredArticle.title}
-                      className={styles['cover-image']}
-                    />
-                  </div>
-                )}
-              </article>
-            )}
+            <meta property="og:title" content={sharingArticleDetails.title} />
+            <meta property="og:description" content={sharingArticleDetails.excerpt || 'Read this article on Journalite.'} />
+            <meta property="og:image" content={sharingArticleDetails.coverImageUrl || '/default-image.jpg'} />
+            <meta property="og:url" content={`https://mvp.journalite.app/articles?slug=${encodeURIComponent(sharingArticleDetails.slug)}`} />
+            <meta property="og:type" content="article" />
+          </>
+        )}
+      </Head>
+      <div className={styles['three-column-layout']}>
+        {/* Background overlay for mobile */}
+        {windowWidth < 768 && !isSidebarCollapsed && (
+          <div className={`${styles['menu-overlay']} ${styles['active']}`} onClick={toggleSidebar}></div>
+        )}
+      
+        {/* LEFT SIDEBAR */}
+        <LeftSidebar 
+          isAuthenticated={isAuthenticated} 
+          handleLogout={handleLogout} 
+          toggleSidebar={toggleSidebar} 
+          isSidebarCollapsed={isSidebarCollapsed}
+        />
 
-            {/* Article Grid */}
-            <div className={styles['article-grid']}>
-              {articles.map((article, index) => (
-                <article 
-                  key={article._id || article.slug || `article-${index}`} 
-                  className={styles['article-card']}
-                >
-                  <h3 className={styles['article-title']}>{article.title}</h3>
-                  <div className={styles['article-meta']}>
-                    by {getAuthorName(article)} • {getReadingTime(article.content)} min read
-                  </div>
-                  {(article.excerpt || (article.content && article.content.length > 0)) && (
-                    <p className={styles['article-excerpt']}>
-                      {getExcerpt(article)}
-                    </p>
-                  )}
-                  
-                  {/* Tags */}
-                  {article.tags && article.tags.length > 0 && (
-                    <div className={styles['article-tags']}>
-                      {article.tags.map((tag, tagIndex) => (
-                        <Link
-                          key={`${article.slug}-tag-${tagIndex}`}
-                          href={`/tag/${tag.toLowerCase()}`}
-                          className={styles['tag']}
-                        >
-                          #{tag}
-                        </Link>
-                      ))}
+        {/* Mobile sidebar toggle button - only shown on mobile */}
+        {windowWidth < 768 && (
+          <button 
+            className={styles['toggle-button']} 
+            onClick={toggleSidebar}
+            aria-label={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            {isSidebarCollapsed ? "☰" : "✕"}
+          </button>
+        )}
+
+        {/* MAIN CONTENT */}
+        <main className={`${styles['center-column']} ${isSidebarCollapsed && windowWidth >= 768 ? styles['expanded'] : ''}`}>
+          {/* Daily Prompt Banner */}
+          <div className={styles['prompt-banner']}>
+            <div className={styles['prompt-icon']}>💡</div>
+            <div className={styles['prompt-text']}>What's an idea that changed your life?</div>
+            <Link href="/write" className={styles['prompt-button']}>
+              Write now →
+            </Link>
+          </div>
+
+          {isLoading ? (
+            <div className={styles['loading']}>Loading articles...</div>
+          ) : (
+            <>
+              {/* Featured Thought */}
+              {featuredArticle && (
+                <article className={styles['featured-card']}>
+                  <div className={styles['featured-content']}>
+                    <div className={styles['featured-label']}>FEATURED THOUGHT</div>
+                    <h2 className={styles['featured-title']}>{featuredArticle.title}</h2>
+                    <div className={styles['featured-meta']}>
+                      by {getAuthorName(featuredArticle)} • {getReadingTime(featuredArticle.content)} min read
                     </div>
-                  )}
-                  
-                  {/* Reaction Bar */}
-                  <div className={styles['reaction-bar']}>
-                    <button className={styles['reaction-button']}>❤️ Echo</button>
-                    <button className={styles['reaction-button']}>🔁 Resonate</button>
-                    <button className={styles['reaction-button']}>💬 Comment</button>
-                    <Link href={`/articles?slug=${encodeURIComponent(article.slug)}`} className={styles['read-link']}>
+                    <p className={styles['featured-excerpt']}>
+                      {getExcerpt(featuredArticle)}
+                    </p>
+                    <Link href={`/articles?slug=${encodeURIComponent(featuredArticle.slug)}`} className={styles['read-link']}>
                       Read →
                     </Link>
                   </div>
+                  {featuredArticle.coverImageUrl && (
+                    <div className={styles['featured-image']}>
+                      <img 
+                        src={featuredArticle.coverImageUrl} 
+                        alt={featuredArticle.title}
+                        className={styles['cover-image']}
+                      />
+                    </div>
+                  )}
                 </article>
-              ))}
-            </div>
-          </>
-        )}
-      </main>
+              )}
 
-      {/* RIGHT SIDEBAR */}
-      <aside className={styles['right-sidebar']}>
-        <h2 className={styles['sidebar-heading']}>Trending</h2>
-        {isAuthenticated && <NotificationBell />}
-        <div className={styles['tag-list']}>
-          {tags.map(tag => (
-            <Link key={tag} href={`/tag/${tag.toLowerCase()}`} className={styles['trending-tag']}>
-              # {tag}
-            </Link>
-          ))}
-        </div>
-        <Link href="/write" className={styles['write-button']}>
-          Write
-        </Link>
-      </aside>
-    </div>
+              {/* Article Grid */}
+              <div className={styles['article-grid']}>
+                {articles.map((article, index) => (
+                  <article 
+                    key={article._id || article.slug || `article-${index}`} 
+                    className={styles['article-card']}
+                  >
+                    <h3 className={styles['article-title']}>{article.title}</h3>
+                    <div className={styles['article-meta']}>
+                      by {getAuthorName(article)} • {getReadingTime(article.content)} min read
+                    </div>
+                    {(article.excerpt || (article.content && article.content.length > 0)) && (
+                      <p className={styles['article-excerpt']}>
+                        {getExcerpt(article)}
+                      </p>
+                    )}
+                    
+                    {/* Tags */}
+                    {article.tags && article.tags.length > 0 && (
+                      <div className={styles['article-tags']}>
+                        {article.tags.map((tag, tagIndex) => (
+                          <Link
+                            key={`${article.slug}-tag-${tagIndex}`}
+                            href={`/tag/${tag.toLowerCase()}`}
+                            className={styles['tag']}
+                          >
+                            #{tag}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                    
+                    {/* Reaction Bar */}
+                    <div className={styles['reaction-bar']}>
+                      <button className={styles['reaction-button']} aria-label="Like article">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+                          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                        </svg>
+                      </button>
+                      <button 
+                        className={styles['reaction-button']} 
+                        aria-label="Share article"
+                        onClick={() => handleOpenShareModal(article)}
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+                          <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/>
+                        </svg>
+                      </button>
+                      <button className={styles['reaction-button']} aria-label="Comment on article">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-5 h-5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.076-4.076a1.526 1.526 0 011.037-.443 48.282 48.282 0 005.68-.494c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" />
+                        </svg>
+                      </button>
+                      <Link href={`/articles?slug=${encodeURIComponent(article.slug)}`} className={styles['read-link']}>
+                        Read →
+                      </Link>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </>
+          )}
+        </main>
+
+        {/* RIGHT SIDEBAR */}
+        <aside className={styles['right-sidebar']}>
+          <h2 className={styles['sidebar-heading']}>Trending</h2>
+          {isAuthenticated && <NotificationBell />}
+          <div className={styles['tag-list']}>
+            {tags.map(tag => (
+              <Link key={tag} href={`/tag/${tag.toLowerCase()}`} className={styles['trending-tag']}>
+                # {tag}
+              </Link>
+            ))}
+          </div>
+          <Link href="/write" className={styles['write-button']}>
+            Write
+          </Link>
+        </aside>
+
+        {/* Share Modal */} 
+        {sharingArticleDetails && (
+          <ShareModal 
+            isOpen={isShareModalOpen}
+            onClose={handleCloseShareModal}
+            articleTitle={sharingArticleDetails.title}
+            articleUrl={`${'https://mvp.journalite.app'}/articles?slug=${encodeURIComponent(sharingArticleDetails.slug)}`}
+            coverImageUrl={sharingArticleDetails.coverImageUrl}
+            excerpt={sharingArticleDetails.excerpt}
+          />
+        )}
+      </div>
+    </>
   )
 }

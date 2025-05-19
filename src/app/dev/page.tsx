@@ -249,61 +249,64 @@ The user onboarding process has been enhanced to include an interest selection s
 
 const authStylingEnhancementsDoc: DocSection = {
   id: 'auth-styling-enhancements',
-  title: 'Authentication Pages UI/UX Enhancements',
+  title: 'Authentication UI & Styling Enhancements',
   content: `
-## Authentication Pages UI/UX Enhancements
+## Authentication UI & Styling Enhancements
 
-Significant UI/UX improvements have been implemented across all authentication and user onboarding pages (\`/login\`, \`/register\`, \`/profile-setup\`, \`/select-interests\`). The goal was to create a more modern, cohesive, and engaging user experience. This area is open to future design iterations and animation refinements.
+The authentication pages (Login, Register, Forgot Password, Reset Password) have been significantly redesigned for a more modern, user-friendly, and consistent look and feel.
 
-### Key Enhancements:
+### Key Changes:
 
-1.  **Consistent Design Language (Tailwind CSS):**
-    *   All pages now utilize a unified design language built with Tailwind CSS.
-    *   The previous CSS module for interest selection (\`src/styles/selectInterests.module.css\`) has been removed, and its styles migrated to Tailwind classes within the component.
-    *   **Shared Styles:**
-        *   **Background:** A subtle gradient (\`bg-gradient-to-br from-stone-100 to-amber-100\`) is used for page backgrounds.
-        *   **Typography:** Consistent \`font-sans\` with updated text colors (variants of \`text-stone-xxx\`) for a softer look.
-        *   **Layout:** Form-based pages (\`login\`, \`register\`) use a two-column layout (form on left, static image on right). Profile setup and interest selection use centered card layouts for focus.
+1.  **Centralized Layout (\`AuthLayout.tsx\`):**
+    *   A new \`AuthLayout\` component (\`src/components/AuthLayout.tsx\`) has been created to provide a consistent wrapper for all auth-related pages.
+    *   This layout includes:
+        *   A clean, centered card for the form content.
+        *   The Journalite logo.
+        *   A brief introductory text or page title.
+        *   Links for alternative actions (e.g., "Don't have an account? Sign Up" or "Back to Login").
+    *   The layout uses CSS Modules (\`AuthLayout.module.css\`) for styling.
 
-2.  **Improved Form Elements:**
-    *   **Input Fields:**
-        *   White background, neutral borders, rounded corners (\`rounded-lg\`), and subtle shadows (\`shadow-sm\`).
-        *   Clear focus states with an amber ring (\`focus:ring-amber-500 focus:border-amber-500\`).
-        *   Distinct validation state styling (e.g., red for errors, green for username availability) with appropriate background and border colors.
-        *   Hover effects on default input state.
-    *   **Buttons (Submit & Social Login):**
-        *   Rounded corners (\`rounded-lg\`) and slight shadows (\`shadow-md\`).
-        *   Smooth transitions (\`transition-all duration-200 ease-in-out\`).
-        *   Hover effects: Darker background for primary buttons, lighter for secondary/social buttons.
-        *   Subtle scale transform on hover (\`hover:scale-[1.01]\`) and active (\`active:scale-[0.99]\`) states for tactile feedback.
-        *   **Loading State:** Submit buttons now display an SVG spinner animation and loading text (e.g., \\"Creating your account...\\") when \`isLoading\` or \`isSubmitting\` is true, maintaining button dimensions.
-        *   **Links:** Styled with an accent color (amber) and underline on hover for better visibility.
+2.  **Modernized Form Styling (\`AuthForm.module.css\`):**
+    *   A dedicated CSS Module (\`AuthForm.module.css\`) is used to style the forms within auth pages.
+    *   Inputs, buttons, and error messages now have a more refined and modern appearance.
+    *   Focus states are improved for better accessibility.
+    *   The color scheme aligns with the Journalite theme (amber and stone).
 
-3.  **Interest Selection Page (\`/select-interests\`):**
-    *   **Interest Buttons:**
-        *   Pill-shaped, responsive buttons.
-        *   Clear visual distinction between selected (amber background, white text, scaled up) and unselected (white background, stone text/border) states.
-        *   Interactive hover and active state animations.
-    *   **Layout:** Centered, responsive design with clear instructions.
+3.  **Improved User Experience:**
+    *   Clearer visual hierarchy and spacing.
+    *   Consistent branding across all auth screens.
+    *   Responsive design ensures a good experience on all device sizes.
 
-4.  **Messages (Error, Success, Info):**
-    *   Styled with distinct background colors (light red, green, sky blue), borders, and rounded corners.
-    *   A fade-in animation (\`animate-fadeIn\`) is applied for smoother appearance (requires \`fadeIn\` keyframes in global CSS).
+4.  **Page-Specific Updates:**
+    *   **Login (\`src/app/login/page.tsx\`):** Uses \`AuthLayout\` and \`AuthForm\` styles.
+    *   **Register (\`src/app/register/page.tsx\`):** Updated to use \`AuthLayout\`. Form fields (First Name, Last Name, Username, Email, Password) are styled consistently.
+    *   **Forgot Password (\`src/app/forgot-password/page.tsx\`):** Uses \`AuthLayout\`.
+    *   **Reset Password (\`src/app/reset-password/page.tsx\`):** Uses \`AuthLayout\`.
 
-5.  **Loading States:**
-    *   Page-level loading (e.g., on \`profile-setup\` and \`select-interests\` while checking auth state) now uses a consistent, centered amber spinner.
+### Implementation Details:
 
-### Animation Details:
+*   Each auth page (e.g., \`login/page.tsx\`) now wraps its content with \`<AuthLayout title="..." description="...">...</AuthLayout>\`.
+*   Form elements within these pages use class names from \`AuthForm.module.css\`.
+*   The global \`globals.css\` and \`home.module.css\` might still apply some base styles, but auth-specific styling is largely encapsulated.
 
-*   **CSS Transitions:** Utilized for smooth changes in \`background-color\`, \`border-color\`, \`transform\` (scale), etc.
-*   **SVG Spinners:** Inline SVG used for loading states in buttons.
-*   **\`animate-fadeIn\`:** A custom keyframe animation for message pop-ups (to be defined in \`globals.css\`).
+### Example Usage (Login Page):
 
-### Future Tweaks:
+\`\`\`tsx
+// src/app/login/page.tsx
+import AuthLayout from '@/components/AuthLayout';
+import styles from '@/styles/AuthForm.module.css'; // For form elements
 
-*   More sophisticated page transition animations.
-*   Micro-interactions on form validation.
-*   Further refinement of the right-hand image/graphic on login/register pages.
+export default function LoginPage() {
+  // ... login logic ...
+  return (
+    <AuthLayout title="Welcome Back" description="Log in to continue to Journalite.">
+      <form onSubmit={handleLogin} className={styles.form}>
+        {/* ... form inputs and button ... */}
+      </form>
+    </AuthLayout>
+  );
+}
+\`\`\`
   `
 };
 
@@ -1240,12 +1243,58 @@ const fetchArticles = async (tag: string) => {
   `
 };
 
+const featureUpdatesDoc: DocSection = {
+  id: 'feature-updates',
+  title: 'Feature Updates',
+  content: `
+## Explore Page Implementation
+
+A new "Explore" page has been added to Journalite, designed to help users discover a wide range of articles.
+
+### Key Features:
+
+*   **Route:** Accessible at \`/explore\`.
+*   **Layout:** Utilizes the existing three-column layout (Left Sidebar, Main Content, Right Sidebar).
+*   **Content Fetching:** Fetches up to 30 articles using the \`getArticles\` function from \`src/firebase/articles.ts\`.
+*   **Categorization:** Articles are organized into sections:
+    *   **Featured Stories:** Displays the first 4 articles, with the first article highlighted in a larger format.
+    *   **Trending Now:** Shows up to 6 articles, sorted by a combination of view counts and likes.
+    *   **Recently Published:** Displays up to 8 of the latest articles.
+    *   **Explore by Topic:** Allows users to select a tag (e.g., Technology, Writing) and view up to 6 articles related to that tag. The \`getArticlesByTag\` function is used here.
+*   **Structure:**
+    *   \`src/app/explore/page.tsx\`: The main page component, acts as a wrapper.
+    *   \`src/app/explore/ExploreClient.tsx\`: A client component that handles all the logic, data fetching, state management (selected tags, loading states, etc.), and rendering of the explore page sections and article cards.
+*   **Styling:** New CSS styles have been added to \`src/styles/home.module.css\` to support the layout and appearance of the Explore page, including:
+    *   \`.explore-header\`, \`.explore-title\`, \`.explore-subtitle\`
+    *   \`.explore-container\`, \`.explore-section\`, \`.section-title\`
+    *   \`.featured-articles-grid\`, \`.feature-large\` (for the prominent featured article)
+    *   \`.tags-selector\`, \`.tag-button\`, \`.tag-button-active\`
+    *   Responsive styles to ensure good display on various screen sizes.
+*   **Functionality:** Includes standard article card features like displaying author, reading time, excerpt, tags, and reaction buttons (like, share). The share modal functionality is also integrated.
+
+## Home Feed Differentiation
+
+With the introduction of a comprehensive Explore page, the Home Feed (\`/\`) can now focus on a more personalized user experience.
+
+### Potential Home Feed Strategies:
+
+*   **Personalized Recommendations:** Articles based on reading history, liked content, or followed tags/authors.
+*   **"For You" Section:** A curated feed algorithmically tailored to individual user preferences.
+*   **Following Feed:** Content from authors or topics the user explicitly follows.
+*   **Community Activity:** Articles trending within the user's network or recently interacted with by people they follow.
+*   **Mixture:** A combination of personalized content, latest articles from followed sources, and some general trending/popular articles to ensure discovery.
+
+The goal is to make the Home Feed a dynamic and relevant starting point for users, while the Explore page serves as a broader discovery tool.
+  `
+};
+
 // Collection of all documentation sections
 const docSections: DocSection[] = [
   projectStructureDoc,
   firebaseLogicDoc,
   userOnboardingImprovementsDoc,
   authStylingEnhancementsDoc,
+  featureUpdatesDoc,
   articleSystemDoc,
   userProfilesDoc,
   routingDoc,

@@ -23,31 +23,46 @@ const authorMapping: { [key: string]: string } = {
   'hannah-cole-id': 'Hannah Cole'
 }
 
-// Convert Firestore article to UI format
-const adaptFirestoreArticle = (firestoreArticle: FirestoreArticle): any => {
-  return {
-    _id: firestoreArticle.id || '',
-    title: firestoreArticle.title,
-    slug: firestoreArticle.slug || '',
-    authorId: firestoreArticle.authorId,
+// Convert Firestore article to UI format for RenderArticle
+// This adapter should ensure the object passed to RenderArticle has the fields RenderArticle expects.
+const adaptFirestoreArticle = (firestoreArticle: FirestoreArticle): any => { // Using 'any' for return type temporarily due to unknown FirestoreArticle structure
+  const slug = firestoreArticle.slug || (firestoreArticle.title || 'untitled').toLowerCase().replace(/[\s\W-]+/g, '-').replace(/^-+|-+$/g, '');
+  const now = new Date().toISOString();
+
+  // Base fields required by RenderArticle's BaseArticleInfo
+  const adapted = {
+    id: firestoreArticle.id || '', // CRITICAL: Ensure 'id' is present
+    _id: firestoreArticle.id || '', // Keep for compatibility if RenderArticle or other parts use it
+    title: firestoreArticle.title || 'Untitled Article',
+    slug: slug,
+    authorId: firestoreArticle.authorId, // Assuming authorId is on FirestoreArticle
     authorName: firestoreArticle.authorName || 'Unknown Author',
-    coverImageUrl: firestoreArticle.coverImage,
-    tags: firestoreArticle.tags,
-    status: firestoreArticle.status || 'published',
-    content: [
-      {
-        paragraphId: 'p1',
-        text: firestoreArticle.body,
-        likes: [],
-        comments: []
-      }
-    ],
-    likes: [],
-    reposts: [],
-    comments: [],
-    createdAt: firestoreArticle.createdAt.toDate().toISOString(),
-    updatedAt: firestoreArticle.createdAt.toDate().toISOString()
+    coverImageUrl: firestoreArticle.coverImage || null,
+    tags: firestoreArticle.tags || [],
+    likes: (firestoreArticle as any).likes || [], // Cast to any if 'likes' is not on FirestoreArticle type
+    createdAt: firestoreArticle.createdAt ? firestoreArticle.createdAt.toDate().toISOString() : now,
+    updatedAt: (firestoreArticle as any).updatedAt ? (firestoreArticle as any).updatedAt.toDate().toISOString() : (firestoreArticle.createdAt ? firestoreArticle.createdAt.toDate().toISOString() : now),
+    excerpt: (firestoreArticle as any).excerpt || '',
+
+    // Fields for SimpleArticle vs ComplexArticle differentiation by RenderArticle
+    // RenderArticle will use its type guards (isSimple, isComplex)
+    // We pass both `body` and a potential `content` array if Firestore structure supports it.
+    body: firestoreArticle.body || '', // For SimpleArticle path in RenderArticle
+    content: (firestoreArticle as any).content || undefined, // For ComplexArticle path if 'content' is an array in Firestore
+                                                       // If firestoreArticle.content is not an array, RenderArticle's isComplex will be false.
+    
+    // Other optional fields RenderArticle might use from ComplexArticle type
+    reposts: (firestoreArticle as any).reposts || [],
+    viewCount: (firestoreArticle as any).viewCount || 0,
   };
+
+  // If firestoreArticle.content is indeed an array of paragraphs, map it.
+  // This specific mapping logic might be too complex for the adapter if FirestoreArticle's content isn't already structured as Paragraph[].
+  // For now, we pass it as is, and RenderArticle's isComplex will determine how to use it or 'body'.
+  // If `(firestoreArticle as any).content` is an array and matches Paragraph structure, it will be used.
+  // Otherwise, RenderArticle's `isSimple` path will likely take over using `adapted.body`.
+
+  return adapted;
 };
 
 function Article () {

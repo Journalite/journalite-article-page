@@ -112,6 +112,12 @@
       "namedRegex": "^/email\\-verified(?:/)?$"
     },
     {
+      "page": "/explore",
+      "regex": "^/explore(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/explore(?:/)?$"
+    },
+    {
       "page": "/forgot-password",
       "regex": "^/forgot\\-password(?:/)?$",
       "routeKeys": {},
@@ -128,6 +134,12 @@
       "regex": "^/my\\-profile(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/my\\-profile(?:/)?$"
+    },
+    {
+      "page": "/my-profile/edit",
+      "regex": "^/my\\-profile/edit(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/my\\-profile/edit(?:/)?$"
     },
     {
       "page": "/my-thoughts",

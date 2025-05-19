@@ -59,6 +59,17 @@ const formatMemberSince = (date: Date): string => {
   }
 };
 
+// Helper function to strip HTML tags
+const stripHtmlTags = (html: string): string => {
+  if (typeof document !== 'undefined') {
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+    return tempDiv.textContent || tempDiv.innerText || '';
+  }
+  // Fallback for server-side or environments without document
+  return html.replace(/<[^>]*>/g, '');
+};
+
 interface ProfileClientProps {
   username: string;
 }
@@ -242,7 +253,7 @@ export default function ProfileClient({ username }: ProfileClientProps) {
                       </span>
                     </div>
                     <p className={styles['article-excerpt']}>
-                      {article.body.substring(0, 150)}...
+                      {stripHtmlTags(article.body).substring(0, 150)}...
                     </p>
                   </div>
                 </Link>

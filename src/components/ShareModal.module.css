@@ -1,0 +1,205 @@
+/* ShareModal.module.css */
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6); /* Darker overlay for better focus */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000; /* Ensure it's on top */
+  padding: 1rem;
+  opacity: 0;
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+.modal {
+  background-color: #ffffff; /* White background for the modal */
+  padding: 2rem; /* Generous padding */
+  border-radius: 12px; /* Softer, larger radius */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  max-width: 500px; /* Max width for the modal */
+  position: relative;
+  transform: scale(0.95);
+  animation: scaleUp 0.3s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleUp {
+  to {
+    transform: scale(1);
+  }
+}
+
+.closeButton {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #9ca3af; /* stone-400 */
+  padding: 0.25rem;
+  border-radius: 50%;
+  transition: color 0.2s, background-color 0.2s;
+}
+
+.closeButton:hover {
+  color: #1f2937; /* stone-800 */
+  background-color: #f3f4f6; /* stone-100 */
+}
+
+.closeButton svg {
+  width: 1.5rem; /* 24px */
+  height: 1.5rem;
+}
+
+.title {
+  font-size: 1.75rem; /* 28px */
+  font-weight: 600;
+  color: #1f2937; /* stone-800 */
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+/* Article Preview Styles */
+.articlePreview {
+  margin-bottom: 2rem;
+  border: 1px solid #e5e7eb; /* stone-200 */
+  border-radius: 8px;
+  padding: 1rem;
+  background-color: #f9fafb; /* stone-50, very light for contrast */
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.articleImage {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.articleTitlePreview {
+  font-size: 1.125rem; /* 18px */
+  font-weight: 600;
+  color: #374151; /* stone-700 */
+  margin-bottom: 0.25rem;
+  line-height: 1.4;
+}
+
+.articleExcerptPreview {
+  font-size: 0.875rem; /* 14px */
+  color: #6b7280; /* stone-500 */
+  line-height: 1.5;
+  max-height: 60px; /* approx 3 lines */
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Share Actions */
+.shareActions {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.copyLinkContainer {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.urlInput {
+  flex-grow: 1;
+  padding: 0.75rem 1rem;
+  border: 1px solid #d1d5db; /* stone-300 */
+  border-radius: 6px;
+  font-size: 0.875rem;
+  background-color: #f9fafb; /* stone-50 */
+  color: #4b5563; /* stone-600 */
+  overflow-x: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.copyButton {
+  background-color: #F59E0B; /* amber-500 */
+  color: white;
+  border: none;
+  padding: 0.75rem 1.25rem;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  white-space: nowrap;
+}
+
+.copyButton:hover {
+  background-color: #D97706; /* amber-600 */
+}
+
+.copyButton:active {
+  background-color: #B45309; /* amber-700 */
+}
+
+.shareViaText {
+  text-align: center;
+  font-size: 0.875rem;
+  color: #6b7280; /* stone-500 */
+  margin: 0;
+}
+
+.socialIcons {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem; /* Increased gap for better touch targets */
+}
+
+.socialIcons a {
+  color: #4b5563; /* stone-600 */
+  transition: color 0.2s, transform 0.2s;
+  display: inline-block; /* For transform */
+}
+
+.socialIcons a:hover {
+  color: #F59E0B; /* amber-500 */
+  transform: scale(1.1);
+}
+
+.socialIcons svg {
+  width: 2rem; /* 32px - larger icons */
+  height: 2rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .modal {
+    padding: 1.5rem;
+    margin: 0.5rem;
+  }
+  .title {
+    font-size: 1.5rem;
+  }
+  .copyLinkContainer {
+    flex-direction: column;
+  }
+  .copyButton {
+    width: 100%;
+  }
+  .socialIcons svg {
+    width: 1.75rem; /* 28px */
+    height: 1.75rem;
+  }
+} 
