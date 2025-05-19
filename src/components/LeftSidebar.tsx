@@ -88,6 +88,13 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({
             <span className={styles['nav-icon']}>•</span>
             <span className={styles['nav-text']}>Notifications</span>
           </Link>
+          <Link 
+            href="https://journalite.app/" 
+            className={`${styles['nav-link']} ${styles['nav-learn-more']}`}
+          >
+            <span className={styles['nav-icon']}>•</span>
+            <span className={styles['nav-text']}>Learn More</span>
+          </Link>
           <button 
             onClick={handleLogout}
             className={`${styles['nav-link']} ${styles['nav-logout']}`}
@@ -114,8 +121,8 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({
             <span className={styles['nav-text']}>Login</span>
           </Link>
           <Link 
-            href="/learn" 
-            className={`${styles['nav-link']} ${styles['nav-learn']}`}
+            href="https://journalite.app/" 
+            className={`${styles['nav-link']} ${styles['nav-learn-more']}`}
           >
             <span className={styles['nav-icon']}>•</span>
             <span className={styles['nav-text']}>Learn More</span>

@@ -298,7 +298,11 @@ export default function HomePage() {
         handleLogout={handleLogout} 
         toggleSidebar={toggleSidebar} 
         isSidebarCollapsed={isSidebarCollapsed}
-      />
+      >
+        <Link href="https://journalite.app/" className={styles['learn-more-link']}>
+          Learn More
+        </Link>
+      </LeftSidebar>
 
       {/* Mobile sidebar toggle button - only shown on mobile */}
       {windowWidth < 768 && (
