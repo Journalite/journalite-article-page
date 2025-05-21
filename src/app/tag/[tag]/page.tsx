@@ -1,6 +1,3 @@
-// Forcing dynamic rendering for this route
-export const dynamic = 'force-dynamic';
-
 // This is now a Server Component
 import { Suspense } from 'react'
 import TagPageClient from './TagPageClient'

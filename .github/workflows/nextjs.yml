@@ -64,8 +64,12 @@ jobs:
           node-version: "20"
           cache: ${{ steps.detect-package-manager.outputs.manager }}
       
-      # We're not using static site generation anymore, so we remove the Pages setup
-      # and will instead use standalone output mode
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+        with:
+          # Automatically inject basePath in your Next.js configuration file and disable
+          # server side image optimization (https://nextjs.org/docs/api-reference/next/image#unoptimized).
+          static_site_generator: next
       
       - name: Restore cache
         uses: actions/cache@v4
@@ -85,7 +89,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./.next/standalone
+          path: ./out
 
   # Deployment job
   deploy:

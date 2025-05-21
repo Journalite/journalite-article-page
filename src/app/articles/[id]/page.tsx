@@ -2,12 +2,12 @@
 import React, { Suspense } from 'react';
 import ArticlePageClient from './client';
 
-// Force dynamic rendering
-export const dynamic = 'force-dynamic';
-
-// This is needed to satisfy Next.js requirements for dynamic routes
+// For static generation, we need to define this to generate the static paths
 export async function generateStaticParams() {
-  return [];
+  // Prerender a few key article IDs, others will be handled as fallbacks
+  return [
+    { id: 'placeholder' }
+  ];
 }
 
 // Server component that renders the client component
