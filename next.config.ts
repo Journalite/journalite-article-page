@@ -5,8 +5,8 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  // Ensure static export for GitHub Pages
-  output: 'export',
+  // Use SSR with standalone output instead of static export
+  output: 'standalone',
   trailingSlash: true,    // Ensure paths like /about/ instead of /about
   basePath: '',           // <- Must be empty for custom domains!
   assetPrefix: ''
