@@ -1,31 +1,16 @@
-'use client'
-
+// Server part (no 'use client')
 import React from 'react';
-import ArticleComposer from '@/components/ArticleComposer';
+import EditArticlePageClient from './client';
 
-interface EditArticlePageProps {
-  params: {
-    id: string;
-  };
-}
-
-// We need to export this function outside the client component
+// Force dynamic rendering
 export const dynamic = 'force-dynamic';
 
-/**
- * Edit Article Page
- * 
- * A page for editing existing articles with our Medium-like editor
- */
-const EditArticlePage: React.FC<EditArticlePageProps> = ({ params }) => {
-  // Access id directly from params
-  const id = params?.id;
-  
-  return (
-    <div>
-      <ArticleComposer articleId={id} />
-    </div>
-  );
-};
+// This is needed to satisfy Next.js requirements for dynamic routes
+export async function generateStaticParams() {
+  return [];
+}
 
-export default EditArticlePage; 
+// Server component that renders the client component
+export default function EditArticlePage({ params }: { params: { id: string } }) {
+  return <EditArticlePageClient id={params.id} />;
+} 
