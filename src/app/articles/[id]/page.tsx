@@ -9,6 +9,9 @@ import CommentSection from '@/components/CommentSection';
 import { getArticleById } from '@/firebase/articles';
 import styles from '@/styles/ArticlePage.module.css';
 
+// Forcing dynamic rendering for this route
+export const dynamic = 'force-dynamic';
+
 // Cached article fetcher
 const getArticleData = cache(async (id: string) => {
   try {

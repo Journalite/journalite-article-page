@@ -1,5 +1,8 @@
 import { Metadata, Viewport } from 'next'
 
+// Forcing dynamic rendering for this route
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Firebase Auth | Journalite',
   description: 'Firebase authentication redirect handler',

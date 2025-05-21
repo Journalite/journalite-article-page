@@ -9,6 +9,9 @@ interface EditArticlePageProps {
   };
 }
 
+// We need to export this function outside the client component
+export const dynamic = 'force-dynamic';
+
 /**
  * Edit Article Page
  * 
