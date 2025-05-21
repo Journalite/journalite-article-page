@@ -453,6 +453,25 @@ const UserSearch: React.FC = () => {
   - Better status selection with clear visibility explanations
   - Interactive tag preview with hover effects
   - Responsive design for mobile devices
+- **Article Page Redesign**: Completely redesigned the article reading experience:
+  - Removed sidebars for a cleaner, distraction-free reading experience
+  - Added a minimalistic notification bell with SVG icon in the header
+  - Made the Journalite logo a link to the homepage
+  - Added user profile dropdown menu in the top-right corner
+  - Made author names clickable, linking to author profile pages
+  - Improved spacing and typography for better readability
+  - Moved related tags to the bottom of the article
+  - Added proper click-outside behavior for dropdown menus
+  - Fixed navigation links to ensure all sidebar options are still accessible
+  - Improved mobile responsiveness
+- **Copy-paste functionality in editor**: Enhanced the editing experience:
+  - Fixed issues with copy-paste functionality in the article editor
+  - Added support for both regular paste (preserving formatting) and "paste and match style"
+  - Implemented proper handling of the editor content to maintain consistent state
+- **Params handling in Next.js**: Fixed issues with Next.js params:
+  - Properly handled params in dynamic routes without using unstable React.use() with Promise
+  - Fixed "article becomes blank" issue after editing and updating
+  - Added proper type safety for route parameters
 - **Next.js build errors**: Fixed Next.js 15.3.0 build issues:
   - Fixed critical build error in edit-article page by moving viewport configuration to layout files
   - Fixed CSR bailout errors by wrapping useSearchParams() in Suspense boundaries
@@ -489,6 +508,176 @@ const UserSearch: React.FC = () => {
   - Fixed inconsistent HTML structure between server and client rendering
   - Created consistent date formatting functions with fixed locale ('en-US') and timezone ('UTC')
   - Replaced HTML img tags with Next.js Image components with proper configuration
+
+## Article Editor/Writer Deep Dive
+
+The Journalite article editor is a custom-built, Medium-like rich text editor that provides a seamless writing experience. It consists of several key components working together:
+
+### Architecture
+
+The article editing system is built with these main components:
+1. **ArticleComposer**: The main container component that manages the article state and interactions
+2. **ArticleEditor**: The actual editor interface with formatting controls
+3. **Document Model**: Custom document model for representing article content
+4. **Editor Services**: Services for handling events, operations, and DOM manipulations
+
+### Key Features
+
+#### Rich Text Editing
+- **Custom document model**: Represents articles as structured JSON with sections, paragraphs, and formatting
+- **WYSIWYG interface**: See exactly what the published article will look like while editing
+- **Formatting toolbar**: Bold, italic, headings (H1, H2, H3), and more
+- **Copy-paste support**: Properly handles both formatted and plain text pasting
+- **Auto-save**: Periodically saves drafts to prevent content loss
+
+#### Document Structure
+```typescript
+// Document model structure
+export interface DocumentModel {
+    id: string;          // Document ID (article ID)
+    title: string;       // Article title
+    sections: Section[]; // Content sections
+    coverImage?: string; // Optional cover image
+    tags?: string[];     // Article tags
+    createdAt?: string;  // Creation timestamp
+    updatedAt?: string;  // Last update timestamp
+    authorId?: string;   // Author ID
+    status?: 'published' | 'drafts'; // Article status
+}
+
+export interface Section {
+    id: string;
+    type: 'section';     // Could be extended for different section types
+    paragraphs: Paragraph[];
+}
+
+export interface Paragraph {
+    id: string;
+    type: 'paragraph' | 'heading' | 'image' | 'blockquote' | 'bulletList' | 'orderedList' | 'listItem';
+    text: string;
+    marks: TextRange[];  // Formatting applied to text ranges
+    level?: number;      // For headings (1-3)
+    src?: string;        // For images
+}
+
+export interface TextRange {
+    type: 'bold' | 'italic' | 'code' | 'link';
+    from: number;  // Start index in text
+    to: number;    // End index in text
+    attrs?: {      // Additional attributes for specific mark types
+        href?: string; // For links
+    };
+}
+```
+
+#### Article Composer Component
+The ArticleComposer handles the overall article state and form functionality:
+
+- **Form inputs**: Title, content, tags, cover image
+- **State management**: Tracks editing state, saves, and publishes actions
+- **Auto-resize**: Automatically expands text areas as content grows
+- **Tag management**: Add/remove tags with real-time preview
+- **Cover image preview**: Shows a preview of the cover image
+- **Validation**: Ensures required fields are filled before saving/publishing
+- **Draft/Publish controls**: Allows saving as draft or publishing immediately
+- **Edit mode detection**: Automatically loads article data in edit mode
+
+#### Advanced Editor Capabilities
+The ArticleEditor component provides the actual editing interface:
+
+- **ContentEditable base**: Uses a managed contentEditable div for WYSIWYG editing
+- **Custom event handling**: Sophisticated event handlers for keyboard interactions
+- **Selection management**: Tracks and manages text selection state
+- **Formatting commands**: Handles text formatting through commands like bold, italic
+- **Paste handling**: Processes pasted content to match the editor's format
+- **DOM patching**: Efficiently updates the DOM based on document model changes
+- **Document operations**: Six core operations (insert/remove/update paragraph/section)
+
+### Editor Event Handling
+The editor uses a custom event handling system to manage user interactions:
+
+```typescript
+// Core editor event handler methods
+private handleKeyDown = (e: KeyboardEvent): void => {
+  if (!this.model) return;
+
+  // Get current paragraph and section
+  this.updateCurrentParagraphAndSection();
+
+  // Handle special keys
+  switch (e.key) {
+    case 'Enter':
+      if (!e.shiftKey) {
+        e.preventDefault();
+        this.handleEnterKey();
+      }
+      break;
+
+    case 'Backspace':
+      if (this.isAtStartOfParagraph()) {
+        e.preventDefault();
+        this.handleBackspaceAtStart();
+      }
+      break;
+
+    // More key handlers...
+  }
+};
+
+// Paste event handler for maintaining formatting
+const handlePaste = (e: React.ClipboardEvent<HTMLDivElement>) => {
+  // Check if the paste was initiated with "Paste and Match Style" option
+  const matchStyle = e.nativeEvent.clipboardData?.getData('text/html-editor-match-style');
+  
+  if (matchStyle === 'true' || e.nativeEvent.clipboardData?.types.includes('text/html-editor-match-style')) {
+    // Paste as plain text (match editor style)
+    e.preventDefault();
+    const text = e.clipboardData.getData('text/plain');
+    document.execCommand('insertText', false, text);
+  } else {
+    // For regular paste (Cmd+V or Ctrl+V), let the browser handle it normally
+    // This will preserve formatting from the source
+  }
+  
+  // Notify model of changes after paste
+  if (editorRef.current && onChange) {
+    setTimeout(() => {
+      if (editorRef.current) {
+        onChange(editorRef.current.innerHTML, documentModel);
+      }
+    }, 0);
+  }
+};
+```
+
+### Document Model to DOM Synchronization
+The editor maintains synchronization between the document model and the DOM:
+
+1. **Document model changes**: When the model changes, the DOM is patched
+2. **User interaction**: User actions modify the DOM
+3. **DOM observation**: Changes to the DOM update the document model
+4. **Change notification**: Model changes trigger callbacks to parent components
+
+This bidirectional sync ensures that the editor state always matches what the user sees.
+
+### Article Viewing with Highlights
+The article viewing component (`ArticleWithHighlights`) extends the editor's capabilities:
+
+- **Highlighting**: Users can highlight text portions
+- **Sharing**: Share highlighted text with others
+- **Comments**: Add comments to specific text selections
+- **DOM reconciliation**: Efficiently updates highlights without full re-renders
+- **Persistence**: Highlights are stored in Firestore linked to the article
+
+### Recent Improvements and Fixes
+- **Copy-paste handling**: Fixed issues where pasted content would be incorrectly formatted
+- **Selection preservation**: Better handling of cursor position after operations
+- **Performance optimizations**: Reduced unnecessary re-renders
+- **Mobile support**: Improved touch interaction and responsive design
+- **Typing past first line**: Fixed bug preventing typing beyond the first line
+- **Content loading messages**: Removed "Content is loaded from HTML" placeholder text
+- **Undo/redo support**: Added keyboard shortcut support for undo/redo operations
+- **Editor styling**: Improved typography and spacing for better writing experience
 
 ## Setup and Installation - This is for Abdul and Hikmat, and Theo. 
 To set up this project locally:

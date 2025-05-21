@@ -521,7 +521,7 @@ export default function Register() {
       </div>
 
       {/* Right image area - Modified to be a background */}
-      <div
+      <div 
         className="hidden md:block md:w-1/2 bg-cover bg-center bg-[url('/images/login.png')]"
         // style={{ backgroundImage: "url('/images/login.png')" }} // Alternative for specific path
       >

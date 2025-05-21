@@ -28,6 +28,22 @@
   "headers": [],
   "dynamicRoutes": [
     {
+      "page": "/articles/[id]",
+      "regex": "^/articles/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/articles/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/articles/[id]/edit",
+      "regex": "^/articles/([^/]+?)/edit(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/articles/(?<nxtPid>[^/]+?)/edit(?:/)?$"
+    },
+    {
       "page": "/tag/[tag]",
       "regex": "^/tag/([^/]+?)(?:/)?$",
       "routeKeys": {
@@ -86,6 +102,12 @@
       "regex": "^/articles(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/articles(?:/)?$"
+    },
+    {
+      "page": "/compose",
+      "regex": "^/compose(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/compose(?:/)?$"
     },
     {
       "page": "/create-article",

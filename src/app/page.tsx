@@ -342,108 +342,108 @@ export default function HomePage() {
           </>
         )}
       </Head>
-      <div className={styles['three-column-layout']}>
-        {/* Background overlay for mobile */}
-        {windowWidth < 768 && !isSidebarCollapsed && (
-          <div className={`${styles['menu-overlay']} ${styles['active']}`} onClick={toggleSidebar}></div>
-        )}
-      
-        {/* LEFT SIDEBAR */}
-        <LeftSidebar 
-          isAuthenticated={isAuthenticated} 
-          handleLogout={handleLogout} 
-          toggleSidebar={toggleSidebar} 
-          isSidebarCollapsed={isSidebarCollapsed}
-        />
+    <div className={styles['three-column-layout']}>
+      {/* Background overlay for mobile */}
+      {windowWidth < 768 && !isSidebarCollapsed && (
+        <div className={`${styles['menu-overlay']} ${styles['active']}`} onClick={toggleSidebar}></div>
+      )}
+    
+      {/* LEFT SIDEBAR */}
+      <LeftSidebar 
+        isAuthenticated={isAuthenticated} 
+        handleLogout={handleLogout} 
+        toggleSidebar={toggleSidebar} 
+        isSidebarCollapsed={isSidebarCollapsed}
+      />
 
-        {/* Mobile sidebar toggle button - only shown on mobile */}
-        {windowWidth < 768 && (
-          <button 
-            className={styles['toggle-button']} 
-            onClick={toggleSidebar}
-            aria-label={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-          >
-            {isSidebarCollapsed ? "☰" : "✕"}
-          </button>
-        )}
+      {/* Mobile sidebar toggle button - only shown on mobile */}
+      {windowWidth < 768 && (
+        <button 
+          className={styles['toggle-button']} 
+          onClick={toggleSidebar}
+          aria-label={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+        >
+          {isSidebarCollapsed ? "☰" : "✕"}
+        </button>
+      )}
 
-        {/* MAIN CONTENT */}
-        <main className={`${styles['center-column']} ${isSidebarCollapsed && windowWidth >= 768 ? styles['expanded'] : ''}`}>
-          {/* Daily Prompt Banner */}
-          <div className={styles['prompt-banner']}>
-            <div className={styles['prompt-icon']}>💡</div>
-            <div className={styles['prompt-text']}>What's an idea that changed your life?</div>
-            <Link href="/write" className={styles['prompt-button']}>
-              Write now →
-            </Link>
-          </div>
+      {/* MAIN CONTENT */}
+      <main className={`${styles['center-column']} ${isSidebarCollapsed && windowWidth >= 768 ? styles['expanded'] : ''}`}>
+        {/* Daily Prompt Banner */}
+        <div className={styles['prompt-banner']}>
+          <div className={styles['prompt-icon']}>💡</div>
+          <div className={styles['prompt-text']}>What's an idea that changed your life?</div>
+          <Link href="/write" className={styles['prompt-button']}>
+            Write now →
+          </Link>
+        </div>
 
-          {isLoading ? (
-            <div className={styles['loading']}>Loading articles...</div>
-          ) : (
-            <>
-              {/* Featured Thought */}
-              {featuredArticle && (
-                <article className={styles['featured-card']}>
-                  <div className={styles['featured-content']}>
-                    <div className={styles['featured-label']}>FEATURED THOUGHT</div>
-                    <h2 className={styles['featured-title']}>{featuredArticle.title}</h2>
-                    <div className={styles['featured-meta']}>
-                      by {getAuthorName(featuredArticle)} • {getReadingTime(featuredArticle.content)} min read
-                    </div>
-                    <p className={styles['featured-excerpt']}>
-                      {getExcerpt(featuredArticle)}
-                    </p>
-                    <Link href={`/articles?slug=${encodeURIComponent(featuredArticle.slug)}`} className={styles['read-link']}>
-                      Read →
-                    </Link>
+        {isLoading ? (
+          <div className={styles['loading']}>Loading articles...</div>
+        ) : (
+          <>
+            {/* Featured Thought */}
+            {featuredArticle && (
+              <article className={styles['featured-card']}>
+                <div className={styles['featured-content']}>
+                  <div className={styles['featured-label']}>FEATURED THOUGHT</div>
+                  <h2 className={styles['featured-title']}>{featuredArticle.title}</h2>
+                  <div className={styles['featured-meta']}>
+                    by {getAuthorName(featuredArticle)} • {getReadingTime(featuredArticle.content)} min read
                   </div>
-                  {featuredArticle.coverImageUrl && (
-                    <div className={styles['featured-image']}>
-                      <img 
-                        src={featuredArticle.coverImageUrl} 
-                        alt={featuredArticle.title}
-                        className={styles['cover-image']}
-                      />
+                  <p className={styles['featured-excerpt']}>
+                    {getExcerpt(featuredArticle)}
+                  </p>
+                  <Link href={`/articles?slug=${encodeURIComponent(featuredArticle.slug)}`} className={styles['read-link']}>
+                    Read →
+                  </Link>
+                </div>
+                {featuredArticle.coverImageUrl && (
+                  <div className={styles['featured-image']}>
+                    <img 
+                      src={featuredArticle.coverImageUrl} 
+                      alt={featuredArticle.title}
+                      className={styles['cover-image']}
+                    />
+                  </div>
+                )}
+              </article>
+            )}
+
+            {/* Article Grid */}
+            <div className={styles['article-grid']}>
+              {articles.map((article, index) => (
+                <article 
+                  key={article._id || article.slug || `article-${index}`} 
+                  className={styles['article-card']}
+                >
+                  <h3 className={styles['article-title']}>{article.title}</h3>
+                  <div className={styles['article-meta']}>
+                    by {getAuthorName(article)} • {getReadingTime(article.content)} min read
+                  </div>
+                  {(article.excerpt || (article.content && article.content.length > 0)) && (
+                    <p className={styles['article-excerpt']}>
+                      {getExcerpt(article)}
+                    </p>
+                  )}
+                  
+                  {/* Tags */}
+                  {article.tags && article.tags.length > 0 && (
+                    <div className={styles['article-tags']}>
+                      {article.tags.map((tag, tagIndex) => (
+                        <Link
+                          key={`${article.slug}-tag-${tagIndex}`}
+                          href={`/tag/${tag.toLowerCase()}`}
+                          className={styles['tag']}
+                        >
+                          #{tag}
+                        </Link>
+                      ))}
                     </div>
                   )}
-                </article>
-              )}
-
-              {/* Article Grid */}
-              <div className={styles['article-grid']}>
-                {articles.map((article, index) => (
-                  <article 
-                    key={article._id || article.slug || `article-${index}`} 
-                    className={styles['article-card']}
-                  >
-                    <h3 className={styles['article-title']}>{article.title}</h3>
-                    <div className={styles['article-meta']}>
-                      by {getAuthorName(article)} • {getReadingTime(article.content)} min read
-                    </div>
-                    {(article.excerpt || (article.content && article.content.length > 0)) && (
-                      <p className={styles['article-excerpt']}>
-                        {getExcerpt(article)}
-                      </p>
-                    )}
-                    
-                    {/* Tags */}
-                    {article.tags && article.tags.length > 0 && (
-                      <div className={styles['article-tags']}>
-                        {article.tags.map((tag, tagIndex) => (
-                          <Link
-                            key={`${article.slug}-tag-${tagIndex}`}
-                            href={`/tag/${tag.toLowerCase()}`}
-                            className={styles['tag']}
-                          >
-                            #{tag}
-                          </Link>
-                        ))}
-                      </div>
-                    )}
-                    
-                    {/* Reaction Bar */}
-                    <div className={styles['reaction-bar']}>
+                  
+                  {/* Reaction Bar */}
+                  <div className={styles['reaction-bar']}>
                       <button className={styles['reaction-button']} aria-label="Like article">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
                           <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
@@ -463,32 +463,32 @@ export default function HomePage() {
                           <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.076-4.076a1.526 1.526 0 011.037-.443 48.282 48.282 0 005.68-.494c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" />
                         </svg>
                       </button>
-                      <Link href={`/articles?slug=${encodeURIComponent(article.slug)}`} className={styles['read-link']}>
-                        Read →
-                      </Link>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            </>
-          )}
-        </main>
+                    <Link href={`/articles?slug=${encodeURIComponent(article.slug)}`} className={styles['read-link']}>
+                      Read →
+                    </Link>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </>
+        )}
+      </main>
 
-        {/* RIGHT SIDEBAR */}
-        <aside className={styles['right-sidebar']}>
-          <h2 className={styles['sidebar-heading']}>Trending</h2>
-          {isAuthenticated && <NotificationBell />}
-          <div className={styles['tag-list']}>
-            {tags.map(tag => (
-              <Link key={tag} href={`/tag/${tag.toLowerCase()}`} className={styles['trending-tag']}>
-                # {tag}
-              </Link>
-            ))}
-          </div>
-          <Link href="/write" className={styles['write-button']}>
-            Write
-          </Link>
-        </aside>
+      {/* RIGHT SIDEBAR */}
+      <aside className={styles['right-sidebar']}>
+        <h2 className={styles['sidebar-heading']}>Trending</h2>
+        {isAuthenticated && <NotificationBell />}
+        <div className={styles['tag-list']}>
+          {tags.map(tag => (
+            <Link key={tag} href={`/tag/${tag.toLowerCase()}`} className={styles['trending-tag']}>
+              # {tag}
+            </Link>
+          ))}
+        </div>
+        <Link href="/write" className={styles['write-button']}>
+          Write
+        </Link>
+      </aside>
 
         {/* Share Modal */} 
         {sharingArticleDetails && (
@@ -501,7 +501,7 @@ export default function HomePage() {
             excerpt={sharingArticleDetails.excerpt}
           />
         )}
-      </div>
+    </div>
     </>
   )
 }

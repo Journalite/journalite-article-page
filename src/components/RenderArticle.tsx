@@ -13,7 +13,10 @@ import { doc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore'; //
 import { User } from 'firebase/auth';
 import Head from 'next/head';
 import '@/styles/article.css';  
+import '@/styles/highlight.css';  // Import highlight styles
 import styles from '@/styles/home.module.css';
+import ArticleHighlights from './ArticleHighlights';
+import { HighlightProvider } from '@/context/HighlightContext';
 
 interface Comment {
   userId: string;
@@ -37,7 +40,7 @@ interface BaseArticleInfo {
   coverImageUrl?: string;
   tags?: string[]; 
   likes?: string[]; 
-  createdAt: string; 
+  createdAt: string;
   updatedAt?: string;
   excerpt?: string;
 }
@@ -63,7 +66,7 @@ const stripHtmlTags = (html: string | undefined): string => {
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = html;
     return tempDiv.textContent || tempDiv.innerText || '';
-  }
+}
   return html.replace(/<[^>]*>/g, '');
 };
 
@@ -125,7 +128,7 @@ const isSimple = (a: any): a is SimpleArticle =>
 const RenderArticle: React.FC<RenderArticleProps> = ({ article }) => {
   const [visibleParagraphs, setVisibleParagraphs] = useState<Record<string, boolean>>({});
   const paragraphRefs = useRef<Record<string, HTMLDivElement | null>>({});
-  
+
   const articleId = article.id;
 
   // State for ShareModal
@@ -204,7 +207,7 @@ const RenderArticle: React.FC<RenderArticleProps> = ({ article }) => {
   const handleCloseShareModal = () => {
     setIsShareModalOpen(false);
   };
-  
+
   // Set initial paragraph visibility state (for complex articles)
   useEffect(() => {
     if (!isComplex(article)) return; // Guard for complex articles
@@ -240,7 +243,7 @@ const RenderArticle: React.FC<RenderArticleProps> = ({ article }) => {
       });
     };
   }, [article]);
-
+  
   if (!articleId) {
     return <div className="article-error">Article data is incomplete (missing ID).</div>;
   }
@@ -265,38 +268,38 @@ const RenderArticle: React.FC<RenderArticleProps> = ({ article }) => {
     const tags = article.tags || [];
 
     return (
-      <header className="article-header">
-        <h1 className="article-title">{article.title}</h1>
-        <div className="article-meta">
-          <div className="author-image-container">
-            <Image
+          <header className="article-header">
+            <h1 className="article-title">{article.title}</h1>
+            <div className="article-meta">
+              <div className="author-image-container">
+                <Image
               src={article.authorName && article.authorId ? "https://images.unsplash.com/photo-1494790108377-be9c29b29330" : "/default-avatar.png"} 
               alt={authorName}
-              width={40}
-              height={40}
-              className="author-image"
-            />
-          </div>
-          <Link href={`/user/${urlUsername}`} className="author-link">
-            By {authorName}
-          </Link>
-          <span className="separator">•</span>
-          <span className="date">{formattedDate}</span>
-        </div>
-        {tags.length > 0 && (
-          <div className="article-tags">
-            {tags.map(tag => (
-              <Link 
-                key={tag} 
-                href={`/tag/${tag.toLowerCase()}`}
-                className="tag"
-              >
-                #{tag}
+                  width={40}
+                  height={40}
+                  className="author-image"
+                />
+              </div>
+              <Link href={`/user/${urlUsername}`} className="author-link">
+                By {authorName}
               </Link>
-            ))}
-          </div>
+              <span className="separator">•</span>
+              <span className="date">{formattedDate}</span>
+            </div>
+        {tags.length > 0 && (
+            <div className="article-tags">
+            {tags.map(tag => (
+                <Link 
+                  key={tag} 
+                  href={`/tag/${tag.toLowerCase()}`}
+                  className="tag"
+                >
+                  #{tag}
+                </Link>
+              ))}
+            </div>
         )}
-      </header>
+          </header>
     );
   };
   
@@ -325,8 +328,33 @@ const RenderArticle: React.FC<RenderArticleProps> = ({ article }) => {
       {/* Add Comment button if needed here */}
     </div>
   );
-
-  return (
+    
+  // Handle sharing highlighted text
+  const handleShareHighlighted = (highlightedText: string) => {
+    // Create a share text that includes the highlighted quote
+    const shareText = `"${highlightedText}" from ${article.title}`;
+    
+    // Set up share data for the modal
+    const shareData = {
+      title: article.title,
+      text: shareText,
+      url: `${baseUrl}article/${article.slug}`,
+    };
+    
+    // Try to use the native share API first if available
+    if (navigator.share) {
+      navigator.share(shareData).catch(error => {
+        console.error('Error sharing:', error);
+        // Fallback to the share modal
+        setIsShareModalOpen(true);
+      });
+    } else {
+      // Fallback to our custom share modal
+      setIsShareModalOpen(true);
+    }
+  };
+    
+    return (
     <>
       <Head>
         <title>{ogTitle} | Journalite</title>
@@ -340,59 +368,82 @@ const RenderArticle: React.FC<RenderArticleProps> = ({ article }) => {
         <meta name="twitter:description" content={ogDescription} />
         <meta name="twitter:image" content={ogImage} />
       </Head>
-      <article className="article-container">
-        <div className="article-main">
-          <ArticleHeader />
-          <ReactionBar />
+      <div className="article-container">
+        {/* Share Modal */}
+        {isShareModalOpen && (
+          <ShareModal
+            title={article.title}
+            url={`${baseUrl}article/${article.slug}`}
+            excerpt={getExcerptForSharing()}
+            onClose={handleCloseShareModal}
+            coverImageUrl={article.coverImageUrl}
+          />
+        )}
 
-          <section className="article-content">
+        {/* Article Header */}
+          <ArticleHeader />
+
+        {/* Article Content wrapped with HighlightProvider and ArticleHighlights */}
+        <HighlightProvider articleId={article.id}>
+          <ArticleHighlights 
+            articleId={article.id}
+            onShare={handleShareHighlighted}
+          >
+            <div className="article-content">
             {isComplex(article) ? (
-              article.content.map(para => (
+                // Complex article with paragraphs
+                article.content.map((paragraph, index) => (
                 <div
-                  key={para.paragraphId}
-                  ref={(el) => { paragraphRefs.current[para.paragraphId] = el; }} 
-                  data-paragraph-id={para.paragraphId}
-                  className={`paragraph-block ${visibleParagraphs[para.paragraphId] ? 'visible' : ''}`}
+                    key={paragraph.paragraphId || index}
+                    ref={el => {
+                      if (el) paragraphRefs.current[paragraph.paragraphId || `p-${index}`] = el;
+                    }}
+                    className={`paragraph-block ${visibleParagraphs[paragraph.paragraphId || `p-${index}`] ? 'visible' : ''}`}
                 >
-                  {isHtmlContent(para.text) ? (
-                    <div className="paragraph-text" dangerouslySetInnerHTML={{ __html: para.text }} />
-                  ) : (
-                    <div className="paragraph-text"><ReactMarkdown>{para.text}</ReactMarkdown></div>
-                  )}
+                    <div className="paragraph-text">
+                      {isHtmlContent(paragraph.text) ? (
+                        <div dangerouslySetInnerHTML={{ __html: paragraph.text }} />
+              ) : (
+                        <ReactMarkdown>{paragraph.text}</ReactMarkdown>
+                      )}
+                    </div>
                 </div>
               ))
             ) : isSimple(article) ? (
-              (() => {
-                const articleContent = article.body; // Now strictly body for simple articles
-                return (
+                // Simple article with single body
                   <div className="paragraph-block visible">
-                    {isHtmlContent(articleContent) ? (
-                      <div className="paragraph-text" dangerouslySetInnerHTML={{ __html: articleContent }} />
+                  <div className="paragraph-text">
+                    {isHtmlContent(article.body) ? (
+                      <div dangerouslySetInnerHTML={{ __html: article.body }} />
                     ) : (
-                      <div className="paragraph-text"><ReactMarkdown>{articleContent}</ReactMarkdown></div>
+                      <ReactMarkdown>{article.body}</ReactMarkdown>
                     )}
                   </div>
-                );
-              })()
-            ) : null}
-          </section>
-          
-          <CommentSection slug={article.slug} />
-        </div>
-      </article>
+                </div>
+                    ) : (
+                // Fallback for unexpected article type
+                <div className="paragraph-block visible">
+                  <div className="paragraph-text">
+                    <p>Content format not supported.</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </ArticleHighlights>
+        </HighlightProvider>
       
-      {isShareModalOpen && articleId && (
-        <ShareModal
-          isOpen={isShareModalOpen}
-          onClose={handleCloseShareModal}
-          articleTitle={article.title}
-          articleUrl={ogUrl}
-          coverImageUrl={article.coverImageUrl || undefined}
-          excerpt={getExcerptForSharing(100)}
+        {/* Reaction Bar */}
+        <ReactionBar />
+
+        {/* Comment Section */}
+        <CommentSection 
+          articleId={article.id} 
+          isComplex={isComplex(article)}
+          slug={article.slug}
         />
-      )}
+      </div>
     </>
-  );
+    );
 };
 
 export default RenderArticle;

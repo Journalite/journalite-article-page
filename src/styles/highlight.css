@@ -1,0 +1,413 @@
+/* Highlight Styles */
+.article-highlight {
+  background-color: rgba(255, 230, 0, 0.3);
+  padding: 0.125rem 0;
+  border-radius: 0.125rem;
+  transition: background-color 0.2s ease;
+  position: relative;
+  cursor: pointer;
+}
+
+.article-highlight:hover {
+  background-color: rgba(255, 230, 0, 0.5);
+}
+
+/* Add a subtle click indicator */
+.article-highlight::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 3px solid transparent;
+  border-right: 3px solid transparent;
+  border-bottom: 3px solid rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.article-highlight:hover::after {
+  opacity: 1;
+}
+
+/* Tooltip when hovering over highlight */
+.article-highlight[data-highlight-id]:hover::before {
+  content: "Click to manage highlight";
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(50, 50, 50, 0.9);
+  color: white;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  animation: fadeIn 0.2s ease forwards;
+  z-index: 1100;
+}
+
+/* Unhighlight specific styles */
+.unhighlight-toolbar {
+  background-color: #1a1a1a;
+  animation: fadeIn 0.15s ease;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.unhighlight-toolbar.hiding {
+  opacity: 0;
+  transform: translateY(-10px) translateX(-50%);
+  pointer-events: none;
+}
+
+.highlight-btn-danger {
+  color: #ef4444;
+}
+
+.highlight-btn-danger:hover {
+  background-color: rgba(239, 68, 68, 0.2);
+}
+
+/* Highlight Toolbar */
+.highlight-toolbar {
+  background-color: #1a1a1a;
+  border-radius: 0.375rem;
+  padding: 0.5rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  animation: scaleIn 0.15s ease forwards;
+  z-index: 1000;
+  user-select: none;
+}
+
+.highlight-btn {
+  background-color: transparent;
+  border: none;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background-color 0.2s ease;
+}
+
+.highlight-btn-main {
+  background-color: rgba(255, 230, 0, 0.2);
+  color: rgba(255, 230, 0, 0.9);
+}
+
+.highlight-btn-main:hover {
+  background-color: rgba(255, 230, 0, 0.3);
+}
+
+.highlight-btn svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.highlight-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.highlight-btn:active {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Container for article with highlights */
+.article-highlight-container {
+  position: relative;
+}
+
+/* Highlight comment display */
+.highlight-comment-container {
+  position: absolute;
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+  max-width: 300px;
+  z-index: 1050;
+  animation: fadeInUp 0.2s ease forwards;
+}
+
+.highlight-comment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.highlight-comment-title {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #1a1a1a;
+}
+
+.highlight-comment-close {
+  background: transparent;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: color 0.2s ease;
+}
+
+.highlight-comment-close:hover {
+  color: #1a1a1a;
+}
+
+.highlight-comment-text {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+  color: #4b5563;
+  font-style: italic;
+  padding: 0.5rem;
+  background-color: #f9fafb;
+  border-radius: 0.25rem;
+}
+
+.highlight-comment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.highlight-comment-input {
+  width: 100%;
+  resize: none;
+  min-height: 80px;
+  padding: 0.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  transition: border-color 0.2s ease;
+}
+
+.highlight-comment-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
+}
+
+.highlight-comment-submit {
+  align-self: flex-end;
+  background-color: #1a1a1a;
+  color: white;
+  border: none;
+  border-radius: 0.25rem;
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.highlight-comment-submit:hover {
+  background-color: #374151;
+}
+
+.highlight-comment-submit:disabled {
+  background-color: #e5e7eb;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: translate(-50%, 10px) scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, 0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Modal styles for response and AI */
+.highlight-response-modal,
+.highlight-ai-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1200;
+  animation: fadeIn 0.2s ease;
+}
+
+.highlight-modal-content {
+  background-color: white;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  width: 90%;
+  max-width: 550px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  position: relative;
+  animation: scaleIn 0.2s ease forwards;
+}
+
+.highlight-modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: #6b7280;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.highlight-modal-close:hover {
+  color: #111827;
+}
+
+.highlight-selected-text {
+  margin: 1.25rem 0;
+  padding: 1rem;
+  background-color: #f9fafb;
+  border-left: 3px solid rgba(255, 230, 0, 0.7);
+  font-style: italic;
+  color: #4b5563;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  border-radius: 0.25rem;
+}
+
+.highlight-response-input {
+  width: 100%;
+  min-height: 150px;
+  padding: 0.75rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.375rem;
+  resize: vertical;
+  font-family: inherit;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+  transition: border-color 0.2s;
+}
+
+.highlight-response-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.highlight-response-submit {
+  background-color: #1a1a1a;
+  color: white;
+  font-weight: 500;
+  padding: 0.5rem 1.25rem;
+  border: none;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  float: right;
+  transition: background-color 0.2s;
+}
+
+.highlight-response-submit:hover {
+  background-color: #374151;
+}
+
+/* AI Modal Specific Styles */
+.highlight-ai-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.highlight-ai-options button {
+  background-color: #f3f4f6;
+  color: #374151;
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 0.5rem 0.875rem;
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.highlight-ai-options button:hover {
+  background-color: #e5e7eb;
+}
+
+.highlight-ai-response {
+  padding: 1rem;
+  background-color: #f9fafb;
+  border-radius: 0.375rem;
+  min-height: 100px;
+}
+
+.highlight-ai-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+  color: #6b7280;
+  font-size: 0.95rem;
+  font-style: italic;
+  position: relative;
+}
+
+.highlight-ai-loading:after {
+  content: "";
+  position: absolute;
+  width: 1.25rem;
+  height: 1.25rem;
+  top: 70%;
+  left: 50%;
+  margin-top: -0.625rem;
+  margin-left: -0.625rem;
+  border-radius: 50%;
+  border: 2px solid rgba(107, 114, 128, 0.3);
+  border-top-color: rgba(107, 114, 128, 0.8);
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+} 

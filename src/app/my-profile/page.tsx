@@ -105,7 +105,7 @@ export default function MyProfilePage() {
         router.push('/login');
       }
     });
-
+    
     return () => unsubscribe();
   }, [router]);
 
@@ -148,7 +148,7 @@ export default function MyProfilePage() {
             {/* Always show initials avatar for now */}
             <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white text-4xl sm:text-5xl font-semibold border-4 border-amber-300 shadow-md">
               {initials || displayName.charAt(0)}
-            </div>
+          </div>
             <div className="mt-4 sm:mt-0 sm:ml-6 text-center sm:text-left">
               <h1 className="text-3xl sm:text-4xl font-bold text-white">{displayName}</h1>
               {userProfile.username && (
@@ -157,8 +157,8 @@ export default function MyProfilePage() {
               <p className="text-stone-300 text-sm mt-1">{userProfile.email}</p>
             </div>
           </div>
-        </div>
-
+            </div>
+            
         <div className="p-6 sm:p-8">
           {userProfile.bio && (
             <div className="mb-8">
@@ -186,8 +186,8 @@ export default function MyProfilePage() {
             </Link>
           </div>
         </div>
-      </div>
-      
+            </div>
+            
       {/* Placeholder for user's articles or other content */}
       <div className="w-full max-w-2xl mt-10">
         <h2 className="text-2xl font-semibold text-stone-800 mb-6 text-center">My Content</h2>
@@ -220,13 +220,13 @@ export default function MyProfilePage() {
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-stone-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
-                      </div>
-                    )}
                   </div>
-
+                )}
+            </div>
+            
                   {/* Content */}
                   <div className="p-6 md:w-2/3 flex flex-col justify-between">
-                    <div>
+            <div>
                       <h3 className="text-2xl font-semibold text-stone-800 group-hover:text-amber-700 transition-colors duration-200 mb-2 leading-tight">{article.title}</h3>
                       <p className="text-sm text-stone-500 mb-3">
                         {new Date(article.createdAt.seconds * 1000).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
@@ -235,8 +235,8 @@ export default function MyProfilePage() {
                       </p>
                       <p className="text-stone-600 text-sm mb-4 leading-relaxed line-clamp-3">
                         {stripHtmlTags(article.body)}
-                      </p>
-                    </div>
+              </p>
+            </div>
                     <div>
                       {article.tags && article.tags.length > 0 && (
                         <div className="flex flex-wrap gap-2 mb-1">
@@ -245,11 +245,11 @@ export default function MyProfilePage() {
                               {tag}
                             </span>
                           ))}
-                        </div>
-                      )}
+              </div>
+            )}
                     </div>
                   </div>
-                </div>
+              </div>
               </Link>
             ))}
           </div>
@@ -263,7 +263,7 @@ export default function MyProfilePage() {
             <Link href="/create-article" className="mt-4 inline-block px-8 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors shadow-md hover:shadow-lg">
               Create New Article
             </Link>
-          </div>
+        </div>
         )}
       </div>
     </div>

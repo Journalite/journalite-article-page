@@ -1,16 +1,25 @@
 'use client'
 
-import { useState, useEffect, Suspense } from 'react'
+import React, { useState, useEffect, Suspense, cache } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { onAuthStateChanged } from 'firebase/auth'
 import { auth } from '@/firebase/clientApp'
-import EditArticleForm from '@/components/EditArticleForm'
+import ArticleComposer from '@/components/ArticleComposer'
 import styles from '@/styles/home.module.css'
+
+// Create a cached version of useSearchParams
+const getSearchParams = cache(() => {
+  const searchParams = useSearchParams();
+  return searchParams;
+});
 
 // Component to safely use search params inside Suspense
 function EditArticleContent() {
-  const params = useSearchParams()
-  const articleId = params?.get('id') || ''
+  // Get search params using the cached function
+  const params = getSearchParams();
+  const articleId = params?.get('id') || '';
+  
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()
@@ -62,7 +71,19 @@ function EditArticleContent() {
     )
   }
 
-  return <EditArticleForm articleId={articleId} />
+  return (
+    <div className={styles.fullWidthContainer}>
+      <div className={styles.editorHeader}>
+        <Link href="/my-thoughts" className={styles.backButton}>
+          ← Back to My Thoughts
+        </Link>
+        <h1>Edit Article</h1>
+      </div>
+      <div className={styles.editorContainer}>
+        <ArticleComposer articleId={articleId} />
+      </div>
+    </div>
+  )
 }
 
 export default function EditArticlePage() {

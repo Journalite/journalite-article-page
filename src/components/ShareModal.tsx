@@ -4,18 +4,18 @@ import React, { useEffect, useState } from 'react';
 import styles from './ShareModal.module.css'; // We will create this CSS module next
 
 interface ShareModalProps {
-  articleTitle: string;
-  articleUrl: string;
-  isOpen: boolean;
+  url: string;
+  title: string;
+  excerpt?: string;
   onClose: () => void;
-  coverImageUrl?: string | null; // Optional: for a richer preview
-  excerpt?: string; // Optional: for a richer preview
+  coverImageUrl?: string | null;
+  isOpen?: boolean; // Make isOpen optional to support both prop patterns
 }
 
 const ShareModal: React.FC<ShareModalProps> = ({
-  articleTitle,
-  articleUrl,
-  isOpen,
+  title,
+  url,
+  isOpen = true, // Default to true when not provided
   onClose,
   coverImageUrl,
   excerpt
@@ -40,7 +40,7 @@ const ShareModal: React.FC<ShareModalProps> = ({
   }
 
   const handleCopyLink = () => {
-    navigator.clipboard.writeText(articleUrl).then(() => {
+    navigator.clipboard.writeText(url).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000); // Reset after 2 seconds
     }).catch(err => {
@@ -50,9 +50,9 @@ const ShareModal: React.FC<ShareModalProps> = ({
   };
 
   // Placeholder social share URLs - replace with actual sharing intents
-  const twitterShareUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(articleUrl)}&text=${encodeURIComponent(articleTitle)}`;
-  const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(articleUrl)}`;
-  const linkedinShareUrl = `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(articleUrl)}&title=${encodeURIComponent(articleTitle)}`;
+  const twitterShareUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`;
+  const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+  const linkedinShareUrl = `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}`;
 
   return (
     <div className={styles.overlay} onClick={onClose}>
@@ -69,15 +69,15 @@ const ShareModal: React.FC<ShareModalProps> = ({
         {/* Optional: Article Preview */}
         <div className={styles.articlePreview}>
           {coverImageUrl && (
-            <img src={coverImageUrl} alt={articleTitle} className={styles.articleImage} />
+            <img src={coverImageUrl} alt={title} className={styles.articleImage} />
           )}
-          <h3 className={styles.articleTitlePreview}>{articleTitle}</h3>
+          <h3 className={styles.articleTitlePreview}>{title}</h3>
           {excerpt && <p className={styles.articleExcerptPreview}>{excerpt}</p>}
         </div>
 
         <div className={styles.shareActions}>
           <div className={styles.copyLinkContainer}>
-            <input type="text" value={articleUrl} readOnly className={styles.urlInput} />
+            <input type="text" value={url} readOnly className={styles.urlInput} />
             <button onClick={handleCopyLink} className={styles.copyButton}>
               {copied ? 'Copied!' : 'Copy Link'}
             </button>

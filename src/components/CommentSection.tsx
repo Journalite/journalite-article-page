@@ -17,10 +17,12 @@ import {
 import styles from '@/styles/comment.module.css';
 
 interface CommentSectionProps {
-  slug: string;
+  articleId: string;
+  slug?: string; // Keep slug as optional for backward compatibility
+  isComplex?: boolean; // New prop for article type
 }
 
-const CommentSection: React.FC<CommentSectionProps> = ({ slug }) => {
+const CommentSection: React.FC<CommentSectionProps> = ({ slug, articleId: propArticleId, isComplex }) => {
   const [comments, setComments] = useState<FirestoreComment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -33,7 +35,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({ slug }) => {
   const [expandedReplies, setExpandedReplies] = useState<Record<string, boolean>>({});
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
-  const [articleId, setArticleId] = useState<string | null>(null);
+  const [articleId, setArticleId] = useState<string | null>(propArticleId || null);
   
   // This user object will be updated when authenticated
   const [currentUser, setCurrentUser] = useState({ id: '', name: 'Reader' });
@@ -57,8 +59,13 @@ const CommentSection: React.FC<CommentSectionProps> = ({ slug }) => {
     return () => unsubscribe();
   }, []);
 
-  // First, get the article ID from the slug
+  // First, get the article ID from the slug if not provided directly
   useEffect(() => {
+    if (propArticleId) {
+      setArticleId(propArticleId);
+      return;
+    }
+    
     if (!slug) return;
 
     const fetchArticleId = async () => {
@@ -74,7 +81,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({ slug }) => {
     };
 
     fetchArticleId();
-  }, [slug]);
+  }, [slug, propArticleId]);
 
   // Then, fetch comments when we have the articleId
   useEffect(() => {
