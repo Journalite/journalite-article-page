@@ -20,4 +20,4 @@ const EditArticlePageClient: React.FC<EditArticlePageClientProps> = ({ id }) => 
   );
 };
 
-export default EditArticlePageClient; 
+export default EditArticlePageClient;
