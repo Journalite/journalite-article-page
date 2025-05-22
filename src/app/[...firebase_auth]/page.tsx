@@ -13,8 +13,10 @@ export const viewport: Viewport = {
 // This generates static paths for pre-rendering
 export async function generateStaticParams() {
   // For a catch-all route, we need to provide at least one placeholder
+  // Also handle favicon.ico which is causing build errors
   return [
-    { firebase_auth: ['auth'] }
+    { firebase_auth: ['auth'] },
+    { firebase_auth: ['favicon.ico'] }
   ]
 }
 

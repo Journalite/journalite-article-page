@@ -12,6 +12,7 @@ import MinimalNotificationBell from '@/components/MinimalNotificationBell'
 import LeftSidebar from '@/components/LeftSidebar'
 import ArticleWithHighlights from '@/components/ArticleWithHighlights'
 import CommentSection from '@/components/CommentSection'
+import ArticleComposer from '@/components/ArticleComposer'
 
 // Import Firestore article service
 import { getArticleBySlug } from '@/firebase/articles'
@@ -84,6 +85,7 @@ function Article() {
   const [likes, setLikes] = useState<string[]>([])
   const [isLiked, setIsLiked] = useState(false)
   const [currentUser, setCurrentUser] = useState<any>(null)
+  const [isEditing, setIsEditing] = useState(false)
   
   // Initialize window width on client side
   useEffect(() => {
@@ -250,6 +252,82 @@ function Article() {
     )
   }
   
+  // Handle when editing is complete
+  const handleUpdateComplete = () => {
+    console.log('Article update complete');
+    // Set loading state
+    setIsLoading(true);
+    setIsEditing(false);
+    
+    // Force reload the page to get fresh content
+    window.location.href = `/articles?slug=${slug}&t=${Date.now()}`;
+    
+    // Fallback: Refetch the article to show updated content
+    const refetchArticle = async () => {
+      try {
+        const articleData = await getArticleBySlug(slug || '');
+        
+        if (!articleData) {
+          setError('Article not found');
+          return;
+        }
+        
+        // Clean HTML content
+        const cleanHtml = articleData.body
+          .replace(/<div[^>]*>Content is loaded from HTML<\/div>/g, '')
+          .replace(/<h1[^>]*>Untitled Article<\/h1>/g, '')
+          
+        setArticleHtml(cleanHtml);
+        setLikes(articleData.likes || []);
+        
+        // Calculate read time (approx 200 words per minute)
+        const wordCount = articleData.body.split(/\s+/).length;
+        const readTimeMinutes = Math.ceil(wordCount / 200);
+        
+        // Format date
+        const date = articleData.createdAt 
+          ? new Date(articleData.createdAt.seconds * 1000).toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric'
+            })
+          : 'Unknown date';
+        
+        setArticle({
+          id: articleData.id,
+          title: articleData.title,
+          authorName: articleData.authorName || 'Anonymous',
+          authorId: articleData.authorId,
+          createdAt: date,
+          readTime: readTimeMinutes,
+          likes: articleData.likes || [],
+          tags: articleData.tags || [],
+          slug: slug || ''
+        });
+        
+        setTags(articleData.tags || []);
+      } catch (error) {
+        console.error('Error refetching article:', error);
+      }
+    };
+    
+    refetchArticle();
+  };
+
+  if (isEditing && article) {
+    return (
+      <div>
+        <div className={articleStyles.editingHeader}>
+          <button onClick={() => setIsEditing(false)} className={articleStyles.cancelButton}>
+            ← Back to Article
+          </button>
+          <h2>Editing: {article.title}</h2>
+        </div>
+        <ArticleComposer articleId={article.id} onUpdateComplete={handleUpdateComplete} />
+      </div>
+    );
+  }
+  
   return (
     <div className={articleStyles.articlePageContainer}>
       {article && (
@@ -339,7 +417,7 @@ function Article() {
                   {isAuthenticated && article.authorId === currentUser?.uid && (
                     <button 
                       className={articleStyles.editButton}
-                      onClick={() => router.push(`/articles/${article.id}/edit`)}
+                      onClick={() => setIsEditing(true)}
                     >
                       Edit
                     </button>

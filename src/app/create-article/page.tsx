@@ -51,12 +51,12 @@ export default function CreateArticlePage() {
       <div className={styles.editorHeader}>
         <Link href="/" className={styles.backButton}>
           ← Back to Home
-        </Link>
+          </Link>
         <h1>Journalite</h1>
-      </div>
+          </div>
       <div className={styles.editorContainer}>
         <ArticleComposer />
-      </div>
+        </div>
     </div>
   )
 } 

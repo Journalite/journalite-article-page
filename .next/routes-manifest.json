@@ -36,12 +36,12 @@
       "namedRegex": "^/articles/(?<nxtPid>[^/]+?)(?:/)?$"
     },
     {
-      "page": "/articles/[id]/edit",
-      "regex": "^/articles/([^/]+?)/edit(?:/)?$",
+      "page": "/articles/[id]/view",
+      "regex": "^/articles/([^/]+?)/view(?:/)?$",
       "routeKeys": {
         "nxtPid": "nxtPid"
       },
-      "namedRegex": "^/articles/(?<nxtPid>[^/]+?)/edit(?:/)?$"
+      "namedRegex": "^/articles/(?<nxtPid>[^/]+?)/view(?:/)?$"
     },
     {
       "page": "/tag/[tag]",

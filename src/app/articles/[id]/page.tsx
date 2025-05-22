@@ -4,9 +4,16 @@ import ArticlePageClient from './client';
 
 // For static generation, we need to define this to generate the static paths
 export async function generateStaticParams() {
-  // Prerender a few key article IDs, others will be handled as fallbacks
+  // Include all known article IDs and some placeholders for static generation
   return [
-    { id: 'placeholder' }
+    { id: 'placeholder' },
+    { id: 'Z0nGCw8msDhUHlWSZpTO' }, // Add your specific article ID here
+    // Add any other known article IDs you want to prerender
+    { id: 'article1' },
+    { id: 'article2' },
+    { id: 'article3' },
+    { id: 'article4' },
+    { id: 'article5' }
   ];
 }
 

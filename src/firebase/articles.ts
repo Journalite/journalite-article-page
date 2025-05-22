@@ -90,22 +90,39 @@ export async function getArticles(options: { limit?: number; includeDrafts?: boo
     }
 }
 
-// Get a single article by ID
+// Get a single article by ID - DIRECT NO-CACHE VERSION
 export async function getArticleById(id: string): Promise<Article | null> {
     try {
+        // Super aggressive cache-busting
+        const timestamp = Date.now();
+        console.log(`🔄 DIRECT FETCH: Getting article with ID: ${id} (time: ${timestamp})`);
+
+        // Completely bypass any caching by making a direct Firestore call
         const docRef = doc(db, 'articles', id);
+
+        // Direct Firestore fetch with no caching
+
+        // Get fresh data directly
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
-            return {
+            const articleData = {
                 id: docSnap.id,
                 ...docSnap.data()
             } as Article;
+
+            console.log('✅ Article found:', articleData.title);
+            console.log('📄 Content length:', articleData.body?.length || 0);
+            console.log('🏷️ Tags:', articleData.tags?.join(', ') || 'none');
+
+            // Return fresh data
+            return articleData;
         } else {
+            console.log('❌ Article not found for ID:', id);
             return null;
         }
     } catch (error) {
-        console.error('Error getting article:', error);
+        console.error('🛑 Error getting article:', error);
         throw error;
     }
 }
@@ -113,19 +130,43 @@ export async function getArticleById(id: string): Promise<Article | null> {
 // Get a single article by slug
 export async function getArticleBySlug(slug: string): Promise<Article | null> {
     try {
-        const articlesRef = collection(db, 'articles');
-        const q = query(articlesRef, where('slug', '==', slug), where('status', '==', 'published'));
-        const querySnapshot = await getDocs(q);
+        console.log(`Getting article by slug: ${slug}, timestamp: ${Date.now()}`);
 
-        if (querySnapshot.empty) {
-            return null;
+        // Try multiple attempts to get fresh data
+        let attempts = 0;
+        const maxAttempts = 2;
+
+        while (attempts < maxAttempts) {
+            attempts++;
+            console.log(`Attempt ${attempts} to get article by slug`);
+
+            // Short delay between attempts
+            if (attempts > 1) {
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
+
+            const articlesRef = collection(db, 'articles');
+            const q = query(articlesRef, where('slug', '==', slug), where('status', '==', 'published'));
+            const querySnapshot = await getDocs(q);
+
+            if (!querySnapshot.empty) {
+                const docSnap = querySnapshot.docs[0];
+                const articleData = {
+                    id: docSnap.id,
+                    ...docSnap.data()
+                } as Article;
+
+                console.log('Article found by slug:', articleData.title, 'Content length:', articleData.body?.length || 0);
+                return articleData;
+            } else if (attempts >= maxAttempts) {
+                console.log('Article not found for slug after multiple attempts:', slug);
+                return null;
+            }
+
+            console.log(`Article not found by slug on attempt ${attempts}, will retry...`);
         }
 
-        const docSnap = querySnapshot.docs[0];
-        return {
-            id: docSnap.id,
-            ...docSnap.data()
-        } as Article;
+        return null;
     } catch (error) {
         console.error('Error getting article by slug:', error);
         throw error;
@@ -193,11 +234,13 @@ export async function updateArticle(articleId: string, articleData: Partial<Omit
 
         const updateData: Partial<Article> = { ...articleData };
 
-        if (articleData.title && !articleData.slug) {
+        // Always update slug when title changes to ensure published articles reflect changes
+        if (articleData.title) {
             updateData.slug = articleData.title
                 .toLowerCase()
                 .replace(/[\s\W-]+/g, '-')
                 .replace(/^-+|-+$/g, '');
+            console.log('Updated slug to:', updateData.slug);
         }
         updateData.updatedAt = Timestamp.now();
 

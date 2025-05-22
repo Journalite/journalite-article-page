@@ -6,7 +6,8 @@ import Link from 'next/link';
 import { auth } from '@/firebase/clientApp';
 import ArticleWithHighlights from '@/components/ArticleWithHighlights';
 import CommentSection from '@/components/CommentSection';
-import { getArticleById } from '@/firebase/articles';
+import ArticleComposer from '@/components/ArticleComposer';
+import { getArticleById, Article } from '@/firebase/articles';
 import styles from '@/styles/ArticlePage.module.css';
 
 interface ArticlePageClientProps {
@@ -25,10 +26,12 @@ const ArticlePageClient: React.FC<ArticlePageClientProps> = ({ id }) => {
     readTime: number;
     likes?: string[];
     tags?: string[];
+    authorId?: string;
   } | null>(null);
   const [likes, setLikes] = useState<string[]>([]);
   const [isLiked, setIsLiked] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
+  const [isEditing, setIsEditing] = useState(false);
   
   // Set up authentication listener
   useEffect(() => {
@@ -39,59 +42,68 @@ const ArticlePageClient: React.FC<ArticlePageClientProps> = ({ id }) => {
     return () => unsubscribe();
   }, []);
   
-  useEffect(() => {
-    const fetchArticle = async () => {
-      try {
-        setIsLoading(true);
-        const articleData = await getArticleById(id);
-        
-        if (!articleData) {
-          setError('Article not found');
-          return;
-        }
-        
-        // Get the HTML content directly
-        const cleanHtml = articleData.body
-          ? articleData.body
-              .replace(/<div[^>]*>Content is loaded from HTML<\/div>/g, '')
-              .replace(/<h1[^>]*>Untitled Article<\/h1>/g, '')
-          : '';
-        
-        setArticleHtml(cleanHtml);
-        
-        // Set likes data
-        setLikes(articleData.likes || []);
-        
-        // Calculate read time (rough estimate: 200 words per minute)
-        const wordCount = articleData.body ? articleData.body.split(/\s+/).length : 0;
-        const readTimeMinutes = Math.ceil(wordCount / 200);
-        
-        // Format date
-        const date = articleData.createdAt 
-          ? new Date(articleData.createdAt.seconds * 1000).toLocaleDateString('en-US', {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric'
-            })
-          : 'Unknown date';
-        
-        setArticle({
-          title: articleData.title || 'Untitled Article',
-          authorName: articleData.authorName || 'Anonymous',
-          createdAt: date,
-          readTime: readTimeMinutes,
-          likes: articleData.likes || [],
-          tags: articleData.tags || []
-        });
-        
-      } catch (error) {
-        console.error('Error loading article:', error);
-        setError('Failed to load article');
-      } finally {
-        setIsLoading(false);
+  // Create a function to fetch article data that can be called multiple times
+  const fetchArticle = async () => {
+    try {
+      console.log(`Fetching article with ID: ${id}, timestamp: ${Date.now()}`);
+      setIsLoading(true);
+      
+      // Add slight delay to ensure Firebase has updated completely
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      const articleData = await getArticleById(id);
+      console.log('Article data received:', articleData?.title, 'Content length:', articleData?.body?.length || 0);
+      
+      if (!articleData) {
+        setError('Article not found');
+        return;
       }
-    };
-    
+      
+      // Get the HTML content directly
+      const cleanHtml = articleData.body
+        ? articleData.body
+            .replace(/<div[^>]*>Content is loaded from HTML<\/div>/g, '')
+            .replace(/<h1[^>]*>Untitled Article<\/h1>/g, '')
+        : '';
+      
+      setArticleHtml(cleanHtml);
+      
+      // Set likes data
+      setLikes(articleData.likes || []);
+      
+      // Calculate read time (rough estimate: 200 words per minute)
+      const wordCount = articleData.body ? articleData.body.split(/\s+/).length : 0;
+      const readTimeMinutes = Math.ceil(wordCount / 200);
+      
+      // Format date
+      const date = articleData.createdAt 
+        ? new Date(articleData.createdAt.seconds * 1000).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          })
+        : 'Unknown date';
+      
+      setArticle({
+        title: articleData.title || 'Untitled Article',
+        authorName: articleData.authorName || 'Anonymous',
+        createdAt: date,
+        readTime: readTimeMinutes,
+        likes: articleData.likes || [],
+        tags: articleData.tags || [],
+        authorId: articleData.authorId
+      });
+      
+    } catch (error) {
+      console.error('Error loading article:', error);
+      setError('Failed to load article');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  // Load article data when component mounts or id changes
+  useEffect(() => {
     fetchArticle();
   }, [id]);
   
@@ -123,6 +135,38 @@ const ArticlePageClient: React.FC<ArticlePageClientProps> = ({ id }) => {
       console.error('Error updating like status:', error);
     }
   };
+
+  const handleEditClick = () => {
+    setIsEditing(true);
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+  };
+
+  // Handle article updates
+  const handleUpdateComplete = (updatedArticle?: Article | null) => {
+    console.log('Article update complete with data:', updatedArticle);
+    // Force a more thorough reload by setting loading state
+    setIsLoading(true);
+    
+    // Clear any cached article content first
+    setArticleHtml(null);
+    setArticle(null);
+    
+    // Do a complete hard reload of the page to ensure we get fresh data
+    if (updatedArticle) {
+      console.log('Forcing hard reload to see updated content');
+      // Using a more aggressive approach with window.location.href and cache-busting
+      window.location.href = `/articles/${id}?reload=${Date.now()}`;
+    } else {
+      // Fallback if no updated article is provided - fetch fresh data
+      setTimeout(() => {
+        // Reload the article data when update is complete
+        fetchArticle();
+      }, 800);
+    }
+  };
   
   if (isLoading) {
     return (
@@ -137,6 +181,20 @@ const ArticlePageClient: React.FC<ArticlePageClientProps> = ({ id }) => {
     return (
       <div className={styles.errorContainer}>
         <p className={styles.errorMessage}>{error}</p>
+      </div>
+    );
+  }
+
+  if (isEditing) {
+    return (
+      <div>
+        <div className={styles.editingHeader}>
+          <button onClick={handleCancelEdit} className={styles.cancelButton}>
+            ← Back to Article
+          </button>
+          <h2>Editing: {article?.title}</h2>
+        </div>
+        <ArticleComposer articleId={id} onUpdateComplete={handleUpdateComplete} />
       </div>
     );
   }
@@ -184,12 +242,14 @@ const ArticlePageClient: React.FC<ArticlePageClientProps> = ({ id }) => {
                   <span>{likes.length > 0 ? likes.length : ''}</span>
                 </button>
               
-                <button 
-                  className={styles.editButton}
-                  onClick={() => router.push(`/articles/${id}/edit`)}
-                >
-                  Edit
-                </button>
+                {currentUser && article.authorId === currentUser.uid && (
+                  <button 
+                    className={styles.editButton}
+                    onClick={handleEditClick}
+                  >
+                    Edit
+                  </button>
+                )}
               </div>
             </div>
             

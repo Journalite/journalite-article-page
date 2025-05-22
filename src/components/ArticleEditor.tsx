@@ -248,6 +248,45 @@ const ArticleEditor: React.FC<ArticleEditorProps> = ({
 
   // Handle keydown events in the editor
   const handleEditorKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    // Check for keyboard shortcuts
+    const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+    const cmdOrCtrl = isMac ? e.metaKey : e.ctrlKey;
+    
+    // Bold: Ctrl/Cmd+B
+    if (cmdOrCtrl && e.key === 'b') {
+      e.preventDefault();
+      handleBold();
+      return false;
+    }
+    
+    // Italic: Ctrl/Cmd+I
+    if (cmdOrCtrl && e.key === 'i') {
+      e.preventDefault();
+      handleItalic();
+      return false;
+    }
+    
+    // Heading 1: Ctrl/Cmd+1
+    if (cmdOrCtrl && e.key === '1') {
+      e.preventDefault();
+      handleHeading(1);
+      return false;
+    }
+    
+    // Heading 2: Ctrl/Cmd+2
+    if (cmdOrCtrl && e.key === '2') {
+      e.preventDefault();
+      handleHeading(2);
+      return false;
+    }
+    
+    // Heading 3: Ctrl/Cmd+3
+    if (cmdOrCtrl && e.key === '3') {
+      e.preventDefault();
+      handleHeading(3);
+      return false;
+    }
+    
     // Handle Enter key to create new paragraphs
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -328,38 +367,41 @@ const ArticleEditor: React.FC<ArticleEditorProps> = ({
         <button 
           className={styles.toolbarButton} 
           onClick={handleBold}
-          title="Bold (Ctrl+B)"
+          title="Bold (⌘/Ctrl+B)"
         >
-          B
+          <strong>B</strong>
         </button>
         <button 
           className={styles.toolbarButton} 
           onClick={handleItalic}
-          title="Italic (Ctrl+I)"
+          title="Italic (⌘/Ctrl+I)"
         >
-          I
+          <em>I</em>
         </button>
         <button 
           className={styles.toolbarButton} 
           onClick={() => handleHeading(1)}
-          title="Heading 1"
+          title="Heading 1 (⌘/Ctrl+1)"
         >
           H1
         </button>
         <button 
           className={styles.toolbarButton} 
           onClick={() => handleHeading(2)}
-          title="Heading 2"
+          title="Heading 2 (⌘/Ctrl+2)"
         >
           H2
         </button>
         <button 
           className={styles.toolbarButton} 
           onClick={() => handleHeading(3)}
-          title="Heading 3"
+          title="Heading 3 (⌘/Ctrl+3)"
         >
           H3
         </button>
+        <div className={styles.keyboardHint}>
+          <kbd>⌘B</kbd> Bold &nbsp; <kbd>⌘I</kbd> Italic &nbsp; <kbd>⌘1-3</kbd> Headings
+        </div>
       </div>
       
       {/* Editor content area */}

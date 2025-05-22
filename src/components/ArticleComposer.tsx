@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { v4 as uuidv4 } from 'uuid';
-import { createArticle, updateArticle, getArticleById } from '@/firebase/articles';
+import { createArticle, updateArticle, getArticleById, Article } from '@/firebase/articles';
 import { auth } from '@/firebase/clientApp';
 import { DocumentModel } from '@/types/DocumentModel';
 import ArticleEditor from './ArticleEditor';
@@ -12,9 +12,10 @@ import { User } from 'firebase/auth';
 
 interface ArticleComposerProps {
   articleId?: string; // Optional - if provided, edit mode, otherwise create mode
+  onUpdateComplete?: (updatedArticle?: Article | null) => void; // Callback when update is complete
 }
 
-const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId }) => {
+const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId, onUpdateComplete }) => {
   const router = useRouter();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -256,20 +257,45 @@ const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId }) => {
       console.log('Saving article data:', articleData);
       
       if (articleId) {
-        // Update existing article
-        const updatedArticle = await updateArticle(articleId, articleData);
-        
-        // If status is published and we're updating, redirect to the article page
-        if (status === 'published') {
+        try {
+          // Update existing article
+          const updatedArticle = await updateArticle(articleId, articleData);
+          console.log('Article updated successfully:', updatedArticle?.title);
+          
+          // Show saved indicator
           setIsSaved(true);
+          
+          // Wait a moment for Firebase to fully process the update
+          await new Promise(resolve => setTimeout(resolve, 500));
+          
+          // Get the updated article with fresh data
+          const updatedArticleData = await getArticleById(articleId);
+          console.log('Fetched updated article data:', updatedArticleData?.title);
+          
+          // Call the callback if provided, pass the updated article data
+          if (onUpdateComplete) {
+            onUpdateComplete(updatedArticleData);
+          }
+          
+          // THIS IS CRITICAL: Go directly to the article page by ID (not slug) to avoid issues
+          // when title/slug changes
           setTimeout(() => {
-            // Using the actual article id from the article data to avoid any issues
-            router.push(`/articles/${articleId}`);
+            console.log('Applying changes immediately and redirecting to article ID page');
+            // Direct navigation to our new ID-based view route
+            window.location.href = `/articles/${articleId}/view?updated=true&time=${Date.now()}`;
+            
+            // Add a fallback in case the route doesn't exist
+            setTimeout(() => {
+              if (window.location.pathname.includes('/edit')) {
+                console.log('Fallback navigation to main articles page');
+                window.location.href = `/articles?id=${articleId}&updated=true&time=${Date.now()}`;
+              }
+            }, 2000);
           }, 1000);
-        } else {
-          // Just show saved indicator
-          setIsSaved(true);
-          setTimeout(() => setIsSaved(false), 3000);
+        } catch (error) {
+          console.error('Error updating article:', error);
+          setError('Failed to update article. Please try again.');
+          setIsSaved(false);
         }
       } else {
         // Create new article
