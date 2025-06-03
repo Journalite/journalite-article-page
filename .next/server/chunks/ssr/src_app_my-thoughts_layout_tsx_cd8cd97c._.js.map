@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 7, "column": 0}, "map": {"version":3,"sources":["file:///Users/sirabdisalam/journalite-article-page/src/app/my-thoughts/layout.tsx"],"sourcesContent":["export default function Layout({ children }: { children: React.ReactNode }) {\n  return <>{children}</>\n} "],"names":[],"mappings":";;;;;AAAe,SAAS,OAAO,EAAE,QAAQ,EAAiC;IACxE,qBAAO;kBAAG;;AACZ","debugId":null}}]
-}

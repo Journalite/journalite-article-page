@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 7, "column": 0}, "map": {"version":3,"sources":["file:///Users/sirabdisalam/journalite-article-page/src/app/edit-article/layout.tsx"],"sourcesContent":["export const viewport = {\n  width: 'device-width',\n  initialScale: 1\n}\n\nexport default function EditArticleLayout({\n  children,\n}: {\n  children: React.ReactNode\n}) {\n  return children\n} "],"names":[],"mappings":";;;;AAAO,MAAM,WAAW;IACtB,OAAO;IACP,cAAc;AAChB;AAEe,SAAS,kBAAkB,EACxC,QAAQ,EAGT;IACC,OAAO;AACT","debugId":null}}]
-}
