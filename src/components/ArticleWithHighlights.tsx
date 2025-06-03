@@ -1,33 +1,28 @@
 'use client'
 
 import React, { useEffect, useState, useRef } from 'react';
-import { DocumentModel } from '@/types/DocumentModel';
 import { HighlightProvider } from '@/context/HighlightContext';
 import ArticleHighlights from './ArticleHighlights';
 import styles from '@/styles/ArticleWithHighlights.module.css';
 import { getArticleById } from '@/firebase/articles';
-import domPatcher from '@/services/DOMPatcher';
 
 interface ArticleWithHighlightsProps {
   articleId: string;
   initialHtml?: string;
-  documentModel?: DocumentModel;
 }
 
 /**
  * ArticleWithHighlights
  * 
  * Displays an article with highlighting functionality.
- * This component bridges our document model with the highlighting feature.
+ * This component renders HTML content with the highlighting feature.
  */
 const ArticleWithHighlights: React.FC<ArticleWithHighlightsProps> = ({
   articleId,
-  initialHtml,
-  documentModel
+  initialHtml
 }) => {
   const [article, setArticle] = useState<{ title: string; body: string } | null>(null);
-  const [model, setModel] = useState<DocumentModel | null>(documentModel || null);
-  const [isLoading, setIsLoading] = useState(!documentModel && !initialHtml);
+  const [isLoading, setIsLoading] = useState(!initialHtml);
   const [error, setError] = useState('');
   const articleContainerRef = useRef<HTMLDivElement>(null);
   
@@ -50,7 +45,7 @@ const ArticleWithHighlights: React.FC<ArticleWithHighlightsProps> = ({
   
   // Load the article if needed
   useEffect(() => {
-    if (documentModel || initialHtml || article) return;
+    if (initialHtml || article) return;
     
     const fetchArticle = async () => {
       try {
@@ -81,29 +76,19 @@ const ArticleWithHighlights: React.FC<ArticleWithHighlightsProps> = ({
     };
     
     fetchArticle();
-  }, [articleId, documentModel, article, initialHtml]);
-  
-  // Render the document model when it's available
-  useEffect(() => {
-    if (!articleContainerRef.current || !model) return;
-    
-    // Use DOM patcher to render the document model
-    domPatcher.initialize(articleContainerRef.current, model);
-    domPatcher.fullRender(model);
-  }, [model]);
-  
-  // If we have initialHtml but no document model, render using innerHTML
-  useEffect(() => {
-    if (!articleContainerRef.current || model || !initialHtml) return;
-    
-    // Clean HTML content
-    const cleanHtml = initialHtml
-      .replace(/<div[^>]*>Content is loaded from HTML<\/div>/g, '')
-      .replace(/<h1[^>]*>Untitled Article<\/h1>/g, '');
-    
-    articleContainerRef.current.innerHTML = cleanHtml;
-  }, [initialHtml, model]);
-  
+  }, [articleId, article, initialHtml]);
+
+  // Get the content to display
+  const getContentToDisplay = () => {
+    if (initialHtml) {
+      // Clean HTML content
+      return initialHtml
+        .replace(/<div[^>]*>Content is loaded from HTML<\/div>/g, '')
+        .replace(/<h1[^>]*>Untitled Article<\/h1>/g, '');
+    }
+    return article?.body || '';
+  };
+
   if (isLoading) {
     return (
       <div className={styles.loadingContainer}>
@@ -112,7 +97,7 @@ const ArticleWithHighlights: React.FC<ArticleWithHighlightsProps> = ({
       </div>
     );
   }
-  
+
   if (error) {
     return (
       <div className={styles.errorContainer}>
@@ -120,7 +105,7 @@ const ArticleWithHighlights: React.FC<ArticleWithHighlightsProps> = ({
       </div>
     );
   }
-  
+
   return (
     <HighlightProvider articleId={articleId}>
       <article className={styles.articleContainer}>
@@ -128,12 +113,8 @@ const ArticleWithHighlights: React.FC<ArticleWithHighlightsProps> = ({
           <div 
             className={styles.articleContent} 
             ref={articleContainerRef}
-          >
-            {/* Content will be rendered by DOM patcher or from HTML */}
-            {!model && !initialHtml && article && (
-              <div dangerouslySetInnerHTML={{ __html: article.body }} />
-            )}
-          </div>
+            dangerouslySetInnerHTML={{ __html: getContentToDisplay() }}
+          />
         </ArticleHighlights>
       </article>
     </HighlightProvider>

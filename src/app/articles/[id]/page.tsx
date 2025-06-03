@@ -2,19 +2,11 @@
 import React, { Suspense } from 'react';
 import ArticlePageClient from './client';
 
-// For static generation, we need to define this to generate the static paths
+// For dynamic routing, return empty array to allow on-demand generation
 export async function generateStaticParams() {
-  // Include all known article IDs and some placeholders for static generation
-  return [
-    { id: 'placeholder' },
-    { id: 'Z0nGCw8msDhUHlWSZpTO' }, // Add your specific article ID here
-    // Add any other known article IDs you want to prerender
-    { id: 'article1' },
-    { id: 'article2' },
-    { id: 'article3' },
-    { id: 'article4' },
-    { id: 'article5' }
-  ];
+  // Return empty array to indicate dynamic generation is preferred
+  // This allows any article ID to be handled dynamically
+  return []
 }
 
 // Server component that renders the client component

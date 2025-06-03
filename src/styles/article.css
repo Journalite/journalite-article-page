@@ -86,6 +86,193 @@
   color: #1f2937;
 }
 
+/* ProseMirror content styling for published articles */
+.article-content h1,
+.article-content h2,
+.article-content h3,
+.article-content h4,
+.article-content h5,
+.article-content h6 {
+  font-weight: 600;
+  margin: 1.5em 0 0.5em;
+  line-height: 1.3;
+  color: #000;
+}
+
+.article-content h1 {
+  font-size: 32px;
+  font-weight: 700;
+  margin: 32px 0 16px;
+  letter-spacing: -0.02em;
+}
+
+.article-content h2 {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 28px 0 16px;
+  letter-spacing: -0.01em;
+}
+
+.article-content h3 {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 24px 0 12px;
+}
+
+.article-content h4 {
+  font-size: 22px;
+  font-weight: 600;
+  margin: 22px 0 12px;
+}
+
+.article-content h5 {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 20px 0 12px;
+}
+
+.article-content h6 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 18px 0 12px;
+}
+
+.article-content p {
+  margin: 0 0 1.5em;
+  font-size: 21px;
+  color: #292929;
+  line-height: 1.6;
+}
+
+.article-content strong {
+  font-weight: 700;
+  color: #000;
+}
+
+.article-content em {
+  font-style: italic;
+}
+
+.article-content a {
+  color: #1a8917;
+  text-decoration: underline;
+  text-decoration-color: rgba(26, 137, 23, 0.3);
+  transition: text-decoration-color 0.2s ease;
+}
+
+.article-content a:hover {
+  text-decoration-color: rgba(26, 137, 23, 0.8);
+}
+
+.article-content code {
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  font-size: 16px;
+  background-color: rgba(0, 0, 0, 0.05);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: #d73a49;
+}
+
+.article-content pre {
+  background-color: #f6f8fa;
+  border-radius: 6px;
+  padding: 16px;
+  margin: 24px 0;
+  overflow-x: auto;
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  font-size: 14px;
+  line-height: 1.45;
+  color: #24292e;
+}
+
+.article-content pre code {
+  background: none;
+  padding: 0;
+  border-radius: 0;
+  color: inherit;
+  font-size: inherit;
+}
+
+.article-content blockquote {
+  border-left: 4px solid #1a8917;
+  padding-left: 20px;
+  margin: 24px 0;
+  font-style: italic;
+  color: #555;
+  font-size: 21px;
+  background-color: rgba(26, 137, 23, 0.02);
+  padding: 16px 20px;
+  border-radius: 0 4px 4px 0;
+}
+
+.article-content img {
+  max-width: 100%;
+  height: auto;
+  margin: 24px auto;
+  border-radius: 6px;
+  display: block;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Enhanced list styling - CRITICAL for bullet points to show */
+.article-content ul,
+.article-content ol {
+  margin: 16px 0 24px;
+  padding-left: 32px;
+  list-style-position: outside;
+}
+
+.article-content ul {
+  list-style-type: disc;
+}
+
+.article-content ol {
+  list-style-type: decimal;
+}
+
+.article-content li {
+  margin-bottom: 8px;
+  font-size: 21px;
+  line-height: 1.6;
+  display: list-item;
+  list-style: inherit;
+}
+
+.article-content li p {
+  margin: 0 0 8px;
+  display: inline;
+}
+
+.article-content li p:last-child {
+  margin-bottom: 0;
+}
+
+/* Ensure list items show bullets/numbers */
+.article-content ul li {
+  list-style-type: disc;
+  display: list-item;
+}
+
+.article-content ol li {
+  list-style-type: decimal;
+  display: list-item;
+}
+
+/* Nested lists */
+.article-content ul ul,
+.article-content ol ol,
+.article-content ul ol,
+.article-content ol ul {
+  margin: 4px 0;
+  padding-left: 24px;
+}
+
+.article-content hr {
+  border: none;
+  border-top: 2px solid #e1e5e9;
+  margin: 32px 0;
+}
+
 .paragraph-block {
   margin-bottom: 1.75rem;
   opacity: 0.01;

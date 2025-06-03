@@ -1,13 +1,12 @@
 import ArticleViewClient from './client'
 
-// Generate static params for all known article IDs
+// Generate static params for dynamic routing (optional optimization)
+// Since we removed output: 'export', this is now optional and Next.js will 
+// generate pages on-demand for any article ID
 export async function generateStaticParams() {
-  return [
-    { id: 'placeholder' },
-    // Include your most common article IDs here
-    { id: 'Z0nGCw8msDhUHlWSZpTO' },
-    { id: 'L8qCNRXWaPJqXEjWRz6q' }
-  ]
+  // Return empty array to indicate dynamic generation is preferred
+  // This allows any article ID to be handled dynamically
+  return []
 }
 
 // Server component that renders the client component

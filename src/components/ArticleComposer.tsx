@@ -5,8 +5,7 @@ import { useRouter } from 'next/navigation';
 import { v4 as uuidv4 } from 'uuid';
 import { createArticle, updateArticle, getArticleById, Article } from '@/firebase/articles';
 import { auth } from '@/firebase/clientApp';
-import { DocumentModel } from '@/types/DocumentModel';
-import ArticleEditor from './ArticleEditor';
+import Editor from './Editor';
 import styles from '@/styles/ArticleComposer.module.css';
 import { User } from 'firebase/auth';
 
@@ -28,7 +27,6 @@ const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId, onUpdateCo
   const [isLoading, setIsLoading] = useState(!!articleId);
   const [user, setUser] = useState<User | null>(null);
   const [currentTag, setCurrentTag] = useState('');
-  const [documentModel, setDocumentModel] = useState<DocumentModel | null>(null);
   
   const titleRef = useRef<HTMLTextAreaElement>(null);
   const tagInputRef = useRef<HTMLInputElement>(null);
@@ -88,21 +86,6 @@ const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId, onUpdateCo
           
           setTags(article.tags || []);
           setCoverImage(article.coverImage || '');
-          
-          // Initialize with empty document model - we'll let the editor parse the HTML
-          const initialModel: DocumentModel = {
-            id: articleId,
-            title: article.title,
-            sections: [
-              {
-                id: uuidv4(),
-                type: 'section',
-                paragraphs: []
-              }
-            ]
-          };
-          
-          setDocumentModel(initialModel);
         } catch (error) {
           console.error('Error loading article:', error);
           setError('Failed to load article');
@@ -113,27 +96,8 @@ const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId, onUpdateCo
       
       fetchArticle();
     } else if (!articleId) {
-      // Create a new document model for new articles
-      const newModel: DocumentModel = {
-        id: uuidv4(),
-        title: '',
-        sections: [
-          {
-            id: uuidv4(),
-            type: 'section',
-            paragraphs: [
-              {
-                id: uuidv4(),
-                type: 'paragraph',
-                text: '',
-                marks: []
-              }
-            ]
-          }
-        ]
-      };
-      
-      setDocumentModel(newModel);
+      // Editor will start with empty content - no need for document model
+      setIsLoading(false);
     }
   }, [articleId, user, router]);
   
@@ -162,19 +126,18 @@ const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId, onUpdateCo
     setTitle(e.target.value);
   };
   
-  // Handle editor content changes
-  const handleEditorChange = (html: string, model: DocumentModel) => {
+  // Handle editor content changes with debouncing for better performance
+  const handleEditorChange = useCallback((html: string, json: any) => {
     // Only update if content has actually changed
     if (html !== content) {
       setContent(html);
-      setDocumentModel(model);
       
       // Reset saved status when content changes
       if (isSaved) {
         setIsSaved(false);
       }
     }
-  };
+  }, [content, isSaved]);
   
   // Handle tag input
   const handleTagInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -213,14 +176,10 @@ const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId, onUpdateCo
     // When user presses Enter in the title field, move focus to the editor
     if (e.key === 'Enter') {
       e.preventDefault();
-      if (editorRef.current) {
-        editorRef.current.focus();
-      }
+      // Note: The new Editor component will handle its own focus
+      // when the user starts typing in the editor area
     }
   };
-
-  // Reference to the editor element
-  const editorRef = useRef<HTMLDivElement>(null);
   
   // Save article (draft or published)
   const saveArticle = async (status: 'drafts' | 'published' = 'drafts') => {
@@ -281,14 +240,14 @@ const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId, onUpdateCo
           // when title/slug changes
           setTimeout(() => {
             console.log('Applying changes immediately and redirecting to article ID page');
-            // Direct navigation to our new ID-based view route
+            // Direct navigation to our ID-based view route
             window.location.href = `/articles/${articleId}/view?updated=true&time=${Date.now()}`;
             
-            // Add a fallback in case the route doesn't exist
+            // Add a fallback in case something goes wrong - but use ID-based routing
             setTimeout(() => {
               if (window.location.pathname.includes('/edit')) {
-                console.log('Fallback navigation to main articles page');
-                window.location.href = `/articles?id=${articleId}&updated=true&time=${Date.now()}`;
+                console.log('Fallback navigation to ID-based article page');
+                window.location.href = `/articles/${articleId}?updated=true&time=${Date.now()}`;
               }
             }, 2000);
           }, 1000);
@@ -441,15 +400,14 @@ const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId, onUpdateCo
         {error && <div className={styles.errorMessage}>{error}</div>}
         
         {/* Article editor */}
-        {documentModel && (
-          <div className={styles.editorContainer} ref={editorRef}>
-            <ArticleEditor
-              articleId={documentModel.id}
-              initialHtml={content}
-              onChange={handleEditorChange}
-            />
-          </div>
-        )}
+        <div className={styles.editorContainer}>
+          <Editor
+            articleId={articleId || uuidv4()}
+            initialContent={content}
+            onChange={handleEditorChange}
+            placeholder="Tell your story..."
+          />
+        </div>
       </main>
     </div>
   );

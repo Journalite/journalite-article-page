@@ -82,12 +82,34 @@
 .articleContent ul, .articleContent ol {
   margin: 0 0 32px;
   padding-left: 32px;
+  list-style-position: outside;
+}
+
+.articleContent ul {
+  list-style-type: disc;
+}
+
+.articleContent ol {
+  list-style-type: decimal;
 }
 
 .articleContent li {
   margin-bottom: 16px;
   font-size: 21px;
   line-height: 1.8;
+  display: list-item;
+  list-style: inherit;
+}
+
+/* Ensure list items show bullets/numbers */
+.articleContent ul li {
+  list-style-type: disc;
+  display: list-item;
+}
+
+.articleContent ol li {
+  list-style-type: decimal;
+  display: list-item;
 }
 
 .articleContent img {

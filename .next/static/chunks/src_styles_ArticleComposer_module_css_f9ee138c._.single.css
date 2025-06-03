@@ -1,0 +1,308 @@
+/* [project]/src/styles/ArticleComposer.module.css [app-client] (css) */
+.ArticleComposer-module__UcJHvq__articleComposer {
+  color: #292929;
+  background-color: #fff;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Open Sans, Helvetica Neue, sans-serif;
+  display: flex;
+}
+
+.ArticleComposer-module__UcJHvq__composerHeader {
+  z-index: 100;
+  backdrop-filter: blur(5px);
+  background-color: #fffffff7;
+  border-bottom: 1px solid #0000000d;
+  justify-content: space-between;
+  align-items: center;
+  height: 65px;
+  padding: 12px 24px;
+  display: flex;
+  position: sticky;
+  top: 0;
+}
+
+.ArticleComposer-module__UcJHvq__logoContainer {
+  align-items: center;
+  display: flex;
+}
+
+.ArticleComposer-module__UcJHvq__logo {
+  color: #1a8917;
+  letter-spacing: -.02em;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.ArticleComposer-module__UcJHvq__actionButtons {
+  align-items: center;
+  gap: 12px;
+  display: flex;
+}
+
+.ArticleComposer-module__UcJHvq__actionButton {
+  color: #292929;
+  cursor: pointer;
+  background-color: #0000;
+  border: 1px solid #ccc;
+  border-radius: 24px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all .2s;
+}
+
+.ArticleComposer-module__UcJHvq__actionButton:hover {
+  background-color: #0000000d;
+}
+
+.ArticleComposer-module__UcJHvq__actionButton:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+.ArticleComposer-module__UcJHvq__publishButton {
+  color: #fff;
+  cursor: pointer;
+  background-color: #1a8917;
+  border: none;
+  border-radius: 24px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all .2s;
+}
+
+.ArticleComposer-module__UcJHvq__publishButton:hover {
+  background-color: #0f6e0c;
+}
+
+.ArticleComposer-module__UcJHvq__publishButton:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}
+
+.ArticleComposer-module__UcJHvq__savedIndicator {
+  color: #1a8917;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  animation: .3s ease-in-out ArticleComposer-module__UcJHvq__fadeIn;
+  display: flex;
+}
+
+.ArticleComposer-module__UcJHvq__savedIndicator svg {
+  width: 16px;
+  height: 16px;
+}
+
+.ArticleComposer-module__UcJHvq__composerContent {
+  flex: 1;
+  width: 100%;
+  max-width: 740px;
+  margin: 0 auto;
+  padding: 60px 24px;
+}
+
+.ArticleComposer-module__UcJHvq__titleInput {
+  color: #292929;
+  resize: none;
+  background-color: #0000;
+  border: none;
+  outline: none;
+  width: 100%;
+  margin-bottom: 24px;
+  padding: 0;
+  font-family: Georgia, serif;
+  font-size: 42px;
+  font-weight: 700;
+  line-height: 1.3;
+  overflow: hidden;
+}
+
+.ArticleComposer-module__UcJHvq__titleInput::-moz-placeholder {
+  color: #8a8a8a;
+}
+
+.ArticleComposer-module__UcJHvq__titleInput::placeholder {
+  color: #8a8a8a;
+}
+
+.ArticleComposer-module__UcJHvq__coverImageInput {
+  margin-bottom: 32px;
+}
+
+.ArticleComposer-module__UcJHvq__imageUrlInput {
+  color: #292929;
+  border: none;
+  border-bottom: 1px solid #e6e6e6;
+  outline: none;
+  width: 100%;
+  margin-bottom: 16px;
+  padding: 12px 0;
+  font-size: 16px;
+  transition: border-color .2s;
+}
+
+.ArticleComposer-module__UcJHvq__imageUrlInput::-moz-placeholder {
+  color: #8a8a8a;
+}
+
+.ArticleComposer-module__UcJHvq__imageUrlInput::placeholder {
+  color: #8a8a8a;
+}
+
+.ArticleComposer-module__UcJHvq__imageUrlInput:focus {
+  border-color: #1a8917;
+}
+
+.ArticleComposer-module__UcJHvq__coverImagePreview {
+  border-radius: 8px;
+  width: 100%;
+  max-height: 450px;
+  margin-bottom: 32px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px #0000001a;
+}
+
+.ArticleComposer-module__UcJHvq__coverImagePreview img {
+  -o-object-fit: cover;
+  object-fit: cover;
+  width: 100%;
+}
+
+.ArticleComposer-module__UcJHvq__tagContainer {
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 32px;
+  display: flex;
+}
+
+.ArticleComposer-module__UcJHvq__tag {
+  color: #1a8917;
+  background-color: #1a89171a;
+  border-radius: 24px;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+}
+
+.ArticleComposer-module__UcJHvq__removeTagButton {
+  cursor: pointer;
+  color: #1a8917;
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.ArticleComposer-module__UcJHvq__tagInput {
+  color: #292929;
+  background-color: #0000;
+  border: none;
+  outline: none;
+  flex: 1;
+  min-width: 150px;
+  padding: 8px 0;
+  font-size: 14px;
+}
+
+.ArticleComposer-module__UcJHvq__tagInput::-moz-placeholder {
+  color: #8a8a8a;
+}
+
+.ArticleComposer-module__UcJHvq__tagInput::placeholder {
+  color: #8a8a8a;
+}
+
+.ArticleComposer-module__UcJHvq__editorContainer {
+  min-height: 400px;
+  margin-top: 40px;
+}
+
+.ArticleComposer-module__UcJHvq__errorMessage {
+  color: #c62828;
+  background-color: #ffebee;
+  border-radius: 4px;
+  margin: 16px 0;
+  padding: 12px 16px;
+  font-size: 14px;
+}
+
+.ArticleComposer-module__UcJHvq__composerLoading {
+  color: #757575;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+}
+
+.ArticleComposer-module__UcJHvq__loadingIndicator {
+  border: 3px solid #1a891733;
+  border-top-color: #1a8917;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: 1s linear infinite ArticleComposer-module__UcJHvq__spin;
+}
+
+@keyframes ArticleComposer-module__UcJHvq__fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes ArticleComposer-module__UcJHvq__spin {
+  from {
+    transform: rotate(0);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.ArticleComposer-module__UcJHvq__titleInput:empty:before, .ArticleComposer-module__UcJHvq__titleInput[placeholder]:empty:before {
+  content: attr(placeholder);
+  color: #757575;
+  pointer-events: none;
+}
+
+@media (width <= 768px) {
+  .ArticleComposer-module__UcJHvq__composerContent {
+    padding: 40px 16px;
+  }
+
+  .ArticleComposer-module__UcJHvq__titleInput {
+    font-size: 36px;
+  }
+
+  .ArticleComposer-module__UcJHvq__composerHeader {
+    padding: 12px 16px;
+  }
+}
+
+@media (width <= 480px) {
+  .ArticleComposer-module__UcJHvq__actionButton, .ArticleComposer-module__UcJHvq__publishButton {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  .ArticleComposer-module__UcJHvq__titleInput {
+    font-size: 32px;
+  }
+}
+
+/*# sourceMappingURL=src_styles_ArticleComposer_module_css_f9ee138c._.single.css.map*/

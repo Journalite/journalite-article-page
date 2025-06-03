@@ -1,9 +1,8 @@
-import { generateUserStaticParams } from '@/utils/staticParamsUtils';
 import FollowersClient from '@/components/FollowersClient';
 
-// This generates the static paths for pre-rendering
+// For dynamic routing, return empty array to allow on-demand generation
 export async function generateStaticParams() {
-  return generateUserStaticParams('followers');
+  return []
 }
 
 // Server component

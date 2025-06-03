@@ -1,17 +1,9 @@
 import React from 'react';
 import FollowingClient from '@/components/FollowingClient';
 
-// This generates the static paths for pre-rendering with fallback
+// For dynamic routing, return empty array to allow on-demand generation
 export async function generateStaticParams() {
-  // Hardcoded usernames for static generation
-  return [
-    { username: 'abdullahshittu.work' },
-    { username: 'kc' },
-    { username: 'abdulmalik' },
-    { username: 'default' },
-    { username: 'placeholder' },
-    // Add more usernames if needed
-  ];
+  return []
 }
 
 // Server component that renders client component

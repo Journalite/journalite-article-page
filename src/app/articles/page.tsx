@@ -259,8 +259,13 @@ function Article() {
     setIsLoading(true);
     setIsEditing(false);
     
-    // Force reload the page to get fresh content
-    window.location.href = `/articles?slug=${slug}&t=${Date.now()}`;
+    // Use ID-based routing instead of slug to prevent issues when title changes
+    if (article?.id) {
+      window.location.href = `/articles/${article.id}/view?updated=true&t=${Date.now()}`;
+    } else {
+      // Fallback to current page refresh if no ID available
+      window.location.reload();
+    }
     
     // Fallback: Refetch the article to show updated content
     const refetchArticle = async () => {

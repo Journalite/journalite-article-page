@@ -1,6 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    output: 'export',
     reactStrictMode: true,
     images: {
         domains: ['firebasestorage.googleapis.com', 'images.unsplash.com', 'upload.wikimedia.org'],
@@ -13,7 +12,7 @@ const nextConfig = {
     typescript: {
         ignoreBuildErrors: true,
     },
-    // Using trailingSlash to ensure consistency in exported pages
+    // Using trailingSlash to ensure consistency in routing
     trailingSlash: true,
     // Disable ESLint for production build
     eslint: {
