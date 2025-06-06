@@ -14,15 +14,24 @@ import {
   ArticleComment as FirestoreComment,
   CommentReply as FirestoreReply
 } from '@/firebase/articles';
+import { moodThemes } from '@/utils/moodThemes';
 import styles from '@/styles/comment.module.css';
 
 interface CommentSectionProps {
   articleId: string;
   slug?: string; // Keep slug as optional for backward compatibility
   isComplex?: boolean; // New prop for article type
+  mood?: 'joyful' | 'reflective' | 'sad' | 'angry' | 'peaceful' | 'energetic';
+  moodFeatureEnabled?: boolean;
 }
 
-const CommentSection: React.FC<CommentSectionProps> = ({ slug, articleId: propArticleId, isComplex }) => {
+const CommentSection: React.FC<CommentSectionProps> = ({ 
+  slug, 
+  articleId: propArticleId, 
+  isComplex, 
+  mood = 'reflective', 
+  moodFeatureEnabled = false 
+}) => {
   const [comments, setComments] = useState<FirestoreComment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -282,10 +291,85 @@ const CommentSection: React.FC<CommentSectionProps> = ({ slug, articleId: propAr
   };
 
   return (
-    <section className={styles.commentSection}>
-      <h2 className={styles.commentSectionTitle}>
-        Join the Discussion
-      </h2>
+    <section 
+      className={styles.commentSection}
+      style={moodFeatureEnabled ? {
+        background: `linear-gradient(160deg, 
+          rgba(255, 255, 255, 0.1) 0%, 
+          ${moodThemes[mood].gradientStart}08 30%, 
+          ${moodThemes[mood].gradientEnd}06 70%, 
+          rgba(255, 255, 255, 0.05) 100%)`,
+        borderRadius: '32px',
+        border: `1px solid ${moodThemes[mood].gradientStart}12`,
+        boxShadow: `
+          0 8px 32px -8px ${moodThemes[mood].gradientStart}08,
+          inset 0 1px 0 rgba(255, 255, 255, 0.1)
+        `,
+        backdropFilter: 'blur(20px) saturate(1.1)',
+        transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
+        position: 'relative',
+        overflow: 'hidden',
+        padding: '2rem'
+      } : {}}
+    >
+      {moodFeatureEnabled && (
+        <>
+          {/* Subtle animated background */}
+          <div
+            style={{
+              position: 'absolute',
+              top: '-50%',
+              left: '-50%',
+              right: '-50%',
+              bottom: '-50%',
+              background: `
+                radial-gradient(circle at 30% 20%, ${moodThemes[mood].gradientStart}04, transparent 40%), 
+                radial-gradient(circle at 70% 80%, ${moodThemes[mood].gradientEnd}03, transparent 40%),
+                radial-gradient(circle at 20% 70%, ${moodThemes[mood].gradientStart}02, transparent 30%)
+              `,
+              animation: 'moodFloat 20s ease-in-out infinite',
+              pointerEvents: 'none',
+              zIndex: 0
+            }}
+          />
+          {/* Decorative border glow */}
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              borderRadius: '32px',
+              background: `linear-gradient(45deg, 
+                ${moodThemes[mood].gradientStart}05, 
+                transparent, 
+                ${moodThemes[mood].gradientEnd}05)`,
+              filter: 'blur(1px)',
+              opacity: 0.6,
+              pointerEvents: 'none',
+              zIndex: 0
+            }}
+          />
+        </>
+      )}
+      <div style={{ position: 'relative', zIndex: 1 }}>
+        <h2 
+          className={styles.commentSectionTitle}
+          style={moodFeatureEnabled ? {
+            color: moodThemes[mood].accent,
+            fontWeight: '600',
+            marginBottom: '1.5rem',
+            textShadow: `0 0 20px ${moodThemes[mood].gradientStart}30, 0 0 40px ${moodThemes[mood].gradientStart}15`,
+            transition: 'all 0.3s ease'
+          } : {
+            fontWeight: '600',
+            marginBottom: '1.5rem',
+            color: '#333'
+          }}
+        >
+          💬 Join the Discussion
+        </h2>
       
       {error && (
         <div className={styles.commentError}>
@@ -301,7 +385,26 @@ const CommentSection: React.FC<CommentSectionProps> = ({ slug, articleId: propAr
       <form className={styles.commentForm} onSubmit={handleCommentSubmit}>
         <div
           className={styles.commentInputContainer}
-          style={{ opacity: focusState ? 1 : 0.85 }}
+          style={moodFeatureEnabled ? {
+            background: `linear-gradient(135deg, 
+              rgba(255, 255, 255, ${focusState ? '0.15' : '0.08'}), 
+              ${moodThemes[mood].gradientStart}${focusState ? '12' : '06'}, 
+              ${moodThemes[mood].gradientEnd}${focusState ? '08' : '04'})`,
+            border: `1px solid ${moodThemes[mood].gradientStart}${focusState ? '25' : '15'}`,
+            borderRadius: '24px',
+            boxShadow: focusState 
+              ? `0 8px 32px -4px ${moodThemes[mood].gradientStart}20, 
+                 inset 0 1px 0 rgba(255, 255, 255, 0.2)`
+              : `0 4px 16px -4px ${moodThemes[mood].gradientStart}10`,
+            backdropFilter: 'blur(12px)',
+            transform: focusState ? 'translateY(-2px)' : 'translateY(0)',
+            transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+            position: 'relative',
+            overflow: 'hidden'
+          } : { 
+            opacity: focusState ? 1 : 0.85,
+            transition: 'opacity 0.3s ease'
+          }}
         >
           {isAuthenticated ? (
             <>
@@ -319,13 +422,49 @@ const CommentSection: React.FC<CommentSectionProps> = ({ slug, articleId: propAr
                     setFocusState(false);
                   }
                 }}
+                style={moodFeatureEnabled ? {
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  border: 'none',
+                  borderRadius: '20px',
+                  color: '#2d3748',
+                  fontSize: '1rem',
+                  padding: '1rem',
+                  resize: 'vertical',
+                  minHeight: '120px',
+                  backdropFilter: 'blur(8px)',
+                  transition: 'all 0.3s ease'
+                } : {}}
               />
               <button 
                 className={styles.commentSubmit}
                 type="submit" 
                 disabled={!newComment.trim() || submitting}
+                style={moodFeatureEnabled ? {
+                  background: `linear-gradient(135deg, 
+                    ${moodThemes[mood].accent}, 
+                    ${moodThemes[mood].gradientEnd})`,
+                  border: 'none',
+                  color: 'white',
+                  borderRadius: '20px',
+                  fontWeight: '600',
+                  padding: '0.75rem 1.5rem',
+                  boxShadow: `0 4px 16px -4px ${moodThemes[mood].accent}40`,
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                  transform: 'translateY(0)',
+                  cursor: 'pointer'
+                } : {}}
+                onMouseEnter={moodFeatureEnabled ? (e) => {
+                  if (!e.currentTarget.disabled) {
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow = `0 8px 24px -4px ${moodThemes[mood].accent}60`;
+                  }
+                } : undefined}
+                onMouseLeave={moodFeatureEnabled ? (e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = `0 4px 16px -4px ${moodThemes[mood].accent}40`;
+                } : undefined}
               >
-                {submitting ? 'Posting...' : 'Post'}
+                {submitting ? '✨ Posting...' : '💬 Post'}
               </button>
             </>
           ) : (
@@ -369,16 +508,69 @@ const CommentSection: React.FC<CommentSectionProps> = ({ slug, articleId: propAr
       )}
 
       {loading ? (
-        <div className={styles.commentLoading}>
-          <p>Loading comments...</p>
+        <div 
+          className={styles.commentLoading}
+          style={moodFeatureEnabled ? {
+            background: `linear-gradient(135deg, 
+              rgba(255, 255, 255, 0.1), 
+              ${moodThemes[mood].gradientStart}06)`,
+                         borderRadius: '24px',
+             padding: '2rem',
+            backdropFilter: 'blur(10px)',
+            border: `1px solid ${moodThemes[mood].gradientStart}10`,
+            textAlign: 'center'
+          } : {}}
+        >
+          <p style={moodFeatureEnabled ? {
+            color: moodThemes[mood].accent,
+            fontWeight: '500',
+            marginBottom: '1rem'
+          } : {}}>
+            ✨ Loading comments...
+          </p>
           <div className={styles.loadingDots}>
-            <div className={styles.loadingDot}></div>
-            <div className={styles.loadingDot}></div>
-            <div className={styles.loadingDot}></div>
+            <div 
+              className={styles.loadingDot}
+              style={moodFeatureEnabled ? {
+                background: moodThemes[mood].gradientStart
+              } : {}}
+            ></div>
+            <div 
+              className={styles.loadingDot}
+              style={moodFeatureEnabled ? {
+                background: moodThemes[mood].accent
+              } : {}}
+            ></div>
+            <div 
+              className={styles.loadingDot}
+              style={moodFeatureEnabled ? {
+                background: moodThemes[mood].gradientEnd
+              } : {}}
+            ></div>
           </div>
         </div>
       ) : comments.length === 0 ? (
-        <div className={styles.noComments}>
+        <div 
+          className={styles.noComments}
+          style={moodFeatureEnabled ? {
+            background: `linear-gradient(135deg, 
+              rgba(255, 255, 255, 0.15) 0%, 
+              ${moodThemes[mood].gradientStart}08 50%, 
+              ${moodThemes[mood].gradientEnd}06 100%)`,
+            border: `1px solid ${moodThemes[mood].gradientStart}12`,
+            borderRadius: '24px',
+            boxShadow: `
+              0 6px 24px -8px ${moodThemes[mood].gradientStart}10,
+              inset 0 1px 0 rgba(255, 255, 255, 0.12)
+            `,
+            backdropFilter: 'blur(12px)',
+            color: moodThemes[mood].accent,
+            fontWeight: '500',
+            padding: '2rem',
+            textAlign: 'center',
+            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+          } : {}}
+        >
           Be the first to share your thoughts on this article.
         </div>
       ) : (
@@ -386,7 +578,40 @@ const CommentSection: React.FC<CommentSectionProps> = ({ slug, articleId: propAr
           {comments.map(comment => {
             const commentId = comment.commentId || comment.id || '';
             return (
-              <div key={commentId} className={styles.commentItem}>
+              <div 
+                key={commentId} 
+                className={styles.commentItem}
+                style={moodFeatureEnabled ? {
+                  background: `linear-gradient(135deg, 
+                    rgba(255, 255, 255, 0.12) 0%, 
+                    ${moodThemes[mood].gradientStart}06 50%, 
+                    ${moodThemes[mood].gradientEnd}04 100%)`,
+                  border: `1px solid ${moodThemes[mood].gradientStart}10`,
+                  borderRadius: '24px',
+                  boxShadow: `
+                    0 4px 20px -6px ${moodThemes[mood].gradientStart}08,
+                    inset 0 1px 0 rgba(255, 255, 255, 0.1)
+                  `,
+                  backdropFilter: 'blur(10px)',
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                  position: 'relative',
+                  overflow: 'hidden'
+                } : {}}
+                onMouseEnter={moodFeatureEnabled ? (e) => {
+                  e.currentTarget.style.transform = 'translateY(-1px)';
+                  e.currentTarget.style.boxShadow = `
+                    0 8px 28px -6px ${moodThemes[mood].gradientStart}12,
+                    inset 0 1px 0 rgba(255, 255, 255, 0.15)
+                  `;
+                } : undefined}
+                onMouseLeave={moodFeatureEnabled ? (e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = `
+                    0 4px 20px -6px ${moodThemes[mood].gradientStart}08,
+                    inset 0 1px 0 rgba(255, 255, 255, 0.1)
+                  `;
+                } : undefined}
+              >
                 <div className={styles.commentHeader}>
                   {getUserAvatar(comment.userName, comment.userId)}
                   <span className={styles.commentUser}>{comment.userName}</span>
@@ -462,7 +687,40 @@ const CommentSection: React.FC<CommentSectionProps> = ({ slug, articleId: propAr
                     {expandedReplies[commentId] && (
                       <div className={styles.replySection}>
                         {comment.replies.map(reply => (
-                          <div key={reply.replyId} className={styles.replyItem}>
+                          <div 
+                            key={reply.replyId} 
+                            className={styles.replyItem}
+                            style={moodFeatureEnabled ? {
+                              background: `linear-gradient(135deg, 
+                                rgba(255, 255, 255, 0.08) 0%, 
+                                ${moodThemes[mood].gradientStart}04 50%, 
+                                ${moodThemes[mood].gradientEnd}03 100%)`,
+                              border: `1px solid ${moodThemes[mood].gradientStart}08`,
+                              borderRadius: '20px',
+                              boxShadow: `
+                                0 2px 12px -4px ${moodThemes[mood].gradientStart}06,
+                                inset 0 1px 0 rgba(255, 255, 255, 0.08)
+                              `,
+                              backdropFilter: 'blur(8px)',
+                              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                              margin: '0.75rem 0',
+                              padding: '1rem'
+                            } : {}}
+                            onMouseEnter={moodFeatureEnabled ? (e) => {
+                              e.currentTarget.style.transform = 'translateX(4px)';
+                              e.currentTarget.style.boxShadow = `
+                                0 4px 16px -4px ${moodThemes[mood].gradientStart}10,
+                                inset 0 1px 0 rgba(255, 255, 255, 0.12)
+                              `;
+                            } : undefined}
+                            onMouseLeave={moodFeatureEnabled ? (e) => {
+                              e.currentTarget.style.transform = 'translateX(0)';
+                              e.currentTarget.style.boxShadow = `
+                                0 2px 12px -4px ${moodThemes[mood].gradientStart}06,
+                                inset 0 1px 0 rgba(255, 255, 255, 0.08)
+                              `;
+                            } : undefined}
+                          >
                             <div className={styles.replyHeader}>
                               {getUserAvatar(reply.userName, reply.userId, true)}
                               <span className={styles.replyUser}>{reply.userName}</span>
@@ -480,12 +738,35 @@ const CommentSection: React.FC<CommentSectionProps> = ({ slug, articleId: propAr
                 
                 {/* Reply form */}
                 {replyingTo === commentId && (
-                  <div className={`${styles.replyForm} ${comment.replies && comment.replies.length > 0 ? styles.inThread : ''}`}>
+                  <div 
+                    className={`${styles.replyForm} ${comment.replies && comment.replies.length > 0 ? styles.inThread : ''}`}
+                    style={moodFeatureEnabled ? {
+                      background: `linear-gradient(135deg, 
+                        rgba(255, 255, 255, 0.1) 0%, 
+                        ${moodThemes[mood].gradientStart}06 50%, 
+                        ${moodThemes[mood].gradientEnd}04 100%)`,
+                      border: `1px solid ${moodThemes[mood].gradientStart}12`,
+                      borderRadius: '20px',
+                      boxShadow: `0 3px 16px -4px ${moodThemes[mood].gradientStart}08`,
+                      backdropFilter: 'blur(10px)',
+                      padding: '1.5rem',
+                      margin: '1rem 0'
+                    } : {}}
+                  >
                     <textarea
                       className={styles.replyInput}
                       placeholder="Write a reply..."
                       value={replyContent}
                       onChange={e => setReplyContent(e.target.value)}
+                      style={moodFeatureEnabled ? {
+                        background: 'rgba(255, 255, 255, 0.08)',
+                        border: `1px solid ${moodThemes[mood].gradientStart}10`,
+                        borderRadius: '16px',
+                        backdropFilter: 'blur(6px)',
+                        color: '#2d3748',
+                        padding: '1rem',
+                        fontSize: '0.95rem'
+                      } : {}}
                     />
                     <div className={styles.replyButtons}>
                       <button 
@@ -494,6 +775,14 @@ const CommentSection: React.FC<CommentSectionProps> = ({ slug, articleId: propAr
                           setReplyingTo(null);
                           setReplyContent('');
                         }}
+                        style={moodFeatureEnabled ? {
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          border: `1px solid ${moodThemes[mood].gradientStart}15`,
+                          borderRadius: '12px',
+                          color: moodThemes[mood].accent,
+                          padding: '0.5rem 1rem',
+                          transition: 'all 0.3s ease'
+                        } : {}}
                       >
                         Cancel
                       </button>
@@ -501,8 +790,20 @@ const CommentSection: React.FC<CommentSectionProps> = ({ slug, articleId: propAr
                         className={styles.replySubmit}
                         disabled={!replyContent.trim() || submittingReply}
                         onClick={() => handleReplySubmit(commentId)}
+                        style={moodFeatureEnabled ? {
+                          background: `linear-gradient(135deg, 
+                            ${moodThemes[mood].accent}, 
+                            ${moodThemes[mood].gradientEnd})`,
+                          border: 'none',
+                          borderRadius: '12px',
+                          color: 'white',
+                          fontWeight: '600',
+                          padding: '0.5rem 1rem',
+                          boxShadow: `0 2px 8px -2px ${moodThemes[mood].accent}40`,
+                          transition: 'all 0.3s ease'
+                        } : {}}
                       >
-                        {submittingReply ? 'Posting...' : 'Post Reply'}
+                        {submittingReply ? '✨ Posting...' : '💬 Post Reply'}
                       </button>
                     </div>
                   </div>
@@ -512,6 +813,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({ slug, articleId: propAr
           })}
         </div>
       )}
+      </div>
     </section>
   );
 };

@@ -28,4 +28,183 @@ input:focus:invalid {
   background: #1a1a19;
   border: none;
   box-shadow: none;
+}
+
+/* Gradient animation for mood status bar */
+@keyframes slideGradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+.animated-gradient {
+  background-size: 200% 200%;
+  animation: slideGradient 8s ease infinite alternate;
+}
+
+/* Dynamic shifting gradient animation */
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 0%;
+  }
+  20% {
+    background-position: 100% 0%;
+  }
+  40% {
+    background-position: 100% 100%;
+  }
+  60% {
+    background-position: 0% 100%;
+  }
+  80% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 50% 0%;
+  }
+}
+
+/* Flowing gradient animation */
+@keyframes gradientFlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Wave flowing animation */
+@keyframes waveFlow {
+  0% {
+    transform: translateX(-50%) translateY(-50%) rotate(0deg);
+    background-position: 0% 0%;
+  }
+  25% {
+    background-position: 100% 100%;
+  }
+  50% {
+    transform: translateX(-50%) translateY(-50%) rotate(180deg);
+    background-position: 0% 100%;
+  }
+  75% {
+    background-position: 100% 0%;
+  }
+  100% {
+    transform: translateX(-50%) translateY(-50%) rotate(360deg);
+    background-position: 0% 0%;
+  }
+}
+
+/* Floating orbs animation */
+@keyframes orbFloat {
+  0% {
+    transform: translateY(0px) scale(1);
+    opacity: 0.7;
+  }
+  33% {
+    transform: translateY(-20px) scale(1.1);
+    opacity: 0.9;
+  }
+  66% {
+    transform: translateY(10px) scale(0.9);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(0px) scale(1);
+    opacity: 0.7;
+  }
+}
+
+/* Grain texture movement */
+@keyframes grainMove {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  25% {
+    transform: translate(-2px, -1px) rotate(90deg);
+  }
+  50% {
+    transform: translate(1px, 2px) rotate(180deg);
+  }
+  75% {
+    transform: translate(2px, -2px) rotate(270deg);
+  }
+  100% {
+    transform: translate(0, 0) rotate(360deg);
+  }
+}
+
+/* Fine grain texture */
+@keyframes fineGrain {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.4;
+  }
+  33% {
+    transform: translate(1px, -1px) scale(1.02);
+    opacity: 0.5;
+  }
+  66% {
+    transform: translate(-1px, 1px) scale(0.98);
+    opacity: 0.3;
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.4;
+  }
+}
+
+/* Mood floating animation for comments */
+@keyframes moodFloat {
+  0% {
+    transform: translate(0%, 0%) rotate(0deg) scale(1);
+    opacity: 0.6;
+  }
+  25% {
+    transform: translate(2%, -1%) rotate(90deg) scale(1.05);
+    opacity: 0.8;
+  }
+  50% {
+    transform: translate(-1%, 2%) rotate(180deg) scale(0.95);
+    opacity: 0.7;
+  }
+  75% {
+    transform: translate(-2%, -1%) rotate(270deg) scale(1.02);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate(0%, 0%) rotate(360deg) scale(1);
+    opacity: 0.6;
+  }
+}
+
+/* Orbital floating animation for decorative orbs */
+@keyframes orbitalFloat {
+  0% {
+    transform: translate(0%, 0%) rotate(0deg);
+    background-position: 0% 0%;
+  }
+  25% {
+    transform: translate(3%, -2%) rotate(90deg);
+    background-position: 25% 25%;
+  }
+  50% {
+    transform: translate(-2%, 3%) rotate(180deg);
+    background-position: 50% 50%;
+  }
+  75% {
+    transform: translate(-3%, -2%) rotate(270deg);
+    background-position: 75% 75%;
+  }
+  100% {
+    transform: translate(0%, 0%) rotate(360deg);
+    background-position: 100% 100%;
+  }
 } 

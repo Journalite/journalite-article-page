@@ -82,8 +82,21 @@ const Editor = React.forwardRef(({
         }
 
         try {
-            // SIMPLIFIED document creation - always start with empty doc
-            let initialDoc = createEmptyDocument();
+            // Create document with initial content if provided
+            let initialDoc;
+            if (initialContent && initialContent.trim()) {
+                console.log('Editor: Loading initial content, length:', initialContent.length);
+                try {
+                    initialDoc = parseHTML(initialContent);
+                    console.log('Editor: Successfully parsed HTML content');
+                } catch (parseError) {
+                    console.error('Editor: Failed to parse HTML content:', parseError);
+                    initialDoc = createEmptyDocument();
+                }
+            } else {
+                console.log('Editor: No initial content, creating empty document');
+                initialDoc = createEmptyDocument();
+            }
 
             // Debug: console.log('Created initial document:', initialDoc.toJSON());
 
@@ -267,7 +280,32 @@ const Editor = React.forwardRef(({
                 viewRef.current = null;
             }
         };
-    }, []); // Remove unstable dependencies - handle them differently
+    }, []); // Only initialize once
+
+    // Separate effect to handle initialContent changes without destroying editor
+    useEffect(() => {
+        if (!viewRef.current || !isReady || !initialContent) return;
+
+        console.log('Editor: Updating content without reinitializing, length:', initialContent.length);
+
+        try {
+            const newDoc = parseHTML(initialContent);
+            const currentContent = serializeToHTML(viewRef.current.state.doc);
+
+            // Only update if content is actually different
+            if (initialContent !== currentContent) {
+                const transaction = viewRef.current.state.tr.replaceWith(
+                    0,
+                    viewRef.current.state.doc.content.size,
+                    newDoc.content
+                );
+                viewRef.current.dispatch(transaction);
+                console.log('Editor: Content updated successfully');
+            }
+        } catch (error) {
+            console.error('Editor: Failed to update content:', error);
+        }
+    }, [initialContent, isReady]);
 
     // Toolbar action handlers - properly implemented
     const toggleBold = useCallback(() => {
@@ -317,9 +355,20 @@ const Editor = React.forwardRef(({
 
     const setCodeBlock = useCallback(() => {
         if (!viewRef.current) return;
+
+        // Ask user for language
+        const language = prompt('Enter programming language (e.g., javascript, python, css):', 'javascript');
+        if (!language) return;
+
         const { state, dispatch } = viewRef.current;
-        const command = setBlockType(schema.nodes.code_block);
-        if (command(state, dispatch)) {
+        const { from, to } = state.selection;
+
+        // Create code block with language attribute
+        const codeBlock = schema.nodes.code_block.create({ language: language.toLowerCase() });
+        const transaction = state.tr.replaceRangeWith(from, to, codeBlock);
+
+        if (dispatch) {
+            dispatch(transaction);
             viewRef.current.focus();
         }
     }, []);

@@ -16,6 +16,8 @@ import ArticleComposer from '@/components/ArticleComposer'
 
 // Import Firestore article service
 import { getArticleBySlug } from '@/firebase/articles'
+import { getMoodFromText } from '@/utils/getMoodFromText'
+import { moodThemes } from '@/utils/moodThemes'
 
 // Author mapping from homepage for consistency
 const authorMapping: { [key: string]: string } = {
@@ -87,6 +89,10 @@ function Article() {
   const [currentUser, setCurrentUser] = useState<any>(null)
   const [isEditing, setIsEditing] = useState(false)
   
+  // Mood detection state
+  const [mood, setMood] = useState<'joyful' | 'reflective' | 'sad' | 'angry' | 'peaceful' | 'energetic'>('reflective')
+  const [moodFeatureEnabled, setMoodFeatureEnabled] = useState(true)
+  
   // Initialize window width on client side
   useEffect(() => {
     setWindowWidth(window.innerWidth)
@@ -98,6 +104,27 @@ function Article() {
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
   }, [])
+  
+  // Load mood feature preference from localStorage (only for authenticated users)
+  useEffect(() => {
+    if (isAuthenticated) {
+      const savedPreference = localStorage.getItem('moodFeatureEnabled')
+      console.log('Loading mood feature preference from localStorage for authenticated user:', savedPreference);
+      if (savedPreference !== null) {
+        const enabled = JSON.parse(savedPreference);
+        console.log('Setting mood feature enabled to:', enabled);
+        setMoodFeatureEnabled(enabled)
+      } else {
+        console.log('No saved preference found for authenticated user, using default: true');
+        setMoodFeatureEnabled(true);
+      }
+    } else {
+      console.log('User not authenticated, disabling mood feature');
+      setMoodFeatureEnabled(false);
+    }
+  }, [isAuthenticated])
+
+
   
   // Check if user is authenticated
   useEffect(() => {
@@ -196,6 +223,18 @@ function Article() {
     fetchArticle()
   }, [slug])
   
+  // Analyze mood when article content is loaded (only for authenticated users)
+  useEffect(() => {
+    if (articleHtml && isAuthenticated) {
+      // Extract text from HTML for sentiment analysis
+      const textContent = articleHtml.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()
+      if (textContent) {
+        const detectedMood = getMoodFromText(textContent)
+        setMood(detectedMood)
+      }
+    }
+  }, [articleHtml, isAuthenticated])
+  
   const handleSignOut = async () => {
     try {
       await signOut(auth)
@@ -288,33 +327,31 @@ function Article() {
   
   // Handle when editing is complete
   const handleUpdateComplete = () => {
-    console.log('Article update complete');
-    // Set loading state
-    setIsLoading(true);
+    console.log('Article update complete - refreshing content');
+    
+    // Set editing state to false
     setIsEditing(false);
     
-    // Use ID-based routing instead of slug to prevent issues when title changes
-    if (article?.id) {
-      window.location.href = `/articles/${article.id}/view?updated=true&t=${Date.now()}`;
-    } else {
-      // Fallback to current page refresh if no ID available
-      window.location.reload();
-    }
-    
-    // Fallback: Refetch the article to show updated content
+    // Refetch the article to show updated content without changing routes
     const refetchArticle = async () => {
       try {
+        setIsLoading(true);
+        
+        // Add a small delay to ensure Firebase has processed the update
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
         const articleData = await getArticleBySlug(slug || '');
         
         if (!articleData) {
           setError('Article not found');
+          setIsLoading(false);
           return;
         }
         
         // Clean HTML content
         const cleanHtml = articleData.body
           .replace(/<div[^>]*>Content is loaded from HTML<\/div>/g, '')
-          .replace(/<h1[^>]*>Untitled Article<\/h1>/g, '')
+          .replace(/<h1[^>]*>Untitled Article<\/h1>/g, '');
           
         setArticleHtml(cleanHtml);
         setLikes(articleData.likes || []);
@@ -345,8 +382,13 @@ function Article() {
         });
         
         setTags(articleData.tags || []);
+        
+        console.log('Article refreshed successfully - mood feature state preserved');
       } catch (error) {
         console.error('Error refetching article:', error);
+        setError('Failed to refresh article content');
+      } finally {
+        setIsLoading(false);
       }
     };
     
@@ -368,13 +410,170 @@ function Article() {
   }
   
   return (
-    <div className={articleStyles.articlePageContainer}>
-      {article && (
+    <div 
+      className={articleStyles.articlePageContainer}
+      style={{ position: 'relative', backgroundColor: '#ffffff' }}
+    >
+      {/* Dynamic animated mood gradient overlay (only for authenticated users) */}
+      {moodFeatureEnabled && isAuthenticated && (
         <>
-          <header className={articleStyles.pageHeader}>
+          {/* Primary flowing gradient */}
+          <div
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundImage: `linear-gradient(45deg, 
+                ${moodThemes[mood].gradientStart}40, 
+                ${moodThemes[mood].gradientEnd}60, 
+                ${moodThemes[mood].gradientStart}30, 
+                ${moodThemes[mood].gradientEnd}50)`,
+              backgroundSize: '400% 400%',
+              animation: 'gradientFlow 8s ease-in-out infinite',
+              filter: 'contrast(1.1) brightness(1.05) saturate(1.1)',
+              zIndex: 0,
+              transition: 'background-image 1s ease-in-out',
+              pointerEvents: 'none'
+            }}
+          />
+          
+          {/* Grain texture overlay */}
+          <div
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundImage: `
+                radial-gradient(circle at 25% 25%, rgba(255,255,255,0.1) 1px, transparent 1px),
+                radial-gradient(circle at 75% 75%, rgba(0,0,0,0.05) 1px, transparent 1px),
+                radial-gradient(circle at 45% 15%, rgba(255,255,255,0.08) 1px, transparent 1px),
+                radial-gradient(circle at 15% 85%, rgba(0,0,0,0.03) 1px, transparent 1px)
+              `,
+              backgroundSize: '4px 4px, 6px 6px, 3px 3px, 5px 5px',
+              animation: 'grainMove 20s linear infinite',
+              opacity: 0.6,
+              mixBlendMode: 'soft-light',
+              zIndex: 0,
+              pointerEvents: 'none'
+            }}
+          />
+          
+          {/* Secondary wave layer */}
+          <div
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundImage: `radial-gradient(ellipse at 30% 50%, 
+                ${moodThemes[mood].gradientEnd}25, 
+                transparent 70%), 
+                radial-gradient(ellipse at 70% 80%, 
+                ${moodThemes[mood].gradientStart}30, 
+                transparent 70%)`,
+              backgroundSize: '800% 800%',
+              animation: 'waveFlow 12s linear infinite reverse',
+              filter: 'contrast(1.15) blur(0.5px)',
+              zIndex: 0,
+              transition: 'background-image 1s ease-in-out',
+              pointerEvents: 'none'
+            }}
+          />
+          
+          {/* Floating orbs */}
+          <div
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundImage: `radial-gradient(circle at 20% 20%, 
+                ${moodThemes[mood].gradientStart}20, 
+                transparent 40%), 
+                radial-gradient(circle at 80% 60%, 
+                ${moodThemes[mood].gradientEnd}25, 
+                transparent 50%),
+                radial-gradient(circle at 40% 90%, 
+                ${moodThemes[mood].gradientStart}15, 
+                transparent 35%)`,
+              animation: 'orbFloat 15s ease-in-out infinite',
+              filter: 'contrast(1.2) saturate(0.9)',
+              zIndex: 0,
+              pointerEvents: 'none'
+            }}
+          />
+          
+          {/* Fine grain texture */}
+          <div
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundImage: `
+                repeating-conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(255,255,255,0.02) 1deg, transparent 2deg),
+                repeating-linear-gradient(90deg, transparent, rgba(0,0,0,0.01) 1px, transparent 2px),
+                repeating-linear-gradient(0deg, transparent, rgba(255,255,255,0.015) 1px, transparent 3px)
+              `,
+              backgroundSize: '2px 2px, 1px 1px, 3px 3px',
+              animation: 'fineGrain 25s linear infinite reverse',
+              opacity: 0.4,
+              mixBlendMode: 'overlay',
+              zIndex: 0,
+              pointerEvents: 'none'
+            }}
+          />
+        </>
+      )}
+              {article && (
+          <>
+            <header 
+              className={articleStyles.pageHeader} 
+              style={moodFeatureEnabled && isAuthenticated ? {
+                position: 'relative', 
+                zIndex: 10000,
+                background: `linear-gradient(135deg, 
+                  rgba(255, 255, 255, 0.15) 0%, 
+                  ${moodThemes[mood].gradientStart}12 40%, 
+                  ${moodThemes[mood].gradientEnd}08 100%)`,
+                backdropFilter: 'blur(24px) saturate(180%)',
+                borderBottom: `1px solid ${moodThemes[mood].gradientStart}25`,
+                boxShadow: `
+                  0 2px 8px -2px ${moodThemes[mood].gradientStart}15,
+                  0 8px 32px -8px ${moodThemes[mood].gradientStart}20,
+                  inset 0 1px 0 rgba(255, 255, 255, 0.25),
+                  inset 0 -1px 0 ${moodThemes[mood].gradientStart}10
+                `,
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                border: `1px solid ${moodThemes[mood].gradientStart}15`,
+                borderTop: 'none'
+              } : { 
+                position: 'relative', 
+                zIndex: 10000 
+              }}
+            >
             <div className={articleStyles.headerContainer}>
               <Link href="/" className={articleStyles.logoLink}>
-                <div className={articleStyles.headerLogo}>Journalite</div>
+                <div 
+                  className={articleStyles.headerLogo}
+                  style={moodFeatureEnabled && isAuthenticated ? {
+                    color: moodThemes[mood].accent,
+                    fontWeight: '700',
+                    textShadow: `0 0 20px ${moodThemes[mood].gradientStart}30, 0 0 40px ${moodThemes[mood].gradientStart}15`,
+                    transition: 'all 0.3s ease'
+                  } : {
+                    fontWeight: '700'
+                  }}
+                >
+                  Journalite
+                </div>
               </Link>
               
               <div className={articleStyles.headerActions}>
@@ -420,7 +619,7 @@ function Article() {
             </div>
           </header>
           
-          <div className={articleStyles.pageContainer}>
+                      <div className={articleStyles.pageContainer} style={{ position: 'relative', zIndex: 1 }}>
             {/* Article header */}
             <header className={articleStyles.articleHeader}>
               <h1 className={articleStyles.articleTitle}>{article.title}</h1>
@@ -477,11 +676,26 @@ function Article() {
             <ArticleWithHighlights 
               articleId={article.id} 
               initialHtml={articleHtml || undefined}
+              isAuthenticated={isAuthenticated}
+              {...(isAuthenticated && {
+                moodFeatureEnabled: moodFeatureEnabled,
+                onToggleMoodFeature: (enabled) => {
+                  console.log('Toggling mood feature:', enabled);
+                  setMoodFeatureEnabled(enabled);
+                  localStorage.setItem('moodFeatureEnabled', JSON.stringify(enabled));
+                }
+              })}
             />
             
             {/* Comments section */}
             <div className={articleStyles.commentsContainer}>
-              <CommentSection articleId={article.id} />
+              <CommentSection 
+                articleId={article.id} 
+                {...(isAuthenticated && {
+                  mood: mood,
+                  moodFeatureEnabled: moodFeatureEnabled
+                })}
+              />
             </div>
             
             {/* Related tags section */}

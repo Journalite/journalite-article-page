@@ -92,15 +92,54 @@ const nodes = {
         toDOM() { return ['blockquote', 0] }
     },
 
-    // Code block node
+    // Code block node with language support
     code_block: {
         content: 'text*',
         marks: '',
         group: 'block',
         code: true,
         defining: true,
-        parseDOM: [{ tag: 'pre', preserveWhitespace: 'full' }],
-        toDOM() { return ['pre', ['code', 0]] }
+        attrs: {
+            language: { default: 'javascript' }
+        },
+        parseDOM: [{
+            tag: 'pre',
+            preserveWhitespace: 'full',
+            getAttrs(node) {
+                // First check for data-language attribute on pre element
+                const dataLanguage = node.getAttribute('data-language');
+                if (dataLanguage) {
+                    return { language: dataLanguage };
+                }
+
+                // Then check for language-* class on code element
+                const codeElement = node.querySelector('code');
+                if (codeElement) {
+                    const className = codeElement.className || '';
+                    const languageMatch = className.match(/language-(\w+)/);
+                    if (languageMatch) {
+                        return { language: languageMatch[1] };
+                    }
+                }
+
+                // Default to javascript
+                return { language: 'javascript' };
+            },
+            getContent(node, schema) {
+                // Extract plain text content from the code element, 
+                // ignoring any HTML syntax highlighting spans
+                const codeElement = node.querySelector('code');
+                if (codeElement) {
+                    const text = codeElement.textContent || codeElement.innerText || '';
+                    return text ? [schema.text(text)] : [];
+                }
+                return [];
+            }
+        }],
+        toDOM(node) {
+            return ['pre', { 'data-language': node.attrs.language },
+                ['code', { class: `language-${node.attrs.language}` }, 0]];
+        }
     },
 
     // Horizontal rule

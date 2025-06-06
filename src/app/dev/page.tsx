@@ -1288,6 +1288,280 @@ The goal is to make the Home Feed a dynamic and relevant starting point for user
   `
 };
 
+const moodFeaturesDoc: DocSection = {
+  id: 'mood-features',
+  title: 'Mood & Reflection Features',
+  content: `
+## Overview
+
+The Mood & Reflection system provides an immersive reading experience by analyzing article content and adapting the visual atmosphere accordingly. It includes sentiment analysis, dynamic backgrounds, interactive reflections, and mood-aware comment styling.
+
+## Mood Detection Algorithm
+
+### Sentiment Analysis Engine
+
+\`\`\`tsx[src/utils/getMoodFromText.ts]
+import sentiment from 'sentiment';
+
+export function getMoodFromText(text: string): MoodType {
+  const analyzer = new sentiment();
+  const result = analyzer.analyze(text);
+  
+  // 6-mood system: joyful, angry, energetic, peaceful, reflective, sad
+  // Keywords take precedence over sentiment score for accuracy
+  
+  const words = text.toLowerCase().split(/\s+/);
+  
+  // Calculate keyword scores for each mood
+  const joyfulScore = countKeywords(words, joyfulWords);
+  const angryScore = countKeywords(words, angryWords);
+  const energeticScore = countKeywords(words, energeticWords);
+  const peacefulScore = countKeywords(words, peacefulWords);
+  const sadScore = countKeywords(words, sadWords);
+  
+  // Political content detection
+  const politicalWords = ['trump', 'biden', 'politics', 'election', 'government'];
+  const isPolitical = words.some(word => politicalWords.includes(word));
+  
+  if (isPolitical) {
+    return result.score > 2 ? 'energetic' : result.score < -2 ? 'angry' : 'reflective';
+  }
+  
+  // Return mood with highest keyword score
+  const maxScore = Math.max(joyfulScore, angryScore, energeticScore, peacefulScore, sadScore);
+  if (maxScore === 0) return 'reflective'; // Default
+  
+  // Return corresponding mood
+  if (maxScore === joyfulScore) return 'joyful';
+  if (maxScore === angryScore) return 'angry';
+  if (maxScore === energeticScore) return 'energetic';
+  if (maxScore === peacefulScore) return 'peaceful';
+  return 'sad';
+}
+\`\`\`
+
+### Keyword Categories
+
+Each mood has extensive keyword lists:
+
+- **Joyful**: celebration, success, love, achievement, happiness (200+ words)
+- **Angry**: frustrated, furious, outraged, betrayed, injustice (150+ words)
+- **Energetic**: exciting, dynamic, breakthrough, innovation, passionate (180+ words)
+- **Peaceful**: calm, serene, meditation, nature, harmony (120+ words)
+- **Reflective**: contemplation, thoughts, philosophy, introspection (100+ words)
+- **Sad**: loss, grief, disappointment, tragedy, melancholy (130+ words)
+
+## Visual Theming System
+
+### Color Palettes
+
+\`\`\`tsx[src/utils/moodThemes.ts]
+export const moodThemes = {
+  joyful: {
+    gradientStart: '#FFD700',
+    gradientEnd: '#FF6B6B',
+    accent: '#FF4757',
+    textColor: '#2C2C54'
+  },
+  angry: {
+    gradientStart: '#FF4757',
+    gradientEnd: '#C44569',
+    accent: '#B33771',
+    textColor: '#FFFFFF'
+  },
+  // ... 4 more moods
+};
+\`\`\`
+
+### Multi-Layer Background System
+
+\`\`\`tsx
+{/* Four animated layers for immersive experience */}
+{moodFeatureEnabled && isAuthenticated && (
+  <>
+    {/* Primary flowing gradient */}
+    <div style={{
+      backgroundImage: \`linear-gradient(45deg, 
+        \${moodThemes[mood].gradientStart}40, 
+        \${moodThemes[mood].gradientEnd}60)\`,
+      animation: 'gradientFlow 8s ease-in-out infinite'
+    }} />
+    
+    {/* Secondary wave layer */}
+    <div style={{
+      backgroundImage: \`radial-gradient(circle, 
+        \${moodThemes[mood].gradientEnd}25 0%, transparent 50%)\`,
+      animation: 'moodFloat 12s ease-in-out infinite alternate'
+    }} />
+    
+    {/* Floating orbs */}
+    <div style={{
+      backgroundImage: \`radial-gradient(circle, 
+        \${moodThemes[mood].gradientStart}20 0%, transparent 25%)\`,
+      animation: 'orbitalFloat 20s linear infinite'
+    }} />
+    
+    {/* Grain texture overlay */}
+    <div style={{
+      backgroundImage: \`repeating-linear-gradient(90deg,
+        transparent, \${moodThemes[mood].gradientStart}02 2px)\`,
+      mixBlendMode: 'overlay'
+    }} />
+  </>
+)}
+\`\`\`
+
+## Authentication-Gated Features
+
+### Feature Access Control
+
+\`\`\`tsx
+// Mood features only work for authenticated users
+const isAuthenticated = !!currentUser;
+
+// Reflection bar shows different content
+{isAuthenticated ? (
+  <div>🎨 Atmosphere adapted - ✨ Reflections saved: {count}</div>
+) : (
+  <div>🔒 Sign in for enhanced features</div>
+)}
+
+// Toggles are disabled for non-auth users
+<button 
+  disabled={!isAuthenticated}
+  onClick={isAuthenticated ? toggleMood : undefined}
+>
+  {(isAuthenticated && moodEnabled) ? 'ON' : 'OFF'}
+</button>
+\`\`\`
+
+### User Preferences
+
+- **localStorage persistence**: Mood preferences saved per user
+- **Toggle controls**: Users can disable mood backgrounds
+- **Default behavior**: New users get mood features enabled
+
+## Interactive Reflections
+
+### Prompt Generation System
+
+\`\`\`tsx
+// Base prompts + topic-specific prompts
+const getTopicBasedPrompts = (text: string) => {
+  const topicPrompts = [];
+  
+  // Technology content
+  if (text.includes('AI') || text.includes('technology')) {
+    topicPrompts.push("How might this technology impact your daily life?");
+    topicPrompts.push("What ethical considerations does this raise?");
+  }
+  
+  // Social issues
+  if (text.includes('social') || text.includes('justice')) {
+    topicPrompts.push("What role should individuals play in addressing this?");
+    topicPrompts.push("How might different communities view this differently?");
+  }
+  
+  return [...basePrompts, ...topicPrompts];
+};
+\`\`\`
+
+### Floating Action Button
+
+- **Fixed positioning**: Always accessible during reading
+- **Smooth animations**: Scale and glow effects on hover
+- **Context awareness**: Shows reflection count and state
+
+## Comment System Integration
+
+### Glass-Morphism Design
+
+\`\`\`tsx
+// Comments adapt to detected mood
+<div style={{
+  background: \`linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.25) 0%, 
+    \${moodThemes[mood].gradientStart}15 100%)\`,
+  backdropFilter: 'blur(20px) saturate(180%)',
+  border: \`1px solid \${moodThemes[mood].gradientStart}25\`,
+  borderRadius: '24px'
+}}>
+  {/* Comment content */}
+</div>
+\`\`\`
+
+### Mood-Themed Elements
+
+- **Input forms**: Dynamic focus states with mood colors
+- **Submit buttons**: Animated with mood gradients  
+- **Loading states**: Mood-colored progress indicators
+- **Reply cards**: Slide animations on hover
+- **Empty states**: "Be the first to share" cards with mood styling
+
+## Performance Optimizations
+
+### Efficient Rendering
+
+- **Conditional rendering**: Mood effects only for authenticated users
+- **CSS-in-JS**: Dynamic styles without layout thrashing
+- **Animation performance**: GPU-accelerated transforms only
+- **Memory management**: Cleanup of event listeners and timers
+
+### Code Splitting
+
+\`\`\`tsx
+// Mood utilities loaded only when needed
+const { getMoodFromText } = await import('@/utils/getMoodFromText');
+const { moodThemes } = await import('@/utils/moodThemes');
+\`\`\`
+
+## Implementation Guide
+
+### Adding Mood to New Components
+
+1. **Import utilities**:
+   \`\`\`tsx
+   import { getMoodFromText } from '@/utils/getMoodFromText';
+   import { moodThemes } from '@/utils/moodThemes';
+   \`\`\`
+
+2. **Detect mood from content**:
+   \`\`\`tsx
+   const detectedMood = getMoodFromText(textContent);
+   \`\`\`
+
+3. **Apply conditional styling**:
+   \`\`\`tsx
+   style={isAuthenticated && moodEnabled ? {
+     background: moodThemes[mood].gradientStart + '20',
+     borderColor: moodThemes[mood].accent
+   } : {}}
+   \`\`\`
+
+4. **Pass mood props to children**:
+   \`\`\`tsx
+   <ChildComponent 
+     {...(isAuthenticated && { mood, moodFeatureEnabled })}
+   />
+   \`\`\`
+
+### CSS Animations Required
+
+Ensure these keyframes exist in \`globals.css\`:
+- \`@keyframes gradientFlow\`
+- \`@keyframes moodFloat\`  
+- \`@keyframes orbitalFloat\`
+
+## Future Enhancements
+
+- **Machine learning**: More sophisticated mood detection
+- **User training**: Let users correct mood detection
+- **Seasonal themes**: Holiday and seasonal mood variations
+- **Accessibility**: High contrast mode for mood themes
+- **Analytics**: Track mood preferences and effectiveness
+  `
+};
+
 // Collection of all documentation sections
 const docSections: DocSection[] = [
   projectStructureDoc,
@@ -1300,7 +1574,8 @@ const docSections: DocSection[] = [
   routingDoc,
   deploymentDoc,
   bestPracticesDoc,
-  tagFeatureDoc
+  tagFeatureDoc,
+  moodFeaturesDoc
 ];
 
 // User Management Component

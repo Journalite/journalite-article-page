@@ -20,6 +20,7 @@ import { gapCursor } from 'prosemirror-gapcursor';
 import { schema } from './schema.js';
 import { headingCmd, paragraphCmd, toggleBlockquote } from './commands.js';
 import { exitHeadingPlugin } from './exitHeadingPlugin.js';
+import { syntaxHighlightingPlugin } from './syntaxHighlighting.js';
 
 // Create input rules for automatic formatting
 function buildInputRulesPlugin() {
@@ -61,10 +62,11 @@ function buildInputRulesPlugin() {
     );
     rules.push(blockquoteRule);
 
-    // 6) Code block: typing "```" at start of line
+    // 6) Code block: typing "```" or "```javascript" at start of line
     const codeRule = textblockTypeInputRule(
-        /^```$/,
-        schema.nodes.code_block
+        /^```([a-zA-Z0-9]*)?$/,
+        schema.nodes.code_block,
+        match => ({ language: match[1] || 'javascript' })
     );
     rules.push(codeRule);
 
@@ -149,6 +151,8 @@ export function createPlugins() {
         customKeymapPlugin,
         dropCursorPlugin,
         gapCursorPlugin,
+        // Syntax highlighting for code blocks
+        syntaxHighlightingPlugin(schema),
     ];
 
     return allPlugins;

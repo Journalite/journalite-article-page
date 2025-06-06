@@ -5,26 +5,37 @@ import { HighlightProvider } from '@/context/HighlightContext';
 import ArticleHighlights from './ArticleHighlights';
 import styles from '@/styles/ArticleWithHighlights.module.css';
 import { getArticle } from '@/services/articleService';
+import { highlightCodeBlocks } from '@/utils/syntaxHighlighter';
+import ClientSideHighlighter from './ClientSideHighlighter';
+import { getMoodFromText } from '@/utils/getMoodFromText';
+import { moodThemes } from '@/utils/moodThemes';
 
 interface ArticleWithHighlightsProps {
   articleId: string;
   initialHtml?: string;
+  isAuthenticated?: boolean;
+  moodFeatureEnabled?: boolean;
+  onToggleMoodFeature?: (enabled: boolean) => void;
 }
 
 const ArticleWithHighlights: React.FC<ArticleWithHighlightsProps> = ({
   articleId,
-  initialHtml
+  initialHtml,
+  isAuthenticated = false,
+  moodFeatureEnabled = true,
+  onToggleMoodFeature
 }) => {
   const [article, setArticle] = useState<{ title: string; body: string } | null>(null);
   const [isLoading, setIsLoading] = useState(!initialHtml);
   const [error, setError] = useState('');
-  const [reflectionsEnabled, setReflectionsEnabled] = useState(true);
+  const [reflectionsEnabled, setReflectionsEnabled] = useState(false);
   const [showReflectionPanel, setShowReflectionPanel] = useState(false);
   const [reflectionCount, setReflectionCount] = useState(0);
   const [currentReflection, setCurrentReflection] = useState('');
   const [currentPrompt, setCurrentPrompt] = useState('');
   const [isEditingPrompt, setIsEditingPrompt] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [mood, setMood] = useState<'joyful' | 'reflective' | 'sad' | 'angry' | 'peaceful' | 'energetic'>('reflective');
   const articleContainerRef = useRef<HTMLDivElement>(null);
 
   // Base reflection prompts
@@ -96,12 +107,42 @@ const ArticleWithHighlights: React.FC<ArticleWithHighlightsProps> = ({
     return allPrompts[reflectionCount % allPrompts.length];
   };
 
+  // Enable reflections only for authenticated users
+  useEffect(() => {
+    setReflectionsEnabled(isAuthenticated);
+  }, [isAuthenticated]);
+
   // Initialize prompt when panel opens
   useEffect(() => {
     if (showReflectionPanel && !currentPrompt) {
       setCurrentPrompt(getDefaultPrompt());
     }
   }, [showReflectionPanel, reflectionCount]);
+
+  // Apply syntax highlighting when content loads
+  useEffect(() => {
+    if (articleContainerRef.current && (initialHtml || article)) {
+      // Small delay to ensure DOM is updated
+      setTimeout(() => {
+        if (articleContainerRef.current) {
+          highlightCodeBlocks(articleContainerRef.current);
+        }
+      }, 100);
+    }
+  }, [initialHtml, article]);
+
+  // Analyze mood when content is available
+  useEffect(() => {
+    const content = getContentToDisplay();
+    if (content) {
+      // Extract text from HTML for sentiment analysis
+      const textContent = content.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+      if (textContent) {
+        const detectedMood = getMoodFromText(textContent);
+        setMood(detectedMood);
+      }
+    }
+  }, [initialHtml, article]);
 
   const handleShare = (text: string) => {
     if (navigator.share) {
@@ -260,6 +301,7 @@ const ArticleWithHighlights: React.FC<ArticleWithHighlightsProps> = ({
 
   return (
     <HighlightProvider articleId={articleId}>
+      <ClientSideHighlighter />
       <article className={styles.articleContainer}>
         {/* Reflection Settings */}
         <div style={{ 
@@ -269,7 +311,11 @@ const ArticleWithHighlights: React.FC<ArticleWithHighlightsProps> = ({
           gap: '1rem', 
           margin: '1rem 0',
           padding: '1rem',
-          background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+          backgroundImage: isAuthenticated 
+            ? `linear-gradient(270deg, ${moodThemes[mood].gradientStart}, ${moodThemes[mood].gradientEnd})`
+            : 'linear-gradient(270deg, #9CA3AF, #6B7280)',
+          backgroundSize: '200% 200%',
+          animation: 'slideGradient 8s ease infinite alternate',
           borderRadius: '20px',
           border: '1px solid rgba(255, 255, 255, 0.5)',
           boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
@@ -277,48 +323,106 @@ const ArticleWithHighlights: React.FC<ArticleWithHighlightsProps> = ({
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <span style={{ 
-              color: '#475569',
-              fontWeight: '600',
-              background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text'
+              color: '#F7FAFC',
+              fontWeight: '500',
+              fontSize: '0.875rem',
+              opacity: 0.9
             }}>
-              ✨ Reflections saved: {reflectionCount}
+              {isAuthenticated ? '🎨 Atmosphere adapted' : '🔒 Sign in for enhanced features'}
             </span>
+            {isAuthenticated && (
+              <span style={{ 
+                color: '#F7FAFC',
+                fontWeight: '600',
+                fontSize: '0.875rem'
+              }}>
+                ✨ Reflections saved: {reflectionCount}
+              </span>
+            )}
           </div>
           
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <span style={{ color: '#64748b', fontWeight: '500' }}>
+            {/* Mood Background Toggle */}
+            <span style={{ color: '#F7FAFC', fontWeight: '500', fontSize: '0.75rem' }}>
+              Mood Background
+            </span>
+            <button
+              onClick={isAuthenticated && onToggleMoodFeature ? () => onToggleMoodFeature(!moodFeatureEnabled) : undefined}
+              style={{
+                padding: '0.4rem 0.8rem',
+                border: 'none',
+                background: (isAuthenticated && moodFeatureEnabled) 
+                  ? 'rgba(255, 255, 255, 0.9)' 
+                  : 'rgba(255, 255, 255, 0.2)',
+                color: (isAuthenticated && moodFeatureEnabled) ? moodThemes[mood].accent : '#F7FAFC',
+                borderRadius: '20px',
+                fontSize: '0.7rem',
+                fontWeight: '600',
+                cursor: isAuthenticated ? 'pointer' : 'not-allowed',
+                transition: 'all 0.3s ease',
+                boxShadow: (isAuthenticated && moodFeatureEnabled) 
+                  ? '0 2px 8px rgba(255, 255, 255, 0.3)' 
+                  : '0 1px 4px rgba(0, 0, 0, 0.1)',
+                transform: 'scale(1)',
+                backdropFilter: 'blur(10px)',
+                opacity: isAuthenticated ? 1 : 0.6
+              }}
+              onMouseEnter={(e) => {
+                if (isAuthenticated) {
+                  e.currentTarget.style.transform = 'scale(1.05)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (isAuthenticated) {
+                  e.currentTarget.style.transform = 'scale(1)';
+                }
+              }}
+            >
+              {(isAuthenticated && moodFeatureEnabled) ? 'ON' : 'OFF'}
+            </button>
+            
+            <span style={{ color: '#F7FAFC', fontWeight: '500' }}>
               Interactive Reflections
             </span>
             <button
-              onClick={() => setReflectionsEnabled(!reflectionsEnabled)}
+              onClick={isAuthenticated ? () => setReflectionsEnabled(!reflectionsEnabled) : undefined}
               style={{
                 padding: '0.6rem 1.2rem',
                 border: 'none',
-                background: reflectionsEnabled 
-                  ? 'linear-gradient(135deg, #3b82f6, #8b5cf6)' 
-                  : 'linear-gradient(135deg, #e2e8f0, #cbd5e1)',
-                color: reflectionsEnabled ? 'white' : '#64748b',
+                background: (isAuthenticated && reflectionsEnabled) 
+                  ? 'rgba(255, 255, 255, 0.9)' 
+                  : 'rgba(255, 255, 255, 0.2)',
+                color: (isAuthenticated && reflectionsEnabled) ? moodThemes[mood].accent : '#F7FAFC',
                 borderRadius: '25px',
                 fontSize: '0.75rem',
                 fontWeight: '600',
-                cursor: 'pointer',
+                cursor: isAuthenticated ? 'pointer' : 'not-allowed',
                 transition: 'all 0.3s ease',
-                boxShadow: reflectionsEnabled 
-                  ? '0 4px 15px rgba(59, 130, 246, 0.4)' 
+                boxShadow: (isAuthenticated && reflectionsEnabled) 
+                  ? '0 4px 15px rgba(255, 255, 255, 0.3)' 
                   : '0 2px 8px rgba(0, 0, 0, 0.1)',
-                transform: 'scale(1)'
+                transform: 'scale(1)',
+                backdropFilter: 'blur(10px)',
+                opacity: isAuthenticated ? 1 : 0.6
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'scale(1.05)';
+                if (isAuthenticated) {
+                  e.currentTarget.style.transform = 'scale(1.05)';
+                  e.currentTarget.style.background = reflectionsEnabled 
+                    ? 'rgba(255, 255, 255, 1)' 
+                    : 'rgba(255, 255, 255, 0.3)';
+                }
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'scale(1)';
+                if (isAuthenticated) {
+                  e.currentTarget.style.transform = 'scale(1)';
+                  e.currentTarget.style.background = reflectionsEnabled 
+                    ? 'rgba(255, 255, 255, 0.9)' 
+                    : 'rgba(255, 255, 255, 0.2)';
+                }
               }}
             >
-              {reflectionsEnabled ? 'ON' : 'OFF'}
+              {(isAuthenticated && reflectionsEnabled) ? 'ON' : 'OFF'}
             </button>
           </div>
         </div>

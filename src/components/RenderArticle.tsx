@@ -18,6 +18,8 @@ import styles from '@/styles/home.module.css';
 import ArticleHighlights from './ArticleHighlights';
 import { HighlightProvider } from '@/context/HighlightContext';
 import InlineReflection from './InlineReflection';
+import { highlightCodeBlocks } from '@/utils/syntaxHighlighter';
+import ClientSideHighlighter from './ClientSideHighlighter';
 
 interface Comment {
   userId: string;
@@ -166,6 +168,19 @@ const RenderArticle: React.FC<RenderArticleProps> = ({ article }) => {
       hasLikes: !!article.likes,
       likesLength: article.likes?.length
     });
+  }, [article]);
+
+  // Apply syntax highlighting when article content loads
+  useEffect(() => {
+    // Small delay to ensure DOM is fully updated
+    const timer = setTimeout(() => {
+      const articleContent = document.querySelector('.article-content');
+      if (articleContent) {
+        highlightCodeBlocks(articleContent as HTMLElement);
+      }
+    }, 100);
+
+    return () => clearTimeout(timer);
   }, [article]);
 
   // Intersection Observer to track paragraph visibility and reading
@@ -399,13 +414,7 @@ const RenderArticle: React.FC<RenderArticleProps> = ({ article }) => {
   
   const ReactionBar = () => (
     <div className={`${styles['reaction-bar']} article-reaction-bar`} style={{ marginTop: '2rem', marginBottom: '1rem', justifyContent: 'flex-start', gap: '1rem' }}>
-      {/* DEBUG: Test button */}
-      <button 
-        onClick={() => console.log("🧪 TEST BUTTON CLICKED - User:", currentUser?.uid, "Disabled:", !currentUser)}
-        style={{ backgroundColor: 'red', color: 'white', padding: '5px', marginRight: '10px' }}
-      >
-        TEST
-      </button>
+
       
       <button 
         onClick={handleLike} 
@@ -497,6 +506,7 @@ const RenderArticle: React.FC<RenderArticleProps> = ({ article }) => {
         <meta name="twitter:description" content={ogDescription} />
         <meta name="twitter:image" content={ogImage} />
       </Head>
+      <ClientSideHighlighter />
       <div className="article-container">
         {/* Share Modal */}
         {isShareModalOpen && (
@@ -512,26 +522,7 @@ const RenderArticle: React.FC<RenderArticleProps> = ({ article }) => {
         {/* Article Header */}
           <ArticleHeader />
           
-        {/* DEBUG SECTION - TEMPORARY */}
-        <div style={{ background: 'yellow', padding: '10px', margin: '10px 0', border: '2px solid red' }}>
-          <h3>🚨 DEBUG INFO (Remove this later)</h3>
-          <p>Current User: {currentUser?.uid || 'NOT LOGGED IN'}</p>
-          <p>Article ID: {article.id}</p>
-          <p>Article Likes: {JSON.stringify(article.likes)}</p>
-          <p>Like Count: {likeCount}</p>
-          <p>Is Liked: {isLiked ? 'YES' : 'NO'}</p>
-          <button 
-            onClick={() => {
-              console.log("🧪 BASIC TEST CLICKED");
-              console.log("User:", currentUser?.uid);
-              console.log("Article:", article.id);
-              handleLike();
-            }}
-            style={{ background: 'red', color: 'white', padding: '10px', margin: '5px' }}
-          >
-            TEST LIKE BUTTON
-          </button>
-        </div>
+
 
         {/* Reflection Settings & Reading Progress */}
         <div className="reflection-settings" style={{ 

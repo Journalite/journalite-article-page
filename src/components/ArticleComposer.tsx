@@ -60,13 +60,18 @@ const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId, onUpdateCo
   
   // Load article data if in edit mode
   useEffect(() => {
+    console.log('ArticleComposer useEffect - articleId:', articleId, 'user:', user?.uid);
     if (articleId && user) {
       const fetchArticle = async () => {
         try {
+          console.log('Fetching article for editing, ID:', articleId);
           setIsLoading(true);
           const article = await getArticleById(articleId);
           
+          console.log('Fetched article:', article?.title, 'Body length:', article?.body?.length);
+          
           if (!article) {
+            console.log('Article not found');
             setError('Article not found');
             router.push('/');
             return;
@@ -74,20 +79,25 @@ const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId, onUpdateCo
           
           // Verify article ownership
           if (article.authorId !== user.uid) {
+            console.log('User not authorized to edit this article');
             setError('You can only edit your own articles');
             router.push('/');
             return;
           }
           
           // Set form data
+          console.log('Setting title:', article.title);
           setTitle(article.title);
           
           // Process HTML to extract and clean the content
           const cleanContent = article.body.replace(/data-[\w-]+="[^"]*"/g, '');
+          console.log('Setting content, length:', cleanContent.length, 'Preview:', cleanContent.substring(0, 100) + '...');
           setContent(cleanContent);
           
           setTags(article.tags || []);
           setCoverImage(article.coverImage || '');
+          
+          console.log('Article data loaded successfully for editing');
         } catch (error) {
           console.error('Error loading article:', error);
           setError('Failed to load article');
@@ -98,8 +108,11 @@ const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId, onUpdateCo
       
       fetchArticle();
     } else if (!articleId) {
+      console.log('No articleId, starting with empty content');
       // Editor will start with empty content - no need for document model
       setIsLoading(false);
+    } else {
+      console.log('User not logged in, waiting...');
     }
   }, [articleId, user, router]);
   
@@ -130,16 +143,19 @@ const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId, onUpdateCo
   
   // Handle editor content changes with debouncing for better performance
   const handleEditorChange = useCallback((html: string, json: any) => {
-    // Only update if content has actually changed
-    if (html !== content) {
-      setContent(html);
-      
-      // Reset saved status when content changes
-      if (isSaved) {
-        setIsSaved(false);
+    // Use functional update to avoid dependency on current content
+    setContent(prevContent => {
+      // Only update if content has actually changed
+      if (html !== prevContent) {
+        // Reset saved status when content changes
+        if (isSaved) {
+          setIsSaved(false);
+        }
+        return html;
       }
-    }
-  }, [content, isSaved]);
+      return prevContent;
+    });
+  }, [isSaved]);
   
   // Handle tag input
   const handleTagInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -235,24 +251,15 @@ const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId, onUpdateCo
           
           // Call the callback if provided, pass the updated article data
           if (onUpdateComplete) {
+            console.log('Calling onUpdateComplete callback instead of navigating');
             onUpdateComplete(updatedArticleData);
-          }
-          
-          // THIS IS CRITICAL: Go directly to the article page by ID (not slug) to avoid issues
-          // when title/slug changes
-          setTimeout(() => {
-            console.log('Applying changes immediately and redirecting to article ID page');
-            // Direct navigation to our ID-based view route
-            window.location.href = `/articles/${articleId}/view?updated=true&time=${Date.now()}`;
-            
-            // Add a fallback in case something goes wrong - but use ID-based routing
+          } else {
+            // Only navigate if no callback is provided (standalone editor usage)
+            console.log('No callback provided, navigating to article page');
             setTimeout(() => {
-              if (window.location.pathname.includes('/edit')) {
-                console.log('Fallback navigation to ID-based article page');
-                window.location.href = `/articles/${articleId}?updated=true&time=${Date.now()}`;
-              }
-            }, 2000);
-          }, 1000);
+              window.location.href = `/articles/${articleId}/view?updated=true&time=${Date.now()}`;
+            }, 1000);
+          }
         } catch (error) {
           console.error('Error updating article:', error);
           setError('Failed to update article. Please try again.');

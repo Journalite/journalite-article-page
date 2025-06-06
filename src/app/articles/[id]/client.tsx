@@ -9,6 +9,8 @@ import CommentSection from '@/components/CommentSection';
 import ArticleComposer from '@/components/ArticleComposer';
 import { getArticleById, Article } from '@/firebase/articles';
 import styles from '@/styles/ArticlePage.module.css';
+import { getMoodFromText } from '@/utils/getMoodFromText';
+import { moodThemes } from '@/utils/moodThemes';
 
 interface ArticlePageClientProps {
   id: string;
@@ -32,15 +34,35 @@ const ArticlePageClient: React.FC<ArticlePageClientProps> = ({ id }) => {
   const [isLiked, setIsLiked] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  
+  // Mood detection state
+  const [mood, setMood] = useState<'joyful' | 'reflective' | 'sad' | 'angry' | 'peaceful' | 'energetic'>('reflective');
+  const [moodFeatureEnabled, setMoodFeatureEnabled] = useState(true);
   
   // Set up authentication listener
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(user => {
       setCurrentUser(user);
+      setIsAuthenticated(!!user);
     });
     
     return () => unsubscribe();
   }, []);
+  
+  // Load mood feature preference from localStorage (only for authenticated users)
+  useEffect(() => {
+    if (isAuthenticated) {
+      const savedPreference = localStorage.getItem('moodFeatureEnabled');
+      if (savedPreference !== null) {
+        setMoodFeatureEnabled(JSON.parse(savedPreference));
+      } else {
+        setMoodFeatureEnabled(true);
+      }
+    } else {
+      setMoodFeatureEnabled(false);
+    }
+  }, [isAuthenticated]);
   
   // Create a function to fetch article data that can be called multiple times
   const fetchArticle = async () => {
@@ -113,6 +135,20 @@ const ArticlePageClient: React.FC<ArticlePageClientProps> = ({ id }) => {
       setIsLiked(article.likes.includes(currentUser.uid));
     }
   }, [article, currentUser]);
+  
+  // Analyze mood when article content is loaded (only for authenticated users)
+  useEffect(() => {
+    if (articleHtml && isAuthenticated) {
+      // Extract text from HTML for sentiment analysis
+      const textContent = articleHtml.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+      if (textContent) {
+        const detectedMood = getMoodFromText(textContent);
+        setMood(detectedMood);
+      }
+    }
+  }, [articleHtml, isAuthenticated]);
+  
+
   
   const handleLikeArticle = async () => {
     if (!currentUser) {
@@ -200,8 +236,123 @@ const ArticlePageClient: React.FC<ArticlePageClientProps> = ({ id }) => {
   }
   
   return (
-    <>
-      <header className={styles.pageHeader}>
+    <div 
+      className={styles.articlePageContainer}
+      style={{ position: 'relative', backgroundColor: '#ffffff' }}
+    >
+      {/* Dynamic animated mood gradient overlay (only for authenticated users) */}
+      {moodFeatureEnabled && isAuthenticated && (
+        <>
+          {/* Primary flowing gradient */}
+          <div
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundImage: `linear-gradient(45deg, 
+                ${moodThemes[mood].gradientStart}40, 
+                ${moodThemes[mood].gradientEnd}60, 
+                ${moodThemes[mood].gradientStart}30, 
+                ${moodThemes[mood].gradientEnd}50)`,
+              backgroundSize: '400% 400%',
+              animation: 'gradientFlow 8s ease-in-out infinite',
+              filter: 'contrast(1.1) brightness(1.05) saturate(1.1)',
+              zIndex: 0,
+              transition: 'background-image 1s ease-in-out',
+              pointerEvents: 'none'
+            }}
+          />
+          
+          {/* Secondary wave layer */}
+          <div
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundImage: `radial-gradient(circle at 20% 80%, ${moodThemes[mood].gradientEnd}25 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, ${moodThemes[mood].gradientStart}25 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, ${moodThemes[mood].gradientEnd}15 0%, transparent 50%)`,
+              backgroundSize: '600px 600px, 800px 800px, 400px 400px',
+              animation: 'moodFloat 12s ease-in-out infinite alternate',
+              zIndex: 1,
+              opacity: 0.6,
+              pointerEvents: 'none'
+            }}
+          />
+          
+          {/* Floating orbs */}
+          <div
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundImage: `radial-gradient(circle at 25% 25%, ${moodThemes[mood].gradientStart}20 0%, transparent 25%),
+                radial-gradient(circle at 75% 75%, ${moodThemes[mood].gradientEnd}20 0%, transparent 25%),
+                radial-gradient(circle at 50% 10%, ${moodThemes[mood].gradientStart}15 0%, transparent 30%),
+                radial-gradient(circle at 10% 90%, ${moodThemes[mood].gradientEnd}15 0%, transparent 30%)`,
+              backgroundSize: '300px 300px, 500px 500px, 200px 200px, 400px 400px',
+              animation: 'orbitalFloat 20s linear infinite',
+              zIndex: 2,
+              opacity: 0.4,
+              pointerEvents: 'none'
+            }}
+          />
+          
+          {/* Grain texture overlay */}
+          <div
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundImage: `repeating-linear-gradient(
+                90deg,
+                transparent,
+                transparent 2px,
+                ${moodThemes[mood].gradientStart}02 2px,
+                ${moodThemes[mood].gradientStart}02 4px
+              )`,
+              zIndex: 3,
+              opacity: 0.15,
+              mixBlendMode: 'overlay',
+              pointerEvents: 'none'
+            }}
+          />
+        </>
+      )}
+      
+      <header 
+        className={styles.pageHeader}
+        style={moodFeatureEnabled && isAuthenticated ? {
+          position: 'relative', 
+          zIndex: 10000,
+          background: `linear-gradient(135deg, 
+            rgba(255, 255, 255, 0.15) 0%, 
+            ${moodThemes[mood].gradientStart}12 40%, 
+            ${moodThemes[mood].gradientEnd}08 100%)`,
+          backdropFilter: 'blur(24px) saturate(180%)',
+          borderBottom: `1px solid ${moodThemes[mood].gradientStart}25`,
+          boxShadow: `
+            0 2px 8px -2px ${moodThemes[mood].gradientStart}15,
+            0 8px 32px -8px ${moodThemes[mood].gradientStart}20,
+            inset 0 1px 0 rgba(255, 255, 255, 0.25),
+            inset 0 -1px 0 ${moodThemes[mood].gradientStart}10
+          `,
+          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+          border: `1px solid ${moodThemes[mood].gradientStart}15`,
+          borderTop: 'none'
+        } : { 
+          position: 'relative', 
+          zIndex: 10000 
+        }}
+      >
         <div className={styles.headerContainer}>
           <Link href="/" className={styles.backLink}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -209,7 +360,19 @@ const ArticlePageClient: React.FC<ArticlePageClientProps> = ({ id }) => {
             </svg>
             Home
           </Link>
-          <div className={styles.headerLogo}>Journalite</div>
+          <div 
+            className={styles.headerLogo}
+            style={moodFeatureEnabled && isAuthenticated ? {
+              color: moodThemes[mood].accent,
+              fontWeight: '700',
+              textShadow: `0 0 20px ${moodThemes[mood].gradientStart}30, 0 0 40px ${moodThemes[mood].gradientStart}15`,
+              transition: 'all 0.3s ease'
+            } : {
+              fontWeight: '700'
+            }}
+          >
+            Journalite
+          </div>
         </div>
       </header>
       
@@ -267,14 +430,28 @@ const ArticlePageClient: React.FC<ArticlePageClientProps> = ({ id }) => {
         <ArticleWithHighlights 
           articleId={id} 
           initialHtml={articleHtml || undefined}
+          isAuthenticated={isAuthenticated}
+          {...(isAuthenticated && {
+            moodFeatureEnabled: moodFeatureEnabled,
+            onToggleMoodFeature: (enabled) => {
+              setMoodFeatureEnabled(enabled);
+              localStorage.setItem('moodFeatureEnabled', JSON.stringify(enabled));
+            }
+          })}
         />
         
         {/* Comments section */}
         <div className={styles.commentsContainer}>
-          <CommentSection articleId={id} />
+          <CommentSection 
+            articleId={id} 
+            {...(isAuthenticated && {
+              mood: mood,
+              moodFeatureEnabled: moodFeatureEnabled
+            })}
+          />
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

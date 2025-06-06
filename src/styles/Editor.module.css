@@ -437,15 +437,16 @@
 }
 
 .prosemirrorEditor pre {
-  background-color: #f6f8fa;
-  border-radius: 6px;
+  background-color: #1e1e1e;
+  border-radius: 8px;
   padding: 16px;
   margin: 24px 0;
   overflow-x: auto;
   font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
   font-size: 14px;
-  line-height: 1.45;
-  color: #24292e;
+  line-height: 1.6;
+  color: #d4d4d4;
+  border: 1px solid #333;
 }
 
 .prosemirrorEditor pre code {
@@ -454,6 +455,148 @@
   border-radius: 0;
   color: inherit;
   font-size: inherit;
+}
+
+/* VS Code Dark Theme Syntax Highlighting */
+.prosemirrorEditor pre :global(.token.comment),
+.prosemirrorEditor pre :global(.token.prolog),
+.prosemirrorEditor pre :global(.token.doctype),
+.prosemirrorEditor pre :global(.token.cdata) {
+  color: #6a9955 !important;
+  font-style: italic;
+}
+
+.prosemirrorEditor pre :global(.token.punctuation) {
+  color: #d4d4d4 !important;
+}
+
+.prosemirrorEditor pre :global(.token.property),
+.prosemirrorEditor pre :global(.token.tag),
+.prosemirrorEditor pre :global(.token.boolean),
+.prosemirrorEditor pre :global(.token.number),
+.prosemirrorEditor pre :global(.token.constant),
+.prosemirrorEditor pre :global(.token.symbol),
+.prosemirrorEditor pre :global(.token.deleted) {
+  color: #b5cea8 !important;
+}
+
+.prosemirrorEditor pre :global(.token.selector),
+.prosemirrorEditor pre :global(.token.attr-name),
+.prosemirrorEditor pre :global(.token.string),
+.prosemirrorEditor pre :global(.token.char),
+.prosemirrorEditor pre :global(.token.builtin),
+.prosemirrorEditor pre :global(.token.inserted) {
+  color: #ce9178 !important;
+}
+
+.prosemirrorEditor pre :global(.token.operator),
+.prosemirrorEditor pre :global(.token.entity),
+.prosemirrorEditor pre :global(.token.url),
+.prosemirrorEditor pre :global(.token.variable) {
+  color: #d4d4d4 !important;
+}
+
+.prosemirrorEditor pre :global(.token.atrule),
+.prosemirrorEditor pre :global(.token.attr-value),
+.prosemirrorEditor pre :global(.token.function),
+.prosemirrorEditor pre :global(.token.class-name) {
+  color: #dcdcaa !important;
+}
+
+.prosemirrorEditor pre :global(.token.keyword) {
+  color: #569cd6 !important;
+  font-weight: 500;
+}
+
+.prosemirrorEditor pre :global(.token.regex),
+.prosemirrorEditor pre :global(.token.important) {
+  color: #f44747 !important;
+}
+
+.prosemirrorEditor pre :global(.token.important),
+.prosemirrorEditor pre :global(.token.bold) {
+  font-weight: bold;
+}
+
+.prosemirrorEditor pre :global(.token.italic) {
+  font-style: italic;
+}
+
+.prosemirrorEditor pre :global(.token.entity) {
+  cursor: help;
+}
+
+/* Language-specific adjustments */
+.prosemirrorEditor pre :global(.token.namespace) {
+  opacity: .7;
+}
+
+/* JavaScript/TypeScript specific */
+.prosemirrorEditor pre :global(.token.template-string) {
+  color: #ce9178 !important;
+}
+
+.prosemirrorEditor pre :global(.token.template-punctuation) {
+  color: #569cd6 !important;
+}
+
+/* JSON specific */
+.prosemirrorEditor pre :global(.token.json .token.property) {
+  color: #9cdcfe !important;
+}
+
+/* CSS specific */
+.prosemirrorEditor pre :global(.token.selector) {
+  color: #d7ba7d !important;
+}
+
+.prosemirrorEditor pre :global(.token.property) {
+  color: #9cdcfe !important;
+}
+
+/* HTML specific */
+.prosemirrorEditor pre :global(.token.doctype .token.name) {
+  color: #569cd6 !important;
+}
+
+.prosemirrorEditor pre :global(.token.tag .token.tag) {
+  color: #569cd6 !important;
+}
+
+.prosemirrorEditor pre :global(.token.tag .token.punctuation) {
+  color: #808080 !important;
+}
+
+.prosemirrorEditor pre :global(.token.attr-name) {
+  color: #9cdcfe !important;
+}
+
+.prosemirrorEditor pre :global(.token.attr-value .token.punctuation) {
+  color: #ce9178 !important;
+}
+
+.prosemirrorEditor pre :global(.token.attr-value .token.punctuation:first-child) {
+  color: #ce9178 !important;
+}
+
+/* Add language indicator */
+.prosemirrorEditor pre[data-language]::before {
+  content: attr(data-language);
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #a0a0a0;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.prosemirrorEditor pre {
+  position: relative;
 }
 
 .prosemirrorEditor blockquote {
@@ -477,42 +620,58 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* ULTRA AGGRESSIVE: Force list styling to override ALL global styles */
+/* CLEAN LIST STYLING: Proper bullet and number lists */
 
-/* Global selector to override Tailwind and other global resets */
+/* Base list styling */
 .editor :global(.ProseMirror ul),
 .editor :global(.ProseMirror ol),
 .prosemirrorEditor ul,
 .prosemirrorEditor ol {
   margin: 16px 0 24px !important;
-  padding-left: 32px !important;
+  padding-left: 28px !important;
   list-style-position: outside !important;
   display: block !important;
-  list-style: revert !important; /* Use browser default */
 }
 
+/* Unordered lists (bullets) */
 .editor :global(.ProseMirror ul),
 .prosemirrorEditor ul {
   list-style-type: disc !important;
-  list-style: disc !important;
 }
 
+.editor :global(.ProseMirror ul li),
+.prosemirrorEditor ul li {
+  list-style-type: disc !important;
+  display: list-item !important;
+  margin-bottom: 8px !important;
+  font-size: 21px !important;
+  line-height: 1.6 !important;
+}
+
+/* Ordered lists (numbers) */
 .editor :global(.ProseMirror ol),
 .prosemirrorEditor ol {
   list-style-type: decimal !important;
-  list-style: decimal !important;
-  counter-reset: item !important;
+  counter-reset: list-counter !important;
 }
 
+.editor :global(.ProseMirror ol li),
+.prosemirrorEditor ol li {
+  list-style-type: decimal !important;
+  display: list-item !important;
+  margin-bottom: 8px !important;
+  font-size: 21px !important;
+  line-height: 1.6 !important;
+  counter-increment: list-counter !important;
+}
+
+/* List item content */
 .editor :global(.ProseMirror li),
 .prosemirrorEditor li {
   margin-bottom: 8px !important;
   font-size: 21px !important;
   line-height: 1.6 !important;
   display: list-item !important;
-  list-style: inherit !important;
-  position: relative !important;
-  padding-left: 0 !important;
 }
 
 .editor :global(.ProseMirror li p),
@@ -524,70 +683,6 @@
 .editor :global(.ProseMirror li p:last-child),
 .prosemirrorEditor li p:last-child {
   margin-bottom: 0 !important;
-}
-
-/* FORCE bullets and numbers with maximum possible specificity */
-.editor :global(.ProseMirror ul li),
-.prosemirrorEditor ul li {
-  list-style-type: disc !important;
-  list-style: disc !important;
-  display: list-item !important;
-  position: relative !important;
-}
-
-.editor :global(.ProseMirror ol li),
-.prosemirrorEditor ol li {
-  list-style-type: decimal !important;
-  list-style: decimal !important;
-  display: list-item !important;
-  position: relative !important;
-}
-
-/* TRIPLE FALLBACK: Use pseudo-elements with extremely specific selectors */
-body .editor :global(.ProseMirror ul li),
-body .prosemirrorEditor ul li {
-  position: relative !important;
-}
-
-body .editor :global(.ProseMirror ul li)::before,
-body .prosemirrorEditor ul li::before {
-  content: "•" !important;
-  color: #292929 !important;
-  font-weight: bold !important;
-  font-size: 21px !important;
-  position: absolute !important;
-  left: -20px !important;
-  top: 0 !important;
-  display: block !important;
-  line-height: 1.6 !important;
-  width: 15px !important;
-  text-align: center !important;
-}
-
-body .editor :global(.ProseMirror ol li),
-body .prosemirrorEditor ol li {
-  position: relative !important;
-  counter-increment: item !important;
-}
-
-body .editor :global(.ProseMirror ol li)::before,
-body .prosemirrorEditor ol li::before {
-  content: counter(item) "." !important;
-  color: #292929 !important;
-  font-weight: bold !important;
-  font-size: 21px !important;
-  position: absolute !important;
-  left: -25px !important;
-  top: 0 !important;
-  display: block !important;
-  line-height: 1.6 !important;
-  width: 20px !important;
-  text-align: right !important;
-}
-
-body .editor :global(.ProseMirror ol),
-body .prosemirrorEditor ol {
-  counter-reset: item !important;
 }
 
 /* Nested lists */
