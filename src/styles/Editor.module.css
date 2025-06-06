@@ -1,14 +1,67 @@
-/* ProseMirror CSS Reset - Prevent interference from global styles */
+/* ULTIMATE FIX: Force ProseMirror to work correctly regardless of global styles */
+.editorContainer :global(.ProseMirror),
+.editorContainer :global(.ProseMirror *),
+.editorContent,
+.prosemirrorEditor,
+.editor :global(.ProseMirror),
+.editor :global(.ProseMirror *) {
+  /* FORCE proper layout */
+  display: block !important;
+  width: auto !important;
+  height: auto !important;
+  
+  /* PREVENT single-line forcing */
+  white-space: pre-wrap !important;
+  overflow: visible !important;
+  flex: none !important;
+  
+  /* ENSURE text wrapping */
+  word-wrap: break-word !important;
+  word-break: normal !important;
+  
+  /* RESET any problematic positioning */
+  position: static !important;
+  float: none !important;
+  transform: none !important;
+}
+
+/* Special fix for the actual contenteditable area */
+.editorContainer :global(.ProseMirror[contenteditable="true"]) {
+  display: block !important;
+  white-space: pre-wrap !important;
+  word-wrap: break-word !important;
+  overflow: visible !important;
+  cursor: text !important;
+  caret-color: #292929 !important;
+}
+
+/* CRITICAL ProseMirror CSS Reset - Prevent interference from global styles */
 .editor :global(.ProseMirror *) {
   white-space: inherit !important;
   direction: inherit !important;
   unicode-bidi: inherit !important;
 }
 
-/* Ensure ProseMirror itself has correct text flow */
+/* CRITICAL: Ensure ProseMirror itself has correct text flow and layout */
 .editor :global(.ProseMirror) {
+  /* Force proper block layout to prevent single-line issues */
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  
+  /* Prevent single-line forcing */
   white-space: pre-wrap !important;
   word-wrap: break-word !important;
+  overflow: visible !important;
+  overflow-x: visible !important;
+  overflow-y: visible !important;
+  
+  /* Reset any flex that could force single line */
+  flex: none !important;
+  flex-wrap: wrap !important;
+  flex-direction: column !important;
+  
+  /* Essential editor behavior */
   outline: none !important;
   cursor: text !important;
   position: relative !important;
@@ -17,13 +70,24 @@
   text-align: start !important;
   font-family: inherit !important;
   line-height: inherit !important;
+  
+  /* Ensure caret positioning works */
+  caret-color: #292929 !important;
 }
 
 /* Main editor container */
 .editor {
+  /* CRITICAL: Ensure container doesn't force single line */
+  display: block !important;
   width: 100%;
   max-width: 800px;
   margin: 0 auto;
+  
+  /* Prevent any layout issues */
+  overflow: visible !important;
+  height: auto !important;
+  
+  /* Typography */
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   color: #292929;
 }
@@ -31,108 +95,139 @@
 /* Loading state */
 .loading {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 200px;
-  color: #999;
-  font-style: italic;
+  min-height: 400px;
+  color: #6b7280;
+  gap: 16px;
+  font-size: 15px;
 }
 
-/* Toolbar styling */
-.toolbar {
+.loadingSpinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid rgba(99, 102, 241, 0.2);
+  border-top-color: #6366f1;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Modern floating toolbar */
+.modernToolbar {
   position: fixed;
-  top: 0;
+  top: 20px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 100;
-  display: flex;
-  gap: 4px;
-  padding: 8px 12px;
-  margin-top: 10px;
-  background-color: white;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.2s ease, visibility 0.2s ease;
-  flex-wrap: wrap;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
 }
 
-.editor:focus-within .toolbar,
-.toolbar:hover {
+.editor:focus-within .modernToolbar,
+.modernToolbar:hover {
   opacity: 1;
   visibility: visible;
+  pointer-events: all;
 }
 
-/* Toolbar groups */
-.toolbarGroup {
+.toolbarContainer {
   display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  box-shadow: 
+    0 4px 20px rgba(0, 0, 0, 0.1),
+    0 1px 3px rgba(0, 0, 0, 0.05);
+  max-width: 90vw;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Format groups */
+.formatGroup {
+  display: flex;
+  align-items: center;
   gap: 2px;
-  padding: 0 6px;
-  border-right: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-.toolbarGroup:last-child {
-  border-right: none;
+/* Dividers */
+.divider {
+  width: 1px;
+  height: 24px;
+  background: rgba(0, 0, 0, 0.1);
+  margin: 0 6px;
+  flex-shrink: 0;
 }
 
-/* Toolbar buttons */
-.toolbarButton {
+/* Tool buttons */
+.toolBtn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 32px;
-  height: 32px;
-  padding: 0 8px;
-  background-color: white;
+  width: 36px;
+  height: 36px;
   border: none;
-  border-radius: 4px;
-  font-size: 13px;
-  font-weight: 500;
-  color: #292929;
+  border-radius: 8px;
+  background: transparent;
+  color: #374151;
   cursor: pointer;
-  transition: all 0.15s ease;
-  white-space: nowrap;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  flex-shrink: 0;
 }
 
-.toolbarButton:hover {
-  background-color: #f5f5f5;
+.toolBtn:hover {
+  background: rgba(99, 102, 241, 0.1);
+  color: #6366f1;
+  transform: scale(1.05);
 }
 
-.toolbarButton:active {
-  background-color: #e8e8e8;
-  transform: translateY(1px);
+.toolBtn:active {
+  transform: scale(0.95);
 }
 
-.toolbarButton.active {
-  background-color: #e6f3ff;
-  color: #0066cc;
-  font-weight: 600;
+.toolBtn.active {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
 }
 
-/* Keyboard hints */
-.keyboardHint {
-  display: flex;
-  align-items: center;
-  margin-left: 8px;
-  padding-left: 8px;
-  font-size: 11px;
-  color: #666;
+.toolBtn.active:hover {
+  background: linear-gradient(135deg, #5b5bd6, #7c3aed);
+  transform: scale(1.05);
 }
 
-.keyboardHint kbd {
-  display: inline-block;
-  padding: 1px 4px;
-  margin: 0 1px;
-  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
-  font-size: 10px;
-  line-height: 1;
-  color: #444;
-  background-color: #f7f7f7;
-  border: 1px solid #ddd;
-  border-radius: 3px;
-  box-shadow: 0 1px 0 rgba(0,0,0,0.1);
+/* Heading icons */
+.headingIcon {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* SVG icons in buttons */
+.toolBtn svg {
+  transition: transform 0.2s ease;
+}
+
+.toolBtn:hover svg {
+  transform: scale(1.1);
+}
+
+.toolBtn.active svg {
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
 }
 
 /* Editor content area */
@@ -148,9 +243,24 @@
 /* Combined ProseMirror and editorContent styling */
 .editorContent.ProseMirror,
 .editor :global(.ProseMirror).editorContent {
-  /* Critical ProseMirror cursor positioning */
+  /* CRITICAL: Force proper display and layout */
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  
+  /* CRITICAL: Prevent single-line forcing */
   white-space: pre-wrap !important;
   word-wrap: break-word !important;
+  overflow: visible !important;
+  overflow-x: visible !important;
+  overflow-y: visible !important;
+  
+  /* CRITICAL: Reset any flex that might force single line */
+  flex: none !important;
+  flex-wrap: wrap !important;
+  flex-direction: column !important;
+  
+  /* Essential cursor and editing behavior */
   -webkit-user-modify: read-write-plaintext-only !important;
   outline: none !important;
   cursor: text !important;
@@ -189,18 +299,33 @@
 
 /* ProseMirror-specific styling */
 .prosemirrorEditor {
+  /* CRITICAL: Force proper block display */
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  
+  /* CRITICAL: Prevent single-line forcing */
+  white-space: pre-wrap !important;
+  word-wrap: break-word !important;
+  overflow: visible !important;
+  overflow-x: visible !important;
+  overflow-y: visible !important;
+  
+  /* CRITICAL: Reset flex properties */
+  flex: none !important;
+  flex-wrap: wrap !important;
+  flex-direction: column !important;
+  
+  /* Essential editor behavior */
   outline: none !important;
   line-height: 1.6;
   font-size: 21px;
   color: #292929;
-  
-  /* Ensure proper cursor behavior */
-  white-space: pre-wrap !important;
-  word-wrap: break-word !important;
   cursor: text !important;
   position: relative !important;
   unicode-bidi: plaintext !important;
   direction: ltr !important;
+  caret-color: #292929 !important;
 }
 
 /* Placeholder styling */
@@ -264,10 +389,18 @@
 }
 
 .prosemirrorEditor p {
+  /* CRITICAL: Ensure paragraphs display properly */
+  display: block !important;
+  width: 100% !important;
   margin: 0 0 24px;
   font-size: 21px;
   color: #292929;
   line-height: 1.6;
+  
+  /* Prevent single-line issues */
+  white-space: pre-wrap !important;
+  word-wrap: break-word !important;
+  overflow: visible !important;
 }
 
 .prosemirrorEditor p:last-child {
@@ -344,48 +477,117 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Enhanced list styling - this is critical for bullet points to show */
+/* ULTRA AGGRESSIVE: Force list styling to override ALL global styles */
+
+/* Global selector to override Tailwind and other global resets */
+.editor :global(.ProseMirror ul),
+.editor :global(.ProseMirror ol),
 .prosemirrorEditor ul,
 .prosemirrorEditor ol {
-  margin: 16px 0 24px;
-  padding-left: 32px;
-  list-style-position: outside;
+  margin: 16px 0 24px !important;
+  padding-left: 32px !important;
+  list-style-position: outside !important;
+  display: block !important;
+  list-style: revert !important; /* Use browser default */
 }
 
+.editor :global(.ProseMirror ul),
 .prosemirrorEditor ul {
-  list-style-type: disc;
+  list-style-type: disc !important;
+  list-style: disc !important;
 }
 
+.editor :global(.ProseMirror ol),
 .prosemirrorEditor ol {
-  list-style-type: decimal;
+  list-style-type: decimal !important;
+  list-style: decimal !important;
+  counter-reset: item !important;
 }
 
+.editor :global(.ProseMirror li),
 .prosemirrorEditor li {
-  margin-bottom: 8px;
-  font-size: 21px;
-  line-height: 1.6;
-  display: list-item;
-  list-style: inherit;
+  margin-bottom: 8px !important;
+  font-size: 21px !important;
+  line-height: 1.6 !important;
+  display: list-item !important;
+  list-style: inherit !important;
+  position: relative !important;
+  padding-left: 0 !important;
 }
 
+.editor :global(.ProseMirror li p),
 .prosemirrorEditor li p {
-  margin: 0 0 8px;
-  display: inline;
+  margin: 0 0 8px !important;
+  display: inline !important;
 }
 
+.editor :global(.ProseMirror li p:last-child),
 .prosemirrorEditor li p:last-child {
-  margin-bottom: 0;
+  margin-bottom: 0 !important;
 }
 
-/* Ensure list items show bullets/numbers in published content */
+/* FORCE bullets and numbers with maximum possible specificity */
+.editor :global(.ProseMirror ul li),
 .prosemirrorEditor ul li {
-  list-style-type: disc;
-  display: list-item;
+  list-style-type: disc !important;
+  list-style: disc !important;
+  display: list-item !important;
+  position: relative !important;
 }
 
+.editor :global(.ProseMirror ol li),
 .prosemirrorEditor ol li {
-  list-style-type: decimal;
-  display: list-item;
+  list-style-type: decimal !important;
+  list-style: decimal !important;
+  display: list-item !important;
+  position: relative !important;
+}
+
+/* TRIPLE FALLBACK: Use pseudo-elements with extremely specific selectors */
+body .editor :global(.ProseMirror ul li),
+body .prosemirrorEditor ul li {
+  position: relative !important;
+}
+
+body .editor :global(.ProseMirror ul li)::before,
+body .prosemirrorEditor ul li::before {
+  content: "•" !important;
+  color: #292929 !important;
+  font-weight: bold !important;
+  font-size: 21px !important;
+  position: absolute !important;
+  left: -20px !important;
+  top: 0 !important;
+  display: block !important;
+  line-height: 1.6 !important;
+  width: 15px !important;
+  text-align: center !important;
+}
+
+body .editor :global(.ProseMirror ol li),
+body .prosemirrorEditor ol li {
+  position: relative !important;
+  counter-increment: item !important;
+}
+
+body .editor :global(.ProseMirror ol li)::before,
+body .prosemirrorEditor ol li::before {
+  content: counter(item) "." !important;
+  color: #292929 !important;
+  font-weight: bold !important;
+  font-size: 21px !important;
+  position: absolute !important;
+  left: -25px !important;
+  top: 0 !important;
+  display: block !important;
+  line-height: 1.6 !important;
+  width: 20px !important;
+  text-align: right !important;
+}
+
+body .editor :global(.ProseMirror ol),
+body .prosemirrorEditor ol {
+  counter-reset: item !important;
 }
 
 /* Nested lists */
@@ -420,29 +622,43 @@
 
 /* Responsive design */
 @media (max-width: 768px) {
-  .toolbar {
+  .modernToolbar {
     position: relative;
-    transform: none;
+    top: 0;
     left: auto;
-    margin: 10px 0;
+    transform: none;
+    margin: 0 0 20px 0;
     opacity: 1;
     visibility: visible;
-    flex-wrap: wrap;
-    gap: 4px;
+    pointer-events: all;
   }
   
-  .toolbarGroup {
-    padding: 0 4px;
+  .toolbarContainer {
+    padding: 6px 12px;
+    border-radius: 10px;
+    max-width: 100%;
+    gap: 2px;
+    overflow-x: auto;
   }
   
-  .toolbarButton {
-    min-width: 28px;
-    height: 28px;
-    font-size: 12px;
+  .formatGroup {
+    gap: 1px;
   }
   
-  .keyboardHint {
-    display: none;
+  .toolBtn {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    flex-shrink: 0;
+  }
+  
+  .divider {
+    height: 20px;
+    margin: 0 4px;
+  }
+  
+  .headingIcon {
+    font-size: 11px;
   }
   
   .prosemirrorEditor {
@@ -470,20 +686,20 @@
   }
 }
 
-/* Animation for toolbar */
+/* Toolbar animations */
+.editor:focus-within .modernToolbar {
+  animation: slideInFromTop 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 @keyframes slideInFromTop {
   from {
     opacity: 0;
-    transform: translateX(-50%) translateY(-10px);
+    transform: translateX(-50%) translateY(-20px) scale(0.95);
   }
   to {
     opacity: 1;
-    transform: translateX(-50%) translateY(0);
+    transform: translateX(-50%) translateY(0) scale(1);
   }
-}
-
-.editor:focus-within .toolbar {
-  animation: slideInFromTop 0.2s ease-out;
 }
 
 /* Custom scrollbar for editor */

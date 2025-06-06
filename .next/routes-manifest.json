@@ -170,6 +170,12 @@
       "namedRegex": "^/my\\-thoughts(?:/)?$"
     },
     {
+      "page": "/my-thoughts/reflections",
+      "regex": "^/my\\-thoughts/reflections(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/my\\-thoughts/reflections(?:/)?$"
+    },
+    {
       "page": "/notifications",
       "regex": "^/notifications(?:/)?$",
       "routeKeys": {},

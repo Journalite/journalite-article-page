@@ -287,6 +287,14 @@
   transform: none;
 }
 
+.paragraph-block.read {
+  background: linear-gradient(90deg, rgba(59, 130, 246, 0.03) 0%, transparent 100%);
+  border-left: 3px solid rgba(59, 130, 246, 0.3);
+  padding-left: 1rem;
+  margin-left: -1rem;
+  transition: all 0.3s ease;
+}
+
 .paragraph-text p {
   margin-bottom: 1.25rem;
 }

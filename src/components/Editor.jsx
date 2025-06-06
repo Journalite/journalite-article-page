@@ -4,11 +4,14 @@
 import 'prosemirror-view/style/prosemirror.css';
 
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { EditorState } from 'prosemirror-state';
+import { EditorState, TextSelection } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import { toggleMark, setBlockType, baseKeymap } from 'prosemirror-commands';
-import { wrapInList } from 'prosemirror-schema-list';
-import { undo, redo } from 'prosemirror-history';
+import { wrapInList, splitListItem, liftListItem, sinkListItem } from 'prosemirror-schema-list';
+import { undo, redo, history } from 'prosemirror-history';
+import { keymap } from 'prosemirror-keymap';
+import { dropCursor } from 'prosemirror-dropcursor';
+import { gapCursor } from 'prosemirror-gapcursor';
 import { schema, createEmptyDocument, parseHTML, serializeToHTML } from '@/editor/schema.js';
 import { createPlugins } from '@/editor/plugins.js';
 import { headingCmd, paragraphCmd, toggleBlockquote } from '@/editor/commands.js';
@@ -26,199 +29,353 @@ import styles from '@/styles/Editor.module.css';
  * - placeholder?: string - Placeholder text for empty editor
  * - className?: string - Additional CSS classes
  */
-const Editor = ({
+const Editor = React.forwardRef(({
     articleId,
     initialContent = '',
     onChange,
     placeholder = 'Tell your story...',
     className = ''
-}) => {
+}, ref) => {
     const editorRef = useRef(null);
     const viewRef = useRef(null);
+    const onChangeRef = useRef(onChange); // Store onChange in ref to avoid re-renders
     const [isReady, setIsReady] = useState(false);
-    const [, forceUpdate] = useState(0);
+
+    // Update onChange ref when it changes
+    onChangeRef.current = onChange;
+
+    // Method to insert text at cursor position
+    const insertTextAtCursor = useCallback((text) => {
+        if (!viewRef.current) return;
+
+        const { state, dispatch } = viewRef.current;
+        const { selection } = state;
+
+        // Create a text node with the new content
+        const textNode = schema.text(text);
+
+        // Create transaction to insert text at current position
+        const transaction = state.tr.replaceSelectionWith(textNode);
+
+        // Apply the transaction
+        dispatch(transaction);
+
+        // Focus the editor
+        viewRef.current.focus();
+    }, []);
+
+    // Expose method to parent component
+    React.useImperativeHandle(ref, () => ({
+        insertText: insertTextAtCursor,
+        focus: () => viewRef.current?.focus()
+    }), [insertTextAtCursor]);
 
     // Initialize ProseMirror editor
     useEffect(() => {
         // Guard against SSR - ProseMirror needs browser environment
         if (typeof window === 'undefined') {
-            console.log('Editor: Running on server, skipping initialization');
             return;
         }
 
-        console.log('Editor: useEffect running on client');
-        console.log('Editor: editorRef.current:', editorRef.current);
-        console.log('Editor: viewRef.current:', viewRef.current);
-
-        if (!editorRef.current) {
-            console.log('Editor: editorRef.current is null, cannot initialize');
-            return;
-        }
-
-        if (viewRef.current) {
-            console.log('Editor: viewRef.current already exists, skipping');
+        if (!editorRef.current || viewRef.current) {
             return;
         }
 
         try {
-            console.log('Editor: Starting initialization...');
+            // SIMPLIFIED document creation - always start with empty doc
+            let initialDoc = createEmptyDocument();
 
-            // Parse initial content
-            let initialDoc;
-            try {
-                if (initialContent) {
-                    // Try to parse as JSON first, then as HTML
-                    if (initialContent.startsWith('{')) {
-                        const jsonDoc = JSON.parse(initialContent);
-                        initialDoc = schema.nodeFromJSON(jsonDoc);
-                    } else {
-                        // Clean HTML and parse
-                        const cleanHtml = initialContent
-                            .replace(/<div[^>]*>Content is loaded from HTML<\/div>/g, '')
-                            .replace(/<h1[^>]*>Untitled Article<\/h1>/g, '');
-                        initialDoc = parseHTML(cleanHtml);
-                    }
-                } else {
-                    initialDoc = createEmptyDocument();
-                }
-                console.log('Editor: Initial document created successfully');
-            } catch (error) {
-                console.error('Error parsing initial content:', error);
-                initialDoc = createEmptyDocument();
-            }
+            // Debug: console.log('Created initial document:', initialDoc.toJSON());
 
-            // Validate that we have a valid document
-            if (!initialDoc) {
-                console.error('Failed to create initial document');
-                initialDoc = createEmptyDocument();
-            }
-
-            console.log('Editor: Creating editor state...');
-            // Create editor state
+            // Add back essential plugins gradually
             const state = EditorState.create({
                 doc: initialDoc,
-                plugins: createPlugins()
+                plugins: [
+                    keymap({
+                        // Custom shortcuts FIRST (higher priority)
+                        'Mod-b': toggleMark(schema.marks.strong),
+                        'Mod-i': toggleMark(schema.marks.em),
+                        'Mod-z': undo,
+                        'Mod-y': redo,
+                        // Auto-formatting shortcuts
+                        'Enter': splitListItem(schema.nodes.list_item),
+                        'Mod-[': liftListItem(schema.nodes.list_item),
+                        'Mod-]': sinkListItem(schema.nodes.list_item),
+                        'Space': (state, dispatch) => {
+                            const { $from } = state.selection;
+
+                            console.log("🕵️‍♂️ Space handler triggered. beforeCursor:", $from.parent.textContent.slice(0, $from.parentOffset));
+
+                            if ($from.parent.type === schema.nodes.paragraph) {
+                                const beforeCursor = $from.parent.textContent.slice(0, $from.parentOffset);
+
+                                // Auto-heading: ## + space = H2, ### + space = H3
+                                const headingMatch = beforeCursor.match(/^(#{1,6})$/);
+                                if (headingMatch) {
+                                    const level = headingMatch[1].length;
+                                    const tr = state.tr
+                                        .delete($from.start(), $from.pos)
+                                        .setBlockType($from.start(), $from.start(), schema.nodes.heading, { level });
+                                    dispatch(tr);
+                                    return true;
+                                }
+
+                                // Auto-bold: **text** + space = bold
+                                const boldMatch = beforeCursor.match(/\*\*([^*]+)\*\*$/);
+                                if (boldMatch) {
+                                    const start = $from.pos - boldMatch[0].length;
+                                    const tr = state.tr
+                                        .delete(start, $from.pos)
+                                        .insertText(boldMatch[1] + ' ', start)
+                                        .addMark(start, start + boldMatch[1].length, schema.marks.strong);
+                                    dispatch(tr);
+                                    return true;
+                                }
+
+                                // Auto-italic: *text* + space = italic
+                                const italicMatch = beforeCursor.match(/(?<!\*)\*([^*]+)\*$/);
+                                if (italicMatch) {
+                                    const start = $from.pos - italicMatch[0].length;
+                                    const tr = state.tr
+                                        .delete(start, $from.pos)
+                                        .insertText(italicMatch[1] + ' ', start)
+                                        .addMark(start, start + italicMatch[1].length, schema.marks.em);
+                                    dispatch(tr);
+                                    return true;
+                                }
+
+                                // Auto-code: `text` + space = inline code
+                                const codeMatch = beforeCursor.match(/`([^`]+)`$/);
+                                if (codeMatch) {
+                                    const start = $from.pos - codeMatch[0].length;
+                                    const tr = state.tr
+                                        .delete(start, $from.pos)
+                                        .insertText(codeMatch[1] + ' ', start)
+                                        .addMark(start, start + codeMatch[1].length, schema.marks.code);
+                                    dispatch(tr);
+                                    return true;
+                                }
+
+                                // Auto-bullet list: - + space or * + space = bullet list
+                                const bulletMatch = beforeCursor.match(/^[-*]$/);
+                                if (bulletMatch) {
+                                    console.log('Bullet list match:', bulletMatch[0]);
+                                    try {
+                                        // Create a simple list item with empty paragraph
+                                        const listItem = schema.nodes.list_item.create(null,
+                                            schema.nodes.paragraph.create()
+                                        );
+                                        const bulletList = schema.nodes.bullet_list.create(null, listItem);
+
+                                        // Delete exactly the dash/asterisk character
+                                        const dashPos = $from.pos - 1; // Position of the dash
+                                        let tr = state.tr
+                                            .delete(dashPos, $from.pos) // Remove exactly the - or *
+                                            .replaceWith(dashPos, dashPos, bulletList);
+
+                                        // Position cursor inside list item (after the transaction is built)
+                                        tr = tr.setSelection(TextSelection.create(tr.doc, dashPos + 2));
+
+                                        dispatch(tr);
+                                        console.log('Auto bullet list creation: success');
+                                        return true;
+                                    } catch (error) {
+                                        console.log('Auto bullet list creation failed:', error);
+                                    }
+                                }
+
+                                // Auto-ordered list: 1. + space = ordered list
+                                const orderedMatch = beforeCursor.match(/^1\.$/);
+                                if (orderedMatch) {
+                                    console.log('Ordered list match:', orderedMatch[0]);
+                                    try {
+                                        // Create a simple list item with empty paragraph
+                                        const listItem = schema.nodes.list_item.create(null,
+                                            schema.nodes.paragraph.create()
+                                        );
+                                        const orderedList = schema.nodes.ordered_list.create(null, listItem);
+
+                                        // Delete exactly the "1." characters
+                                        const numberedPos = $from.pos - 2; // Position of the "1."
+                                        let tr = state.tr
+                                            .delete(numberedPos, $from.pos) // Remove exactly the 1.
+                                            .replaceWith(numberedPos, numberedPos, orderedList);
+
+                                        // Position cursor inside list item (after the transaction is built)
+                                        tr = tr.setSelection(TextSelection.create(tr.doc, numberedPos + 2));
+
+                                        dispatch(tr);
+                                        console.log('Auto ordered list creation: success');
+                                        return true;
+                                    } catch (error) {
+                                        console.log('Auto ordered list creation failed:', error);
+                                    }
+                                }
+                            }
+
+                            // Default space behavior
+                            return false;
+                        }
+                    }),
+                    keymap(baseKeymap), // Base keymap AFTER custom
+                    history(), // For undo/redo
+                    dropCursor(),
+                    gapCursor()
+                ]
             });
 
-            console.log('Editor: Creating editor view...');
-            // Create editor view
+            // Add back minimal transaction handling
             const view = new EditorView(editorRef.current, {
                 state,
+                editable: () => true,
                 dispatchTransaction: (transaction) => {
+                    // Apply transaction normally
                     const newState = view.state.apply(transaction);
                     view.updateState(newState);
 
-                    // 1) fire onChange only when the *document* changed
-                    if (transaction.docChanged && onChange) {
+                    // Call onChange only when content actually changes
+                    if (transaction.docChanged && onChangeRef.current) {
                         const html = serializeToHTML(newState.doc);
                         const json = newState.doc.toJSON();
-                        onChange(html, json);
-                    }
-
-                    // 2) but force a React re-render whenever *either*
-                    //    the document OR the selection changed
-                    if (transaction.docChanged || transaction.selectionSet) {
-                        forceUpdate(v => v + 1);        // <- one line does the trick
+                        onChangeRef.current(html, json);
                     }
                 },
                 attributes: {
-                    class: `${styles.prosemirrorEditor} prosemirror-content`,
-                    'data-placeholder': placeholder,
-                    'contenteditable': 'true',
-                    'role': 'textbox',
-                    'aria-multiline': 'true'
+                    'data-placeholder': placeholder || 'Tell your story...',
                 },
-                editable: () => true,
-                handleDOMEvents: {
-                    // Ensure proper focus handling
-                    focus: (view, event) => {
-                        console.log('Editor focused');
-                        return false; // Let ProseMirror handle it
-                    },
-                    blur: (view, event) => {
-                        console.log('Editor blurred');
-                        return false; // Let ProseMirror handle it
-                    }
-                }
             });
 
-            console.log('Editor: EditorView created successfully');
             viewRef.current = view;
             setIsReady(true);
-            console.log('Editor: setIsReady(true) called - editor should now be visible');
+
+            // Focus the editor after it's ready
+            setTimeout(() => {
+                if (view && !view.isDestroyed) {
+                    view.focus();
+                }
+            }, 100);
 
         } catch (error) {
             console.error('Error initializing editor:', error);
-            console.error('Error details:', error.message, error.stack);
-            // Set ready to true anyway to show the editor, even if there was an error
             setIsReady(true);
         }
 
         // Cleanup function
         return () => {
             if (viewRef.current) {
-                console.log('Editor: Cleaning up view');
                 viewRef.current.destroy();
                 viewRef.current = null;
             }
         };
-    }, []);
+    }, []); // Remove unstable dependencies - handle them differently
 
-    // Toolbar action handlers - simplified
+    // Toolbar action handlers - properly implemented
     const toggleBold = useCallback(() => {
         if (!viewRef.current) return;
         const { state, dispatch } = viewRef.current;
-        toggleMark(schema.marks.strong)(state, dispatch, viewRef.current);
-        viewRef.current.focus();
+        const command = toggleMark(schema.marks.strong);
+        if (command(state, dispatch)) {
+            viewRef.current.focus();
+        }
     }, []);
 
     const toggleItalic = useCallback(() => {
         if (!viewRef.current) return;
         const { state, dispatch } = viewRef.current;
-        toggleMark(schema.marks.em)(state, dispatch, viewRef.current);
-        viewRef.current.focus();
+        const command = toggleMark(schema.marks.em);
+        if (command(state, dispatch)) {
+            viewRef.current.focus();
+        }
     }, []);
 
     const setHeading = useCallback((level) => {
         if (!viewRef.current) return;
         const { state, dispatch } = viewRef.current;
-        headingCmd(level)(state, dispatch, viewRef.current);
-        viewRef.current.focus();
+        const command = headingCmd(level);
+        if (command(state, dispatch, viewRef.current)) {
+            viewRef.current.focus();
+        }
     }, []);
 
     const setParagraph = useCallback(() => {
         if (!viewRef.current) return;
         const { state, dispatch } = viewRef.current;
-        paragraphCmd()(state, dispatch, viewRef.current);
-        viewRef.current.focus();
+        const command = paragraphCmd();
+        if (command(state, dispatch, viewRef.current)) {
+            viewRef.current.focus();
+        }
     }, []);
 
     const setBlockquote = useCallback(() => {
         if (!viewRef.current) return;
         const { state, dispatch } = viewRef.current;
-        toggleBlockquote(state, dispatch, viewRef.current);
-        viewRef.current.focus();
-    }, [forceUpdate]);
+        const command = toggleBlockquote;
+        if (command(state, dispatch, viewRef.current)) {
+            viewRef.current.focus();
+        }
+    }, []);
 
     const setCodeBlock = useCallback(() => {
         if (!viewRef.current) return;
         const { state, dispatch } = viewRef.current;
-        setBlockType(schema.nodes.code_block)(state, dispatch, viewRef.current);
-        viewRef.current.focus();
+        const command = setBlockType(schema.nodes.code_block);
+        if (command(state, dispatch)) {
+            viewRef.current.focus();
+        }
     }, []);
 
     const toggleBulletList = useCallback(() => {
         if (!viewRef.current) return;
+        console.log('Bullet list button clicked');
         const { state, dispatch } = viewRef.current;
-        wrapInList(schema.nodes.bullet_list)(state, dispatch, viewRef.current);
-        viewRef.current.focus();
+        const { $from, $to } = state.selection;
+
+        try {
+            // Try simple list creation approach
+            const listItem = schema.nodes.list_item.create(null,
+                schema.nodes.paragraph.create(null, $from.parent.content)
+            );
+            const bulletList = schema.nodes.bullet_list.create(null, listItem);
+
+            const tr = state.tr.replaceWith($from.start(), $to.end(), bulletList);
+            dispatch(tr);
+            console.log('Manual bullet list creation: success');
+            viewRef.current.focus();
+        } catch (error) {
+            console.log('Manual bullet list creation failed:', error);
+            // Fallback to wrapInList
+            const command = wrapInList(schema.nodes.bullet_list);
+            const result = command(state, dispatch);
+            console.log('wrapInList fallback result:', result);
+            if (result) viewRef.current.focus();
+        }
     }, []);
 
     const toggleOrderedList = useCallback(() => {
         if (!viewRef.current) return;
+        console.log('Ordered list button clicked');
         const { state, dispatch } = viewRef.current;
-        wrapInList(schema.nodes.ordered_list)(state, dispatch, viewRef.current);
-        viewRef.current.focus();
+        const { $from, $to } = state.selection;
+
+        try {
+            // Try simple list creation approach
+            const listItem = schema.nodes.list_item.create(null,
+                schema.nodes.paragraph.create(null, $from.parent.content)
+            );
+            const orderedList = schema.nodes.ordered_list.create(null, listItem);
+
+            const tr = state.tr.replaceWith($from.start(), $to.end(), orderedList);
+            dispatch(tr);
+            console.log('Manual ordered list creation: success');
+            viewRef.current.focus();
+        } catch (error) {
+            console.log('Manual ordered list creation failed:', error);
+            // Fallback to wrapInList
+            const command = wrapInList(schema.nodes.ordered_list);
+            const result = command(state, dispatch);
+            console.log('wrapInList fallback result:', result);
+            if (result) viewRef.current.focus();
+        }
     }, []);
 
     const insertImage = useCallback(() => {
@@ -254,7 +411,7 @@ const Editor = ({
             return markType.isInSet(viewRef.current.state.storedMarks || $from.marks());
         }
         return viewRef.current.state.doc.rangeHasMark(from, to, markType);
-    }, [forceUpdate]);
+    }, []);
 
     const isBlockActive = useCallback((nodeType, attrs = {}) => {
         if (!viewRef.current) return false;
@@ -269,7 +426,7 @@ const Editor = ({
             return true;
         });
         return allMatch;
-    }, [forceUpdate]);
+    }, []);
 
     const isInBlockquote = useCallback(() => {
         if (!viewRef.current) return false;
@@ -283,145 +440,181 @@ const Editor = ({
             return true;
         });
         return inQuote;
-    }, [forceUpdate]);
+    }, []);
 
     return (
-        <div className={`${styles.editor} ${className}`}>
-            {/* Conditionally show toolbar only when ready */}
-            {isReady ? (
-                <div className={styles.toolbar}>
-                    {/* Text formatting */}
-                    <div className={styles.toolbarGroup}>
-                        <button
-                            className={`${styles.toolbarButton} ${isMarkActive(schema.marks.strong) ? styles.active : ''}`}
-                            onClick={toggleBold}
-                            title="Bold (⌘/Ctrl+B)"
-                        >
-                            <strong>B</strong>
-                        </button>
-                        <button
-                            className={`${styles.toolbarButton} ${isMarkActive(schema.marks.em) ? styles.active : ''}`}
-                            onClick={toggleItalic}
-                            title="Italic (⌘/Ctrl+I)"
-                        >
-                            <em>I</em>
-                        </button>
-                    </div>
+        <div className={styles.editor} style={{ maxWidth: '800px', margin: '0 auto', padding: '20px' }}>
+            {/* Modern Toolbar - Always visible for now */}
+            {isReady && (
+                <div className={styles.modernToolbar} style={{ opacity: 1, visibility: 'visible', position: 'relative', top: 'auto', left: 'auto', transform: 'none', marginBottom: '20px' }}>
+                    <div className={styles.toolbarContainer}>
+                        {/* Text formatting */}
+                        <div className={styles.formatGroup}>
+                            <button
+                                className={`${styles.toolBtn} ${isMarkActive(schema.marks.strong) ? styles.active : ''}`}
+                                onClick={toggleBold}
+                                title="Bold (⌘B)"
+                                aria-label="Bold"
+                            >
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M13.5 15.5H10v-3h3.5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5zM10 6.5h3c.55 0 1 .45 1 1s-.45 1-1 1h-3v-2zm5.6 4.5c.75-.9 1.2-2.05 1.2-3.3 0-2.76-2.24-5-5-5H6.5C5.67 2.7 5 3.37 5 4.2v15.6c0 .83.67 1.5 1.5 1.5h8.5c3.31 0 6-2.69 6-6 0-2.5-1.49-4.65-3.4-5.3z" />
+                                </svg>
+                            </button>
+                            <button
+                                className={`${styles.toolBtn} ${isMarkActive(schema.marks.em) ? styles.active : ''}`}
+                                onClick={toggleItalic}
+                                title="Italic (⌘I)"
+                                aria-label="Italic"
+                            >
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M10 4v3h2.21l-3.42 8H6v3h8v-3h-2.21l3.42-8H18V4h-8z" />
+                                </svg>
+                            </button>
+                        </div>
 
-                    {/* Block types */}
-                    <div className={styles.toolbarGroup}>
-                        <button
-                            className={`${styles.toolbarButton} ${isBlockActive(schema.nodes.paragraph) ? styles.active : ''}`}
-                            onClick={setParagraph}
-                            title="Paragraph (⌘/Ctrl+0)"
-                        >
-                            P
-                        </button>
-                        <button
-                            className={`${styles.toolbarButton} ${isBlockActive(schema.nodes.heading, { level: 1 }) ? styles.active : ''}`}
-                            onClick={() => setHeading(1)}
-                            title="Heading 1 (⌘/Ctrl+Shift+1)"
-                        >
-                            H1
-                        </button>
-                        <button
-                            className={`${styles.toolbarButton} ${isBlockActive(schema.nodes.heading, { level: 2 }) ? styles.active : ''}`}
-                            onClick={() => setHeading(2)}
-                            title="Heading 2 (⌘/Ctrl+Shift+2)"
-                        >
-                            H2
-                        </button>
-                        <button
-                            className={`${styles.toolbarButton} ${isBlockActive(schema.nodes.heading, { level: 3 }) ? styles.active : ''}`}
-                            onClick={() => setHeading(3)}
-                            title="Heading 3 (⌘/Ctrl+Shift+3)"
-                        >
-                            H3
-                        </button>
-                    </div>
+                        <div className={styles.divider}></div>
 
-                    {/* Lists and blocks */}
-                    <div className={styles.toolbarGroup}>
-                        <button
-                            className={styles.toolbarButton}
-                            onClick={toggleBulletList}
-                            title="Bullet List"
-                        >
-                            • List
-                        </button>
-                        <button
-                            className={styles.toolbarButton}
-                            onClick={toggleOrderedList}
-                            title="Ordered List"
-                        >
-                            1. List
-                        </button>
-                        <button
-                            className={`${styles.toolbarButton} ${isInBlockquote() ? styles.active : ''}`}
-                            onClick={setBlockquote}
-                            title="Blockquote (⌘/Ctrl+>)"
-                        >
-                            " Quote
-                        </button>
-                        <button
-                            className={`${styles.toolbarButton} ${isBlockActive(schema.nodes.code_block) ? styles.active : ''}`}
-                            onClick={setCodeBlock}
-                            title="Code Block"
-                        >
-                            &lt;/&gt;
-                        </button>
-                    </div>
+                        {/* Block types */}
+                        <div className={styles.formatGroup}>
+                            <button
+                                className={`${styles.toolBtn} ${isBlockActive(schema.nodes.heading, { level: 1 }) ? styles.active : ''}`}
+                                onClick={() => setHeading(1)}
+                                title="Large Heading (⌘⇧1)"
+                                aria-label="Heading 1"
+                            >
+                                <span className={styles.headingIcon}>H1</span>
+                            </button>
+                            <button
+                                className={`${styles.toolBtn} ${isBlockActive(schema.nodes.heading, { level: 2 }) ? styles.active : ''}`}
+                                onClick={() => setHeading(2)}
+                                title="Medium Heading (⌘⇧2)"
+                                aria-label="Heading 2"
+                            >
+                                <span className={styles.headingIcon}>H2</span>
+                            </button>
+                            <button
+                                className={`${styles.toolBtn} ${isBlockActive(schema.nodes.heading, { level: 3 }) ? styles.active : ''}`}
+                                onClick={() => setHeading(3)}
+                                title="Small Heading (⌘⇧3)"
+                                aria-label="Heading 3"
+                            >
+                                <span className={styles.headingIcon}>H3</span>
+                            </button>
+                        </div>
 
-                    {/* Media and actions */}
-                    <div className={styles.toolbarGroup}>
-                        <button
-                            className={styles.toolbarButton}
-                            onClick={insertImage}
-                            title="Insert Image"
-                        >
-                            🖼️ Image
-                        </button>
-                    </div>
+                        <div className={styles.divider}></div>
 
-                    {/* History */}
-                    <div className={styles.toolbarGroup}>
-                        <button
-                            className={styles.toolbarButton}
-                            onClick={undoCommand}
-                            title="Undo (⌘/Ctrl+Z)"
-                        >
-                            ↶ Undo
-                        </button>
-                        <button
-                            className={styles.toolbarButton}
-                            onClick={redoCommand}
-                            title="Redo (⌘/Ctrl+Y)"
-                        >
-                            ↷ Redo
-                        </button>
-                    </div>
+                        {/* Lists and special blocks */}
+                        <div className={styles.formatGroup}>
+                            <button
+                                className={styles.toolBtn}
+                                onClick={toggleBulletList}
+                                title="Bullet List"
+                                aria-label="Bullet list"
+                            >
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M4 10.5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5-.67-1.5-1.5-1.5zm0-6c-.83 0-1.5.67-1.5 1.5S3.17 7.5 4 7.5 5.5 6.83 5.5 6 4.83 4.5 4 4.5zm0 12c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5-.67-1.5-1.5-1.5zM7 19h14v-2H7v2zm0-6h14v-2H7v2zm0-8v2h14V5H7z" />
+                                </svg>
+                            </button>
+                            <button
+                                className={styles.toolBtn}
+                                onClick={toggleOrderedList}
+                                title="Numbered List"
+                                aria-label="Numbered list"
+                            >
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M2 17h2v.5H3v1h1v.5H2v1h3v-4H2v1zm1-9h1V4H2v1h1v3zm-1 3h1.8L2 13.1v.9h3v-1H3.2L5 10.9V10H2v1zm5-6v2h14V5H7zm0 14h14v-2H7v2zm0-6h14v-2H7v2z" />
+                                </svg>
+                            </button>
+                            <button
+                                className={`${styles.toolBtn} ${isInBlockquote() ? styles.active : ''}`}
+                                onClick={setBlockquote}
+                                title="Quote (⌘>)"
+                                aria-label="Quote"
+                            >
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M6 17h3l2-4V7H5v6h3zm8 0h3l2-4V7h-6v6h3z" />
+                                </svg>
+                            </button>
+                        </div>
 
-                    {/* Keyboard shortcuts hint */}
-                    <div className={styles.keyboardHint}>
-                        <kbd>⌘B</kbd> Bold &nbsp; <kbd>⌘I</kbd> Italic &nbsp; <kbd>⌘⇧1-3</kbd> Headings
+                        <div className={styles.divider}></div>
+
+                        {/* Media and special */}
+                        <div className={styles.formatGroup}>
+                            <button
+                                className={styles.toolBtn}
+                                onClick={insertImage}
+                                title="Add Image"
+                                aria-label="Insert image"
+                            >
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" />
+                                </svg>
+                            </button>
+                            <button
+                                className={`${styles.toolBtn} ${isBlockActive(schema.nodes.code_block) ? styles.active : ''}`}
+                                onClick={setCodeBlock}
+                                title="Code Block"
+                                aria-label="Code block"
+                            >
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0L19.2 12l-4.6-4.6L16 6l6 6-6 6-1.4-1.4z" />
+                                </svg>
+                            </button>
+                        </div>
+
+                        <div className={styles.divider}></div>
+
+                        {/* History */}
+                        <div className={styles.formatGroup}>
+                            <button
+                                className={styles.toolBtn}
+                                onClick={undoCommand}
+                                title="Undo (⌘Z)"
+                                aria-label="Undo"
+                            >
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z" />
+                                </svg>
+                            </button>
+                            <button
+                                className={styles.toolBtn}
+                                onClick={redoCommand}
+                                title="Redo (⌘Y)"
+                                aria-label="Redo"
+                            >
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M18.4 10.6C16.55 8.99 14.15 8 11.5 8c-4.65 0-8.58 3.03-9.96 7.22L3.9 16c1.05-3.19 4.05-5.5 7.6-5.5 1.95 0 3.73.72 5.12 1.88L13 16h9V7l-3.6 3.6z" />
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
-            ) : (
-                <div className={styles.loading}>Loading editor...</div>
             )}
 
-            {/* Always render the editor container so the ref can attach */}
+            {/* Loading state */}
+            {!isReady && (
+                <div className={styles.loading}>
+                    <div className={styles.loadingSpinner}></div>
+                    <span>Loading editor...</span>
+                </div>
+            )}
+
+            {/* Editor content with safe styling */}
             <div
                 ref={editorRef}
-                className={`ProseMirror ${styles.editorContent}`}
+                className={styles.prosemirrorEditor}
                 aria-label="Rich text editor"
                 style={{
-                    minHeight: '300px',
-                    opacity: isReady ? 1 : 0.5
+                    minHeight: '400px',
+                    opacity: isReady ? 1 : 0.3
                 }}
             />
         </div>
     );
-};
+});
+
+Editor.displayName = 'Editor';
 
 export default Editor; 

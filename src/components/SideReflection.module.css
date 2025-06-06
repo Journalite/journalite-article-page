@@ -1,0 +1,265 @@
+.sideReflectionContainer {
+    position: fixed;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 280px;
+    max-width: 90vw;
+    z-index: 1000;
+    animation: slideInRight 0.4s ease-out;
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateY(-50%) translateX(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(-50%) translateX(0);
+    }
+}
+
+/* Collapsed prompt state */
+.reflectionPrompt {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1rem;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.reflectionPrompt:hover {
+    transform: scale(1.02);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    border-color: #3b82f6;
+}
+
+.promptIcon {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+
+.promptText {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #1e293b;
+    line-height: 1.4;
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+
+.expandHint {
+    font-size: 0.75rem;
+    color: #64748b;
+    text-align: center;
+    font-style: italic;
+}
+
+/* Expanded form state */
+.reflectionForm {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1.25rem;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(10px);
+    animation: expandForm 0.3s ease-out;
+}
+
+@keyframes expandForm {
+    from {
+        transform: scale(0.95);
+        opacity: 0.8;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.formHeader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.formHeader .promptIcon {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.formPrompt {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #1e293b;
+    line-height: 1.4;
+    margin: 0;
+}
+
+.responseTextarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    line-height: 1.4;
+    resize: none;
+    font-family: inherit;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    background: rgba(255, 255, 255, 0.8);
+}
+
+.responseTextarea:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.responseTextarea::placeholder {
+    color: #94a3b8;
+    font-style: italic;
+}
+
+.formActions {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+}
+
+.skipButton {
+    flex: 1;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #e2e8f0;
+    background: rgba(255, 255, 255, 0.8);
+    color: #64748b;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.skipButton:hover:not(:disabled) {
+    border-color: #cbd5e1;
+    background: rgba(248, 250, 252, 0.9);
+}
+
+.skipButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.saveButton {
+    flex: 1;
+    padding: 0.5rem 0.75rem;
+    border: none;
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+}
+
+.saveButton:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+}
+
+.saveButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.1);
+}
+
+/* Thank you message */
+.thankYouMessage {
+    background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
+    border: 1px solid #bbf7d0;
+    border-radius: 12px;
+    padding: 1.25rem;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.1);
+    animation: thankYouPulse 0.5s ease-out;
+}
+
+@keyframes thankYouPulse {
+    0% {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.thankYouIcon {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.thankYouMessage p {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #059669;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .sideReflectionContainer {
+        position: fixed;
+        right: 10px;
+        left: 10px;
+        top: auto;
+        bottom: 20px;
+        width: auto;
+        max-width: none;
+        transform: none;
+        animation: slideInUp 0.4s ease-out;
+    }
+
+    @keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(100%);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .reflectionPrompt,
+    .reflectionForm {
+        margin: 0 auto;
+        max-width: 350px;
+    }
+}
+
+@media (max-width: 480px) {
+    .formActions {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .skipButton,
+    .saveButton {
+        width: 100%;
+    }
+} 

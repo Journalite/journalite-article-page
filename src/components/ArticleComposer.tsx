@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { createArticle, updateArticle, getArticleById, Article } from '@/firebase/articles';
 import { auth } from '@/firebase/clientApp';
 import Editor from './Editor';
+import InspirationWidget from './InspirationWidget';
 import styles from '@/styles/ArticleComposer.module.css';
 import { User } from 'firebase/auth';
 
@@ -30,6 +31,7 @@ const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId, onUpdateCo
   
   const titleRef = useRef<HTMLTextAreaElement>(null);
   const tagInputRef = useRef<HTMLInputElement>(null);
+  const editorRef = useRef<any>(null);
   
   // Auto-resize title textarea as content grows
   const autoResizeTitle = useCallback(() => {
@@ -292,6 +294,29 @@ const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId, onUpdateCo
   const handleSaveDraft = async () => {
     await saveArticle('drafts');
   };
+
+  // Handle inserting text from inspiration widget
+  const handleInsertInspiration = (text: string) => {
+    // Try to insert using the editor ref first
+    if (editorRef.current && editorRef.current.insertText) {
+      editorRef.current.insertText('\n\n' + text + '\n\n');
+    } else {
+      // Fallback: append to content with proper spacing
+      setContent(prevContent => {
+        const newContent = prevContent.trim() 
+          ? prevContent + '\n\n<p>' + text + '</p>' 
+          : '<p>' + text + '</p>';
+        return newContent;
+      });
+    }
+    
+    // Focus the editor after insertion
+    setTimeout(() => {
+      if (editorRef.current && editorRef.current.focus) {
+        editorRef.current.focus();
+      }
+    }, 100);
+  };
   
   if (isLoading) {
     return (
@@ -402,6 +427,7 @@ const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId, onUpdateCo
         {/* Article editor */}
         <div className={styles.editorContainer}>
           <Editor
+            ref={editorRef}
             articleId={articleId || uuidv4()}
             initialContent={content}
             onChange={handleEditorChange}
@@ -409,6 +435,9 @@ const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId, onUpdateCo
           />
         </div>
       </main>
+
+      {/* Inspiration Widget */}
+      <InspirationWidget onInsert={handleInsertInspiration} />
     </div>
   );
 };

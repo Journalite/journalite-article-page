@@ -214,24 +214,58 @@ function Article() {
   }
   
   const handleLikeArticle = async () => {
+    console.log('🔥 LIKE BUTTON CLICKED!')
+    console.log('Current user:', currentUser)
+    console.log('Article ID:', article?.id)
+    console.log('Is liked:', isLiked)
+    
     if (!currentUser) {
       alert('Please login to like articles')
       return
     }
     
+    if (!article?.id) {
+      console.error('❌ No article ID found')
+      return
+    }
+    
     try {
+      // Import Firestore functions at the top of the function for debugging
+      const { doc, updateDoc, arrayUnion, arrayRemove } = await import('firebase/firestore')
+      const { db } = await import('@/firebase/clientApp')
+      
+      console.log('📝 Updating Firestore...')
+      
+      const articleRef = doc(db, 'articles', article.id)
+      
       if (isLiked) {
+        console.log('👍 Removing like...')
+        await updateDoc(articleRef, {
+          likes: arrayRemove(currentUser.uid)
+        })
         setLikes(likes.filter(uid => uid !== currentUser.uid))
         setIsLiked(false)
+        console.log('✅ Like removed successfully')
       } else {
+        console.log('❤️ Adding like...')
+        await updateDoc(articleRef, {
+          likes: arrayUnion(currentUser.uid)
+        })
         setLikes([...likes, currentUser.uid])
         setIsLiked(true)
+        console.log('✅ Like added successfully')
       }
       
-      // This is a placeholder - you would call your API here
-      // to update the likes in your database
     } catch (error) {
-      console.error('Error updating like status:', error)
+      console.error('❌ Error updating like status:', error)
+      // Revert UI changes on error
+      if (isLiked) {
+        setLikes([...likes, currentUser.uid])
+        setIsLiked(true)
+      } else {
+        setLikes(likes.filter(uid => uid !== currentUser.uid))
+        setIsLiked(false)
+      }
     }
   }
   

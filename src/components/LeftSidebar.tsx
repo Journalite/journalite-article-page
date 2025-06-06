@@ -54,6 +54,14 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({
             <span className={styles['nav-text']}>My Thoughts</span>
           </Link>
           <Link 
+            href="/my-thoughts/reflections" 
+            className={`${styles['nav-link']} ${styles['nav-reflections']}`}
+            style={{ paddingLeft: '2rem', fontSize: '0.9rem' }}
+          >
+            <span className={styles['nav-icon']}>💭</span>
+            <span className={styles['nav-text']}>Reflections</span>
+          </Link>
+          <Link 
             href="/create-article" 
             className={`${styles['nav-link']} ${styles['nav-create']}`}
           >

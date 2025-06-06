@@ -17,6 +17,7 @@ import '@/styles/highlight.css';  // Import highlight styles
 import styles from '@/styles/home.module.css';
 import ArticleHighlights from './ArticleHighlights';
 import { HighlightProvider } from '@/context/HighlightContext';
+import InlineReflection from './InlineReflection';
 
 interface Comment {
   userId: string;
@@ -128,6 +129,15 @@ const isSimple = (a: any): a is SimpleArticle =>
 const RenderArticle: React.FC<RenderArticleProps> = ({ article }) => {
   const [visibleParagraphs, setVisibleParagraphs] = useState<Record<string, boolean>>({});
   const paragraphRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  
+  // State for reflection prompts
+  const [reflectionResponses, setReflectionResponses] = useState<Record<string, string>>({});
+  const [reflectionsEnabled, setReflectionsEnabled] = useState(true);
+  
+  // State for tracking read paragraphs
+  const [readParagraphs, setReadParagraphs] = useState<Record<string, boolean>>({});
+  const [readOrder, setReadOrder] = useState<string[]>([]);
+  const readTimers = useRef<Record<string, NodeJS.Timeout>>({});
 
   const articleId = article.id;
 
@@ -142,9 +152,76 @@ const RenderArticle: React.FC<RenderArticleProps> = ({ article }) => {
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(user => {
       setCurrentUser(user);
+      console.log("🔐 Auth state changed:", user?.uid || "Not logged in");
     });
     return () => unsubscribe();
   }, []);
+
+  // Debug article data
+  useEffect(() => {
+    console.log("📄 Article data:", {
+      id: article.id,
+      title: article.title,
+      likes: article.likes,
+      hasLikes: !!article.likes,
+      likesLength: article.likes?.length
+    });
+  }, [article]);
+
+  // Intersection Observer to track paragraph visibility and reading
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const paragraphId = entry.target.getAttribute('data-paragraph-id');
+          if (!paragraphId) return;
+
+          if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
+            // Paragraph is visible (50% or more)
+            setVisibleParagraphs(prev => ({ ...prev, [paragraphId]: true }));
+            
+            // Start a timer to mark as "read" after 2 seconds of visibility
+            if (!readTimers.current[paragraphId] && !readParagraphs[paragraphId]) {
+              readTimers.current[paragraphId] = setTimeout(() => {
+                setReadParagraphs(prev => {
+                  if (!prev[paragraphId]) {
+                    setReadOrder(order => [...order, paragraphId]);
+                    return { ...prev, [paragraphId]: true };
+                  }
+                  return prev;
+                });
+                delete readTimers.current[paragraphId];
+              }, 2000); // 2 seconds to be considered "read"
+            }
+          } else {
+            // Paragraph is not visible
+            setVisibleParagraphs(prev => ({ ...prev, [paragraphId]: false }));
+            
+            // Clear the timer if paragraph goes out of view before 2 seconds
+            if (readTimers.current[paragraphId]) {
+              clearTimeout(readTimers.current[paragraphId]);
+              delete readTimers.current[paragraphId];
+            }
+          }
+        });
+      },
+      {
+        threshold: [0, 0.5, 1], // Track when 0%, 50%, and 100% visible
+        rootMargin: '0px 0px -20% 0px' // Trigger when paragraph is 20% from bottom
+      }
+    );
+
+    // Observe all paragraph elements
+    Object.values(paragraphRefs.current).forEach(ref => {
+      if (ref) observer.observe(ref);
+    });
+
+    return () => {
+      observer.disconnect();
+      // Clean up any remaining timers
+      Object.values(readTimers.current).forEach(timer => clearTimeout(timer));
+    };
+  }, [paragraphRefs.current, readParagraphs]);
 
   useEffect(() => {
     // Sync like state with the article prop, especially if it can change from parent
@@ -156,32 +233,49 @@ const RenderArticle: React.FC<RenderArticleProps> = ({ article }) => {
   }, [article.likes, currentUser]);
 
   const handleLike = async () => {
+    console.log("🚀 handleLike called");
+    console.log("📊 Current state:", { 
+      currentUser: currentUser?.uid, 
+      articleId, 
+      isLiked, 
+      likeCount,
+      articleLikes: article.likes 
+    });
+
     if (!currentUser) {
-      // Optionally: prompt user to log in
+      console.log("❌ No current user");
       alert("Please log in to like articles.");
       return;
     }
     if (!articleId) {
-      console.error("Article ID is missing.");
+      console.error("❌ Article ID is missing.");
       return;
     }
 
     const articleRef = doc(db, "articles", articleId);
+    console.log("📄 Article ref created for:", articleId);
+
     try {
       if (isLiked) {
+        console.log("💔 Removing like...");
         await updateDoc(articleRef, { likes: arrayRemove(currentUser.uid) });
         setIsLiked(false);
-        setLikeCount(prev => Math.max(0, prev - 1)); // Ensure count doesn't go below 0
+        setLikeCount(prev => Math.max(0, prev - 1));
+        console.log("✅ Like removed successfully");
       } else {
+        console.log("❤️ Adding like...");
         await updateDoc(articleRef, { likes: arrayUnion(currentUser.uid) });
         setIsLiked(true);
         setLikeCount(prev => prev + 1);
+        console.log("✅ Like added successfully");
       }
-      // To reflect changes in the parent if it relies on this prop for likes:
-      // You might need a callback function passed from parent to update its state.
-      // For now, this updates local state which is often sufficient for immediate UI feedback.
-    } catch (error) {
-        console.error("Error updating like status: ", error);
+    } catch (error: any) {
+        console.error("💥 Error updating like status: ", error);
+        console.error("🔍 Error details:", {
+          code: error?.code,
+          message: error?.message,
+          stack: error?.stack
+        });
         alert("Failed to update like status. Please try again.");
     }
   };
@@ -305,6 +399,14 @@ const RenderArticle: React.FC<RenderArticleProps> = ({ article }) => {
   
   const ReactionBar = () => (
     <div className={`${styles['reaction-bar']} article-reaction-bar`} style={{ marginTop: '2rem', marginBottom: '1rem', justifyContent: 'flex-start', gap: '1rem' }}>
+      {/* DEBUG: Test button */}
+      <button 
+        onClick={() => console.log("🧪 TEST BUTTON CLICKED - User:", currentUser?.uid, "Disabled:", !currentUser)}
+        style={{ backgroundColor: 'red', color: 'white', padding: '5px', marginRight: '10px' }}
+      >
+        TEST
+      </button>
+      
       <button 
         onClick={handleLike} 
         className={`${styles['reaction-button']} ${isLiked ? styles['liked'] : ''}`} 
@@ -353,6 +455,33 @@ const RenderArticle: React.FC<RenderArticleProps> = ({ article }) => {
       setIsShareModalOpen(true);
     }
   };
+
+  // Handle reflection responses
+  const handleReflectionResponse = (position: number, response: string) => {
+    setReflectionResponses(prev => ({
+      ...prev,
+      [position]: response
+    }));
+  };
+
+  // Determine if a reflection prompt should appear based on read paragraphs
+  const shouldShowReflection = (index: number, paragraphId: string): boolean => {
+    if (!reflectionsEnabled) return false;
+    
+    const currentParagraphRead = readParagraphs[paragraphId];
+    if (!currentParagraphRead) return false; // Don't show until paragraph is actually read
+    
+    // Count how many paragraphs have been read so far
+    const readCount = readOrder.length;
+    
+    // Show reflection prompts after every 2 read paragraphs
+    const shouldShow = readCount > 0 && readCount % 2 === 0;
+    
+    // Only show the prompt on the most recently read paragraph
+    const isLatestRead = readOrder[readOrder.length - 1] === paragraphId;
+    
+    return shouldShow && isLatestRead;
+  };
     
     return (
     <>
@@ -382,6 +511,79 @@ const RenderArticle: React.FC<RenderArticleProps> = ({ article }) => {
 
         {/* Article Header */}
           <ArticleHeader />
+          
+        {/* DEBUG SECTION - TEMPORARY */}
+        <div style={{ background: 'yellow', padding: '10px', margin: '10px 0', border: '2px solid red' }}>
+          <h3>🚨 DEBUG INFO (Remove this later)</h3>
+          <p>Current User: {currentUser?.uid || 'NOT LOGGED IN'}</p>
+          <p>Article ID: {article.id}</p>
+          <p>Article Likes: {JSON.stringify(article.likes)}</p>
+          <p>Like Count: {likeCount}</p>
+          <p>Is Liked: {isLiked ? 'YES' : 'NO'}</p>
+          <button 
+            onClick={() => {
+              console.log("🧪 BASIC TEST CLICKED");
+              console.log("User:", currentUser?.uid);
+              console.log("Article:", article.id);
+              handleLike();
+            }}
+            style={{ background: 'red', color: 'white', padding: '10px', margin: '5px' }}
+          >
+            TEST LIKE BUTTON
+          </button>
+        </div>
+
+        {/* Reflection Settings & Reading Progress */}
+        <div className="reflection-settings" style={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center', 
+          gap: '1rem', 
+          margin: '1rem 0',
+          padding: '0.75rem',
+          background: '#f8fafc',
+          borderRadius: '8px',
+          fontSize: '0.875rem'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <span style={{ color: '#64748b' }}>
+              📖 Reading Progress: {readOrder.length} paragraphs read
+            </span>
+            {readOrder.length > 0 && (
+              <span style={{ 
+                color: '#059669', 
+                fontSize: '0.75rem',
+                background: '#d1fae5',
+                padding: '0.25rem 0.5rem',
+                borderRadius: '4px'
+              }}>
+                Next reflection in {2 - (readOrder.length % 2)} paragraphs
+              </span>
+            )}
+          </div>
+          
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span style={{ color: '#64748b' }}>
+              💭 Interactive Reflections
+            </span>
+            <button
+              onClick={() => setReflectionsEnabled(!reflectionsEnabled)}
+              style={{
+                padding: '0.5rem 1rem',
+                border: reflectionsEnabled ? '2px solid #3b82f6' : '2px solid #e2e8f0',
+                background: reflectionsEnabled ? '#3b82f6' : 'white',
+                color: reflectionsEnabled ? 'white' : '#64748b',
+                borderRadius: '6px',
+                fontSize: '0.75rem',
+                fontWeight: '600',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease'
+              }}
+            >
+              {reflectionsEnabled ? 'ON' : 'OFF'}
+            </button>
+          </div>
+        </div>
 
         {/* Article Content wrapped with HighlightProvider and ArticleHighlights */}
         <HighlightProvider articleId={article.id}>
@@ -392,34 +594,64 @@ const RenderArticle: React.FC<RenderArticleProps> = ({ article }) => {
             <div className="article-content">
             {isComplex(article) ? (
                 // Complex article with paragraphs
-                article.content.map((paragraph, index) => (
-                <div
-                    key={paragraph.paragraphId || index}
-                    ref={el => {
-                      if (el) paragraphRefs.current[paragraph.paragraphId || `p-${index}`] = el;
-                    }}
-                    className={`paragraph-block ${visibleParagraphs[paragraph.paragraphId || `p-${index}`] ? 'visible' : ''}`}
-                >
-                    <div className="paragraph-text">
-                      {isHtmlContent(paragraph.text) ? (
-                        <div dangerouslySetInnerHTML={{ __html: paragraph.text }} />
-              ) : (
-                        <ReactMarkdown>{paragraph.text}</ReactMarkdown>
+                <>
+                  {article.content.map((paragraph, index) => (
+                    <React.Fragment key={paragraph.paragraphId || index}>
+                      <div
+                          ref={el => {
+                            if (el) paragraphRefs.current[paragraph.paragraphId || `p-${index}`] = el;
+                          }}
+                          data-paragraph-id={paragraph.paragraphId || `p-${index}`}
+                          className={`paragraph-block ${visibleParagraphs[paragraph.paragraphId || `p-${index}`] ? 'visible' : ''} ${readParagraphs[paragraph.paragraphId || `p-${index}`] ? 'read' : ''}`}
+                      >
+                          <div className="paragraph-text">
+                            {isHtmlContent(paragraph.text) ? (
+                              <div dangerouslySetInnerHTML={{ __html: paragraph.text }} />
+                    ) : (
+                              <ReactMarkdown>{paragraph.text}</ReactMarkdown>
+                            )}
+                          </div>
+                      </div>
+                      
+                      {/* Add reflection prompt after certain paragraphs */}
+                      {shouldShowReflection(index, paragraph.paragraphId || `p-${index}`) && (
+                        <InlineReflection
+                          articleId={article.id}
+                          position={index}
+                          onResponseSaved={(response) => handleReflectionResponse(index, response)}
+                        />
                       )}
-                    </div>
-                </div>
-              ))
+                    </React.Fragment>
+                  ))}
+                </>
             ) : isSimple(article) ? (
                 // Simple article with single body
-                  <div className="paragraph-block visible">
-                  <div className="paragraph-text">
-                    {isHtmlContent(article.body) ? (
-                      <div dangerouslySetInnerHTML={{ __html: article.body }} />
-                    ) : (
-                      <ReactMarkdown>{article.body}</ReactMarkdown>
-                    )}
+                <>
+                  <div 
+                    ref={el => {
+                      if (el) paragraphRefs.current[`simple-body`] = el;
+                    }}
+                    data-paragraph-id="simple-body"
+                    className={`paragraph-block visible ${readParagraphs['simple-body'] ? 'read' : ''}`}
+                  >
+                    <div className="paragraph-text">
+                      {isHtmlContent(article.body) ? (
+                        <div dangerouslySetInnerHTML={{ __html: article.body }} />
+                      ) : (
+                        <ReactMarkdown>{article.body}</ReactMarkdown>
+                      )}
+                    </div>
                   </div>
-                </div>
+                  
+                  {/* Add a reflection prompt for simple articles */}
+                  {shouldShowReflection(0, 'simple-body') && (
+                    <InlineReflection
+                      articleId={article.id}
+                      position={0}
+                      onResponseSaved={(response) => handleReflectionResponse(0, response)}
+                    />
+                  )}
+                </>
                     ) : (
                 // Fallback for unexpected article type
                 <div className="paragraph-block visible">

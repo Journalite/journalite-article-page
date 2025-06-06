@@ -148,6 +148,21 @@
   background-color: rgba(26, 137, 23, 0.2);
 }
 
+/* Reading progress styles */
+.articleContent :global(.trackable-paragraph) {
+  transition: all 0.3s ease;
+  border-left: 3px solid transparent;
+  padding-left: 0;
+  margin-left: 0;
+}
+
+.articleContent :global(.trackable-paragraph.read) {
+  background: linear-gradient(90deg, rgba(59, 130, 246, 0.03) 0%, transparent 100%);
+  border-left: 3px solid rgba(59, 130, 246, 0.3);
+  padding-left: 1rem;
+  margin-left: -1rem;
+}
+
 /* Loading state */
 .loadingContainer {
   width: 100%;
