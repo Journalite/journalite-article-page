@@ -431,6 +431,8 @@ const ArticlePageClient: React.FC<ArticlePageClientProps> = ({ id }) => {
           articleId={id} 
           initialHtml={articleHtml || undefined}
           isAuthenticated={isAuthenticated}
+          articleTitle={article?.title || 'Article'}
+          articleSlug={article?.title ? article.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') : id}
           {...(isAuthenticated && {
             moodFeatureEnabled: moodFeatureEnabled,
             onToggleMoodFeature: (enabled) => {

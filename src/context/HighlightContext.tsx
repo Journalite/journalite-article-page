@@ -3,6 +3,7 @@ import { auth } from '@/firebase/clientApp';
 import { User } from 'firebase/auth';
 import { 
   Highlight, 
+  HighlightTag,
   getArticleHighlights, 
   saveHighlight, 
   deleteHighlight 
@@ -11,9 +12,9 @@ import {
 interface HighlightContextType {
   highlights: Highlight[];
   loading: boolean;
-  saveHighlight: (text: string, prefix: string, suffix: string, articleId: string) => Promise<string | null>;
+  saveHighlight: (text: string, prefix: string, suffix: string, articleId: string, tag: HighlightTag) => Promise<string | null>;
   removeHighlight: (highlightId: string) => Promise<void>;
-  highlightElement: (range: Range) => void;
+  highlightElement: (range: Range, tag: HighlightTag) => void;
 }
 
 const HighlightContext = createContext<HighlightContextType | undefined>(undefined);
@@ -36,31 +37,37 @@ export const HighlightProvider: React.FC<HighlightProviderProps> = ({ children, 
     return () => unsubscribe();
   }, []);
 
-  // Load highlights for the current article
+  // Load highlights for the current article (user-specific)
   useEffect(() => {
     const loadHighlights = async () => {
-      if (articleId) {
+      if (articleId && currentUser) {
         setLoading(true);
         try {
-          const articleHighlights = await getArticleHighlights(articleId);
-          setHighlights(articleHighlights);
+          // Pass user ID to get only current user's highlights
+          const userHighlights = await getArticleHighlights(articleId, currentUser.uid);
+          setHighlights(userHighlights);
         } catch (error) {
           console.error('Error loading highlights:', error);
         } finally {
           setLoading(false);
         }
+      } else {
+        // If no user is logged in, clear highlights
+        setHighlights([]);
+        setLoading(false);
       }
     };
 
     loadHighlights();
-  }, [articleId]);
+  }, [articleId, currentUser]);
 
   // Save a new highlight
   const handleSaveHighlight = async (
     text: string, 
     prefix: string, 
     suffix: string, 
-    articleId: string
+    articleId: string,
+    tag: HighlightTag
   ): Promise<string | null> => {
     if (!currentUser) {
       alert('You must be logged in to highlight text');
@@ -73,7 +80,8 @@ export const HighlightProvider: React.FC<HighlightProviderProps> = ({ children, 
         currentUser.uid,
         text,
         prefix,
-        suffix
+        suffix,
+        tag
       );
 
       // Add the new highlight to state
@@ -84,7 +92,10 @@ export const HighlightProvider: React.FC<HighlightProviderProps> = ({ children, 
         text,
         prefix,
         suffix,
+        tag,
         createdAt: new Date(),
+        reactions: {},
+        userReactions: {}
       };
 
       setHighlights(prev => [...prev, newHighlight]);
@@ -105,19 +116,62 @@ export const HighlightProvider: React.FC<HighlightProviderProps> = ({ children, 
     }
   };
 
-  // Apply highlight styling to a DOM element
-  const highlightElement = (range: Range): void => {
-    const highlightMark = document.createElement('mark');
-    highlightMark.className = 'article-highlight';
-    
+  // Apply highlight styling to a DOM element with improved range handling
+  const highlightElement = (range: Range, tag: HighlightTag): void => {
     try {
-      range.surroundContents(highlightMark);
+      // Clean up the range to avoid partial word selections
+      const selectedText = range.toString().trim();
+      if (!selectedText) return;
+      
+      // Create a new range to ensure clean boundaries
+      const cleanRange = document.createRange();
+      cleanRange.setStart(range.startContainer, range.startOffset);
+      cleanRange.setEnd(range.endContainer, range.endOffset);
+      
+      // Expand range to word boundaries if needed
+      const startContainer = cleanRange.startContainer;
+      const endContainer = cleanRange.endContainer;
+      
+      if (startContainer.nodeType === Node.TEXT_NODE) {
+        const text = startContainer.textContent || '';
+        let startOffset = cleanRange.startOffset;
+        
+        // Move start to word boundary if we're in the middle of a word
+        while (startOffset > 0 && /\S/.test(text.charAt(startOffset - 1))) {
+          startOffset--;
+        }
+        cleanRange.setStart(startContainer, startOffset);
+      }
+      
+      if (endContainer.nodeType === Node.TEXT_NODE) {
+        const text = endContainer.textContent || '';
+        let endOffset = cleanRange.endOffset;
+        
+        // Move end to word boundary if we're in the middle of a word
+        while (endOffset < text.length && /\S/.test(text.charAt(endOffset))) {
+          endOffset++;
+        }
+        cleanRange.setEnd(endContainer, endOffset);
+      }
+      
+      const highlightMark = document.createElement('mark');
+      highlightMark.className = `article-highlight highlight-${tag}`;
+      
+      // Try to surround the contents with the highlight
+      try {
+        cleanRange.surroundContents(highlightMark);
+      } catch (error) {
+        // If surrounding fails (e.g., crosses element boundaries), extract and wrap
+        const fragment = cleanRange.extractContents();
+        highlightMark.appendChild(fragment);
+        cleanRange.insertNode(highlightMark);
+      }
+      
+      // Clear the selection to prevent UI confusion
+      window.getSelection()?.removeAllRanges();
+      
     } catch (error) {
       console.error('Error highlighting range:', error);
-      // Handle complex selection that spans multiple elements
-      const fragment = range.extractContents();
-      highlightMark.appendChild(fragment);
-      range.insertNode(highlightMark);
     }
   };
 

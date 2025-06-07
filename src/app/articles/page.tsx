@@ -677,6 +677,8 @@ function Article() {
               articleId={article.id} 
               initialHtml={articleHtml || undefined}
               isAuthenticated={isAuthenticated}
+              articleTitle={article.title}
+              articleSlug={article.slug}
               {...(isAuthenticated && {
                 moodFeatureEnabled: moodFeatureEnabled,
                 onToggleMoodFeature: (enabled) => {

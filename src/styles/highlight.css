@@ -12,6 +12,39 @@
   background-color: rgba(255, 230, 0, 0.5);
 }
 
+/* Color-coded highlight styles */
+.article-highlight.highlight-insight {
+  background-color: rgba(59, 130, 246, 0.3);
+}
+
+.article-highlight.highlight-insight:hover {
+  background-color: rgba(59, 130, 246, 0.5);
+}
+
+.article-highlight.highlight-question {
+  background-color: rgba(245, 158, 11, 0.3);
+}
+
+.article-highlight.highlight-question:hover {
+  background-color: rgba(245, 158, 11, 0.5);
+}
+
+.article-highlight.highlight-quote {
+  background-color: rgba(16, 185, 129, 0.3);
+}
+
+.article-highlight.highlight-quote:hover {
+  background-color: rgba(16, 185, 129, 0.5);
+}
+
+.article-highlight.highlight-important {
+  background-color: rgba(239, 68, 68, 0.3);
+}
+
+.article-highlight.highlight-important:hover {
+  background-color: rgba(239, 68, 68, 0.5);
+}
+
 /* Add a subtle click indicator */
 .article-highlight::after {
   content: "";
@@ -121,6 +154,68 @@
 
 .highlight-btn:active {
   background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Enhanced color selection toolbar */
+.highlight-color-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background-color: #1a1a1a;
+  border-radius: 0.5rem;
+  min-width: 220px;
+}
+
+.highlight-color-label {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+.highlight-color-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border: none;
+  border-radius: 0.375rem;
+  color: white;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  opacity: 0.9;
+}
+
+.highlight-color-btn:hover {
+  opacity: 1;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.highlight-color-btn:active {
+  transform: translateY(0);
+}
+
+.highlight-icon {
+  font-size: 1rem;
+}
+
+.highlight-label {
+  font-weight: 600;
+}
+
+.highlight-btn-cancel {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.8);
+  margin-top: 0.25rem;
+}
+
+.highlight-btn-cancel:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: white;
 }
 
 /* Container for article with highlights */
@@ -404,9 +499,96 @@
   border: 2px solid rgba(107, 114, 128, 0.3);
   border-top-color: rgba(107, 114, 128, 0.8);
   animation: spin 0.8s linear infinite;
+  }
+
+/* Highlight reactions */
+.highlight-reactions {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-top: 0.5rem;
+  padding: 0.25rem 0;
 }
 
-@keyframes spin {
+.highlight-reaction-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 1rem;
+  background-color: white;
+  color: #6b7280;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.highlight-reaction-btn:hover {
+  background-color: #f3f4f6;
+  border-color: rgba(0, 0, 0, 0.2);
+}
+
+.highlight-reaction-btn.active {
+  background-color: #dbeafe;
+  border-color: #3b82f6;
+  color: #3b82f6;
+}
+
+.highlight-reaction-emoji {
+  font-size: 0.875rem;
+}
+
+.highlight-reaction-count {
+  font-weight: 500;
+  min-width: 1rem;
+  text-align: center;
+}
+
+/* Highlight share tooltip */
+.highlight-share-tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #1a1a1a;
+  color: white;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  z-index: 1100;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.highlight-share-tooltip.visible {
+  opacity: 1;
+}
+
+/* Shared highlight flash animation */
+.highlight-shared-flash {
+  animation: highlightFlash 1s ease-out;
+}
+
+@keyframes highlightFlash {
+  0% {
+    background-color: rgba(59, 130, 246, 0.6);
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.3);
+  }
+  50% {
+    background-color: rgba(59, 130, 246, 0.4);
+    box-shadow: 0 0 0 8px rgba(59, 130, 246, 0.2);
+  }
+  100% {
+    background-color: inherit;
+    box-shadow: none;
+  }
+}
+  
+  @keyframes spin {
   to {
     transform: rotate(360deg);
   }

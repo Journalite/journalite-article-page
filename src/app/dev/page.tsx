@@ -1562,6 +1562,371 @@ Ensure these keyframes exist in \`globals.css\`:
   `
 };
 
+const enhancedHighlightsDoc: DocSection = {
+  id: 'enhanced-highlights',
+  title: 'Enhanced Highlight Features',
+  content: `
+## Overview
+
+The Enhanced Highlight system transforms basic text highlighting into an engaging, social, and semantic experience. Users can now categorize highlights, react to them, and share specific highlights via direct URLs.
+
+## 🎨 Color-Coded Highlights by Theme
+
+### Four Semantic Categories
+
+\`\`\`tsx[src/services/highlightService.ts]
+export type HighlightTag = 'insight' | 'question' | 'quote' | 'important';
+
+const highlightTags = [
+  { tag: 'insight', label: 'Insight', color: '#3B82F6', icon: '💡' },
+  { tag: 'question', label: 'Question', color: '#F59E0B', icon: '❓' },
+  { tag: 'quote', label: 'Quote', color: '#10B981', icon: '💬' },
+  { tag: 'important', label: 'Important', color: '#EF4444', icon: '⭐' }
+];
+\`\`\`
+
+### Enhanced Highlight Interface
+
+\`\`\`tsx
+export interface Highlight {
+  id: string;
+  articleId: string;
+  userId: string;
+  text: string;
+  prefix: string;
+  suffix: string;
+  tag: HighlightTag;                    // NEW: Semantic category
+  reactions?: { [emoji: string]: number };  // NEW: Reaction counts
+  userReactions?: { [userId: string]: string }; // NEW: User reaction tracking
+  createdAt: any;
+  comments?: Comment[];
+}
+\`\`\`
+
+### CSS Color Styling
+
+\`\`\`css[src/styles/highlight.css]
+.article-highlight.highlight-insight {
+  background-color: rgba(59, 130, 246, 0.3); /* Blue */
+}
+
+.article-highlight.highlight-question {
+  background-color: rgba(245, 158, 11, 0.3); /* Amber */
+}
+
+.article-highlight.highlight-quote {
+  background-color: rgba(16, 185, 129, 0.3); /* Emerald */
+}
+
+.article-highlight.highlight-important {
+  background-color: rgba(239, 68, 68, 0.3); /* Red */
+}
+\`\`\`
+
+## 🔗 Highlight & Share Links
+
+### URL Generation
+
+\`\`\`tsx
+export const generateHighlightShareUrl = (
+  articleSlug: string,
+  highlightId: string,
+  baseUrl: string = window.location.origin
+): string => {
+  return \`\${baseUrl}/articles?slug=\${articleSlug}#highlight=\${highlightId}\`;
+};
+
+// Usage example
+const shareUrl = generateHighlightShareUrl('my-article', 'highlight123');
+// Result: https://journalite.com/articles?slug=my-article#highlight=highlight123
+\`\`\`
+
+### Auto-Scroll & Flash Animation
+
+\`\`\`tsx
+// Check URL fragment and scroll to highlight
+useEffect(() => {
+  if (typeof window !== 'undefined') {
+    const urlFragment = window.location.hash;
+    if (urlFragment === \`#highlight=\${highlight.id}\`) {
+      setIsFlashing(true);
+      setTimeout(() => setIsFlashing(false), 1000);
+      
+      // Smooth scroll to highlight
+      const element = document.querySelector(\`[data-highlight-id="\${highlight.id}"]\`);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+  }
+}, [highlight.id]);
+\`\`\`
+
+### Share Functionality
+
+\`\`\`tsx
+const handleShare = () => {
+  const shareUrl = generateHighlightShareUrl(articleSlug, highlight.id);
+  
+  if (navigator.share) {
+    // Native share API (mobile)
+    navigator.share({
+      title: 'Check out this highlight',
+      text: \`"\${highlight.text}"\`,
+      url: shareUrl,
+    });
+  } else {
+    // Fallback: copy to clipboard
+    navigator.clipboard.writeText(shareUrl);
+    showTooltip('Link copied to clipboard!');
+  }
+};
+\`\`\`
+
+## 👍 Quick Reactions System
+
+### Available Reactions
+
+\`\`\`tsx
+const availableReactions = ['👍', '❤️', '🤔', '💡'];
+\`\`\`
+
+### Reaction Management
+
+\`\`\`tsx
+export const addReactionToHighlight = async (
+  highlightId: string,
+  userId: string,
+  emoji: string
+): Promise<void> => {
+  const highlightRef = doc(db, 'highlights', highlightId);
+  
+  await updateDoc(highlightRef, {
+    [\`reactions.\${emoji}\`]: increment(1),
+    [\`userReactions.\${userId}\`]: emoji
+  });
+};
+
+export const removeReactionFromHighlight = async (
+  highlightId: string,
+  userId: string,
+  emoji: string
+): Promise<void> => {
+  const highlightRef = doc(db, 'highlights', highlightId);
+  
+  await updateDoc(highlightRef, {
+    [\`reactions.\${emoji}\`]: increment(-1),
+    [\`userReactions.\${userId}\`]: null
+  });
+};
+\`\`\`
+
+### Reaction UI Component
+
+\`\`\`tsx
+const ReactionButton = ({ emoji, count, isActive, onReact }) => (
+  <button
+    onClick={() => onReact(emoji)}
+    className={\`highlight-reaction-btn \${isActive ? 'active' : ''}\`}
+  >
+    <span className="highlight-reaction-emoji">{emoji}</span>
+    {count > 0 && (
+      <span className="highlight-reaction-count">{count}</span>
+    )}
+  </button>
+);
+\`\`\`
+
+## 🛠️ Enhanced Toolbar Implementation
+
+### Color Selection Interface
+
+\`\`\`tsx
+const HighlightToolbar = ({ selection, onHighlight }) => {
+  const [showColorOptions, setShowColorOptions] = useState(false);
+  
+  return (
+    <div className="highlight-toolbar">
+      {!showColorOptions ? (
+        <button onClick={() => setShowColorOptions(true)}>
+          Highlight
+        </button>
+      ) : (
+        <div className="highlight-color-options">
+          <span>Choose highlight type:</span>
+          {highlightTags.map((tagInfo) => (
+            <button
+              key={tagInfo.tag}
+              onClick={() => handleHighlight(selection, tagInfo.tag)}
+              style={{ backgroundColor: tagInfo.color }}
+            >
+              {tagInfo.icon} {tagInfo.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+\`\`\`
+
+## 📊 Performance & Data Structure
+
+### Lightweight Implementation
+
+- **Storage**: Only added 3 fields to existing Highlight object
+- **Reactions**: Simple integer increments, no complex aggregation
+- **Colors**: CSS-only styling, no JavaScript color calculations
+- **URLs**: Fragment-based routing, no server-side changes needed
+
+### Database Structure
+
+\`\`\`
+highlights/{highlightId}
+├── tag: 'insight' | 'question' | 'quote' | 'important'
+├── reactions: { '👍': 5, '❤️': 2, '🤔': 1 }
+├── userReactions: { 'user1': '👍', 'user2': '❤️' }
+└── ...existing fields
+\`\`\`
+
+### Query Optimization
+
+\`\`\`tsx
+// Reactions use Firestore increment for atomic updates
+await updateDoc(highlightRef, {
+  [\`reactions.\${emoji}\`]: increment(1)  // Atomic operation
+});
+
+// No need for read-then-write patterns
+// No race conditions with multiple users reacting simultaneously
+\`\`\`
+
+## 🎯 User Experience Enhancements
+
+### Visual Feedback
+
+- **Hover states**: Show reaction/share options on highlight hover
+- **Flash animation**: Shared highlights flash when visited via URL
+- **Instant feedback**: Reactions update immediately with optimistic UI
+- **Color coding**: Instant visual categorization of highlight types
+
+### Mobile Optimization
+
+- **Touch-friendly**: Large tap targets for reaction buttons
+- **Native sharing**: Uses device's native share sheet when available
+- **Responsive toolbar**: Adapts to screen size constraints
+
+## 🚀 Implementation Guide
+
+### Adding to Existing Articles
+
+1. **Update highlight service**:
+   \`\`\`tsx
+   import { HighlightTag } from '@/services/highlightService';
+   \`\`\`
+
+2. **Modify highlight creation**:
+   \`\`\`tsx
+   const handleHighlight = (text: string, range: Range, tag: HighlightTag) => {
+     saveHighlight(text, prefix, suffix, articleId, tag);
+   };
+   \`\`\`
+
+3. **Apply color classes**:
+   \`\`\`tsx
+   <span className={\`article-highlight highlight-\${highlight.tag}\`}>
+     {highlight.text}
+   </span>
+   \`\`\`
+
+4. **Add reaction handling**:
+   \`\`\`tsx
+   <HighlightDisplay 
+     highlight={highlight} 
+     articleSlug={articleSlug}
+     onUpdate={refreshHighlights}
+   />
+   \`\`\`
+
+### Required CSS
+
+Ensure these styles exist in \`highlight.css\`:
+- \`.highlight-color-options\` - Color selection toolbar
+- \`.highlight-reaction-btn\` - Reaction buttons
+- \`.highlight-shared-flash\` - Flash animation
+- \`.highlight-[tag]\` - Color variants for each tag
+
+## 💡 Future Enhancement Ideas
+
+### Highlight Heatmap Bar (Next Phase)
+
+\`\`\`tsx
+// Break article into segments and show highlight density
+const HighlightHeatmap = ({ highlights, articleLength }) => {
+  const segments = 20;
+  const segmentCounts = calculateHighlightDensity(highlights, segments);
+  
+  return (
+    <div className="highlight-heatmap">
+      {segmentCounts.map((count, index) => (
+        <div 
+          key={index}
+          className="heatmap-segment"
+          style={{ opacity: count / maxCount }}
+        />
+      ))}
+    </div>
+  );
+};
+\`\`\`
+
+### Offline-First Highlighting
+
+\`\`\`tsx
+// Buffer highlights in localStorage when offline
+const saveHighlightOffline = (highlight) => {
+  const pending = JSON.parse(localStorage.getItem('pendingHighlights') || '[]');
+  pending.push(highlight);
+  localStorage.setItem('pendingHighlights', JSON.stringify(pending));
+};
+
+// Sync when online
+const syncPendingHighlights = async () => {
+  const pending = JSON.parse(localStorage.getItem('pendingHighlights') || '[]');
+  
+  for (const highlight of pending) {
+    await saveHighlight(...highlight);
+  }
+  
+  localStorage.removeItem('pendingHighlights');
+};
+\`\`\`
+
+### Analytics & Insights
+
+- Track most popular highlight types per article
+- Identify engaging content sections via highlight density
+- User highlighting patterns and preferences
+- Social sharing metrics for highlighted content
+
+## 📈 Impact Metrics
+
+### Engagement Benefits
+
+- **Increased Time on Page**: Categorized highlights encourage deeper reading
+- **Social Sharing**: Direct highlight URLs drive referral traffic
+- **User Retention**: Reaction system creates social connection
+- **Content Insights**: Highlight patterns reveal reader interests
+
+### Technical Benefits
+
+- **Zero Complexity**: No new microservices or complex infrastructure
+- **High Performance**: Client-side routing and CSS-only visuals
+- **Scalable**: Firestore handles concurrent reactions efficiently
+- **Maintainable**: Clean separation of concerns, minimal code changes
+  `
+};
+
 // Collection of all documentation sections
 const docSections: DocSection[] = [
   projectStructureDoc,
@@ -1575,7 +1940,8 @@ const docSections: DocSection[] = [
   deploymentDoc,
   bestPracticesDoc,
   tagFeatureDoc,
-  moodFeaturesDoc
+  moodFeaturesDoc,
+  enhancedHighlightsDoc
 ];
 
 // User Management Component

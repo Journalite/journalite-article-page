@@ -16,6 +16,8 @@ interface ArticleWithHighlightsProps {
   isAuthenticated?: boolean;
   moodFeatureEnabled?: boolean;
   onToggleMoodFeature?: (enabled: boolean) => void;
+  articleTitle?: string;
+  articleSlug?: string;
 }
 
 const ArticleWithHighlights: React.FC<ArticleWithHighlightsProps> = ({
@@ -23,7 +25,9 @@ const ArticleWithHighlights: React.FC<ArticleWithHighlightsProps> = ({
   initialHtml,
   isAuthenticated = false,
   moodFeatureEnabled = true,
-  onToggleMoodFeature
+  onToggleMoodFeature,
+  articleTitle = 'Article',
+  articleSlug = ''
 }) => {
   const [article, setArticle] = useState<{ title: string; body: string } | null>(null);
   const [isLoading, setIsLoading] = useState(!initialHtml);
@@ -427,7 +431,12 @@ const ArticleWithHighlights: React.FC<ArticleWithHighlightsProps> = ({
           </div>
         </div>
 
-        <ArticleHighlights articleId={articleId} onShare={handleShare}>
+        <ArticleHighlights 
+          articleId={articleId} 
+          articleTitle={articleTitle}
+          articleSlug={articleSlug}
+          onShare={handleShare}
+        >
           <div className={styles.articleContent}>
             {/* Original article content with preserved formatting */}
             <div 

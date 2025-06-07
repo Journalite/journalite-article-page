@@ -1,9 +1,6 @@
 {
   "/[...firebase_auth]/page": "app/[...firebase_auth]/page.js",
-  "/articles/[id]/page": "app/articles/[id]/page.js",
   "/articles/page": "app/articles/page.js",
-  "/create-article/page": "app/create-article/page.js",
   "/login/page": "app/login/page.js",
-  "/my-thoughts/page": "app/my-thoughts/page.js",
   "/page": "app/page.js"
 }

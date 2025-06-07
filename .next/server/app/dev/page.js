@@ -1,4 +1,4 @@
-(()=>{var e={};e.id=2,e.ids=[2],e.modules={3295:e=>{"use strict";e.exports=require("next/dist/server/app-render/after-task-async-storage.external.js")},4998:()=>{},5062:e=>{e.exports={"article-page":"home_article-page__CJrzD","three-column-layout":"home_three-column-layout__x41EQ","left-sidebar":"home_left-sidebar__MaSov",collapsed:"home_collapsed__2_VdN","sidebar-header":"home_sidebar-header__4tIx3",logo:"home_logo__fwoF8","toggle-button":"home_toggle-button__sVP2W","vertical-nav":"home_vertical-nav__Cj0En","nav-home":"home_nav-home__X8XEK","nav-icon":"home_nav-icon__yM4nn","nav-thoughts":"home_nav-thoughts__0rfq1","nav-explore":"home_nav-explore__bcQBn","nav-profile":"home_nav-profile__WAAem","nav-settings":"home_nav-settings__0w_SC","nav-logout":"home_nav-logout__MCaXq","nav-login":"home_nav-login__1lQUW","nav-signup":"home_nav-signup__8EtSK","nav-learn":"home_nav-learn__M1FC_","nav-plans":"home_nav-plans__c9i07","nav-link":"home_nav-link__6kEPW","nav-text":"home_nav-text__B7jdN",active:"home_active__S0jaV","sidebar-footer":"home_sidebar-footer__Fj8FR","sidebar-collapse-button":"home_sidebar-collapse-button__W3ZL0","center-column":"home_center-column__eaxY9",expanded:"home_expanded__mJRm4",loading:"home_loading__D6__B","prompt-banner":"home_prompt-banner__xFQFU","prompt-icon":"home_prompt-icon__9eWo_","prompt-text":"home_prompt-text__P3NSJ","prompt-button":"home_prompt-button__z8a6r","featured-card":"home_featured-card__r3SXe","featured-content":"home_featured-content__gbOMz","featured-image":"home_featured-image__3DBbZ","cover-image":"home_cover-image___ZInI","featured-label":"home_featured-label__z2IzP","featured-title":"home_featured-title__qNCn0","featured-meta":"home_featured-meta__Lq6uD","featured-excerpt":"home_featured-excerpt__dhAPX","read-link":"home_read-link___6ZMN","article-grid":"home_article-grid__mC5EI","article-card":"home_article-card__fzb4w","article-title":"home_article-title__toAvL","article-meta":"home_article-meta__9UhXG","article-excerpt":"home_article-excerpt__kuCuZ","article-tags":"home_article-tags__VxN88",tag:"home_tag__LEtq4","reaction-bar":"home_reaction-bar__Y0gsv","reaction-button":"home_reaction-button__KLD0h","reaction-icon":"home_reaction-icon__vhB0y","right-sidebar":"home_right-sidebar__e_5Hr","sidebar-heading":"home_sidebar-heading__lega4","tag-list":"home_tag-list__fgeEi","trending-tag":"home_trending-tag__0awB8","write-button":"home_write-button__Gowtg","edit-button":"home_edit-button__RsQLX","quote-card":"home_quote-card__LAcHm","quote-tag":"home_quote-tag__AukSw","article-container":"home_article-container__RCmcS","article-header":"home_article-header__mdTUd","article-content":"home_article-content__HUOVu","article-paragraph":"home_article-paragraph__6t7oy","article-cover-image":"home_article-cover-image__KDspQ",header:"home_header__PUC5f",hero:"home_hero__3iLRs","hero-title":"home_hero-title__tuN3q","hero-subtitle":"home_hero-subtitle__cyiJZ","cta-button":"home_cta-button__X8xB1","main-grid":"home_main-grid__qFsbA","section-title":"home_section-title__wEK3N","article-tag":"home_article-tag__m6NuJ","author-info":"home_author-info__Xw67P","author-avatar":"home_author-avatar__kBH_g","author-name":"home_author-name__vEgN7",topics:"home_topics__lPwTP","topic-tag":"home_topic-tag__LL122","trending-list":"home_trending-list__YinkY",writers:"home_writers__2u4IP","writer-item":"home_writer-item__1jEW3","writer-info":"home_writer-info__OG3R7","writer-avatar":"home_writer-avatar__b69xH","writer-name":"home_writer-name__McEqt","follow-button":"home_follow-button__UX_LS",features:"home_features__Uc1bS","feature-title":"home_feature-title__9pzGT","feature-desc":"home_feature-desc__jOby5",footer:"home_footer__1HL_E","menu-overlay":"home_menu-overlay__S__PE",fadeIn:"home_fadeIn__uLm0f",articleFormContainer:"home_articleFormContainer__DSMnb",articleFormHeader:"home_articleFormHeader__yeH26",articleFormTitle:"home_articleFormTitle__B11fv",articleFormSubtitle:"home_articleFormSubtitle__XZLCa",articleForm:"home_articleForm__qtKbt",formGroup:"home_formGroup__dX_8o",formLabel:"home_formLabel__qdIcu",optionalLabel:"home_optionalLabel__U0gvl",formControl:"home_formControl__Cf48C",formTextarea:"home_formTextarea__tVyby",formActions:"home_formActions__BdMyR",cancelButton:"home_cancelButton__docpL",submitButton:"home_submitButton__gVGwS",errorAlert:"home_errorAlert__tVY_A",errorIcon:"home_errorIcon__gc9ZB",imagePreview:"home_imagePreview__zqwvQ",tagsPreview:"home_tagsPreview__V6lf7",container:"home_container__TLSt1","writing-tips":"home_writing-tips__2ODsS","writing-tip":"home_writing-tip__dmGLE",loginLink:"home_loginLink__imUQF",discussionSection:"home_discussionSection__0Ifpl",discussionTitle:"home_discussionTitle__O3EuW",commentForm:"home_commentForm__zAQrR",commentInputContainer:"home_commentInputContainer__gKx6N",commentAvatar:"home_commentAvatar__T8zJ0",replyAvatar:"home_replyAvatar___kB3f",commentInputWrapper:"home_commentInputWrapper__hxZkN",commentInput:"home_commentInput__uUtg_",replyInput:"home_replyInput__rYKdQ",commentActions:"home_commentActions__OO9jZ",replyActions:"home_replyActions__p9B_f",submitReplyButton:"home_submitReplyButton__BdUJ2",cancelReplyButton:"home_cancelReplyButton__XvM8F",loginPrompt:"home_loginPrompt__w4N0u",loginPromptButtons:"home_loginPromptButtons__snC_B",loginButton:"home_loginButton__YS1MQ",closePromptButton:"home_closePromptButton__QYTJ8",errorMessage:"home_errorMessage__9Ki1b",loadingSpinner:"home_loadingSpinner__peANt",spin:"home_spin__D0mwY",noComments:"home_noComments__850HV",commentsList:"home_commentsList__fRn9g",commentItem:"home_commentItem__L5fNy",commentHeader:"home_commentHeader___Zk6a",replyHeader:"home_replyHeader__f7TaG",commentMeta:"home_commentMeta__MJRA8",replyMeta:"home_replyMeta__ve_YC",commentAuthor:"home_commentAuthor__HPgNT",replyAuthor:"home_replyAuthor__2Brdn",commentDate:"home_commentDate__VBAuX",replyDate:"home_replyDate__y0RtU",commentContent:"home_commentContent__uzL9r",replyContent:"home_replyContent__HFiXM",commentControls:"home_commentControls__ebC_D",likeButton:"home_likeButton__gtW9b",replyButton:"home_replyButton__e_FYj",toggleRepliesButton:"home_toggleRepliesButton__UC2Rk",deleteButton:"home_deleteButton__VEIPc",liked:"home_liked__LMNuR",replyForm:"home_replyForm__CpHFF",replyInputContainer:"home_replyInputContainer__3_T0M",repliesList:"home_repliesList__TjSoC",replyItem:"home_replyItem__TadHa",profileHeader:"home_profileHeader__N2hD3",profileAvatar:"home_profileAvatar__zAfHf",avatarPlaceholder:"home_avatarPlaceholder__mh9Xc",profileInfo:"home_profileInfo__tQtas",profileName:"home_profileName__7mtlO",profileUsername:"home_profileUsername__ACE_Q",profileBio:"home_profileBio__pKxZ3",sectionHeading:"home_sectionHeading__F_a8F",profileContent:"home_profileContent__a6u08",emptyState:"home_emptyState__0oCVS",sidebarSection:"home_sidebarSection__cyQHn",backLink:"home_backLink__Anavd","article-image":"home_article-image__mOEoE",searchContainer:"home_searchContainer__NcXe2",searchInputWrapper:"home_searchInputWrapper__jDfiT",searchInput:"home_searchInput__D6QYE",clearSearchButton:"home_clearSearchButton__XEPTo",searchResultsContainer:"home_searchResultsContainer__aOrYe",searchResultsTitle:"home_searchResultsTitle__KjT7N",backToAllButton:"home_backToAllButton__ShJnS",searchResults:"home_searchResults__sWgqy",searchResultItem:"home_searchResultItem__CuGQu",searchResultAvatar:"home_searchResultAvatar__QRukz",adminAvatar:"home_adminAvatar__5I7Wp",developerAvatar:"home_developerAvatar__YWLjR",userAvatar:"home_userAvatar__sJEnc",searchResultInfo:"home_searchResultInfo__vOptx",searchResultName:"home_searchResultName__yMZVz",searchResultUsername:"home_searchResultUsername__oQ4tk",searchResultRole:"home_searchResultRole__E5rB8",searchResultRoleAdmin:"home_searchResultRoleAdmin__58nmi",searchResultRoleDeveloper:"home_searchResultRoleDeveloper__D6KaE",searchResultRoleUser:"home_searchResultRoleUser__P_B5t",roleTag:"home_roleTag__X3nyq",noResults:"home_noResults__VKSke",searchBarContainer:"home_searchBarContainer__p1hA_",sidebarSearch:"home_sidebarSearch__rSKxe",tabContainer:"home_tabContainer__WiCFt",tabButton:"home_tabButton___0LSM",activeTab:"home_activeTab___peId",docsContainer:"home_docsContainer__uFnrg",userManagementContainer:"home_userManagementContainer__d8zKX",sectionTitle:"home_sectionTitle___LoW8",statsContainer:"home_statsContainer__Ecxt0",statBox:"home_statBox__sOuzf",statNumber:"home_statNumber__0HaRO",statLabel:"home_statLabel___lx3s",usersTableContainer:"home_usersTableContainer__xgtQE",usersTable:"home_usersTable__UQjnE",roleSelect:"home_roleSelect__85R__",documentationContainer:"home_documentationContainer__3hhXs",docSidebar:"home_docSidebar__NjNVF",docSearchContainer:"home_docSearchContainer__2oA__",docSearchInput:"home_docSearchInput__YwfD7",docNav:"home_docNav__TyBYN",docNavItem:"home_docNavItem__wzbPN",docNavItemActive:"home_docNavItemActive__2G1E0",docContent:"home_docContent__HO1_Q",docTitle:"home_docTitle__IElVr",docSubheading:"home_docSubheading__qezFR",docText:"home_docText__pOq_f",codeBlock:"home_codeBlock__2XLSi",codeBlockContainer:"home_codeBlockContainer__m8biO",codeLineNumbers:"home_codeLineNumbers___g0z3",codeContent:"home_codeContent__8Ufq0",keyword:"home_keyword__xcIYJ",string:"home_string__IDzCq",comment:"home_comment___nq3w",function:"home_function__lPtv4",type:"home_type__Ot2EV",variable:"home_variable__V9b_I",number:"home_number__EdK6u",operator:"home_operator__4A6PV",copyButton:"home_copyButton__FJrSq",alertInfo:"home_alertInfo__DNxOh",alertWarning:"home_alertWarning__h5lMU",alertSuccess:"home_alertSuccess__VNous",userTableCell:"home_userTableCell__EfMXq","tag-header":"home_tag-header__V7Fnc",highlight:"home_highlight__wsiMU","tag-description":"home_tag-description___G1Ky","back-link":"home_back-link__nWn7j","no-results":"home_no-results__lv_Xi","explore-header":"home_explore-header__EECf8","explore-title":"home_explore-title__FCgPB","explore-subtitle":"home_explore-subtitle__n2Hy_","explore-container":"home_explore-container__RUVLK","explore-section":"home_explore-section__kWWcA","featured-articles-grid":"home_featured-articles-grid__Fow9u","feature-large":"home_feature-large__V74KX","tags-selector":"home_tags-selector__Bw1Pi","tag-button":"home_tag-button__xESQB","tag-button-active":"home_tag-button-active__cuvxR",fullWidthContainer:"home_fullWidthContainer__bH7VI",editorHeader:"home_editorHeader__nxAUv",backButton:"home_backButton__7YWR2",editorContainer:"home_editorContainer__TTjO_"}},10846:e=>{"use strict";e.exports=require("next/dist/compiled/next-server/app-page.runtime.prod.js")},16189:(e,t,r)=>{"use strict";var o=r(65773);r.o(o,"useRouter")&&r.d(t,{useRouter:function(){return o.useRouter}}),r.o(o,"useSearchParams")&&r.d(t,{useSearchParams:function(){return o.useSearchParams}})},19121:e=>{"use strict";e.exports=require("next/dist/server/app-render/action-async-storage.external.js")},19771:e=>{"use strict";e.exports=require("process")},21820:e=>{"use strict";e.exports=require("os")},22278:(e,t,r)=>{"use strict";r.r(t),r.d(t,{default:()=>d});var o=r(60687),a=r(43210),s=r(16189),n=r(75535),i=r(43649);r(84245);var l=r(5062),c=r.n(l);let m=[{id:"project-structure",title:"Project Structure",content:`
+(()=>{var e={};e.id=2,e.ids=[2],e.modules={3295:e=>{"use strict";e.exports=require("next/dist/server/app-render/after-task-async-storage.external.js")},4998:()=>{},5062:e=>{e.exports={"article-page":"home_article-page__CJrzD","three-column-layout":"home_three-column-layout__x41EQ","left-sidebar":"home_left-sidebar__MaSov",collapsed:"home_collapsed__2_VdN","sidebar-header":"home_sidebar-header__4tIx3",logo:"home_logo__fwoF8","toggle-button":"home_toggle-button__sVP2W","vertical-nav":"home_vertical-nav__Cj0En","nav-home":"home_nav-home__X8XEK","nav-icon":"home_nav-icon__yM4nn","nav-thoughts":"home_nav-thoughts__0rfq1","nav-explore":"home_nav-explore__bcQBn","nav-profile":"home_nav-profile__WAAem","nav-settings":"home_nav-settings__0w_SC","nav-logout":"home_nav-logout__MCaXq","nav-login":"home_nav-login__1lQUW","nav-signup":"home_nav-signup__8EtSK","nav-learn":"home_nav-learn__M1FC_","nav-plans":"home_nav-plans__c9i07","nav-link":"home_nav-link__6kEPW","nav-text":"home_nav-text__B7jdN",active:"home_active__S0jaV","sidebar-footer":"home_sidebar-footer__Fj8FR","sidebar-collapse-button":"home_sidebar-collapse-button__W3ZL0","center-column":"home_center-column__eaxY9",expanded:"home_expanded__mJRm4",loading:"home_loading__D6__B","prompt-banner":"home_prompt-banner__xFQFU","prompt-icon":"home_prompt-icon__9eWo_","prompt-text":"home_prompt-text__P3NSJ","prompt-button":"home_prompt-button__z8a6r","featured-card":"home_featured-card__r3SXe","featured-content":"home_featured-content__gbOMz","featured-image":"home_featured-image__3DBbZ","cover-image":"home_cover-image___ZInI","featured-label":"home_featured-label__z2IzP","featured-title":"home_featured-title__qNCn0","featured-meta":"home_featured-meta__Lq6uD","featured-excerpt":"home_featured-excerpt__dhAPX","read-link":"home_read-link___6ZMN","article-grid":"home_article-grid__mC5EI","article-card":"home_article-card__fzb4w","article-title":"home_article-title__toAvL","article-meta":"home_article-meta__9UhXG","article-excerpt":"home_article-excerpt__kuCuZ","article-tags":"home_article-tags__VxN88",tag:"home_tag__LEtq4","reaction-bar":"home_reaction-bar__Y0gsv","reaction-button":"home_reaction-button__KLD0h","reaction-icon":"home_reaction-icon__vhB0y","right-sidebar":"home_right-sidebar__e_5Hr","sidebar-heading":"home_sidebar-heading__lega4","tag-list":"home_tag-list__fgeEi","trending-tag":"home_trending-tag__0awB8","write-button":"home_write-button__Gowtg","edit-button":"home_edit-button__RsQLX","quote-card":"home_quote-card__LAcHm","quote-tag":"home_quote-tag__AukSw","article-container":"home_article-container__RCmcS","article-header":"home_article-header__mdTUd","article-content":"home_article-content__HUOVu","article-paragraph":"home_article-paragraph__6t7oy","article-cover-image":"home_article-cover-image__KDspQ",header:"home_header__PUC5f",hero:"home_hero__3iLRs","hero-title":"home_hero-title__tuN3q","hero-subtitle":"home_hero-subtitle__cyiJZ","cta-button":"home_cta-button__X8xB1","main-grid":"home_main-grid__qFsbA","section-title":"home_section-title__wEK3N","article-tag":"home_article-tag__m6NuJ","author-info":"home_author-info__Xw67P","author-avatar":"home_author-avatar__kBH_g","author-name":"home_author-name__vEgN7",topics:"home_topics__lPwTP","topic-tag":"home_topic-tag__LL122","trending-list":"home_trending-list__YinkY",writers:"home_writers__2u4IP","writer-item":"home_writer-item__1jEW3","writer-info":"home_writer-info__OG3R7","writer-avatar":"home_writer-avatar__b69xH","writer-name":"home_writer-name__McEqt","follow-button":"home_follow-button__UX_LS",features:"home_features__Uc1bS","feature-title":"home_feature-title__9pzGT","feature-desc":"home_feature-desc__jOby5",footer:"home_footer__1HL_E","menu-overlay":"home_menu-overlay__S__PE",fadeIn:"home_fadeIn__uLm0f",articleFormContainer:"home_articleFormContainer__DSMnb",articleFormHeader:"home_articleFormHeader__yeH26",articleFormTitle:"home_articleFormTitle__B11fv",articleFormSubtitle:"home_articleFormSubtitle__XZLCa",articleForm:"home_articleForm__qtKbt",formGroup:"home_formGroup__dX_8o",formLabel:"home_formLabel__qdIcu",optionalLabel:"home_optionalLabel__U0gvl",formControl:"home_formControl__Cf48C",formTextarea:"home_formTextarea__tVyby",formActions:"home_formActions__BdMyR",cancelButton:"home_cancelButton__docpL",submitButton:"home_submitButton__gVGwS",errorAlert:"home_errorAlert__tVY_A",errorIcon:"home_errorIcon__gc9ZB",imagePreview:"home_imagePreview__zqwvQ",tagsPreview:"home_tagsPreview__V6lf7",container:"home_container__TLSt1","writing-tips":"home_writing-tips__2ODsS","writing-tip":"home_writing-tip__dmGLE",loginLink:"home_loginLink__imUQF",discussionSection:"home_discussionSection__0Ifpl",discussionTitle:"home_discussionTitle__O3EuW",commentForm:"home_commentForm__zAQrR",commentInputContainer:"home_commentInputContainer__gKx6N",commentAvatar:"home_commentAvatar__T8zJ0",replyAvatar:"home_replyAvatar___kB3f",commentInputWrapper:"home_commentInputWrapper__hxZkN",commentInput:"home_commentInput__uUtg_",replyInput:"home_replyInput__rYKdQ",commentActions:"home_commentActions__OO9jZ",replyActions:"home_replyActions__p9B_f",submitReplyButton:"home_submitReplyButton__BdUJ2",cancelReplyButton:"home_cancelReplyButton__XvM8F",loginPrompt:"home_loginPrompt__w4N0u",loginPromptButtons:"home_loginPromptButtons__snC_B",loginButton:"home_loginButton__YS1MQ",closePromptButton:"home_closePromptButton__QYTJ8",errorMessage:"home_errorMessage__9Ki1b",loadingSpinner:"home_loadingSpinner__peANt",spin:"home_spin__D0mwY",noComments:"home_noComments__850HV",commentsList:"home_commentsList__fRn9g",commentItem:"home_commentItem__L5fNy",commentHeader:"home_commentHeader___Zk6a",replyHeader:"home_replyHeader__f7TaG",commentMeta:"home_commentMeta__MJRA8",replyMeta:"home_replyMeta__ve_YC",commentAuthor:"home_commentAuthor__HPgNT",replyAuthor:"home_replyAuthor__2Brdn",commentDate:"home_commentDate__VBAuX",replyDate:"home_replyDate__y0RtU",commentContent:"home_commentContent__uzL9r",replyContent:"home_replyContent__HFiXM",commentControls:"home_commentControls__ebC_D",likeButton:"home_likeButton__gtW9b",replyButton:"home_replyButton__e_FYj",toggleRepliesButton:"home_toggleRepliesButton__UC2Rk",deleteButton:"home_deleteButton__VEIPc",liked:"home_liked__LMNuR",replyForm:"home_replyForm__CpHFF",replyInputContainer:"home_replyInputContainer__3_T0M",repliesList:"home_repliesList__TjSoC",replyItem:"home_replyItem__TadHa",profileHeader:"home_profileHeader__N2hD3",profileAvatar:"home_profileAvatar__zAfHf",avatarPlaceholder:"home_avatarPlaceholder__mh9Xc",profileInfo:"home_profileInfo__tQtas",profileName:"home_profileName__7mtlO",profileUsername:"home_profileUsername__ACE_Q",profileBio:"home_profileBio__pKxZ3",sectionHeading:"home_sectionHeading__F_a8F",profileContent:"home_profileContent__a6u08",emptyState:"home_emptyState__0oCVS",sidebarSection:"home_sidebarSection__cyQHn",backLink:"home_backLink__Anavd","article-image":"home_article-image__mOEoE",searchContainer:"home_searchContainer__NcXe2",searchInputWrapper:"home_searchInputWrapper__jDfiT",searchInput:"home_searchInput__D6QYE",clearSearchButton:"home_clearSearchButton__XEPTo",searchResultsContainer:"home_searchResultsContainer__aOrYe",searchResultsTitle:"home_searchResultsTitle__KjT7N",backToAllButton:"home_backToAllButton__ShJnS",searchResults:"home_searchResults__sWgqy",searchResultItem:"home_searchResultItem__CuGQu",searchResultAvatar:"home_searchResultAvatar__QRukz",adminAvatar:"home_adminAvatar__5I7Wp",developerAvatar:"home_developerAvatar__YWLjR",userAvatar:"home_userAvatar__sJEnc",searchResultInfo:"home_searchResultInfo__vOptx",searchResultName:"home_searchResultName__yMZVz",searchResultUsername:"home_searchResultUsername__oQ4tk",searchResultRole:"home_searchResultRole__E5rB8",searchResultRoleAdmin:"home_searchResultRoleAdmin__58nmi",searchResultRoleDeveloper:"home_searchResultRoleDeveloper__D6KaE",searchResultRoleUser:"home_searchResultRoleUser__P_B5t",roleTag:"home_roleTag__X3nyq",noResults:"home_noResults__VKSke",searchBarContainer:"home_searchBarContainer__p1hA_",sidebarSearch:"home_sidebarSearch__rSKxe",tabContainer:"home_tabContainer__WiCFt",tabButton:"home_tabButton___0LSM",activeTab:"home_activeTab___peId",docsContainer:"home_docsContainer__uFnrg",userManagementContainer:"home_userManagementContainer__d8zKX",sectionTitle:"home_sectionTitle___LoW8",statsContainer:"home_statsContainer__Ecxt0",statBox:"home_statBox__sOuzf",statNumber:"home_statNumber__0HaRO",statLabel:"home_statLabel___lx3s",usersTableContainer:"home_usersTableContainer__xgtQE",usersTable:"home_usersTable__UQjnE",roleSelect:"home_roleSelect__85R__",documentationContainer:"home_documentationContainer__3hhXs",docSidebar:"home_docSidebar__NjNVF",docSearchContainer:"home_docSearchContainer__2oA__",docSearchInput:"home_docSearchInput__YwfD7",docNav:"home_docNav__TyBYN",docNavItem:"home_docNavItem__wzbPN",docNavItemActive:"home_docNavItemActive__2G1E0",docContent:"home_docContent__HO1_Q",docTitle:"home_docTitle__IElVr",docSubheading:"home_docSubheading__qezFR",docText:"home_docText__pOq_f",codeBlock:"home_codeBlock__2XLSi",codeBlockContainer:"home_codeBlockContainer__m8biO",codeLineNumbers:"home_codeLineNumbers___g0z3",codeContent:"home_codeContent__8Ufq0",keyword:"home_keyword__xcIYJ",string:"home_string__IDzCq",comment:"home_comment___nq3w",function:"home_function__lPtv4",type:"home_type__Ot2EV",variable:"home_variable__V9b_I",number:"home_number__EdK6u",operator:"home_operator__4A6PV",copyButton:"home_copyButton__FJrSq",alertInfo:"home_alertInfo__DNxOh",alertWarning:"home_alertWarning__h5lMU",alertSuccess:"home_alertSuccess__VNous",userTableCell:"home_userTableCell__EfMXq","tag-header":"home_tag-header__V7Fnc",highlight:"home_highlight__wsiMU","tag-description":"home_tag-description___G1Ky","back-link":"home_back-link__nWn7j","no-results":"home_no-results__lv_Xi","explore-header":"home_explore-header__EECf8","explore-title":"home_explore-title__FCgPB","explore-subtitle":"home_explore-subtitle__n2Hy_","explore-container":"home_explore-container__RUVLK","explore-section":"home_explore-section__kWWcA","featured-articles-grid":"home_featured-articles-grid__Fow9u","feature-large":"home_feature-large__V74KX","tags-selector":"home_tags-selector__Bw1Pi","tag-button":"home_tag-button__xESQB","tag-button-active":"home_tag-button-active__cuvxR",fullWidthContainer:"home_fullWidthContainer__bH7VI",editorHeader:"home_editorHeader__nxAUv",backButton:"home_backButton__7YWR2",editorContainer:"home_editorContainer__TTjO_"}},10846:e=>{"use strict";e.exports=require("next/dist/compiled/next-server/app-page.runtime.prod.js")},16189:(e,t,o)=>{"use strict";var r=o(65773);o.o(r,"useRouter")&&o.d(t,{useRouter:function(){return r.useRouter}}),o.o(r,"useSearchParams")&&o.d(t,{useSearchParams:function(){return r.useSearchParams}})},19121:e=>{"use strict";e.exports=require("next/dist/server/app-render/action-async-storage.external.js")},19771:e=>{"use strict";e.exports=require("process")},21820:e=>{"use strict";e.exports=require("os")},22278:(e,t,o)=>{"use strict";o.r(t),o.d(t,{default:()=>u});var r=o(60687),a=o(43210),i=o(16189),s=o(75535),n=o(43649);o(84245);var l=o(5062),c=o.n(l);let m=[{id:"project-structure",title:"Project Structure",content:`
 ## Directory Structure
 
 \`\`\`tsx
@@ -1185,12 +1185,639 @@ const fetchArticles = async (tag: string) => {
   console.log(articles);
 };
 \`
-  `}];function _(){let[e,t]=(0,a.useState)([]),[r,s]=(0,a.useState)([]),[l,m]=(0,a.useState)(!0),[_,u]=(0,a.useState)(null),[d,h]=(0,a.useState)(""),[p,g]=(0,a.useState)(!1),[f,b]=(0,a.useState)({total:0,admins:0,developers:0,regular:0}),v=async(r,o)=>{try{let a=(0,n.doc)(i.db,"users",r);await (0,n.updateDoc)(a,{role:o});let l=e.map(e=>e.id===r?{...e,role:o}:e);if(t(l),d.trim()){let e=d.toLowerCase();s(l.filter(t=>t.name?.toLowerCase().includes(e)||t.email?.toLowerCase().includes(e)||t.username?.toLowerCase().includes(e)||!1))}else s(l);let c=l.filter(e=>"admin"===e.role).length,m=l.filter(e=>"developer"===e.role).length,_=l.filter(e=>!e.role||"user"===e.role).length;b({total:l.length,admins:c,developers:m,regular:_})}catch(e){console.error("Error updating user role:",e),alert("Failed to update user role")}},y=e=>e?e.split(" ").map(e=>e.charAt(0)).join("").toUpperCase().substring(0,2):"?",x=e=>e?e.charAt(0).toUpperCase():"?",w=e=>{switch(e){case"admin":return c().adminAvatar;case"developer":return c().developerAvatar;default:return""}},C=e=>{switch(e){case"admin":return c().searchResultRoleAdmin;case"developer":return c().searchResultRoleDeveloper;default:return c().searchResultRoleUser}},A=()=>{h(""),g(!1)};return l?(0,o.jsxs)("div",{className:c().loading,children:[(0,o.jsx)("div",{className:c().loadingSpinner}),"Loading users..."]}):_?(0,o.jsx)("div",{className:c().errorMessage,children:_}):(0,o.jsxs)("div",{className:c().userManagementContainer,children:[(0,o.jsx)("h2",{className:c().sectionTitle,children:"User Management"}),(0,o.jsxs)("div",{className:c().statsContainer,children:[(0,o.jsxs)("div",{className:c().statBox,children:[(0,o.jsx)("span",{className:c().statNumber,children:f.total}),(0,o.jsx)("span",{className:c().statLabel,children:"Total Users"})]}),(0,o.jsxs)("div",{className:c().statBox,children:[(0,o.jsx)("span",{className:c().statNumber,children:f.admins}),(0,o.jsx)("span",{className:c().statLabel,children:"Admins"})]}),(0,o.jsxs)("div",{className:c().statBox,children:[(0,o.jsx)("span",{className:c().statNumber,children:f.developers}),(0,o.jsx)("span",{className:c().statLabel,children:"Developers"})]}),(0,o.jsxs)("div",{className:c().statBox,children:[(0,o.jsx)("span",{className:c().statNumber,children:f.regular}),(0,o.jsx)("span",{className:c().statLabel,children:"Regular Users"})]})]}),(0,o.jsx)("div",{className:c().searchContainer,children:(0,o.jsxs)("div",{className:c().searchInputWrapper,children:[(0,o.jsx)("input",{type:"text",placeholder:"Search users by name, email, or username...",value:d,onChange:e=>h(e.target.value),className:c().searchInput}),d&&(0,o.jsx)("button",{onClick:A,className:c().clearSearchButton,"aria-label":"Clear search",children:"\xd7"})]})}),p?(0,o.jsxs)("div",{className:c().searchResultsContainer,children:[(0,o.jsxs)("h3",{className:c().searchResultsTitle,children:["Search Results (",r.length,")",r.length>0&&(0,o.jsx)("button",{className:c().backToAllButton,onClick:A,children:"Back to all users"})]}),0===r.length?(0,o.jsxs)("div",{className:c().noResults,children:['No users found matching "',d,'"']}):(0,o.jsx)("div",{className:c().searchResults,children:r.map(e=>(0,o.jsxs)("div",{className:c().searchResultItem,children:[(0,o.jsx)("div",{className:`${c().searchResultAvatar} ${w(e.role)}`,"data-initial":x(e.name),children:y(e.name)}),(0,o.jsxs)("div",{className:c().searchResultInfo,children:[(0,o.jsx)("div",{className:c().searchResultName,children:e.name||"Unnamed User"}),(0,o.jsx)("div",{className:c().searchResultUsername,children:e.email||e.username||"No contact info"})]}),(0,o.jsx)("div",{className:`${c().searchResultRole} ${C(e.role)}`,children:e.role||"user"}),(0,o.jsxs)("select",{value:e.role||"user",onChange:t=>v(e.id,t.target.value),className:c().roleSelect,children:[(0,o.jsx)("option",{value:"user",children:"User"}),(0,o.jsx)("option",{value:"developer",children:"Developer"}),(0,o.jsx)("option",{value:"admin",children:"Admin"})]})]},e.id))})]}):(0,o.jsx)("div",{className:c().usersTableContainer,children:(0,o.jsxs)("table",{className:c().usersTable,children:[(0,o.jsx)("thead",{children:(0,o.jsxs)("tr",{children:[(0,o.jsx)("th",{children:"Name"}),(0,o.jsx)("th",{children:"Email"}),(0,o.jsx)("th",{children:"Username"}),(0,o.jsx)("th",{children:"Role"}),(0,o.jsx)("th",{children:"Actions"})]})}),(0,o.jsx)("tbody",{children:0===r.length?(0,o.jsx)("tr",{children:(0,o.jsx)("td",{colSpan:5,className:c().noResults,children:"No users found"})}):r.map(e=>(0,o.jsxs)("tr",{children:[(0,o.jsx)("td",{children:(0,o.jsxs)("div",{className:c().userTableCell,children:[(0,o.jsx)("span",{className:`${c().userAvatar} ${w(e.role)}`,"data-initial":x(e.name),children:y(e.name)}),e.name||"N/A"]})}),(0,o.jsx)("td",{children:e.email||"N/A"}),(0,o.jsx)("td",{children:e.username||"N/A"}),(0,o.jsx)("td",{children:(0,o.jsx)("span",{className:`${c().roleTag} ${C(e.role)}`,children:e.role||"user"})}),(0,o.jsx)("td",{children:(0,o.jsxs)("select",{value:e.role||"user",onChange:t=>v(e.id,t.target.value),className:c().roleSelect,children:[(0,o.jsx)("option",{value:"user",children:"User"}),(0,o.jsx)("option",{value:"developer",children:"Developer"}),(0,o.jsx)("option",{value:"admin",children:"Admin"})]})})]},e.id))})]})})]})}function u(){let[e,t]=(0,a.useState)(""),[r,s]=(0,a.useState)(m[0].id),[n,i]=(0,a.useState)(m),l=e=>{s(e),window.scrollTo(0,0)},_=n.find(e=>e.id===r)||n[0],u=`doc-content-${_?.id||"empty"}-${Date.now()}`;return(0,o.jsxs)("div",{className:c().documentationContainer,children:[(0,o.jsxs)("div",{className:c().docSidebar,children:[(0,o.jsx)("div",{className:c().docSearchContainer,children:(0,o.jsx)("input",{type:"text",placeholder:"Search documentation...",value:e,onChange:e=>t(e.target.value),className:c().docSearchInput})}),(0,o.jsx)("nav",{className:c().docNav,children:n.map(e=>(0,o.jsx)("button",{onClick:()=>l(e.id),className:`${c().docNavItem} ${r===e.id?c().docNavItemActive:""}`,children:e.title},e.id))})]}),(0,o.jsx)("div",{className:c().docContent,children:0===n.length?(0,o.jsx)("div",{className:c().noResults,children:"No documentation sections match your search."}):(0,o.jsxs)(o.Fragment,{children:[(0,o.jsx)("h2",{className:c().docTitle,children:_.title}),(0,o.jsx)("div",{className:c().docText,dangerouslySetInnerHTML:{__html:function(e){let t=e=>{switch(e){case"tsx":return"Component.tsx";case"ts":return"index.ts";case"js":return"script.js";case"jsx":return"Component.jsx";case"html":return"index.html";case"css":return"styles.css";case"json":return"config.json";default:return"example.code"}},r=(e,t)=>["ts","tsx","js","jsx"].includes(t)?e.replace(/\b(const|let|var|function|class|interface|type|enum|import|export|from|as|return|if|else|for|while|switch|case|break|default|try|catch|finally|async|await|new|this|extends|implements|private|public|protected|static|get|set|super|void|yield)\b/g,'<span class="'+c().keyword+'">$1</span>').replace(/(["'`])((?:\\\1|(?!\1).)*?)\1/g,'<span class="'+c().string+'">$1$2$1</span>').replace(/(`)((?:[^`]|\\.)*?)(`)/g,function(e,t,r,o){let a=r.replace(/(\${)(.*?)(})/g,'<span class="'+c().operator+'">$1</span><span class="'+c().variable+'">$2</span><span class="'+c().operator+'">$3</span>');return'<span class="'+c().string+'">'+t+a+o+"</span>"}).replace(/(\/\/.*?)($|\n)/g,'<span class="'+c().comment+'">$1</span>$2').replace(/(\/\*[\s\S]*?\*\/)/g,'<span class="'+c().comment+'">$1</span>').replace(/(&lt;|\<)([A-Z][A-Za-z0-9]*|[a-z][A-Za-z0-9]*|\/?&gt;|\/?>\s*$)/g,function(e,t,r){return'<span class="'+c().operator+'">'+t+'</span><span class="'+c().type+'">'+r+"</span>"}).replace(/(\s)([A-Za-z_$][A-Za-z0-9_$]*)(\s*\()/g,'$1<span class="'+c().function+'">$2</span>$3').replace(/\b(string|number|boolean|any|void|null|undefined|never|object|Symbol|Array|Promise|Record|Partial|Readonly|Required|Pick|Omit|Exclude|Extract|NonNullable|ReturnType)\b/g,'<span class="'+c().type+'">$1</span>').replace(/(\.)([A-Za-z_$][A-Za-z0-9_$]*)/g,'$1<span class="'+c().variable+'">$2</span>').replace(/([A-Za-z_$][A-Za-z0-9_$]*)(\s*:\s*)/g,'<span class="'+c().variable+'">$1</span>$2').replace(/\b(0[xX][0-9a-fA-F]+|0[bB][01]+|0[oO][0-7]+|\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)\b/g,'<span class="'+c().number+'">$1</span>').replace(/([=!<>+\-*/%&|^~?:;,.]|=&gt;|=&lt;|&amp;&amp;|\|\|)/g,'<span class="'+c().operator+'">$1</span>').split("\n").map((e,t)=>'<span class="code-line" data-line="'+(t+1)+'">'+(e||"&nbsp;")+"</span>").join("\n"):"html"===t?e.replace(/(&lt;|<)(\/?)([\w\-]+)([^>]*?)(\/?)(>|&gt;)/g,'<span class="'+c().operator+'">$1$2</span><span class="'+c().type+'">$3</span>$4<span class="'+c().operator+'">$5$6</span>').replace(/(\s+)([a-zA-Z\-:_]+)(=)/g,'$1<span class="'+c().variable+'">$2</span><span class="'+c().operator+'">$3</span>').replace(/(=)(["'])((?:\\\2|(?!\2).)*?)(\2)/g,'<span class="'+c().operator+'">$1</span><span class="'+c().string+'">$2$3$4</span>').replace(/(&lt;!--|<!--)([\s\S]*?)(--&gt;|-->)/g,'<span class="'+c().comment+'">$1$2$3</span>').split("\n").map((e,t)=>'<span class="code-line" data-line="'+(t+1)+'">'+(e||"&nbsp;")+"</span>").join("\n"):"css"===t?e.replace(/([.#]?[\w\-_]+)(?=\s*\{)/g,'<span class="'+c().type+'">$1</span>').replace(/([\w\-]+)(\s*:\s*)/g,'<span class="'+c().variable+'">$1</span>$2').replace(/(:)([^;{}]*)([;}])/g,function(e,t,r,o){return t+r.replace(/([#](?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})\b|((?:\d*\.)?\d+(?:px|em|rem|vh|vw|%|s|ms|deg|pt)?)\b)/g,'<span class="'+c().number+'">$1$2</span>')+o}).replace(/(\/\*[\s\S]*?\*\/)/g,'<span class="'+c().comment+'">$1</span>').replace(/({|})/g,'<span class="'+c().operator+'">$1</span>').split("\n").map((e,t)=>'<span class="code-line" data-line="'+(t+1)+'">'+(e||"&nbsp;")+"</span>").join("\n"):"json"===t?e.replace(/"([^"]+)"\s*:/g,'<span class="'+c().variable+'">"$1"</span>:').replace(/:\s*"([^"]+)"/g,': <span class="'+c().string+'">"$1"</span>').replace(/:\s*(-?\d+(?:\.\d+)?)/g,': <span class="'+c().number+'">$1</span>').replace(/:\s*(true|false|null)\b/g,': <span class="'+c().keyword+'">$1</span>').replace(/([{}\[\]])/g,'<span class="'+c().operator+'">$1</span>').split("\n").map((e,t)=>'<span class="code-line" data-line="'+(t+1)+'">'+(e||"&nbsp;")+"</span>").join("\n"):e.split("\n").map((e,t)=>'<span class="code-line" data-line="'+(t+1)+'">'+(e||"&nbsp;")+"</span>").join("\n"),o=e,a=(o=(o=(o=(o=(o=(o=o.replace(/:::info\s+([^:]+):::/g,'<div class="'+c().alertInfo+'">$1</div>')).replace(/:::warning\s+([^:]+):::/g,'<div class="'+c().alertWarning+'">$1</div>')).replace(/:::success\s+([^:]+):::/g,'<div class="'+c().alertSuccess+'">$1</div>')).replace(/`([^`]+)`/g,(e,t)=>"<code>"+t.replace(/\${/g,"\\${")+"</code>")).replace(/```(tsx|js|jsx|ts|html|css|json)?\s*(?:\[([^\]]+)\])?(?:\n)([\s\S]+?)```/g,(e,o,a,s)=>{let n=a||t(o||""),i=s.replace(/\${/g,"___TEMPLATE_START___").replace(/}/g,"___TEMPLATE_END___").replace(/`/g,"___BACKTICK___"),l=i.trim().split("\n").map((e,t)=>`<span class="${c().lineNumber}">${t+1}</span>`).join(""),m=r(i,o||"").replace(/___TEMPLATE_START___/g,"${").replace(/___TEMPLATE_END___/g,"}").replace(/___BACKTICK___/g,"`");return`
+  `},{id:"mood-features",title:"Mood & Reflection Features",content:`
+## Overview
+
+The Mood & Reflection system provides an immersive reading experience by analyzing article content and adapting the visual atmosphere accordingly. It includes sentiment analysis, dynamic backgrounds, interactive reflections, and mood-aware comment styling.
+
+## Mood Detection Algorithm
+
+### Sentiment Analysis Engine
+
+\`\`\`tsx[src/utils/getMoodFromText.ts]
+import sentiment from 'sentiment';
+
+export function getMoodFromText(text: string): MoodType {
+  const analyzer = new sentiment();
+  const result = analyzer.analyze(text);
+  
+  // 6-mood system: joyful, angry, energetic, peaceful, reflective, sad
+  // Keywords take precedence over sentiment score for accuracy
+  
+  const words = text.toLowerCase().split(/s+/);
+  
+  // Calculate keyword scores for each mood
+  const joyfulScore = countKeywords(words, joyfulWords);
+  const angryScore = countKeywords(words, angryWords);
+  const energeticScore = countKeywords(words, energeticWords);
+  const peacefulScore = countKeywords(words, peacefulWords);
+  const sadScore = countKeywords(words, sadWords);
+  
+  // Political content detection
+  const politicalWords = ['trump', 'biden', 'politics', 'election', 'government'];
+  const isPolitical = words.some(word => politicalWords.includes(word));
+  
+  if (isPolitical) {
+    return result.score > 2 ? 'energetic' : result.score < -2 ? 'angry' : 'reflective';
+  }
+  
+  // Return mood with highest keyword score
+  const maxScore = Math.max(joyfulScore, angryScore, energeticScore, peacefulScore, sadScore);
+  if (maxScore === 0) return 'reflective'; // Default
+  
+  // Return corresponding mood
+  if (maxScore === joyfulScore) return 'joyful';
+  if (maxScore === angryScore) return 'angry';
+  if (maxScore === energeticScore) return 'energetic';
+  if (maxScore === peacefulScore) return 'peaceful';
+  return 'sad';
+}
+\`\`\`
+
+### Keyword Categories
+
+Each mood has extensive keyword lists:
+
+- **Joyful**: celebration, success, love, achievement, happiness (200+ words)
+- **Angry**: frustrated, furious, outraged, betrayed, injustice (150+ words)
+- **Energetic**: exciting, dynamic, breakthrough, innovation, passionate (180+ words)
+- **Peaceful**: calm, serene, meditation, nature, harmony (120+ words)
+- **Reflective**: contemplation, thoughts, philosophy, introspection (100+ words)
+- **Sad**: loss, grief, disappointment, tragedy, melancholy (130+ words)
+
+## Visual Theming System
+
+### Color Palettes
+
+\`\`\`tsx[src/utils/moodThemes.ts]
+export const moodThemes = {
+  joyful: {
+    gradientStart: '#FFD700',
+    gradientEnd: '#FF6B6B',
+    accent: '#FF4757',
+    textColor: '#2C2C54'
+  },
+  angry: {
+    gradientStart: '#FF4757',
+    gradientEnd: '#C44569',
+    accent: '#B33771',
+    textColor: '#FFFFFF'
+  },
+  // ... 4 more moods
+};
+\`\`\`
+
+### Multi-Layer Background System
+
+\`\`\`tsx
+{/* Four animated layers for immersive experience */}
+{moodFeatureEnabled && isAuthenticated && (
+  <>
+    {/* Primary flowing gradient */}
+    <div style={{
+      backgroundImage: \`linear-gradient(45deg, 
+        \${moodThemes[mood].gradientStart}40, 
+        \${moodThemes[mood].gradientEnd}60)\`,
+      animation: 'gradientFlow 8s ease-in-out infinite'
+    }} />
+    
+    {/* Secondary wave layer */}
+    <div style={{
+      backgroundImage: \`radial-gradient(circle, 
+        \${moodThemes[mood].gradientEnd}25 0%, transparent 50%)\`,
+      animation: 'moodFloat 12s ease-in-out infinite alternate'
+    }} />
+    
+    {/* Floating orbs */}
+    <div style={{
+      backgroundImage: \`radial-gradient(circle, 
+        \${moodThemes[mood].gradientStart}20 0%, transparent 25%)\`,
+      animation: 'orbitalFloat 20s linear infinite'
+    }} />
+    
+    {/* Grain texture overlay */}
+    <div style={{
+      backgroundImage: \`repeating-linear-gradient(90deg,
+        transparent, \${moodThemes[mood].gradientStart}02 2px)\`,
+      mixBlendMode: 'overlay'
+    }} />
+  </>
+)}
+\`\`\`
+
+## Authentication-Gated Features
+
+### Feature Access Control
+
+\`\`\`tsx
+// Mood features only work for authenticated users
+const isAuthenticated = !!currentUser;
+
+// Reflection bar shows different content
+{isAuthenticated ? (
+  <div>🎨 Atmosphere adapted - ✨ Reflections saved: {count}</div>
+) : (
+  <div>🔒 Sign in for enhanced features</div>
+)}
+
+// Toggles are disabled for non-auth users
+<button 
+  disabled={!isAuthenticated}
+  onClick={isAuthenticated ? toggleMood : undefined}
+>
+  {(isAuthenticated && moodEnabled) ? 'ON' : 'OFF'}
+</button>
+\`\`\`
+
+### User Preferences
+
+- **localStorage persistence**: Mood preferences saved per user
+- **Toggle controls**: Users can disable mood backgrounds
+- **Default behavior**: New users get mood features enabled
+
+## Interactive Reflections
+
+### Prompt Generation System
+
+\`\`\`tsx
+// Base prompts + topic-specific prompts
+const getTopicBasedPrompts = (text: string) => {
+  const topicPrompts = [];
+  
+  // Technology content
+  if (text.includes('AI') || text.includes('technology')) {
+    topicPrompts.push("How might this technology impact your daily life?");
+    topicPrompts.push("What ethical considerations does this raise?");
+  }
+  
+  // Social issues
+  if (text.includes('social') || text.includes('justice')) {
+    topicPrompts.push("What role should individuals play in addressing this?");
+    topicPrompts.push("How might different communities view this differently?");
+  }
+  
+  return [...basePrompts, ...topicPrompts];
+};
+\`\`\`
+
+### Floating Action Button
+
+- **Fixed positioning**: Always accessible during reading
+- **Smooth animations**: Scale and glow effects on hover
+- **Context awareness**: Shows reflection count and state
+
+## Comment System Integration
+
+### Glass-Morphism Design
+
+\`\`\`tsx
+// Comments adapt to detected mood
+<div style={{
+  background: \`linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.25) 0%, 
+    \${moodThemes[mood].gradientStart}15 100%)\`,
+  backdropFilter: 'blur(20px) saturate(180%)',
+  border: \`1px solid \${moodThemes[mood].gradientStart}25\`,
+  borderRadius: '24px'
+}}>
+  {/* Comment content */}
+</div>
+\`\`\`
+
+### Mood-Themed Elements
+
+- **Input forms**: Dynamic focus states with mood colors
+- **Submit buttons**: Animated with mood gradients  
+- **Loading states**: Mood-colored progress indicators
+- **Reply cards**: Slide animations on hover
+- **Empty states**: "Be the first to share" cards with mood styling
+
+## Performance Optimizations
+
+### Efficient Rendering
+
+- **Conditional rendering**: Mood effects only for authenticated users
+- **CSS-in-JS**: Dynamic styles without layout thrashing
+- **Animation performance**: GPU-accelerated transforms only
+- **Memory management**: Cleanup of event listeners and timers
+
+### Code Splitting
+
+\`\`\`tsx
+// Mood utilities loaded only when needed
+const { getMoodFromText } = await import('@/utils/getMoodFromText');
+const { moodThemes } = await import('@/utils/moodThemes');
+\`\`\`
+
+## Implementation Guide
+
+### Adding Mood to New Components
+
+1. **Import utilities**:
+   \`\`\`tsx
+   import { getMoodFromText } from '@/utils/getMoodFromText';
+   import { moodThemes } from '@/utils/moodThemes';
+   \`\`\`
+
+2. **Detect mood from content**:
+   \`\`\`tsx
+   const detectedMood = getMoodFromText(textContent);
+   \`\`\`
+
+3. **Apply conditional styling**:
+   \`\`\`tsx
+   style={isAuthenticated && moodEnabled ? {
+     background: moodThemes[mood].gradientStart + '20',
+     borderColor: moodThemes[mood].accent
+   } : {}}
+   \`\`\`
+
+4. **Pass mood props to children**:
+   \`\`\`tsx
+   <ChildComponent 
+     {...(isAuthenticated && { mood, moodFeatureEnabled })}
+   />
+   \`\`\`
+
+### CSS Animations Required
+
+Ensure these keyframes exist in \`globals.css\`:
+- \`@keyframes gradientFlow\`
+- \`@keyframes moodFloat\`  
+- \`@keyframes orbitalFloat\`
+
+## Future Enhancements
+
+- **Machine learning**: More sophisticated mood detection
+- **User training**: Let users correct mood detection
+- **Seasonal themes**: Holiday and seasonal mood variations
+- **Accessibility**: High contrast mode for mood themes
+- **Analytics**: Track mood preferences and effectiveness
+  `},{id:"enhanced-highlights",title:"Enhanced Highlight Features",content:`
+## Overview
+
+The Enhanced Highlight system transforms basic text highlighting into an engaging, social, and semantic experience. Users can now categorize highlights, react to them, and share specific highlights via direct URLs.
+
+## 🎨 Color-Coded Highlights by Theme
+
+### Four Semantic Categories
+
+\`\`\`tsx[src/services/highlightService.ts]
+export type HighlightTag = 'insight' | 'question' | 'quote' | 'important';
+
+const highlightTags = [
+  { tag: 'insight', label: 'Insight', color: '#3B82F6', icon: '💡' },
+  { tag: 'question', label: 'Question', color: '#F59E0B', icon: '❓' },
+  { tag: 'quote', label: 'Quote', color: '#10B981', icon: '💬' },
+  { tag: 'important', label: 'Important', color: '#EF4444', icon: '⭐' }
+];
+\`\`\`
+
+### Enhanced Highlight Interface
+
+\`\`\`tsx
+export interface Highlight {
+  id: string;
+  articleId: string;
+  userId: string;
+  text: string;
+  prefix: string;
+  suffix: string;
+  tag: HighlightTag;                    // NEW: Semantic category
+  reactions?: { [emoji: string]: number };  // NEW: Reaction counts
+  userReactions?: { [userId: string]: string }; // NEW: User reaction tracking
+  createdAt: any;
+  comments?: Comment[];
+}
+\`\`\`
+
+### CSS Color Styling
+
+\`\`\`css[src/styles/highlight.css]
+.article-highlight.highlight-insight {
+  background-color: rgba(59, 130, 246, 0.3); /* Blue */
+}
+
+.article-highlight.highlight-question {
+  background-color: rgba(245, 158, 11, 0.3); /* Amber */
+}
+
+.article-highlight.highlight-quote {
+  background-color: rgba(16, 185, 129, 0.3); /* Emerald */
+}
+
+.article-highlight.highlight-important {
+  background-color: rgba(239, 68, 68, 0.3); /* Red */
+}
+\`\`\`
+
+## 🔗 Highlight & Share Links
+
+### URL Generation
+
+\`\`\`tsx
+export const generateHighlightShareUrl = (
+  articleSlug: string,
+  highlightId: string,
+  baseUrl: string = window.location.origin
+): string => {
+  return \`\${baseUrl}/articles?slug=\${articleSlug}#highlight=\${highlightId}\`;
+};
+
+// Usage example
+const shareUrl = generateHighlightShareUrl('my-article', 'highlight123');
+// Result: https://journalite.com/articles?slug=my-article#highlight=highlight123
+\`\`\`
+
+### Auto-Scroll & Flash Animation
+
+\`\`\`tsx
+// Check URL fragment and scroll to highlight
+useEffect(() => {
+  if (typeof window !== 'undefined') {
+    const urlFragment = window.location.hash;
+    if (urlFragment === \`#highlight=\${highlight.id}\`) {
+      setIsFlashing(true);
+      setTimeout(() => setIsFlashing(false), 1000);
+      
+      // Smooth scroll to highlight
+      const element = document.querySelector(\`[data-highlight-id="\${highlight.id}"]\`);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+  }
+}, [highlight.id]);
+\`\`\`
+
+### Share Functionality
+
+\`\`\`tsx
+const handleShare = () => {
+  const shareUrl = generateHighlightShareUrl(articleSlug, highlight.id);
+  
+  if (navigator.share) {
+    // Native share API (mobile)
+    navigator.share({
+      title: 'Check out this highlight',
+      text: \`"\${highlight.text}"\`,
+      url: shareUrl,
+    });
+  } else {
+    // Fallback: copy to clipboard
+    navigator.clipboard.writeText(shareUrl);
+    showTooltip('Link copied to clipboard!');
+  }
+};
+\`\`\`
+
+## 👍 Quick Reactions System
+
+### Available Reactions
+
+\`\`\`tsx
+const availableReactions = ['👍', '❤️', '🤔', '💡'];
+\`\`\`
+
+### Reaction Management
+
+\`\`\`tsx
+export const addReactionToHighlight = async (
+  highlightId: string,
+  userId: string,
+  emoji: string
+): Promise<void> => {
+  const highlightRef = doc(db, 'highlights', highlightId);
+  
+  await updateDoc(highlightRef, {
+    [\`reactions.\${emoji}\`]: increment(1),
+    [\`userReactions.\${userId}\`]: emoji
+  });
+};
+
+export const removeReactionFromHighlight = async (
+  highlightId: string,
+  userId: string,
+  emoji: string
+): Promise<void> => {
+  const highlightRef = doc(db, 'highlights', highlightId);
+  
+  await updateDoc(highlightRef, {
+    [\`reactions.\${emoji}\`]: increment(-1),
+    [\`userReactions.\${userId}\`]: null
+  });
+};
+\`\`\`
+
+### Reaction UI Component
+
+\`\`\`tsx
+const ReactionButton = ({ emoji, count, isActive, onReact }) => (
+  <button
+    onClick={() => onReact(emoji)}
+    className={\`highlight-reaction-btn \${isActive ? 'active' : ''}\`}
+  >
+    <span className="highlight-reaction-emoji">{emoji}</span>
+    {count > 0 && (
+      <span className="highlight-reaction-count">{count}</span>
+    )}
+  </button>
+);
+\`\`\`
+
+## 🛠️ Enhanced Toolbar Implementation
+
+### Color Selection Interface
+
+\`\`\`tsx
+const HighlightToolbar = ({ selection, onHighlight }) => {
+  const [showColorOptions, setShowColorOptions] = useState(false);
+  
+  return (
+    <div className="highlight-toolbar">
+      {!showColorOptions ? (
+        <button onClick={() => setShowColorOptions(true)}>
+          Highlight
+        </button>
+      ) : (
+        <div className="highlight-color-options">
+          <span>Choose highlight type:</span>
+          {highlightTags.map((tagInfo) => (
+            <button
+              key={tagInfo.tag}
+              onClick={() => handleHighlight(selection, tagInfo.tag)}
+              style={{ backgroundColor: tagInfo.color }}
+            >
+              {tagInfo.icon} {tagInfo.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+\`\`\`
+
+## 📊 Performance & Data Structure
+
+### Lightweight Implementation
+
+- **Storage**: Only added 3 fields to existing Highlight object
+- **Reactions**: Simple integer increments, no complex aggregation
+- **Colors**: CSS-only styling, no JavaScript color calculations
+- **URLs**: Fragment-based routing, no server-side changes needed
+
+### Database Structure
+
+\`\`\`
+highlights/{highlightId}
+├── tag: 'insight' | 'question' | 'quote' | 'important'
+├── reactions: { '👍': 5, '❤️': 2, '🤔': 1 }
+├── userReactions: { 'user1': '👍', 'user2': '❤️' }
+└── ...existing fields
+\`\`\`
+
+### Query Optimization
+
+\`\`\`tsx
+// Reactions use Firestore increment for atomic updates
+await updateDoc(highlightRef, {
+  [\`reactions.\${emoji}\`]: increment(1)  // Atomic operation
+});
+
+// No need for read-then-write patterns
+// No race conditions with multiple users reacting simultaneously
+\`\`\`
+
+## 🎯 User Experience Enhancements
+
+### Visual Feedback
+
+- **Hover states**: Show reaction/share options on highlight hover
+- **Flash animation**: Shared highlights flash when visited via URL
+- **Instant feedback**: Reactions update immediately with optimistic UI
+- **Color coding**: Instant visual categorization of highlight types
+
+### Mobile Optimization
+
+- **Touch-friendly**: Large tap targets for reaction buttons
+- **Native sharing**: Uses device's native share sheet when available
+- **Responsive toolbar**: Adapts to screen size constraints
+
+## 🚀 Implementation Guide
+
+### Adding to Existing Articles
+
+1. **Update highlight service**:
+   \`\`\`tsx
+   import { HighlightTag } from '@/services/highlightService';
+   \`\`\`
+
+2. **Modify highlight creation**:
+   \`\`\`tsx
+   const handleHighlight = (text: string, range: Range, tag: HighlightTag) => {
+     saveHighlight(text, prefix, suffix, articleId, tag);
+   };
+   \`\`\`
+
+3. **Apply color classes**:
+   \`\`\`tsx
+   <span className={\`article-highlight highlight-\${highlight.tag}\`}>
+     {highlight.text}
+   </span>
+   \`\`\`
+
+4. **Add reaction handling**:
+   \`\`\`tsx
+   <HighlightDisplay 
+     highlight={highlight} 
+     articleSlug={articleSlug}
+     onUpdate={refreshHighlights}
+   />
+   \`\`\`
+
+### Required CSS
+
+Ensure these styles exist in \`highlight.css\`:
+- \`.highlight-color-options\` - Color selection toolbar
+- \`.highlight-reaction-btn\` - Reaction buttons
+- \`.highlight-shared-flash\` - Flash animation
+- \`.highlight-[tag]\` - Color variants for each tag
+
+## 💡 Future Enhancement Ideas
+
+### Highlight Heatmap Bar (Next Phase)
+
+\`\`\`tsx
+// Break article into segments and show highlight density
+const HighlightHeatmap = ({ highlights, articleLength }) => {
+  const segments = 20;
+  const segmentCounts = calculateHighlightDensity(highlights, segments);
+  
+  return (
+    <div className="highlight-heatmap">
+      {segmentCounts.map((count, index) => (
+        <div 
+          key={index}
+          className="heatmap-segment"
+          style={{ opacity: count / maxCount }}
+        />
+      ))}
+    </div>
+  );
+};
+\`\`\`
+
+### Offline-First Highlighting
+
+\`\`\`tsx
+// Buffer highlights in localStorage when offline
+const saveHighlightOffline = (highlight) => {
+  const pending = JSON.parse(localStorage.getItem('pendingHighlights') || '[]');
+  pending.push(highlight);
+  localStorage.setItem('pendingHighlights', JSON.stringify(pending));
+};
+
+// Sync when online
+const syncPendingHighlights = async () => {
+  const pending = JSON.parse(localStorage.getItem('pendingHighlights') || '[]');
+  
+  for (const highlight of pending) {
+    await saveHighlight(...highlight);
+  }
+  
+  localStorage.removeItem('pendingHighlights');
+};
+\`\`\`
+
+### Analytics & Insights
+
+- Track most popular highlight types per article
+- Identify engaging content sections via highlight density
+- User highlighting patterns and preferences
+- Social sharing metrics for highlighted content
+
+## 📈 Impact Metrics
+
+### Engagement Benefits
+
+- **Increased Time on Page**: Categorized highlights encourage deeper reading
+- **Social Sharing**: Direct highlight URLs drive referral traffic
+- **User Retention**: Reaction system creates social connection
+- **Content Insights**: Highlight patterns reveal reader interests
+
+### Technical Benefits
+
+- **Zero Complexity**: No new microservices or complex infrastructure
+- **High Performance**: Client-side routing and CSS-only visuals
+- **Scalable**: Firestore handles concurrent reactions efficiently
+- **Maintainable**: Clean separation of concerns, minimal code changes
+  `}];function d(){let[e,t]=(0,a.useState)([]),[o,i]=(0,a.useState)([]),[l,m]=(0,a.useState)(!0),[d,h]=(0,a.useState)(null),[u,_]=(0,a.useState)(""),[p,g]=(0,a.useState)(!1),[f,b]=(0,a.useState)({total:0,admins:0,developers:0,regular:0}),v=async(o,r)=>{try{let a=(0,s.doc)(n.db,"users",o);await (0,s.updateDoc)(a,{role:r});let l=e.map(e=>e.id===o?{...e,role:r}:e);if(t(l),u.trim()){let e=u.toLowerCase();i(l.filter(t=>t.name?.toLowerCase().includes(e)||t.email?.toLowerCase().includes(e)||t.username?.toLowerCase().includes(e)||!1))}else i(l);let c=l.filter(e=>"admin"===e.role).length,m=l.filter(e=>"developer"===e.role).length,d=l.filter(e=>!e.role||"user"===e.role).length;b({total:l.length,admins:c,developers:m,regular:d})}catch(e){console.error("Error updating user role:",e),alert("Failed to update user role")}},y=e=>e?e.split(" ").map(e=>e.charAt(0)).join("").toUpperCase().substring(0,2):"?",x=e=>e?e.charAt(0).toUpperCase():"?",w=e=>{switch(e){case"admin":return c().adminAvatar;case"developer":return c().developerAvatar;default:return""}},S=e=>{switch(e){case"admin":return c().searchResultRoleAdmin;case"developer":return c().searchResultRoleDeveloper;default:return c().searchResultRoleUser}},C=()=>{_(""),g(!1)};return l?(0,r.jsxs)("div",{className:c().loading,children:[(0,r.jsx)("div",{className:c().loadingSpinner}),"Loading users..."]}):d?(0,r.jsx)("div",{className:c().errorMessage,children:d}):(0,r.jsxs)("div",{className:c().userManagementContainer,children:[(0,r.jsx)("h2",{className:c().sectionTitle,children:"User Management"}),(0,r.jsxs)("div",{className:c().statsContainer,children:[(0,r.jsxs)("div",{className:c().statBox,children:[(0,r.jsx)("span",{className:c().statNumber,children:f.total}),(0,r.jsx)("span",{className:c().statLabel,children:"Total Users"})]}),(0,r.jsxs)("div",{className:c().statBox,children:[(0,r.jsx)("span",{className:c().statNumber,children:f.admins}),(0,r.jsx)("span",{className:c().statLabel,children:"Admins"})]}),(0,r.jsxs)("div",{className:c().statBox,children:[(0,r.jsx)("span",{className:c().statNumber,children:f.developers}),(0,r.jsx)("span",{className:c().statLabel,children:"Developers"})]}),(0,r.jsxs)("div",{className:c().statBox,children:[(0,r.jsx)("span",{className:c().statNumber,children:f.regular}),(0,r.jsx)("span",{className:c().statLabel,children:"Regular Users"})]})]}),(0,r.jsx)("div",{className:c().searchContainer,children:(0,r.jsxs)("div",{className:c().searchInputWrapper,children:[(0,r.jsx)("input",{type:"text",placeholder:"Search users by name, email, or username...",value:u,onChange:e=>_(e.target.value),className:c().searchInput}),u&&(0,r.jsx)("button",{onClick:C,className:c().clearSearchButton,"aria-label":"Clear search",children:"\xd7"})]})}),p?(0,r.jsxs)("div",{className:c().searchResultsContainer,children:[(0,r.jsxs)("h3",{className:c().searchResultsTitle,children:["Search Results (",o.length,")",o.length>0&&(0,r.jsx)("button",{className:c().backToAllButton,onClick:C,children:"Back to all users"})]}),0===o.length?(0,r.jsxs)("div",{className:c().noResults,children:['No users found matching "',u,'"']}):(0,r.jsx)("div",{className:c().searchResults,children:o.map(e=>(0,r.jsxs)("div",{className:c().searchResultItem,children:[(0,r.jsx)("div",{className:`${c().searchResultAvatar} ${w(e.role)}`,"data-initial":x(e.name),children:y(e.name)}),(0,r.jsxs)("div",{className:c().searchResultInfo,children:[(0,r.jsx)("div",{className:c().searchResultName,children:e.name||"Unnamed User"}),(0,r.jsx)("div",{className:c().searchResultUsername,children:e.email||e.username||"No contact info"})]}),(0,r.jsx)("div",{className:`${c().searchResultRole} ${S(e.role)}`,children:e.role||"user"}),(0,r.jsxs)("select",{value:e.role||"user",onChange:t=>v(e.id,t.target.value),className:c().roleSelect,children:[(0,r.jsx)("option",{value:"user",children:"User"}),(0,r.jsx)("option",{value:"developer",children:"Developer"}),(0,r.jsx)("option",{value:"admin",children:"Admin"})]})]},e.id))})]}):(0,r.jsx)("div",{className:c().usersTableContainer,children:(0,r.jsxs)("table",{className:c().usersTable,children:[(0,r.jsx)("thead",{children:(0,r.jsxs)("tr",{children:[(0,r.jsx)("th",{children:"Name"}),(0,r.jsx)("th",{children:"Email"}),(0,r.jsx)("th",{children:"Username"}),(0,r.jsx)("th",{children:"Role"}),(0,r.jsx)("th",{children:"Actions"})]})}),(0,r.jsx)("tbody",{children:0===o.length?(0,r.jsx)("tr",{children:(0,r.jsx)("td",{colSpan:5,className:c().noResults,children:"No users found"})}):o.map(e=>(0,r.jsxs)("tr",{children:[(0,r.jsx)("td",{children:(0,r.jsxs)("div",{className:c().userTableCell,children:[(0,r.jsx)("span",{className:`${c().userAvatar} ${w(e.role)}`,"data-initial":x(e.name),children:y(e.name)}),e.name||"N/A"]})}),(0,r.jsx)("td",{children:e.email||"N/A"}),(0,r.jsx)("td",{children:e.username||"N/A"}),(0,r.jsx)("td",{children:(0,r.jsx)("span",{className:`${c().roleTag} ${S(e.role)}`,children:e.role||"user"})}),(0,r.jsx)("td",{children:(0,r.jsxs)("select",{value:e.role||"user",onChange:t=>v(e.id,t.target.value),className:c().roleSelect,children:[(0,r.jsx)("option",{value:"user",children:"User"}),(0,r.jsx)("option",{value:"developer",children:"Developer"}),(0,r.jsx)("option",{value:"admin",children:"Admin"})]})})]},e.id))})]})})]})}function h(){let[e,t]=(0,a.useState)(""),[o,i]=(0,a.useState)(m[0].id),[s,n]=(0,a.useState)(m),l=e=>{i(e),window.scrollTo(0,0)},d=s.find(e=>e.id===o)||s[0],h=`doc-content-${d?.id||"empty"}-${Date.now()}`;return(0,r.jsxs)("div",{className:c().documentationContainer,children:[(0,r.jsxs)("div",{className:c().docSidebar,children:[(0,r.jsx)("div",{className:c().docSearchContainer,children:(0,r.jsx)("input",{type:"text",placeholder:"Search documentation...",value:e,onChange:e=>t(e.target.value),className:c().docSearchInput})}),(0,r.jsx)("nav",{className:c().docNav,children:s.map(e=>(0,r.jsx)("button",{onClick:()=>l(e.id),className:`${c().docNavItem} ${o===e.id?c().docNavItemActive:""}`,children:e.title},e.id))})]}),(0,r.jsx)("div",{className:c().docContent,children:0===s.length?(0,r.jsx)("div",{className:c().noResults,children:"No documentation sections match your search."}):(0,r.jsxs)(r.Fragment,{children:[(0,r.jsx)("h2",{className:c().docTitle,children:d.title}),(0,r.jsx)("div",{className:c().docText,dangerouslySetInnerHTML:{__html:function(e){let t=e=>{switch(e){case"tsx":return"Component.tsx";case"ts":return"index.ts";case"js":return"script.js";case"jsx":return"Component.jsx";case"html":return"index.html";case"css":return"styles.css";case"json":return"config.json";default:return"example.code"}},o=(e,t)=>["ts","tsx","js","jsx"].includes(t)?e.replace(/\b(const|let|var|function|class|interface|type|enum|import|export|from|as|return|if|else|for|while|switch|case|break|default|try|catch|finally|async|await|new|this|extends|implements|private|public|protected|static|get|set|super|void|yield)\b/g,'<span class="'+c().keyword+'">$1</span>').replace(/(["'`])((?:\\\1|(?!\1).)*?)\1/g,'<span class="'+c().string+'">$1$2$1</span>').replace(/(`)((?:[^`]|\\.)*?)(`)/g,function(e,t,o,r){let a=o.replace(/(\${)(.*?)(})/g,'<span class="'+c().operator+'">$1</span><span class="'+c().variable+'">$2</span><span class="'+c().operator+'">$3</span>');return'<span class="'+c().string+'">'+t+a+r+"</span>"}).replace(/(\/\/.*?)($|\n)/g,'<span class="'+c().comment+'">$1</span>$2').replace(/(\/\*[\s\S]*?\*\/)/g,'<span class="'+c().comment+'">$1</span>').replace(/(&lt;|\<)([A-Z][A-Za-z0-9]*|[a-z][A-Za-z0-9]*|\/?&gt;|\/?>\s*$)/g,function(e,t,o){return'<span class="'+c().operator+'">'+t+'</span><span class="'+c().type+'">'+o+"</span>"}).replace(/(\s)([A-Za-z_$][A-Za-z0-9_$]*)(\s*\()/g,'$1<span class="'+c().function+'">$2</span>$3').replace(/\b(string|number|boolean|any|void|null|undefined|never|object|Symbol|Array|Promise|Record|Partial|Readonly|Required|Pick|Omit|Exclude|Extract|NonNullable|ReturnType)\b/g,'<span class="'+c().type+'">$1</span>').replace(/(\.)([A-Za-z_$][A-Za-z0-9_$]*)/g,'$1<span class="'+c().variable+'">$2</span>').replace(/([A-Za-z_$][A-Za-z0-9_$]*)(\s*:\s*)/g,'<span class="'+c().variable+'">$1</span>$2').replace(/\b(0[xX][0-9a-fA-F]+|0[bB][01]+|0[oO][0-7]+|\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)\b/g,'<span class="'+c().number+'">$1</span>').replace(/([=!<>+\-*/%&|^~?:;,.]|=&gt;|=&lt;|&amp;&amp;|\|\|)/g,'<span class="'+c().operator+'">$1</span>').split("\n").map((e,t)=>'<span class="code-line" data-line="'+(t+1)+'">'+(e||"&nbsp;")+"</span>").join("\n"):"html"===t?e.replace(/(&lt;|<)(\/?)([\w\-]+)([^>]*?)(\/?)(>|&gt;)/g,'<span class="'+c().operator+'">$1$2</span><span class="'+c().type+'">$3</span>$4<span class="'+c().operator+'">$5$6</span>').replace(/(\s+)([a-zA-Z\-:_]+)(=)/g,'$1<span class="'+c().variable+'">$2</span><span class="'+c().operator+'">$3</span>').replace(/(=)(["'])((?:\\\2|(?!\2).)*?)(\2)/g,'<span class="'+c().operator+'">$1</span><span class="'+c().string+'">$2$3$4</span>').replace(/(&lt;!--|<!--)([\s\S]*?)(--&gt;|-->)/g,'<span class="'+c().comment+'">$1$2$3</span>').split("\n").map((e,t)=>'<span class="code-line" data-line="'+(t+1)+'">'+(e||"&nbsp;")+"</span>").join("\n"):"css"===t?e.replace(/([.#]?[\w\-_]+)(?=\s*\{)/g,'<span class="'+c().type+'">$1</span>').replace(/([\w\-]+)(\s*:\s*)/g,'<span class="'+c().variable+'">$1</span>$2').replace(/(:)([^;{}]*)([;}])/g,function(e,t,o,r){return t+o.replace(/([#](?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})\b|((?:\d*\.)?\d+(?:px|em|rem|vh|vw|%|s|ms|deg|pt)?)\b)/g,'<span class="'+c().number+'">$1$2</span>')+r}).replace(/(\/\*[\s\S]*?\*\/)/g,'<span class="'+c().comment+'">$1</span>').replace(/({|})/g,'<span class="'+c().operator+'">$1</span>').split("\n").map((e,t)=>'<span class="code-line" data-line="'+(t+1)+'">'+(e||"&nbsp;")+"</span>").join("\n"):"json"===t?e.replace(/"([^"]+)"\s*:/g,'<span class="'+c().variable+'">"$1"</span>:').replace(/:\s*"([^"]+)"/g,': <span class="'+c().string+'">"$1"</span>').replace(/:\s*(-?\d+(?:\.\d+)?)/g,': <span class="'+c().number+'">$1</span>').replace(/:\s*(true|false|null)\b/g,': <span class="'+c().keyword+'">$1</span>').replace(/([{}\[\]])/g,'<span class="'+c().operator+'">$1</span>').split("\n").map((e,t)=>'<span class="code-line" data-line="'+(t+1)+'">'+(e||"&nbsp;")+"</span>").join("\n"):e.split("\n").map((e,t)=>'<span class="code-line" data-line="'+(t+1)+'">'+(e||"&nbsp;")+"</span>").join("\n"),r=e,a=(r=(r=(r=(r=(r=(r=r.replace(/:::info\s+([^:]+):::/g,'<div class="'+c().alertInfo+'">$1</div>')).replace(/:::warning\s+([^:]+):::/g,'<div class="'+c().alertWarning+'">$1</div>')).replace(/:::success\s+([^:]+):::/g,'<div class="'+c().alertSuccess+'">$1</div>')).replace(/`([^`]+)`/g,(e,t)=>"<code>"+t.replace(/\${/g,"\\${")+"</code>")).replace(/```(tsx|js|jsx|ts|html|css|json)?\s*(?:\[([^\]]+)\])?(?:\n)([\s\S]+?)```/g,(e,r,a,i)=>{let s=a||t(r||""),n=i.replace(/\${/g,"___TEMPLATE_START___").replace(/}/g,"___TEMPLATE_END___").replace(/`/g,"___BACKTICK___"),l=n.trim().split("\n").map((e,t)=>`<span class="${c().lineNumber}">${t+1}</span>`).join(""),m=o(n,r||"").replace(/___TEMPLATE_START___/g,"${").replace(/___TEMPLATE_END___/g,"}").replace(/___BACKTICK___/g,"`");return`
         <div class="${c().codeBlockContainer}">
-          <pre class="${c().codeBlock}" data-filename="${n}">
+          <pre class="${c().codeBlock}" data-filename="${s}">
             <div class="${c().codeLineNumbers}">${l}</div>
             <div class="${c().codeContent}">${m}</div>
             <button class="${c().copyButton}" title="Copy to clipboard">Copy</button>
           </pre>
         </div>
-      `})).replace(/## ([^\n]+)/g,'<h2 class="'+c().docSubheading+'">$1</h2>').replace(/\*\*([^*]+)\*\*/g,"<strong>$1</strong>").replace(/\*([^*]+)\*/g,"<em>$1</em>").replace(/- ([^\n]+)/g,"<li>$1</li>").replace(/(<li>[^<]+<\/li>(\s*)?)+/g,"<ul>$&</ul>")).split(/<pre class=/);for(let e=0;e<a.length;e++)0!==e&&a[e].includes("codeBlock")||(a[e]=a[e].replace(/\n\n/g,"<br><br>"));return a.join("<pre class=")}(_.content)}},u)]})})]})}function d(){(0,s.useRouter)();let[e,t]=(0,a.useState)(!0),[r,n]=(0,a.useState)(!1),[i,l]=(0,a.useState)(""),[m,d]=(0,a.useState)("docs");return e?(0,o.jsx)("div",{className:c().container,children:(0,o.jsxs)("div",{className:c().loadingContainer,children:[(0,o.jsx)("div",{className:c().loadingSpinner}),(0,o.jsx)("p",{children:"Verifying access..."})]})}):r?(0,o.jsx)("div",{className:c().container,children:(0,o.jsxs)("div",{className:c().devDocsContainer,children:[(0,o.jsx)("h1",{className:c().devDocsTitle,children:"Developer Portal"}),(0,o.jsxs)("p",{className:c().devDocsWelcome,children:["Welcome, ",i,"! This page contains developer tools and documentation."]}),(0,o.jsxs)("div",{className:c().tabContainer,children:[(0,o.jsx)("button",{className:`${c().tabButton} ${"docs"===m?c().activeTab:""}`,onClick:()=>d("docs"),children:"Documentation"}),(0,o.jsx)("button",{className:`${c().tabButton} ${"users"===m?c().activeTab:""}`,onClick:()=>d("users"),children:"User Management"})]}),"docs"===m?(0,o.jsx)(u,{}):(0,o.jsx)(_,{})]})}):null}},22366:e=>{e.exports={"article-page":"home_article-page__CJrzD","three-column-layout":"home_three-column-layout__x41EQ","left-sidebar":"home_left-sidebar__MaSov",collapsed:"home_collapsed__2_VdN","sidebar-header":"home_sidebar-header__4tIx3",logo:"home_logo__fwoF8","toggle-button":"home_toggle-button__sVP2W","vertical-nav":"home_vertical-nav__Cj0En","nav-home":"home_nav-home__X8XEK","nav-icon":"home_nav-icon__yM4nn","nav-thoughts":"home_nav-thoughts__0rfq1","nav-explore":"home_nav-explore__bcQBn","nav-profile":"home_nav-profile__WAAem","nav-settings":"home_nav-settings__0w_SC","nav-logout":"home_nav-logout__MCaXq","nav-login":"home_nav-login__1lQUW","nav-signup":"home_nav-signup__8EtSK","nav-learn":"home_nav-learn__M1FC_","nav-plans":"home_nav-plans__c9i07","nav-link":"home_nav-link__6kEPW","nav-text":"home_nav-text__B7jdN",active:"home_active__S0jaV","sidebar-footer":"home_sidebar-footer__Fj8FR","sidebar-collapse-button":"home_sidebar-collapse-button__W3ZL0","center-column":"home_center-column__eaxY9",expanded:"home_expanded__mJRm4",loading:"home_loading__D6__B","prompt-banner":"home_prompt-banner__xFQFU","prompt-icon":"home_prompt-icon__9eWo_","prompt-text":"home_prompt-text__P3NSJ","prompt-button":"home_prompt-button__z8a6r","featured-card":"home_featured-card__r3SXe","featured-content":"home_featured-content__gbOMz","featured-image":"home_featured-image__3DBbZ","cover-image":"home_cover-image___ZInI","featured-label":"home_featured-label__z2IzP","featured-title":"home_featured-title__qNCn0","featured-meta":"home_featured-meta__Lq6uD","featured-excerpt":"home_featured-excerpt__dhAPX","read-link":"home_read-link___6ZMN","article-grid":"home_article-grid__mC5EI","article-card":"home_article-card__fzb4w","article-title":"home_article-title__toAvL","article-meta":"home_article-meta__9UhXG","article-excerpt":"home_article-excerpt__kuCuZ","article-tags":"home_article-tags__VxN88",tag:"home_tag__LEtq4","reaction-bar":"home_reaction-bar__Y0gsv","reaction-button":"home_reaction-button__KLD0h","reaction-icon":"home_reaction-icon__vhB0y","right-sidebar":"home_right-sidebar__e_5Hr","sidebar-heading":"home_sidebar-heading__lega4","tag-list":"home_tag-list__fgeEi","trending-tag":"home_trending-tag__0awB8","write-button":"home_write-button__Gowtg","edit-button":"home_edit-button__RsQLX","quote-card":"home_quote-card__LAcHm","quote-tag":"home_quote-tag__AukSw","article-container":"home_article-container__RCmcS","article-header":"home_article-header__mdTUd","article-content":"home_article-content__HUOVu","article-paragraph":"home_article-paragraph__6t7oy","article-cover-image":"home_article-cover-image__KDspQ",header:"home_header__PUC5f",hero:"home_hero__3iLRs","hero-title":"home_hero-title__tuN3q","hero-subtitle":"home_hero-subtitle__cyiJZ","cta-button":"home_cta-button__X8xB1","main-grid":"home_main-grid__qFsbA","section-title":"home_section-title__wEK3N","article-tag":"home_article-tag__m6NuJ","author-info":"home_author-info__Xw67P","author-avatar":"home_author-avatar__kBH_g","author-name":"home_author-name__vEgN7",topics:"home_topics__lPwTP","topic-tag":"home_topic-tag__LL122","trending-list":"home_trending-list__YinkY",writers:"home_writers__2u4IP","writer-item":"home_writer-item__1jEW3","writer-info":"home_writer-info__OG3R7","writer-avatar":"home_writer-avatar__b69xH","writer-name":"home_writer-name__McEqt","follow-button":"home_follow-button__UX_LS",features:"home_features__Uc1bS","feature-title":"home_feature-title__9pzGT","feature-desc":"home_feature-desc__jOby5",footer:"home_footer__1HL_E","menu-overlay":"home_menu-overlay__S__PE",fadeIn:"home_fadeIn__uLm0f",articleFormContainer:"home_articleFormContainer__DSMnb",articleFormHeader:"home_articleFormHeader__yeH26",articleFormTitle:"home_articleFormTitle__B11fv",articleFormSubtitle:"home_articleFormSubtitle__XZLCa",articleForm:"home_articleForm__qtKbt",formGroup:"home_formGroup__dX_8o",formLabel:"home_formLabel__qdIcu",optionalLabel:"home_optionalLabel__U0gvl",formControl:"home_formControl__Cf48C",formTextarea:"home_formTextarea__tVyby",formActions:"home_formActions__BdMyR",cancelButton:"home_cancelButton__docpL",submitButton:"home_submitButton__gVGwS",errorAlert:"home_errorAlert__tVY_A",errorIcon:"home_errorIcon__gc9ZB",imagePreview:"home_imagePreview__zqwvQ",tagsPreview:"home_tagsPreview__V6lf7",container:"home_container__TLSt1","writing-tips":"home_writing-tips__2ODsS","writing-tip":"home_writing-tip__dmGLE",loginLink:"home_loginLink__imUQF",discussionSection:"home_discussionSection__0Ifpl",discussionTitle:"home_discussionTitle__O3EuW",commentForm:"home_commentForm__zAQrR",commentInputContainer:"home_commentInputContainer__gKx6N",commentAvatar:"home_commentAvatar__T8zJ0",replyAvatar:"home_replyAvatar___kB3f",commentInputWrapper:"home_commentInputWrapper__hxZkN",commentInput:"home_commentInput__uUtg_",replyInput:"home_replyInput__rYKdQ",commentActions:"home_commentActions__OO9jZ",replyActions:"home_replyActions__p9B_f",submitReplyButton:"home_submitReplyButton__BdUJ2",cancelReplyButton:"home_cancelReplyButton__XvM8F",loginPrompt:"home_loginPrompt__w4N0u",loginPromptButtons:"home_loginPromptButtons__snC_B",loginButton:"home_loginButton__YS1MQ",closePromptButton:"home_closePromptButton__QYTJ8",errorMessage:"home_errorMessage__9Ki1b",loadingSpinner:"home_loadingSpinner__peANt",spin:"home_spin__D0mwY",noComments:"home_noComments__850HV",commentsList:"home_commentsList__fRn9g",commentItem:"home_commentItem__L5fNy",commentHeader:"home_commentHeader___Zk6a",replyHeader:"home_replyHeader__f7TaG",commentMeta:"home_commentMeta__MJRA8",replyMeta:"home_replyMeta__ve_YC",commentAuthor:"home_commentAuthor__HPgNT",replyAuthor:"home_replyAuthor__2Brdn",commentDate:"home_commentDate__VBAuX",replyDate:"home_replyDate__y0RtU",commentContent:"home_commentContent__uzL9r",replyContent:"home_replyContent__HFiXM",commentControls:"home_commentControls__ebC_D",likeButton:"home_likeButton__gtW9b",replyButton:"home_replyButton__e_FYj",toggleRepliesButton:"home_toggleRepliesButton__UC2Rk",deleteButton:"home_deleteButton__VEIPc",liked:"home_liked__LMNuR",replyForm:"home_replyForm__CpHFF",replyInputContainer:"home_replyInputContainer__3_T0M",repliesList:"home_repliesList__TjSoC",replyItem:"home_replyItem__TadHa",profileHeader:"home_profileHeader__N2hD3",profileAvatar:"home_profileAvatar__zAfHf",avatarPlaceholder:"home_avatarPlaceholder__mh9Xc",profileInfo:"home_profileInfo__tQtas",profileName:"home_profileName__7mtlO",profileUsername:"home_profileUsername__ACE_Q",profileBio:"home_profileBio__pKxZ3",sectionHeading:"home_sectionHeading__F_a8F",profileContent:"home_profileContent__a6u08",emptyState:"home_emptyState__0oCVS",sidebarSection:"home_sidebarSection__cyQHn",backLink:"home_backLink__Anavd","article-image":"home_article-image__mOEoE",searchContainer:"home_searchContainer__NcXe2",searchInputWrapper:"home_searchInputWrapper__jDfiT",searchInput:"home_searchInput__D6QYE",clearSearchButton:"home_clearSearchButton__XEPTo",searchResultsContainer:"home_searchResultsContainer__aOrYe",searchResultsTitle:"home_searchResultsTitle__KjT7N",backToAllButton:"home_backToAllButton__ShJnS",searchResults:"home_searchResults__sWgqy",searchResultItem:"home_searchResultItem__CuGQu",searchResultAvatar:"home_searchResultAvatar__QRukz",adminAvatar:"home_adminAvatar__5I7Wp",developerAvatar:"home_developerAvatar__YWLjR",userAvatar:"home_userAvatar__sJEnc",searchResultInfo:"home_searchResultInfo__vOptx",searchResultName:"home_searchResultName__yMZVz",searchResultUsername:"home_searchResultUsername__oQ4tk",searchResultRole:"home_searchResultRole__E5rB8",searchResultRoleAdmin:"home_searchResultRoleAdmin__58nmi",searchResultRoleDeveloper:"home_searchResultRoleDeveloper__D6KaE",searchResultRoleUser:"home_searchResultRoleUser__P_B5t",roleTag:"home_roleTag__X3nyq",noResults:"home_noResults__VKSke",searchBarContainer:"home_searchBarContainer__p1hA_",sidebarSearch:"home_sidebarSearch__rSKxe",tabContainer:"home_tabContainer__WiCFt",tabButton:"home_tabButton___0LSM",activeTab:"home_activeTab___peId",docsContainer:"home_docsContainer__uFnrg",userManagementContainer:"home_userManagementContainer__d8zKX",sectionTitle:"home_sectionTitle___LoW8",statsContainer:"home_statsContainer__Ecxt0",statBox:"home_statBox__sOuzf",statNumber:"home_statNumber__0HaRO",statLabel:"home_statLabel___lx3s",usersTableContainer:"home_usersTableContainer__xgtQE",usersTable:"home_usersTable__UQjnE",roleSelect:"home_roleSelect__85R__",documentationContainer:"home_documentationContainer__3hhXs",docSidebar:"home_docSidebar__NjNVF",docSearchContainer:"home_docSearchContainer__2oA__",docSearchInput:"home_docSearchInput__YwfD7",docNav:"home_docNav__TyBYN",docNavItem:"home_docNavItem__wzbPN",docNavItemActive:"home_docNavItemActive__2G1E0",docContent:"home_docContent__HO1_Q",docTitle:"home_docTitle__IElVr",docSubheading:"home_docSubheading__qezFR",docText:"home_docText__pOq_f",codeBlock:"home_codeBlock__2XLSi",codeBlockContainer:"home_codeBlockContainer__m8biO",codeLineNumbers:"home_codeLineNumbers___g0z3",codeContent:"home_codeContent__8Ufq0",keyword:"home_keyword__xcIYJ",string:"home_string__IDzCq",comment:"home_comment___nq3w",function:"home_function__lPtv4",type:"home_type__Ot2EV",variable:"home_variable__V9b_I",number:"home_number__EdK6u",operator:"home_operator__4A6PV",copyButton:"home_copyButton__FJrSq",alertInfo:"home_alertInfo__DNxOh",alertWarning:"home_alertWarning__h5lMU",alertSuccess:"home_alertSuccess__VNous",userTableCell:"home_userTableCell__EfMXq","tag-header":"home_tag-header__V7Fnc",highlight:"home_highlight__wsiMU","tag-description":"home_tag-description___G1Ky","back-link":"home_back-link__nWn7j","no-results":"home_no-results__lv_Xi","explore-header":"home_explore-header__EECf8","explore-title":"home_explore-title__FCgPB","explore-subtitle":"home_explore-subtitle__n2Hy_","explore-container":"home_explore-container__RUVLK","explore-section":"home_explore-section__kWWcA","featured-articles-grid":"home_featured-articles-grid__Fow9u","feature-large":"home_feature-large__V74KX","tags-selector":"home_tags-selector__Bw1Pi","tag-button":"home_tag-button__xESQB","tag-button-active":"home_tag-button-active__cuvxR",fullWidthContainer:"home_fullWidthContainer__bH7VI",editorHeader:"home_editorHeader__nxAUv",backButton:"home_backButton__7YWR2",editorContainer:"home_editorContainer__TTjO_"}},27910:e=>{"use strict";e.exports=require("stream")},28354:e=>{"use strict";e.exports=require("util")},29021:e=>{"use strict";e.exports=require("fs")},29294:e=>{"use strict";e.exports=require("next/dist/server/app-render/work-async-storage.external.js")},31501:(e,t,r)=>{Promise.resolve().then(r.bind(r,58868))},33873:e=>{"use strict";e.exports=require("path")},34631:e=>{"use strict";e.exports=require("tls")},37366:e=>{"use strict";e.exports=require("dns")},37396:()=>{},38701:(e,t,r)=>{Promise.resolve().then(r.t.bind(r,85814,23))},43176:(e,t,r)=>{Promise.resolve().then(r.t.bind(r,86346,23)),Promise.resolve().then(r.t.bind(r,27924,23)),Promise.resolve().then(r.t.bind(r,35656,23)),Promise.resolve().then(r.t.bind(r,40099,23)),Promise.resolve().then(r.t.bind(r,38243,23)),Promise.resolve().then(r.t.bind(r,28827,23)),Promise.resolve().then(r.t.bind(r,62763,23)),Promise.resolve().then(r.t.bind(r,97173,23))},43649:(e,t,r)=>{"use strict";r.d(t,{db:()=>l,j2:()=>i});var o=r(67989);r(10178);var a=r(84245),s=r(75535);let n=(0,o.Wp)({apiKey:"AIzaSyCFpybhLt43iKUw6lNahU1n2zjYv0BXmf4",authDomain:"journalitev1.firebaseapp.com",projectId:"journalitev1",storageBucket:"journalitev1.firebasestorage.app",messagingSenderId:"897263211529",appId:"1:897263211529:web:bae4a00910a2236d6d54d8",measurementId:"G-ZYT8PRMT0D"}),i=(0,a.xI)(n),l=(0,s.aU)(n)},54413:(e,t,r)=>{"use strict";r.r(t),r.d(t,{default:()=>l});var o=r(37413),a=r(4536),s=r.n(a),n=r(22366),i=r.n(n);function l(){return(0,o.jsx)("div",{className:i().container,children:(0,o.jsxs)("div",{className:i().errorAlert,children:[(0,o.jsx)("h1",{children:"404 - Page Not Found"}),(0,o.jsx)("p",{children:"The page you are looking for does not exist."}),(0,o.jsx)("p",{children:"This could be because the user profile doesn't exist or the URL is incorrect."}),(0,o.jsx)(s(),{href:"/",className:i().backLink,children:"Back to home"})]})})}},55511:e=>{"use strict";e.exports=require("crypto")},58868:(e,t,r)=>{"use strict";r.r(t),r.d(t,{default:()=>o});let o=(0,r(12907).registerClientReference)(function(){throw Error("Attempted to call the default export of \"/Users/sirabdisalam/journalite-article-page/src/app/dev/page.tsx\" from the server, but it's on the client. It's not possible to invoke a client function from the server, it can only be rendered as a Component or passed to props of a Client Component.")},"/Users/sirabdisalam/journalite-article-page/src/app/dev/page.tsx","default")},62916:(e,t,r)=>{"use strict";r.r(t),r.d(t,{GlobalError:()=>n.a,__next_app__:()=>_,pages:()=>m,routeModule:()=>u,tree:()=>c});var o=r(65239),a=r(48088),s=r(88170),n=r.n(s),i=r(30893),l={};for(let e in i)0>["default","tree","pages","GlobalError","__next_app__","routeModule"].indexOf(e)&&(l[e]=()=>i[e]);r.d(t,l);let c={children:["",{children:["dev",{children:["__PAGE__",{},{page:[()=>Promise.resolve().then(r.bind(r,58868)),"/Users/sirabdisalam/journalite-article-page/src/app/dev/page.tsx"]}]},{}]},{layout:[()=>Promise.resolve().then(r.bind(r,94431)),"/Users/sirabdisalam/journalite-article-page/src/app/layout.tsx"],"not-found":[()=>Promise.resolve().then(r.bind(r,54413)),"/Users/sirabdisalam/journalite-article-page/src/app/not-found.tsx"],forbidden:[()=>Promise.resolve().then(r.t.bind(r,89999,23)),"next/dist/client/components/forbidden-error"],unauthorized:[()=>Promise.resolve().then(r.t.bind(r,65284,23)),"next/dist/client/components/unauthorized-error"]}]}.children,m=["/Users/sirabdisalam/journalite-article-page/src/app/dev/page.tsx"],_={require:r,loadChunk:()=>Promise.resolve()},u=new o.AppPageRouteModule({definition:{kind:a.RouteKind.APP_PAGE,page:"/dev/page",pathname:"/dev",bundlePath:"",filename:"",appPaths:[]},userland:{loaderTree:c}})},63033:e=>{"use strict";e.exports=require("next/dist/server/app-render/work-unit-async-storage.external.js")},72547:()=>{},73496:e=>{"use strict";e.exports=require("http2")},74075:e=>{"use strict";e.exports=require("zlib")},75085:(e,t,r)=>{Promise.resolve().then(r.t.bind(r,4536,23))},78765:(e,t,r)=>{Promise.resolve().then(r.bind(r,22278))},79551:e=>{"use strict";e.exports=require("url")},79624:(e,t,r)=>{Promise.resolve().then(r.t.bind(r,16444,23)),Promise.resolve().then(r.t.bind(r,16042,23)),Promise.resolve().then(r.t.bind(r,88170,23)),Promise.resolve().then(r.t.bind(r,49477,23)),Promise.resolve().then(r.t.bind(r,29345,23)),Promise.resolve().then(r.t.bind(r,12089,23)),Promise.resolve().then(r.t.bind(r,46577,23)),Promise.resolve().then(r.t.bind(r,31307,23))},81630:e=>{"use strict";e.exports=require("http")},91086:()=>{},91645:e=>{"use strict";e.exports=require("net")},94431:(e,t,r)=>{"use strict";r.r(t),r.d(t,{default:()=>m,metadata:()=>l,viewport:()=>c});var o=r(37413),a=r(2202),s=r.n(a),n=r(64988),i=r.n(n);r(72547),r(37396);let l={title:"Journalite - Your Trusted Journalism Source",description:"A revolutionary social platform delivering reliable journalism"},c={width:"device-width",initialScale:1,maximumScale:1,userScalable:!1};function m({children:e}){return(0,o.jsxs)("html",{lang:"en",className:`${s().variable} ${i().variable}`,children:[(0,o.jsxs)("head",{children:[(0,o.jsx)("link",{rel:"stylesheet",href:"https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"}),(0,o.jsx)("link",{rel:"stylesheet",href:"https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap"})]}),(0,o.jsx)("body",{children:e})]})}},94735:e=>{"use strict";e.exports=require("events")}};var t=require("../../webpack-runtime.js");t.C(e);var r=e=>t(t.s=e),o=t.X(0,[476,948],()=>r(62916));module.exports=o})();
+      `})).replace(/## ([^\n]+)/g,'<h2 class="'+c().docSubheading+'">$1</h2>').replace(/\*\*([^*]+)\*\*/g,"<strong>$1</strong>").replace(/\*([^*]+)\*/g,"<em>$1</em>").replace(/- ([^\n]+)/g,"<li>$1</li>").replace(/(<li>[^<]+<\/li>(\s*)?)+/g,"<ul>$&</ul>")).split(/<pre class=/);for(let e=0;e<a.length;e++)0!==e&&a[e].includes("codeBlock")||(a[e]=a[e].replace(/\n\n/g,"<br><br>"));return a.join("<pre class=")}(d.content)}},h)]})})]})}function u(){(0,i.useRouter)();let[e,t]=(0,a.useState)(!0),[o,s]=(0,a.useState)(!1),[n,l]=(0,a.useState)(""),[m,u]=(0,a.useState)("docs");return e?(0,r.jsx)("div",{className:c().container,children:(0,r.jsxs)("div",{className:c().loadingContainer,children:[(0,r.jsx)("div",{className:c().loadingSpinner}),(0,r.jsx)("p",{children:"Verifying access..."})]})}):o?(0,r.jsx)("div",{className:c().container,children:(0,r.jsxs)("div",{className:c().devDocsContainer,children:[(0,r.jsx)("h1",{className:c().devDocsTitle,children:"Developer Portal"}),(0,r.jsxs)("p",{className:c().devDocsWelcome,children:["Welcome, ",n,"! This page contains developer tools and documentation."]}),(0,r.jsxs)("div",{className:c().tabContainer,children:[(0,r.jsx)("button",{className:`${c().tabButton} ${"docs"===m?c().activeTab:""}`,onClick:()=>u("docs"),children:"Documentation"}),(0,r.jsx)("button",{className:`${c().tabButton} ${"users"===m?c().activeTab:""}`,onClick:()=>u("users"),children:"User Management"})]}),"docs"===m?(0,r.jsx)(h,{}):(0,r.jsx)(d,{})]})}):null}},22366:e=>{e.exports={"article-page":"home_article-page__CJrzD","three-column-layout":"home_three-column-layout__x41EQ","left-sidebar":"home_left-sidebar__MaSov",collapsed:"home_collapsed__2_VdN","sidebar-header":"home_sidebar-header__4tIx3",logo:"home_logo__fwoF8","toggle-button":"home_toggle-button__sVP2W","vertical-nav":"home_vertical-nav__Cj0En","nav-home":"home_nav-home__X8XEK","nav-icon":"home_nav-icon__yM4nn","nav-thoughts":"home_nav-thoughts__0rfq1","nav-explore":"home_nav-explore__bcQBn","nav-profile":"home_nav-profile__WAAem","nav-settings":"home_nav-settings__0w_SC","nav-logout":"home_nav-logout__MCaXq","nav-login":"home_nav-login__1lQUW","nav-signup":"home_nav-signup__8EtSK","nav-learn":"home_nav-learn__M1FC_","nav-plans":"home_nav-plans__c9i07","nav-link":"home_nav-link__6kEPW","nav-text":"home_nav-text__B7jdN",active:"home_active__S0jaV","sidebar-footer":"home_sidebar-footer__Fj8FR","sidebar-collapse-button":"home_sidebar-collapse-button__W3ZL0","center-column":"home_center-column__eaxY9",expanded:"home_expanded__mJRm4",loading:"home_loading__D6__B","prompt-banner":"home_prompt-banner__xFQFU","prompt-icon":"home_prompt-icon__9eWo_","prompt-text":"home_prompt-text__P3NSJ","prompt-button":"home_prompt-button__z8a6r","featured-card":"home_featured-card__r3SXe","featured-content":"home_featured-content__gbOMz","featured-image":"home_featured-image__3DBbZ","cover-image":"home_cover-image___ZInI","featured-label":"home_featured-label__z2IzP","featured-title":"home_featured-title__qNCn0","featured-meta":"home_featured-meta__Lq6uD","featured-excerpt":"home_featured-excerpt__dhAPX","read-link":"home_read-link___6ZMN","article-grid":"home_article-grid__mC5EI","article-card":"home_article-card__fzb4w","article-title":"home_article-title__toAvL","article-meta":"home_article-meta__9UhXG","article-excerpt":"home_article-excerpt__kuCuZ","article-tags":"home_article-tags__VxN88",tag:"home_tag__LEtq4","reaction-bar":"home_reaction-bar__Y0gsv","reaction-button":"home_reaction-button__KLD0h","reaction-icon":"home_reaction-icon__vhB0y","right-sidebar":"home_right-sidebar__e_5Hr","sidebar-heading":"home_sidebar-heading__lega4","tag-list":"home_tag-list__fgeEi","trending-tag":"home_trending-tag__0awB8","write-button":"home_write-button__Gowtg","edit-button":"home_edit-button__RsQLX","quote-card":"home_quote-card__LAcHm","quote-tag":"home_quote-tag__AukSw","article-container":"home_article-container__RCmcS","article-header":"home_article-header__mdTUd","article-content":"home_article-content__HUOVu","article-paragraph":"home_article-paragraph__6t7oy","article-cover-image":"home_article-cover-image__KDspQ",header:"home_header__PUC5f",hero:"home_hero__3iLRs","hero-title":"home_hero-title__tuN3q","hero-subtitle":"home_hero-subtitle__cyiJZ","cta-button":"home_cta-button__X8xB1","main-grid":"home_main-grid__qFsbA","section-title":"home_section-title__wEK3N","article-tag":"home_article-tag__m6NuJ","author-info":"home_author-info__Xw67P","author-avatar":"home_author-avatar__kBH_g","author-name":"home_author-name__vEgN7",topics:"home_topics__lPwTP","topic-tag":"home_topic-tag__LL122","trending-list":"home_trending-list__YinkY",writers:"home_writers__2u4IP","writer-item":"home_writer-item__1jEW3","writer-info":"home_writer-info__OG3R7","writer-avatar":"home_writer-avatar__b69xH","writer-name":"home_writer-name__McEqt","follow-button":"home_follow-button__UX_LS",features:"home_features__Uc1bS","feature-title":"home_feature-title__9pzGT","feature-desc":"home_feature-desc__jOby5",footer:"home_footer__1HL_E","menu-overlay":"home_menu-overlay__S__PE",fadeIn:"home_fadeIn__uLm0f",articleFormContainer:"home_articleFormContainer__DSMnb",articleFormHeader:"home_articleFormHeader__yeH26",articleFormTitle:"home_articleFormTitle__B11fv",articleFormSubtitle:"home_articleFormSubtitle__XZLCa",articleForm:"home_articleForm__qtKbt",formGroup:"home_formGroup__dX_8o",formLabel:"home_formLabel__qdIcu",optionalLabel:"home_optionalLabel__U0gvl",formControl:"home_formControl__Cf48C",formTextarea:"home_formTextarea__tVyby",formActions:"home_formActions__BdMyR",cancelButton:"home_cancelButton__docpL",submitButton:"home_submitButton__gVGwS",errorAlert:"home_errorAlert__tVY_A",errorIcon:"home_errorIcon__gc9ZB",imagePreview:"home_imagePreview__zqwvQ",tagsPreview:"home_tagsPreview__V6lf7",container:"home_container__TLSt1","writing-tips":"home_writing-tips__2ODsS","writing-tip":"home_writing-tip__dmGLE",loginLink:"home_loginLink__imUQF",discussionSection:"home_discussionSection__0Ifpl",discussionTitle:"home_discussionTitle__O3EuW",commentForm:"home_commentForm__zAQrR",commentInputContainer:"home_commentInputContainer__gKx6N",commentAvatar:"home_commentAvatar__T8zJ0",replyAvatar:"home_replyAvatar___kB3f",commentInputWrapper:"home_commentInputWrapper__hxZkN",commentInput:"home_commentInput__uUtg_",replyInput:"home_replyInput__rYKdQ",commentActions:"home_commentActions__OO9jZ",replyActions:"home_replyActions__p9B_f",submitReplyButton:"home_submitReplyButton__BdUJ2",cancelReplyButton:"home_cancelReplyButton__XvM8F",loginPrompt:"home_loginPrompt__w4N0u",loginPromptButtons:"home_loginPromptButtons__snC_B",loginButton:"home_loginButton__YS1MQ",closePromptButton:"home_closePromptButton__QYTJ8",errorMessage:"home_errorMessage__9Ki1b",loadingSpinner:"home_loadingSpinner__peANt",spin:"home_spin__D0mwY",noComments:"home_noComments__850HV",commentsList:"home_commentsList__fRn9g",commentItem:"home_commentItem__L5fNy",commentHeader:"home_commentHeader___Zk6a",replyHeader:"home_replyHeader__f7TaG",commentMeta:"home_commentMeta__MJRA8",replyMeta:"home_replyMeta__ve_YC",commentAuthor:"home_commentAuthor__HPgNT",replyAuthor:"home_replyAuthor__2Brdn",commentDate:"home_commentDate__VBAuX",replyDate:"home_replyDate__y0RtU",commentContent:"home_commentContent__uzL9r",replyContent:"home_replyContent__HFiXM",commentControls:"home_commentControls__ebC_D",likeButton:"home_likeButton__gtW9b",replyButton:"home_replyButton__e_FYj",toggleRepliesButton:"home_toggleRepliesButton__UC2Rk",deleteButton:"home_deleteButton__VEIPc",liked:"home_liked__LMNuR",replyForm:"home_replyForm__CpHFF",replyInputContainer:"home_replyInputContainer__3_T0M",repliesList:"home_repliesList__TjSoC",replyItem:"home_replyItem__TadHa",profileHeader:"home_profileHeader__N2hD3",profileAvatar:"home_profileAvatar__zAfHf",avatarPlaceholder:"home_avatarPlaceholder__mh9Xc",profileInfo:"home_profileInfo__tQtas",profileName:"home_profileName__7mtlO",profileUsername:"home_profileUsername__ACE_Q",profileBio:"home_profileBio__pKxZ3",sectionHeading:"home_sectionHeading__F_a8F",profileContent:"home_profileContent__a6u08",emptyState:"home_emptyState__0oCVS",sidebarSection:"home_sidebarSection__cyQHn",backLink:"home_backLink__Anavd","article-image":"home_article-image__mOEoE",searchContainer:"home_searchContainer__NcXe2",searchInputWrapper:"home_searchInputWrapper__jDfiT",searchInput:"home_searchInput__D6QYE",clearSearchButton:"home_clearSearchButton__XEPTo",searchResultsContainer:"home_searchResultsContainer__aOrYe",searchResultsTitle:"home_searchResultsTitle__KjT7N",backToAllButton:"home_backToAllButton__ShJnS",searchResults:"home_searchResults__sWgqy",searchResultItem:"home_searchResultItem__CuGQu",searchResultAvatar:"home_searchResultAvatar__QRukz",adminAvatar:"home_adminAvatar__5I7Wp",developerAvatar:"home_developerAvatar__YWLjR",userAvatar:"home_userAvatar__sJEnc",searchResultInfo:"home_searchResultInfo__vOptx",searchResultName:"home_searchResultName__yMZVz",searchResultUsername:"home_searchResultUsername__oQ4tk",searchResultRole:"home_searchResultRole__E5rB8",searchResultRoleAdmin:"home_searchResultRoleAdmin__58nmi",searchResultRoleDeveloper:"home_searchResultRoleDeveloper__D6KaE",searchResultRoleUser:"home_searchResultRoleUser__P_B5t",roleTag:"home_roleTag__X3nyq",noResults:"home_noResults__VKSke",searchBarContainer:"home_searchBarContainer__p1hA_",sidebarSearch:"home_sidebarSearch__rSKxe",tabContainer:"home_tabContainer__WiCFt",tabButton:"home_tabButton___0LSM",activeTab:"home_activeTab___peId",docsContainer:"home_docsContainer__uFnrg",userManagementContainer:"home_userManagementContainer__d8zKX",sectionTitle:"home_sectionTitle___LoW8",statsContainer:"home_statsContainer__Ecxt0",statBox:"home_statBox__sOuzf",statNumber:"home_statNumber__0HaRO",statLabel:"home_statLabel___lx3s",usersTableContainer:"home_usersTableContainer__xgtQE",usersTable:"home_usersTable__UQjnE",roleSelect:"home_roleSelect__85R__",documentationContainer:"home_documentationContainer__3hhXs",docSidebar:"home_docSidebar__NjNVF",docSearchContainer:"home_docSearchContainer__2oA__",docSearchInput:"home_docSearchInput__YwfD7",docNav:"home_docNav__TyBYN",docNavItem:"home_docNavItem__wzbPN",docNavItemActive:"home_docNavItemActive__2G1E0",docContent:"home_docContent__HO1_Q",docTitle:"home_docTitle__IElVr",docSubheading:"home_docSubheading__qezFR",docText:"home_docText__pOq_f",codeBlock:"home_codeBlock__2XLSi",codeBlockContainer:"home_codeBlockContainer__m8biO",codeLineNumbers:"home_codeLineNumbers___g0z3",codeContent:"home_codeContent__8Ufq0",keyword:"home_keyword__xcIYJ",string:"home_string__IDzCq",comment:"home_comment___nq3w",function:"home_function__lPtv4",type:"home_type__Ot2EV",variable:"home_variable__V9b_I",number:"home_number__EdK6u",operator:"home_operator__4A6PV",copyButton:"home_copyButton__FJrSq",alertInfo:"home_alertInfo__DNxOh",alertWarning:"home_alertWarning__h5lMU",alertSuccess:"home_alertSuccess__VNous",userTableCell:"home_userTableCell__EfMXq","tag-header":"home_tag-header__V7Fnc",highlight:"home_highlight__wsiMU","tag-description":"home_tag-description___G1Ky","back-link":"home_back-link__nWn7j","no-results":"home_no-results__lv_Xi","explore-header":"home_explore-header__EECf8","explore-title":"home_explore-title__FCgPB","explore-subtitle":"home_explore-subtitle__n2Hy_","explore-container":"home_explore-container__RUVLK","explore-section":"home_explore-section__kWWcA","featured-articles-grid":"home_featured-articles-grid__Fow9u","feature-large":"home_feature-large__V74KX","tags-selector":"home_tags-selector__Bw1Pi","tag-button":"home_tag-button__xESQB","tag-button-active":"home_tag-button-active__cuvxR",fullWidthContainer:"home_fullWidthContainer__bH7VI",editorHeader:"home_editorHeader__nxAUv",backButton:"home_backButton__7YWR2",editorContainer:"home_editorContainer__TTjO_"}},27910:e=>{"use strict";e.exports=require("stream")},28354:e=>{"use strict";e.exports=require("util")},29021:e=>{"use strict";e.exports=require("fs")},29294:e=>{"use strict";e.exports=require("next/dist/server/app-render/work-async-storage.external.js")},31501:(e,t,o)=>{Promise.resolve().then(o.bind(o,58868))},33873:e=>{"use strict";e.exports=require("path")},34631:e=>{"use strict";e.exports=require("tls")},37366:e=>{"use strict";e.exports=require("dns")},37396:()=>{},38701:(e,t,o)=>{Promise.resolve().then(o.t.bind(o,85814,23))},43176:(e,t,o)=>{Promise.resolve().then(o.t.bind(o,86346,23)),Promise.resolve().then(o.t.bind(o,27924,23)),Promise.resolve().then(o.t.bind(o,35656,23)),Promise.resolve().then(o.t.bind(o,40099,23)),Promise.resolve().then(o.t.bind(o,38243,23)),Promise.resolve().then(o.t.bind(o,28827,23)),Promise.resolve().then(o.t.bind(o,62763,23)),Promise.resolve().then(o.t.bind(o,97173,23))},43649:(e,t,o)=>{"use strict";o.d(t,{db:()=>l,j2:()=>n});var r=o(67989);o(10178);var a=o(84245),i=o(75535);let s=(0,r.Wp)({apiKey:"AIzaSyCFpybhLt43iKUw6lNahU1n2zjYv0BXmf4",authDomain:"journalitev1.firebaseapp.com",projectId:"journalitev1",storageBucket:"journalitev1.firebasestorage.app",messagingSenderId:"897263211529",appId:"1:897263211529:web:bae4a00910a2236d6d54d8",measurementId:"G-ZYT8PRMT0D"}),n=(0,a.xI)(s),l=(0,i.getFirestore)(s)},54413:(e,t,o)=>{"use strict";o.r(t),o.d(t,{default:()=>l});var r=o(37413),a=o(4536),i=o.n(a),s=o(22366),n=o.n(s);function l(){return(0,r.jsx)("div",{className:n().container,children:(0,r.jsxs)("div",{className:n().errorAlert,children:[(0,r.jsx)("h1",{children:"404 - Page Not Found"}),(0,r.jsx)("p",{children:"The page you are looking for does not exist."}),(0,r.jsx)("p",{children:"This could be because the user profile doesn't exist or the URL is incorrect."}),(0,r.jsx)(i(),{href:"/",className:n().backLink,children:"Back to home"})]})})}},55511:e=>{"use strict";e.exports=require("crypto")},58868:(e,t,o)=>{"use strict";o.r(t),o.d(t,{default:()=>r});let r=(0,o(12907).registerClientReference)(function(){throw Error("Attempted to call the default export of \"/Users/sirabdisalam/journalite-article-page/src/app/dev/page.tsx\" from the server, but it's on the client. It's not possible to invoke a client function from the server, it can only be rendered as a Component or passed to props of a Client Component.")},"/Users/sirabdisalam/journalite-article-page/src/app/dev/page.tsx","default")},62916:(e,t,o)=>{"use strict";o.r(t),o.d(t,{GlobalError:()=>s.a,__next_app__:()=>d,pages:()=>m,routeModule:()=>h,tree:()=>c});var r=o(65239),a=o(48088),i=o(88170),s=o.n(i),n=o(30893),l={};for(let e in n)0>["default","tree","pages","GlobalError","__next_app__","routeModule"].indexOf(e)&&(l[e]=()=>n[e]);o.d(t,l);let c={children:["",{children:["dev",{children:["__PAGE__",{},{page:[()=>Promise.resolve().then(o.bind(o,58868)),"/Users/sirabdisalam/journalite-article-page/src/app/dev/page.tsx"]}]},{}]},{layout:[()=>Promise.resolve().then(o.bind(o,94431)),"/Users/sirabdisalam/journalite-article-page/src/app/layout.tsx"],"not-found":[()=>Promise.resolve().then(o.bind(o,54413)),"/Users/sirabdisalam/journalite-article-page/src/app/not-found.tsx"],forbidden:[()=>Promise.resolve().then(o.t.bind(o,89999,23)),"next/dist/client/components/forbidden-error"],unauthorized:[()=>Promise.resolve().then(o.t.bind(o,65284,23)),"next/dist/client/components/unauthorized-error"]}]}.children,m=["/Users/sirabdisalam/journalite-article-page/src/app/dev/page.tsx"],d={require:o,loadChunk:()=>Promise.resolve()},h=new r.AppPageRouteModule({definition:{kind:a.RouteKind.APP_PAGE,page:"/dev/page",pathname:"/dev",bundlePath:"",filename:"",appPaths:[]},userland:{loaderTree:c}})},63033:e=>{"use strict";e.exports=require("next/dist/server/app-render/work-unit-async-storage.external.js")},72547:()=>{},73496:e=>{"use strict";e.exports=require("http2")},74075:e=>{"use strict";e.exports=require("zlib")},75085:(e,t,o)=>{Promise.resolve().then(o.t.bind(o,4536,23))},78765:(e,t,o)=>{Promise.resolve().then(o.bind(o,22278))},79551:e=>{"use strict";e.exports=require("url")},79624:(e,t,o)=>{Promise.resolve().then(o.t.bind(o,16444,23)),Promise.resolve().then(o.t.bind(o,16042,23)),Promise.resolve().then(o.t.bind(o,88170,23)),Promise.resolve().then(o.t.bind(o,49477,23)),Promise.resolve().then(o.t.bind(o,29345,23)),Promise.resolve().then(o.t.bind(o,12089,23)),Promise.resolve().then(o.t.bind(o,46577,23)),Promise.resolve().then(o.t.bind(o,31307,23))},81630:e=>{"use strict";e.exports=require("http")},91086:()=>{},91645:e=>{"use strict";e.exports=require("net")},94431:(e,t,o)=>{"use strict";o.r(t),o.d(t,{default:()=>m,metadata:()=>l,viewport:()=>c});var r=o(37413),a=o(2202),i=o.n(a),s=o(64988),n=o.n(s);o(72547),o(37396);let l={title:"Journalite - Your Trusted Journalism Source",description:"A revolutionary social platform delivering reliable journalism"},c={width:"device-width",initialScale:1,maximumScale:1,userScalable:!1};function m({children:e}){return(0,r.jsxs)("html",{lang:"en",className:`${i().variable} ${n().variable}`,children:[(0,r.jsxs)("head",{children:[(0,r.jsx)("link",{rel:"stylesheet",href:"https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"}),(0,r.jsx)("link",{rel:"stylesheet",href:"https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap"})]}),(0,r.jsx)("body",{children:e})]})}},94735:e=>{"use strict";e.exports=require("events")}};var t=require("../../webpack-runtime.js");t.C(e);var o=e=>t(t.s=e),r=t.X(0,[476,948],()=>o(62916));module.exports=r})();

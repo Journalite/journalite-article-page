@@ -14,13 +14,17 @@
   "src/components/ReflectionJournal.tsx -> @/firebase/articles": {
     "id": 9210,
     "files": [
-      "static/chunks/9210.6816a2d20e2782dc.js"
+      "static/chunks/9210.b9db254b1c3591b1.js"
     ]
+  },
+  "src/services/highlightService.ts -> firebase/firestore": {
+    "id": 5317,
+    "files": []
   },
   "src/services/reflectionService.ts -> @/firebase/articles": {
     "id": 9210,
     "files": [
-      "static/chunks/9210.6816a2d20e2782dc.js"
+      "static/chunks/9210.b9db254b1c3591b1.js"
     ]
   }
 }

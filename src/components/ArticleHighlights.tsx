@@ -1,41 +1,55 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import HighlightToolbar from './HighlightToolbar';
 import { useHighlights } from '@/context/HighlightContext';
-import { Highlight } from '@/services/highlightService';
+import { Highlight, HighlightTag, generateHighlightShareUrl } from '@/services/highlightService';
+import ShareModal from './ShareModal';
 
 interface ArticleHighlightsProps {
   articleId: string;
   children: React.ReactNode;
+  articleTitle?: string;
+  articleSlug?: string;
   onShare?: (text: string) => void; // Optional share handler
 }
 
-// Get context for a selection
+// Get context for a selection with improved handling
 const getSelectionContext = (selection: Selection): { prefix: string; suffix: string } => {
-  // Default empty result
   const result = { prefix: '', suffix: '' };
   
   if (!selection || selection.rangeCount === 0) return result;
   
   const range = selection.getRangeAt(0);
-  const selectedText = range.toString();
+  const selectedText = range.toString().trim();
   
-  // Clone the range for getting surrounding content
-  const contextRange = range.cloneRange();
+  // Get the full text content of the container
+  const container = range.commonAncestorContainer;
+  const containerElement = container.nodeType === Node.TEXT_NODE ? container.parentElement : container;
   
-  // Get parent node of selection
-  const parentNode = range.commonAncestorContainer;
-  const parentContent = parentNode.textContent || '';
+  if (!containerElement) return result;
   
-  // Find selection position in parent content
-  const selectionStart = parentContent.indexOf(selectedText);
+  // Get all text content from the container
+  const fullText = containerElement.textContent || '';
+  const cleanSelectedText = selectedText.replace(/\s+/g, ' ');
   
-  if (selectionStart !== -1) {
-    // Get up to 30 chars of context before and after selection
-    const prefixStart = Math.max(0, selectionStart - 30);
-    const suffixEnd = Math.min(parentContent.length, selectionStart + selectedText.length + 30);
+  // Find the position of our selected text in the full text
+  const startIndex = fullText.indexOf(cleanSelectedText);
+  
+  if (startIndex !== -1) {
+    // Get context with word boundaries to avoid partial word issues
+    const contextLength = 50;
+    const prefixStart = Math.max(0, startIndex - contextLength);
+    const suffixEnd = Math.min(fullText.length, startIndex + cleanSelectedText.length + contextLength);
     
-    result.prefix = parentContent.substring(prefixStart, selectionStart);
-    result.suffix = parentContent.substring(selectionStart + selectedText.length, suffixEnd);
+    // Extract prefix and suffix, ensuring we don't break words
+    let prefix = fullText.substring(prefixStart, startIndex);
+    let suffix = fullText.substring(startIndex + cleanSelectedText.length, suffixEnd);
+    
+    // Trim to word boundaries
+    prefix = prefix.replace(/^\S*\s/, ''); // Remove partial word at start
+    suffix = suffix.replace(/\s\S*$/, ''); // Remove partial word at end
+    
+    result.prefix = prefix;
+    result.suffix = suffix;
   }
   
   return result;
@@ -96,7 +110,7 @@ const applyHighlightsToContent = (highlights: any[], articleContent: HTMLElement
       try {
         // Create highlight mark
         const mark = document.createElement('mark');
-        mark.className = 'article-highlight';
+        mark.className = `article-highlight highlight-${highlight.tag || 'insight'}`;
         mark.dataset.highlightId = highlight.id;
         
         // Apply highlight
@@ -108,7 +122,7 @@ const applyHighlightsToContent = (highlights: any[], articleContent: HTMLElement
   });
 };
 
-const ArticleHighlights: React.FC<ArticleHighlightsProps> = ({ articleId, children, onShare }) => {
+const ArticleHighlights: React.FC<ArticleHighlightsProps> = ({ articleId, children, articleTitle = 'Article', articleSlug = '', onShare }) => {
   const [selection, setSelection] = useState<Selection | null>(null);
   const { highlights, saveHighlight, removeHighlight, highlightElement } = useHighlights();
   const [contentRef, setContentRef] = useState<HTMLElement | null>(null);
@@ -120,6 +134,8 @@ const ArticleHighlights: React.FC<ArticleHighlightsProps> = ({ articleId, childr
   const [showUnhighlightToolbar, setShowUnhighlightToolbar] = useState(false);
   const [isHidingToolbar, setIsHidingToolbar] = useState(false);
   const [unhighlightPosition, setUnhighlightPosition] = useState({ top: 0, left: 0 });
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [shareHighlightText, setShareHighlightText] = useState('');
   
   // Function to hide toolbar with animation
   const hideToolbarWithAnimation = useCallback(() => {
@@ -145,21 +161,22 @@ const ArticleHighlights: React.FC<ArticleHighlightsProps> = ({ articleId, childr
   }, [showUnhighlightToolbar]);
   
   // Handle highlight button click
-  const handleHighlight = useCallback((selectedText: string, range: Range) => {
+  const handleHighlight = useCallback((selectedText: string, range: Range, tag: HighlightTag) => {
     if (selectedText && range) {
       // Get context for the selection
       const context = getSelectionContext(window.getSelection()!);
       
-      // Save highlight to database
+      // Save highlight to database with tag
       saveHighlight(
         selectedText.trim(),
         context.prefix,
         context.suffix,
-        articleId
+        articleId,
+        tag
       );
       
-      // Apply highlight visually
-      highlightElement(range);
+      // Apply highlight visually with tag-based styling
+      highlightElement(range, tag);
     }
   }, [articleId, saveHighlight, highlightElement]);
   
@@ -239,31 +256,9 @@ const ArticleHighlights: React.FC<ArticleHighlightsProps> = ({ articleId, childr
 
   // Handle share button click
   const handleShare = useCallback((selectedText: string) => {
-    if (onShare) {
-      onShare(selectedText);
-    } else {
-      // Fallback if no share handler is provided
-      const shareText = `"${selectedText}" — via Journalite`;
-      
-      // Try to use native share API if available
-      if (navigator.share) {
-        navigator.share({
-          text: shareText,
-        }).catch(error => {
-          console.error('Error sharing:', error);
-          // Fallback to copying to clipboard
-          navigator.clipboard.writeText(shareText)
-            .then(() => alert('Quote copied to clipboard!'))
-            .catch(err => console.error('Failed to copy:', err));
-        });
-      } else {
-        // Fallback to copying to clipboard
-        navigator.clipboard.writeText(shareText)
-          .then(() => alert('Quote copied to clipboard!'))
-          .catch(err => console.error('Failed to copy:', err));
-      }
-    }
-  }, [onShare]);
+    setShareHighlightText(selectedText);
+    setShowShareModal(true);
+  }, []);
 
   // Handle AI assist button click
   const handleAiAssist = useCallback((selectedText: string) => {
@@ -438,6 +433,17 @@ const ArticleHighlights: React.FC<ArticleHighlightsProps> = ({ articleId, childr
             </div>
           </div>
         </div>
+      )}
+      
+      {/* Share Modal */}
+      {showShareModal && (
+        <ShareModal
+          isOpen={showShareModal}
+          onClose={() => setShowShareModal(false)}
+          highlightText={shareHighlightText}
+          articleTitle={articleTitle}
+          shareUrl={generateHighlightShareUrl(articleSlug, articleId)}
+        />
       )}
     </>
   );
