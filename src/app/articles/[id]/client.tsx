@@ -4,7 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { auth } from '@/firebase/clientApp';
-import ArticleWithHighlights from '@/components/ArticleWithHighlights';
+import ArticleContent from '@/components/ArticleContent';
+import LikeButton from '@/components/LikeButton';
 import CommentSection from '@/components/CommentSection';
 import ArticleComposer from '@/components/ArticleComposer';
 import { getArticleById, Article } from '@/firebase/articles';
@@ -26,12 +27,10 @@ const ArticlePageClient: React.FC<ArticlePageClientProps> = ({ id }) => {
     authorName: string;
     createdAt: string;
     readTime: number;
-    likes?: string[];
     tags?: string[];
     authorId?: string;
   } | null>(null);
-  const [likes, setLikes] = useState<string[]>([]);
-  const [isLiked, setIsLiked] = useState(false);
+  const [initialLikes, setInitialLikes] = useState<string[]>([]);
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -90,8 +89,8 @@ const ArticlePageClient: React.FC<ArticlePageClientProps> = ({ id }) => {
       
       setArticleHtml(cleanHtml);
       
-      // Set likes data
-      setLikes(articleData.likes || []);
+      // Set likes data separately
+      setInitialLikes(articleData.likes || []);
       
       // Calculate read time (rough estimate: 200 words per minute)
       const wordCount = articleData.body ? articleData.body.split(/\s+/).length : 0;
@@ -111,7 +110,6 @@ const ArticlePageClient: React.FC<ArticlePageClientProps> = ({ id }) => {
         authorName: articleData.authorName || 'Anonymous',
         createdAt: date,
         readTime: readTimeMinutes,
-        likes: articleData.likes || [],
         tags: articleData.tags || [],
         authorId: articleData.authorId
       });
@@ -129,13 +127,6 @@ const ArticlePageClient: React.FC<ArticlePageClientProps> = ({ id }) => {
     fetchArticle();
   }, [id]);
   
-  // Update like status based on current user
-  useEffect(() => {
-    if (article?.likes && currentUser) {
-      setIsLiked(article.likes.includes(currentUser.uid));
-    }
-  }, [article, currentUser]);
-  
   // Analyze mood when article content is loaded (only for authenticated users)
   useEffect(() => {
     if (articleHtml && isAuthenticated) {
@@ -147,30 +138,6 @@ const ArticlePageClient: React.FC<ArticlePageClientProps> = ({ id }) => {
       }
     }
   }, [articleHtml, isAuthenticated]);
-  
-
-  
-  const handleLikeArticle = async () => {
-    if (!currentUser) {
-      // Prompt to login
-      alert('Please login to like articles');
-      return;
-    }
-    
-    try {
-      // This is a simplified placeholder - you would call your API here
-      // to update the likes in your database
-      if (isLiked) {
-        setLikes(likes.filter(uid => uid !== currentUser.uid));
-        setIsLiked(false);
-      } else {
-        setLikes([...likes, currentUser.uid]);
-        setIsLiked(true);
-      }
-    } catch (error) {
-      console.error('Error updating like status:', error);
-    }
-  };
 
   const handleEditClick = () => {
     setIsEditing(true);
@@ -394,16 +361,12 @@ const ArticlePageClient: React.FC<ArticlePageClientProps> = ({ id }) => {
               </div>
               
               <div className={styles.articleActions}>
-                <button 
-                  className={`${styles.likeButton} ${isLiked ? styles.liked : ''}`}
-                  onClick={handleLikeArticle}
-                  aria-label={isLiked ? 'Unlike article' : 'Like article'}
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill={isLiked ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" className={styles.likeIcon}>
-                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-                  </svg>
-                  <span>{likes.length > 0 ? likes.length : ''}</span>
-                </button>
+                <LikeButton
+                  articleId={id}
+                  initialLikes={initialLikes}
+                  className={styles.likeButton}
+                  styles={styles}
+                />
               
                 {currentUser && article.authorId === currentUser.uid && (
                   <button 
@@ -427,15 +390,15 @@ const ArticlePageClient: React.FC<ArticlePageClientProps> = ({ id }) => {
         )}
         
         {/* Article content with highlights */}
-        <ArticleWithHighlights 
+        <ArticleContent 
           articleId={id} 
-          initialHtml={articleHtml || undefined}
+          articleHtml={articleHtml}
           isAuthenticated={isAuthenticated}
           articleTitle={article?.title || 'Article'}
           articleSlug={article?.title ? article.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') : id}
           {...(isAuthenticated && {
             moodFeatureEnabled: moodFeatureEnabled,
-            onToggleMoodFeature: (enabled) => {
+            onToggleMoodFeature: (enabled: boolean) => {
               setMoodFeatureEnabled(enabled);
               localStorage.setItem('moodFeatureEnabled', JSON.stringify(enabled));
             }

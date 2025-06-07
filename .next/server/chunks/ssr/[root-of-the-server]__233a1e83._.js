@@ -1602,8 +1602,15 @@ const getSelectionContext = (selection)=>{
 // Apply highlights to existing content in the DOM
 const applyHighlightsToContent = (highlights, articleContent)=>{
     if (!highlights || !articleContent) return;
-    // First clear existing highlights to prevent duplicates
+    // Check if highlights are already applied correctly
     const existingHighlights = articleContent.querySelectorAll('.article-highlight');
+    const existingHighlightIds = Array.from(existingHighlights).map((el)=>el.getAttribute('data-highlight-id')).filter(Boolean);
+    const newHighlightIds = highlights.map((h)=>h.id);
+    // If the same highlights are already applied, don't re-apply
+    if (existingHighlightIds.length === newHighlightIds.length && existingHighlightIds.every((id)=>newHighlightIds.includes(id))) {
+        return;
+    }
+    // First clear existing highlights to prevent duplicates
     existingHighlights.forEach((el)=>{
         const parent = el.parentNode;
         if (parent) {
@@ -1832,7 +1839,11 @@ const ArticleHighlights = ({ articleId, children, articleTitle = 'Article', arti
     // Apply highlights from database when they change
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         if (contentRef && highlights.length > 0) {
-            applyHighlightsToContent(highlights, contentRef);
+            // Add a small delay to ensure DOM is stable after re-renders
+            const timeoutId = setTimeout(()=>{
+                applyHighlightsToContent(highlights, contentRef);
+            }, 50);
+            return ()=>clearTimeout(timeoutId);
         }
     }, [
         highlights,
@@ -1840,10 +1851,12 @@ const ArticleHighlights = ({ articleId, children, articleTitle = 'Article', arti
     ]);
     // Get ref to content element
     const setRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useCallback"])((node)=>{
-        if (node) {
+        if (node && node !== contentRef) {
             setContentRef(node);
         }
-    }, []);
+    }, [
+        contentRef
+    ]);
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$HighlightToolbar$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -1854,7 +1867,7 @@ const ArticleHighlights = ({ articleId, children, articleTitle = 'Article', arti
                 onAiAssist: handleAiAssist
             }, void 0, false, {
                 fileName: "[project]/src/components/ArticleHighlights.tsx",
-                lineNumber: 325,
+                lineNumber: 340,
                 columnNumber: 7
             }, this),
             showUnhighlightToolbar && activeHighlight && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1886,7 +1899,7 @@ const ArticleHighlights = ({ articleId, children, articleTitle = 'Article', arti
                                         d: "M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/ArticleHighlights.tsx",
-                                        lineNumber: 347,
+                                        lineNumber: 362,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
@@ -1896,7 +1909,7 @@ const ArticleHighlights = ({ articleId, children, articleTitle = 'Article', arti
                                         y2: "15"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/ArticleHighlights.tsx",
-                                        lineNumber: 348,
+                                        lineNumber: 363,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
@@ -1906,26 +1919,26 @@ const ArticleHighlights = ({ articleId, children, articleTitle = 'Article', arti
                                         y2: "15"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/ArticleHighlights.tsx",
-                                        lineNumber: 349,
+                                        lineNumber: 364,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/ArticleHighlights.tsx",
-                                lineNumber: 346,
+                                lineNumber: 361,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                 children: "Unhighlight"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/ArticleHighlights.tsx",
-                                lineNumber: 351,
+                                lineNumber: 366,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/ArticleHighlights.tsx",
-                        lineNumber: 345,
+                        lineNumber: 360,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1952,7 +1965,7 @@ const ArticleHighlights = ({ articleId, children, articleTitle = 'Article', arti
                                         r: "3"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/ArticleHighlights.tsx",
-                                        lineNumber: 362,
+                                        lineNumber: 377,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("circle", {
@@ -1961,7 +1974,7 @@ const ArticleHighlights = ({ articleId, children, articleTitle = 'Article', arti
                                         r: "3"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/ArticleHighlights.tsx",
-                                        lineNumber: 363,
+                                        lineNumber: 378,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("circle", {
@@ -1970,7 +1983,7 @@ const ArticleHighlights = ({ articleId, children, articleTitle = 'Article', arti
                                         r: "3"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/ArticleHighlights.tsx",
-                                        lineNumber: 364,
+                                        lineNumber: 379,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
@@ -1980,7 +1993,7 @@ const ArticleHighlights = ({ articleId, children, articleTitle = 'Article', arti
                                         y2: "17.49"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/ArticleHighlights.tsx",
-                                        lineNumber: 365,
+                                        lineNumber: 380,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
@@ -1990,26 +2003,26 @@ const ArticleHighlights = ({ articleId, children, articleTitle = 'Article', arti
                                         y2: "10.49"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/ArticleHighlights.tsx",
-                                        lineNumber: 366,
+                                        lineNumber: 381,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/ArticleHighlights.tsx",
-                                lineNumber: 361,
+                                lineNumber: 376,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                 children: "Share"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/ArticleHighlights.tsx",
-                                lineNumber: 368,
+                                lineNumber: 383,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/ArticleHighlights.tsx",
-                        lineNumber: 354,
+                        lineNumber: 369,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -2033,31 +2046,31 @@ const ArticleHighlights = ({ articleId, children, articleTitle = 'Article', arti
                                     d: "M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/ArticleHighlights.tsx",
-                                    lineNumber: 379,
+                                    lineNumber: 394,
                                     columnNumber: 15
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/components/ArticleHighlights.tsx",
-                                lineNumber: 378,
+                                lineNumber: 393,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                 children: "Response"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/ArticleHighlights.tsx",
-                                lineNumber: 381,
+                                lineNumber: 396,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/ArticleHighlights.tsx",
-                        lineNumber: 371,
+                        lineNumber: 386,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/ArticleHighlights.tsx",
-                lineNumber: 335,
+                lineNumber: 350,
                 columnNumber: 9
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2066,7 +2079,7 @@ const ArticleHighlights = ({ articleId, children, articleTitle = 'Article', arti
                 children: children
             }, void 0, false, {
                 fileName: "[project]/src/components/ArticleHighlights.tsx",
-                lineNumber: 387,
+                lineNumber: 402,
                 columnNumber: 7
             }, this),
             showResponseModal && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2080,14 +2093,14 @@ const ArticleHighlights = ({ articleId, children, articleTitle = 'Article', arti
                             children: "×"
                         }, void 0, false, {
                             fileName: "[project]/src/components/ArticleHighlights.tsx",
-                            lineNumber: 395,
+                            lineNumber: 410,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
                             children: "Respond to highlighted text"
                         }, void 0, false, {
                             fileName: "[project]/src/components/ArticleHighlights.tsx",
-                            lineNumber: 401,
+                            lineNumber: 416,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2099,7 +2112,7 @@ const ArticleHighlights = ({ articleId, children, articleTitle = 'Article', arti
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/ArticleHighlights.tsx",
-                            lineNumber: 402,
+                            lineNumber: 417,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("textarea", {
@@ -2107,7 +2120,7 @@ const ArticleHighlights = ({ articleId, children, articleTitle = 'Article', arti
                             placeholder: "Write your response..."
                         }, void 0, false, {
                             fileName: "[project]/src/components/ArticleHighlights.tsx",
-                            lineNumber: 403,
+                            lineNumber: 418,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -2115,18 +2128,18 @@ const ArticleHighlights = ({ articleId, children, articleTitle = 'Article', arti
                             children: "Submit"
                         }, void 0, false, {
                             fileName: "[project]/src/components/ArticleHighlights.tsx",
-                            lineNumber: 407,
+                            lineNumber: 422,
                             columnNumber: 13
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/components/ArticleHighlights.tsx",
-                    lineNumber: 394,
+                    lineNumber: 409,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/components/ArticleHighlights.tsx",
-                lineNumber: 393,
+                lineNumber: 408,
                 columnNumber: 9
             }, this),
             showAiModal && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2140,14 +2153,14 @@ const ArticleHighlights = ({ articleId, children, articleTitle = 'Article', arti
                             children: "×"
                         }, void 0, false, {
                             fileName: "[project]/src/components/ArticleHighlights.tsx",
-                            lineNumber: 416,
+                            lineNumber: 431,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
                             children: "Journa AI"
                         }, void 0, false, {
                             fileName: "[project]/src/components/ArticleHighlights.tsx",
-                            lineNumber: 422,
+                            lineNumber: 437,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2159,7 +2172,7 @@ const ArticleHighlights = ({ articleId, children, articleTitle = 'Article', arti
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/ArticleHighlights.tsx",
-                            lineNumber: 423,
+                            lineNumber: 438,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2169,34 +2182,34 @@ const ArticleHighlights = ({ articleId, children, articleTitle = 'Article', arti
                                     children: "Explain this"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/ArticleHighlights.tsx",
-                                    lineNumber: 425,
+                                    lineNumber: 440,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                     children: "Fact check"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/ArticleHighlights.tsx",
-                                    lineNumber: 426,
+                                    lineNumber: 441,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                     children: "Provide context"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/ArticleHighlights.tsx",
-                                    lineNumber: 427,
+                                    lineNumber: 442,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                     children: "Summarize"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/ArticleHighlights.tsx",
-                                    lineNumber: 428,
+                                    lineNumber: 443,
                                     columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/ArticleHighlights.tsx",
-                            lineNumber: 424,
+                            lineNumber: 439,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2206,23 +2219,23 @@ const ArticleHighlights = ({ articleId, children, articleTitle = 'Article', arti
                                 children: "Journa AI is thinking..."
                             }, void 0, false, {
                                 fileName: "[project]/src/components/ArticleHighlights.tsx",
-                                lineNumber: 432,
+                                lineNumber: 447,
                                 columnNumber: 15
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/src/components/ArticleHighlights.tsx",
-                            lineNumber: 430,
+                            lineNumber: 445,
                             columnNumber: 13
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/components/ArticleHighlights.tsx",
-                    lineNumber: 415,
+                    lineNumber: 430,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/components/ArticleHighlights.tsx",
-                lineNumber: 414,
+                lineNumber: 429,
                 columnNumber: 9
             }, this),
             showShareModal && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ShareModal$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -2233,7 +2246,7 @@ const ArticleHighlights = ({ articleId, children, articleTitle = 'Article', arti
                 shareUrl: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$services$2f$highlightService$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["generateHighlightShareUrl"])(articleSlug, articleId)
             }, void 0, false, {
                 fileName: "[project]/src/components/ArticleHighlights.tsx",
-                lineNumber: 440,
+                lineNumber: 455,
                 columnNumber: 9
             }, this)
         ]

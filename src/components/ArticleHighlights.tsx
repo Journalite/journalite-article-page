@@ -59,8 +59,18 @@ const getSelectionContext = (selection: Selection): { prefix: string; suffix: st
 const applyHighlightsToContent = (highlights: any[], articleContent: HTMLElement): void => {
   if (!highlights || !articleContent) return;
   
-  // First clear existing highlights to prevent duplicates
+  // Check if highlights are already applied correctly
   const existingHighlights = articleContent.querySelectorAll('.article-highlight');
+  const existingHighlightIds = Array.from(existingHighlights).map(el => el.getAttribute('data-highlight-id')).filter(Boolean);
+  const newHighlightIds = highlights.map(h => h.id);
+  
+  // If the same highlights are already applied, don't re-apply
+  if (existingHighlightIds.length === newHighlightIds.length && 
+      existingHighlightIds.every(id => newHighlightIds.includes(id))) {
+    return;
+  }
+  
+  // First clear existing highlights to prevent duplicates
   existingHighlights.forEach(el => {
     const parent = el.parentNode;
     if (parent) {
@@ -308,16 +318,21 @@ const ArticleHighlights: React.FC<ArticleHighlightsProps> = ({ articleId, childr
   // Apply highlights from database when they change
   useEffect(() => {
     if (contentRef && highlights.length > 0) {
-      applyHighlightsToContent(highlights, contentRef);
+      // Add a small delay to ensure DOM is stable after re-renders
+      const timeoutId = setTimeout(() => {
+        applyHighlightsToContent(highlights, contentRef);
+      }, 50);
+      
+      return () => clearTimeout(timeoutId);
     }
   }, [highlights, contentRef]);
   
   // Get ref to content element
   const setRef = useCallback((node: HTMLElement | null) => {
-    if (node) {
+    if (node && node !== contentRef) {
       setContentRef(node);
     }
-  }, []);
+  }, [contentRef]);
   
   return (
     <>
