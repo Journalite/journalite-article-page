@@ -25,10 +25,8 @@ interface ArticleLayoutProps {
   
   // Callbacks (should be stable with useCallback)
   onEditClick: () => void;
-  onToggleMoodFeature: (enabled: boolean) => void;
   
   // Other props
-  moodFeatureEnabled: boolean;
   articleTitle: string;
   articleSlug: string;
 }
@@ -41,8 +39,6 @@ const ArticleLayout: React.FC<ArticleLayoutProps> = ({
   currentUser,
   isAuthenticated,
   onEditClick,
-  onToggleMoodFeature,
-  moodFeatureEnabled,
   articleTitle,
   articleSlug
 }) => {
@@ -102,10 +98,6 @@ const ArticleLayout: React.FC<ArticleLayoutProps> = ({
         isAuthenticated={isAuthenticated}
         articleTitle={articleTitle}
         articleSlug={articleSlug}
-        {...(isAuthenticated && {
-          moodFeatureEnabled: moodFeatureEnabled,
-          onToggleMoodFeature: onToggleMoodFeature
-        })}
       />
     </div>
   );
@@ -127,16 +119,12 @@ export default React.memo(ArticleLayout, (prevProps, nextProps) => {
     prevProps.isAuthenticated === nextProps.isAuthenticated &&
     prevProps.currentUser?.uid === nextProps.currentUser?.uid &&
     
-    // Features
-    prevProps.moodFeatureEnabled === nextProps.moodFeatureEnabled &&
-    
     // Stable props
     prevProps.articleTitle === nextProps.articleTitle &&
     prevProps.articleSlug === nextProps.articleSlug &&
     
     // Callbacks (should be stable)
-    prevProps.onEditClick === nextProps.onEditClick &&
-    prevProps.onToggleMoodFeature === nextProps.onToggleMoodFeature
+    prevProps.onEditClick === nextProps.onEditClick
   );
   
   if (!shouldNotRerender) {

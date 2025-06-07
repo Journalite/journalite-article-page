@@ -3277,8 +3277,9 @@ var _s = __turbopack_context__.k.signature();
 ;
 ;
 ;
-const ArticleWithHighlights = ({ articleId, initialHtml, isAuthenticated = false, moodFeatureEnabled = true, onToggleMoodFeature, articleTitle = 'Article', articleSlug = '' })=>{
+const ArticleWithHighlights = ({ articleId, initialHtml, isAuthenticated = false, articleTitle = 'Article', articleSlug = '' })=>{
     _s();
+    const [moodFeatureEnabled, setMoodFeatureEnabled] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(true);
     const [article, setArticle] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
     const [isLoading, setIsLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(!initialHtml);
     const [error, setError] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])('');
@@ -3529,20 +3530,20 @@ const ArticleWithHighlights = ({ articleId, initialHtml, isAuthenticated = false
                     className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$ArticleWithHighlights$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].loadingIndicator
                 }, void 0, false, {
                     fileName: "[project]/src/components/ArticleWithHighlights.tsx",
-                    lineNumber: 292,
+                    lineNumber: 291,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                     children: "Loading article..."
                 }, void 0, false, {
                     fileName: "[project]/src/components/ArticleWithHighlights.tsx",
-                    lineNumber: 293,
+                    lineNumber: 292,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/src/components/ArticleWithHighlights.tsx",
-            lineNumber: 291,
+            lineNumber: 290,
             columnNumber: 7
         }, this);
     }
@@ -3554,12 +3555,12 @@ const ArticleWithHighlights = ({ articleId, initialHtml, isAuthenticated = false
                 children: error
             }, void 0, false, {
                 fileName: "[project]/src/components/ArticleWithHighlights.tsx",
-                lineNumber: 301,
+                lineNumber: 300,
                 columnNumber: 9
             }, this)
         }, void 0, false, {
             fileName: "[project]/src/components/ArticleWithHighlights.tsx",
-            lineNumber: 300,
+            lineNumber: 299,
             columnNumber: 7
         }, this);
     }
@@ -3568,7 +3569,7 @@ const ArticleWithHighlights = ({ articleId, initialHtml, isAuthenticated = false
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ClientSideHighlighter$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                 fileName: "[project]/src/components/ArticleWithHighlights.tsx",
-                lineNumber: 308,
+                lineNumber: 307,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("article", {
@@ -3608,7 +3609,7 @@ const ArticleWithHighlights = ({ articleId, initialHtml, isAuthenticated = false
                                         children: isAuthenticated ? '🎨 Atmosphere adapted' : '🔒 Sign in for enhanced features'
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/ArticleWithHighlights.tsx",
-                                        lineNumber: 329,
+                                        lineNumber: 328,
                                         columnNumber: 13
                                     }, this),
                                     isAuthenticated && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -3623,13 +3624,13 @@ const ArticleWithHighlights = ({ articleId, initialHtml, isAuthenticated = false
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/ArticleWithHighlights.tsx",
-                                        lineNumber: 338,
+                                        lineNumber: 337,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/ArticleWithHighlights.tsx",
-                                lineNumber: 328,
+                                lineNumber: 327,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3648,7 +3649,7 @@ const ArticleWithHighlights = ({ articleId, initialHtml, isAuthenticated = false
                                         children: "Mood Background"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/ArticleWithHighlights.tsx",
-                                        lineNumber: 350,
+                                        lineNumber: 349,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -3681,7 +3682,7 @@ const ArticleWithHighlights = ({ articleId, initialHtml, isAuthenticated = false
                                         children: isAuthenticated && moodFeatureEnabled ? 'ON' : 'OFF'
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/ArticleWithHighlights.tsx",
-                                        lineNumber: 353,
+                                        lineNumber: 352,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -3692,7 +3693,7 @@ const ArticleWithHighlights = ({ articleId, initialHtml, isAuthenticated = false
                                         children: "Interactive Reflections"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/ArticleWithHighlights.tsx",
-                                        lineNumber: 388,
+                                        lineNumber: 387,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -3727,19 +3728,19 @@ const ArticleWithHighlights = ({ articleId, initialHtml, isAuthenticated = false
                                         children: isAuthenticated && reflectionsEnabled ? 'ON' : 'OFF'
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/ArticleWithHighlights.tsx",
-                                        lineNumber: 391,
+                                        lineNumber: 390,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/ArticleWithHighlights.tsx",
-                                lineNumber: 348,
+                                lineNumber: 347,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/ArticleWithHighlights.tsx",
-                        lineNumber: 311,
+                        lineNumber: 310,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ArticleHighlights$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -3757,12 +3758,12 @@ const ArticleWithHighlights = ({ articleId, initialHtml, isAuthenticated = false
                                     }
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/ArticleWithHighlights.tsx",
-                                    lineNumber: 442,
+                                    lineNumber: 441,
                                     columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/components/ArticleWithHighlights.tsx",
-                                lineNumber: 440,
+                                lineNumber: 439,
                                 columnNumber: 11
                             }, this),
                             reflectionsEnabled && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -3799,7 +3800,7 @@ const ArticleWithHighlights = ({ articleId, initialHtml, isAuthenticated = false
                                 children: showReflectionPanel ? '✕' : '✍️'
                             }, void 0, false, {
                                 fileName: "[project]/src/components/ArticleWithHighlights.tsx",
-                                lineNumber: 450,
+                                lineNumber: 449,
                                 columnNumber: 13
                             }, this),
                             showReflectionPanel && reflectionsEnabled && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3837,7 +3838,7 @@ const ArticleWithHighlights = ({ articleId, initialHtml, isAuthenticated = false
                 `
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/ArticleWithHighlights.tsx",
-                                        lineNumber: 512,
+                                        lineNumber: 511,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3853,7 +3854,7 @@ const ArticleWithHighlights = ({ articleId, initialHtml, isAuthenticated = false
                                         }
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/ArticleWithHighlights.tsx",
-                                        lineNumber: 528,
+                                        lineNumber: 527,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3875,7 +3876,7 @@ const ArticleWithHighlights = ({ articleId, initialHtml, isAuthenticated = false
                                                 children: "Time to Reflect ✨"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/ArticleWithHighlights.tsx",
-                                                lineNumber: 544,
+                                                lineNumber: 543,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3907,7 +3908,7 @@ const ArticleWithHighlights = ({ articleId, initialHtml, isAuthenticated = false
                                                     }
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/ArticleWithHighlights.tsx",
-                                                    lineNumber: 559,
+                                                    lineNumber: 558,
                                                     columnNumber: 21
                                                 }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                     style: {
@@ -3942,7 +3943,7 @@ const ArticleWithHighlights = ({ articleId, initialHtml, isAuthenticated = false
                                                             children: currentPrompt
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/ArticleWithHighlights.tsx",
-                                                            lineNumber: 591,
+                                                            lineNumber: 590,
                                                             columnNumber: 23
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -3961,24 +3962,24 @@ const ArticleWithHighlights = ({ articleId, initialHtml, isAuthenticated = false
                                                             children: "🎲"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/ArticleWithHighlights.tsx",
-                                                            lineNumber: 615,
+                                                            lineNumber: 614,
                                                             columnNumber: 23
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/ArticleWithHighlights.tsx",
-                                                    lineNumber: 584,
+                                                    lineNumber: 583,
                                                     columnNumber: 21
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/ArticleWithHighlights.tsx",
-                                                lineNumber: 557,
+                                                lineNumber: 556,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/ArticleWithHighlights.tsx",
-                                        lineNumber: 540,
+                                        lineNumber: 539,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("textarea", {
@@ -4012,7 +4013,7 @@ const ArticleWithHighlights = ({ articleId, initialHtml, isAuthenticated = false
                                         }
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/ArticleWithHighlights.tsx",
-                                        lineNumber: 637,
+                                        lineNumber: 636,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4044,7 +4045,7 @@ const ArticleWithHighlights = ({ articleId, initialHtml, isAuthenticated = false
                                                 children: "Skip"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/ArticleWithHighlights.tsx",
-                                                lineNumber: 674,
+                                                lineNumber: 673,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -4076,41 +4077,41 @@ const ArticleWithHighlights = ({ articleId, initialHtml, isAuthenticated = false
                                                 children: isSubmitting ? 'Saving...' : 'Save Reflection'
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/ArticleWithHighlights.tsx",
-                                                lineNumber: 696,
+                                                lineNumber: 695,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/ArticleWithHighlights.tsx",
-                                        lineNumber: 669,
+                                        lineNumber: 668,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/ArticleWithHighlights.tsx",
-                                lineNumber: 494,
+                                lineNumber: 493,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/ArticleWithHighlights.tsx",
-                        lineNumber: 434,
+                        lineNumber: 433,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/ArticleWithHighlights.tsx",
-                lineNumber: 309,
+                lineNumber: 308,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/ArticleWithHighlights.tsx",
-        lineNumber: 307,
+        lineNumber: 306,
         columnNumber: 5
     }, this);
 };
-_s(ArticleWithHighlights, "IClFUbmUli3vBZw4Y3J6QuVhcqI=");
+_s(ArticleWithHighlights, "YLQV6pn7uNpTg6VdQQpKhd14sSc=");
 _c = ArticleWithHighlights;
 const __TURBOPACK__default__export__ = ArticleWithHighlights;
 var _c;

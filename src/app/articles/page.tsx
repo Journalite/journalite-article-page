@@ -124,6 +124,9 @@ function Article() {
     }
   }, [isAuthenticated])
 
+  // 🚫 REMOVED: No more mood toggle events that cause React re-renders and lose highlights!
+  // Mood elements are now controlled by direct DOM manipulation in MoodToggle component
+
 
   
   // Check if user is authenticated
@@ -358,11 +361,12 @@ function Article() {
       className={articleStyles.articlePageContainer}
       style={{ position: 'relative', backgroundColor: '#ffffff' }}
     >
-      {/* Dynamic animated mood gradient overlay (only for authenticated users) */}
-      {moodFeatureEnabled && isAuthenticated && (
+      {/* Dynamic animated mood gradient overlay (always rendered but controlled by MoodToggle) */}
+      {isAuthenticated && (
         <>
           {/* Primary flowing gradient */}
           <div
+            data-mood-element="primary-gradient"
             style={{
               position: 'fixed',
               top: 0,
@@ -379,12 +383,15 @@ function Article() {
               filter: 'contrast(1.1) brightness(1.05) saturate(1.1)',
               zIndex: 0,
               transition: 'background-image 1s ease-in-out',
-              pointerEvents: 'none'
+              pointerEvents: 'none',
+              // Initial display controlled by localStorage preference
+              display: typeof window !== 'undefined' && localStorage.getItem('moodFeatureEnabled') === 'false' ? 'none' : ''
             }}
           />
           
           {/* Grain texture overlay */}
           <div
+            data-mood-element="grain-texture"
             style={{
               position: 'fixed',
               top: 0,
@@ -402,12 +409,14 @@ function Article() {
               opacity: 0.6,
               mixBlendMode: 'soft-light',
               zIndex: 0,
-              pointerEvents: 'none'
+              pointerEvents: 'none',
+              display: typeof window !== 'undefined' && localStorage.getItem('moodFeatureEnabled') === 'false' ? 'none' : ''
             }}
           />
           
           {/* Secondary wave layer */}
           <div
+            data-mood-element="secondary-wave"
             style={{
               position: 'fixed',
               top: 0,
@@ -425,12 +434,14 @@ function Article() {
               filter: 'contrast(1.15) blur(0.5px)',
               zIndex: 0,
               transition: 'background-image 1s ease-in-out',
-              pointerEvents: 'none'
+              pointerEvents: 'none',
+              display: typeof window !== 'undefined' && localStorage.getItem('moodFeatureEnabled') === 'false' ? 'none' : ''
             }}
           />
           
           {/* Floating orbs */}
           <div
+            data-mood-element="floating-orbs"
             style={{
               position: 'fixed',
               top: 0,
@@ -449,12 +460,14 @@ function Article() {
               animation: 'orbFloat 15s ease-in-out infinite',
               filter: 'contrast(1.2) saturate(0.9)',
               zIndex: 0,
-              pointerEvents: 'none'
+              pointerEvents: 'none',
+              display: typeof window !== 'undefined' && localStorage.getItem('moodFeatureEnabled') === 'false' ? 'none' : ''
             }}
           />
           
           {/* Fine grain texture */}
           <div
+            data-mood-element="fine-grain"
             style={{
               position: 'fixed',
               top: 0,
@@ -471,7 +484,8 @@ function Article() {
               opacity: 0.4,
               mixBlendMode: 'overlay',
               zIndex: 0,
-              pointerEvents: 'none'
+              pointerEvents: 'none',
+              display: typeof window !== 'undefined' && localStorage.getItem('moodFeatureEnabled') === 'false' ? 'none' : ''
             }}
           />
         </>
@@ -479,7 +493,8 @@ function Article() {
               {article && (
           <>
             <header 
-              className={articleStyles.pageHeader} 
+              className={articleStyles.pageHeader}
+              data-mood-header="page-header"
               style={moodFeatureEnabled && isAuthenticated ? {
                 position: 'relative', 
                 zIndex: 10000,
@@ -619,14 +634,6 @@ function Article() {
               isAuthenticated={isAuthenticated}
               articleTitle={article.title}
               articleSlug={article.slug}
-              {...(isAuthenticated && {
-                moodFeatureEnabled: moodFeatureEnabled,
-                onToggleMoodFeature: (enabled) => {
-                  console.log('Toggling mood feature:', enabled);
-                  setMoodFeatureEnabled(enabled);
-                  localStorage.setItem('moodFeatureEnabled', JSON.stringify(enabled));
-                }
-              })}
             />
             
             {/* Comments section */}

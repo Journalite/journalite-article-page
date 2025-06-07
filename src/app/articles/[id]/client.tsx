@@ -50,6 +50,9 @@ const ArticlePageClient: React.FC<ArticlePageClientProps> = ({ id }) => {
     
     return () => unsubscribe();
   }, []);
+
+  // 🚫 REMOVED: No more mood toggle events that cause React re-renders and lose highlights!
+  // Mood elements are now controlled by direct DOM manipulation in MoodToggle component
   
   // Load mood feature preference from localStorage (only for authenticated users)
   useEffect(() => {
@@ -222,11 +225,12 @@ const ArticlePageClient: React.FC<ArticlePageClientProps> = ({ id }) => {
       className={styles.articlePageContainer}
       style={{ position: 'relative', backgroundColor: '#ffffff' }}
     >
-      {/* Dynamic animated mood gradient overlay (only for authenticated users) */}
-      {moodFeatureEnabled && isAuthenticated && (
+      {/* Dynamic animated mood gradient overlay (always rendered but controlled by MoodToggle) */}
+      {isAuthenticated && (
         <>
           {/* Primary flowing gradient */}
           <div
+            data-mood-element="primary-gradient"
             style={{
               position: 'fixed',
               top: 0,
@@ -243,12 +247,14 @@ const ArticlePageClient: React.FC<ArticlePageClientProps> = ({ id }) => {
               filter: 'contrast(1.1) brightness(1.05) saturate(1.1)',
               zIndex: 0,
               transition: 'background-image 1s ease-in-out',
-              pointerEvents: 'none'
+              pointerEvents: 'none',
+              display: typeof window !== 'undefined' && localStorage.getItem('moodFeatureEnabled') === 'false' ? 'none' : ''
             }}
           />
           
           {/* Secondary wave layer */}
           <div
+            data-mood-element="secondary-wave"
             style={{
               position: 'fixed',
               top: 0,
@@ -262,12 +268,14 @@ const ArticlePageClient: React.FC<ArticlePageClientProps> = ({ id }) => {
               animation: 'moodFloat 12s ease-in-out infinite alternate',
               zIndex: 1,
               opacity: 0.6,
-              pointerEvents: 'none'
+              pointerEvents: 'none',
+              display: typeof window !== 'undefined' && localStorage.getItem('moodFeatureEnabled') === 'false' ? 'none' : ''
             }}
           />
           
           {/* Floating orbs */}
           <div
+            data-mood-element="floating-orbs"
             style={{
               position: 'fixed',
               top: 0,
@@ -282,12 +290,14 @@ const ArticlePageClient: React.FC<ArticlePageClientProps> = ({ id }) => {
               animation: 'orbitalFloat 20s linear infinite',
               zIndex: 2,
               opacity: 0.4,
-              pointerEvents: 'none'
+              pointerEvents: 'none',
+              display: typeof window !== 'undefined' && localStorage.getItem('moodFeatureEnabled') === 'false' ? 'none' : ''
             }}
           />
           
           {/* Grain texture overlay */}
           <div
+            data-mood-element="grain-texture"
             style={{
               position: 'fixed',
               top: 0,
@@ -304,7 +314,8 @@ const ArticlePageClient: React.FC<ArticlePageClientProps> = ({ id }) => {
               zIndex: 3,
               opacity: 0.15,
               mixBlendMode: 'overlay',
-              pointerEvents: 'none'
+              pointerEvents: 'none',
+              display: typeof window !== 'undefined' && localStorage.getItem('moodFeatureEnabled') === 'false' ? 'none' : ''
             }}
           />
         </>
@@ -312,6 +323,7 @@ const ArticlePageClient: React.FC<ArticlePageClientProps> = ({ id }) => {
       
       <header 
         className={styles.pageHeader}
+        data-mood-header="page-header"
         style={moodFeatureEnabled && isAuthenticated ? {
           position: 'relative', 
           zIndex: 10000,
@@ -332,7 +344,8 @@ const ArticlePageClient: React.FC<ArticlePageClientProps> = ({ id }) => {
           borderTop: 'none'
         } : { 
           position: 'relative', 
-          zIndex: 10000 
+          zIndex: 10000,
+          background: 'rgba(255, 255, 255, 0.95)'
         }}
       >
         <div className={styles.headerContainer}>
@@ -366,8 +379,7 @@ const ArticlePageClient: React.FC<ArticlePageClientProps> = ({ id }) => {
         currentUser={currentUser}
         isAuthenticated={isAuthenticated}
         onEditClick={handleEditClick}
-        onToggleMoodFeature={handleToggleMoodFeature}
-        moodFeatureEnabled={moodFeatureEnabled}
+
         articleTitle={articleTitle}
         articleSlug={articleSlug}
       />

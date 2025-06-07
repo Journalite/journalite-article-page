@@ -12,14 +12,14 @@ interface ArticleHighlightsProps {
   onShare?: (text: string) => void; // Optional share handler
 }
 
-// Get context for a selection with improved handling
+// Get context for a selection with improved handling that preserves formatting
 const getSelectionContext = (selection: Selection): { prefix: string; suffix: string } => {
   const result = { prefix: '', suffix: '' };
   
   if (!selection || selection.rangeCount === 0) return result;
   
   const range = selection.getRangeAt(0);
-  const selectedText = range.toString().trim();
+  const selectedText = range.toString();
   
   // Get the full text content of the container
   const container = range.commonAncestorContainer;
@@ -27,24 +27,35 @@ const getSelectionContext = (selection: Selection): { prefix: string; suffix: st
   
   if (!containerElement) return result;
   
-  // Get all text content from the container
+  // Get all text content from the container preserving original formatting
   const fullText = containerElement.textContent || '';
-  const cleanSelectedText = selectedText.replace(/\s+/g, ' ');
   
-  // Find the position of our selected text in the full text
-  const startIndex = fullText.indexOf(cleanSelectedText);
+  // Find the position of our selected text in the full text (exact match first)
+  let startIndex = fullText.indexOf(selectedText);
+  
+  // If exact match fails, try with normalized spaces as fallback
+  if (startIndex === -1) {
+    const normalizedSelectedText = selectedText.replace(/\s+/g, ' ').trim();
+    const normalizedFullText = fullText.replace(/\s+/g, ' ');
+    const normalizedStartIndex = normalizedFullText.indexOf(normalizedSelectedText);
+    
+    if (normalizedStartIndex !== -1) {
+      // Map back to original text position - this is approximate
+      startIndex = normalizedStartIndex;
+    }
+  }
   
   if (startIndex !== -1) {
     // Get context with word boundaries to avoid partial word issues
     const contextLength = 50;
     const prefixStart = Math.max(0, startIndex - contextLength);
-    const suffixEnd = Math.min(fullText.length, startIndex + cleanSelectedText.length + contextLength);
+    const suffixEnd = Math.min(fullText.length, startIndex + selectedText.length + contextLength);
     
-    // Extract prefix and suffix, ensuring we don't break words
+    // Extract prefix and suffix preserving original formatting
     let prefix = fullText.substring(prefixStart, startIndex);
-    let suffix = fullText.substring(startIndex + cleanSelectedText.length, suffixEnd);
+    let suffix = fullText.substring(startIndex + selectedText.length, suffixEnd);
     
-    // Trim to word boundaries
+    // Only trim word boundaries, not all whitespace
     prefix = prefix.replace(/^\S*\s/, ''); // Remove partial word at start
     suffix = suffix.replace(/\s\S*$/, ''); // Remove partial word at end
     
@@ -82,31 +93,124 @@ const applyHighlightsToContent = (highlights: any[], articleContent: HTMLElement
     }
   });
   
+  // Track highlights that couldn't be applied for cleanup
+  const failedHighlights: string[] = [];
+  
   // Then apply all highlights from the database
   highlights.forEach(highlight => {
-    // Function to find text in the DOM using prefix and suffix as context
+    // Enhanced function to find text in the DOM with better formatting preservation
     const findTextInDOM = (text: string, prefix: string, suffix: string): Range | null => {
-      // Create a text finder walker
+      
+      // Strategy 1: Try exact text match first (preserves all formatting)
       const walker = document.createTreeWalker(
         articleContent,
         NodeFilter.SHOW_TEXT,
         null
       );
       
-      // Pattern to search for (prefix + text + suffix)
-      const pattern = (prefix + text + suffix).trim();
-      
       let node;
       while (node = walker.nextNode()) {
         const content = node.textContent || '';
-        const index = content.indexOf(pattern);
+        const index = content.indexOf(text);
         
         if (index !== -1) {
-          // Found the text with context, create a range
           const range = document.createRange();
-          const prefixLength = prefix.trim().length;
-          range.setStart(node, index + prefixLength);
-          range.setEnd(node, index + prefixLength + text.trim().length);
+          range.setStart(node, index);
+          range.setEnd(node, index + text.length);
+          return range;
+        }
+      }
+      
+      // Strategy 2: Try with relaxed whitespace matching for poetry/formatted text
+      const walker2 = document.createTreeWalker(
+        articleContent,
+        NodeFilter.SHOW_TEXT,
+        null
+      );
+      
+      // Create a more flexible pattern that accounts for different whitespace
+      const createFlexiblePattern = (str: string): RegExp => {
+        // Escape special regex characters but keep spaces flexible
+        const escaped = str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        // Replace any sequence of whitespace with flexible whitespace matcher
+        const flexible = escaped.replace(/\s+/g, '\\s+');
+        return new RegExp(flexible, 'i');
+      };
+      
+      let node2;
+      while (node2 = walker2.nextNode()) {
+        const content = node2.textContent || '';
+        const flexiblePattern = createFlexiblePattern(text);
+        const match = content.match(flexiblePattern);
+        
+        if (match && match.index !== undefined) {
+          const range = document.createRange();
+          range.setStart(node2, match.index);
+          range.setEnd(node2, match.index + match[0].length);
+          return range;
+        }
+      }
+      
+      // Strategy 3: Try with context if above strategies fail
+      if (prefix || suffix) {
+        const walker3 = document.createTreeWalker(
+          articleContent,
+          NodeFilter.SHOW_TEXT,
+          null
+        );
+        
+        // Create context pattern with flexible whitespace
+        const contextText = prefix + text + suffix;
+        const contextPattern = createFlexiblePattern(contextText);
+        
+        let node3;
+        while (node3 = walker3.nextNode()) {
+          const content = node3.textContent || '';
+          const match = content.match(contextPattern);
+          
+          if (match && match.index !== undefined) {
+            // Find the actual text within the context match
+            const fullMatch = match[0];
+            const prefixPattern = createFlexiblePattern(prefix);
+            const prefixMatch = fullMatch.match(prefixPattern);
+            const prefixLength = prefixMatch ? prefixMatch[0].length : 0;
+            
+            const range = document.createRange();
+            const textStart = match.index + prefixLength;
+            const textPattern = createFlexiblePattern(text);
+            const textInContext = fullMatch.substring(prefixLength);
+            const textMatch = textInContext.match(textPattern);
+            
+            if (textMatch) {
+              range.setStart(node3, textStart);
+              range.setEnd(node3, textStart + textMatch[0].length);
+              return range;
+            }
+          }
+        }
+      }
+      
+      // Strategy 4: Last resort - normalized search (original behavior as fallback)
+      const walker4 = document.createTreeWalker(
+        articleContent,
+        NodeFilter.SHOW_TEXT,
+        null
+      );
+      
+      const contextPattern = (prefix + text + suffix).replace(/\s+/g, ' ').trim();
+      
+      let node4;
+      while (node4 = walker4.nextNode()) {
+        const content = node4.textContent || '';
+        const normalizedContent = content.replace(/\s+/g, ' ');
+        const index = normalizedContent.indexOf(contextPattern);
+        
+        if (index !== -1) {
+          const range = document.createRange();
+          const prefixLength = prefix.replace(/\s+/g, ' ').trim().length;
+          const startIndex = index + (prefixLength > 0 ? prefixLength + 1 : 0);
+          range.setStart(node4, startIndex);
+          range.setEnd(node4, startIndex + text.replace(/\s+/g, ' ').trim().length);
           return range;
         }
       }
@@ -115,7 +219,7 @@ const applyHighlightsToContent = (highlights: any[], articleContent: HTMLElement
     };
     
     // Try to find and highlight the text
-    const range = findTextInDOM(highlight.text, highlight.prefix, highlight.suffix);
+    const range = findTextInDOM(highlight.text, highlight.prefix || '', highlight.suffix || '');
     if (range) {
       try {
         // Create highlight mark
@@ -123,13 +227,76 @@ const applyHighlightsToContent = (highlights: any[], articleContent: HTMLElement
         mark.className = `article-highlight highlight-${highlight.tag || 'insight'}`;
         mark.dataset.highlightId = highlight.id;
         
-        // Apply highlight
+        // Apply highlight with better error handling
+        try {
         range.surroundContents(mark);
+        } catch (surroundError) {
+          // Fallback approach
+          const contents = range.extractContents();
+          mark.appendChild(contents);
+          range.insertNode(mark);
+        }
+        
+        console.log(`✅ Applied highlight "${highlight.text.substring(0, 30)}..." with ID: ${highlight.id}`);
       } catch (error) {
-        console.error('Error applying highlight:', error);
+        console.error('Error applying highlight:', error, {
+          text: highlight.text,
+          id: highlight.id,
+          tag: highlight.tag
+        });
+        failedHighlights.push(highlight.id);
       }
+    } else {
+      console.warn(`❌ Could not find text for highlight: "${highlight.text.substring(0, 30)}..." with ID: ${highlight.id}`);
+      failedHighlights.push(highlight.id);
     }
   });
+  
+  // Clean up failed highlights after a few attempts
+  if (failedHighlights.length > 0) {
+    console.log(`🧹 Found ${failedHighlights.length} highlights that couldn't be applied. These might be from old text formatting.`);
+    
+    // Store failed highlights in sessionStorage to track across re-renders
+    const storageKey = `failed-highlights-${location.pathname}`;
+    const existingFailed = JSON.parse(sessionStorage.getItem(storageKey) || '{}');
+    
+    failedHighlights.forEach(id => {
+      existingFailed[id] = (existingFailed[id] || 0) + 1;
+    });
+    
+    sessionStorage.setItem(storageKey, JSON.stringify(existingFailed));
+    
+    // If a highlight has failed 3+ times, suggest cleanup
+    const persistentlyFailed = Object.entries(existingFailed)
+      .filter(([_, count]) => (count as number) >= 3)
+      .map(([id]) => id);
+    
+    if (persistentlyFailed.length > 0) {
+      console.log(`🗑️  Suggesting cleanup of ${persistentlyFailed.length} persistently failed highlights`);
+      
+      // Show a one-time cleanup notification
+      const notificationShown = sessionStorage.getItem(`cleanup-notification-${location.pathname}`);
+      if (!notificationShown) {
+        // Automatically clean up broken highlights from text format change
+        console.log('🔄 Auto-cleaning broken highlights from text format change...');
+        setTimeout(() => {
+          persistentlyFailed.forEach(async (id) => {
+            try {
+              // We need access to removeHighlight function, so let's emit a custom event
+              const cleanupEvent = new CustomEvent('cleanup-broken-highlight', { 
+                detail: { highlightId: id } 
+              });
+              window.dispatchEvent(cleanupEvent);
+            } catch (error) {
+              console.error('Failed to cleanup highlight:', id, error);
+            }
+          });
+        }, 1000);
+        
+        sessionStorage.setItem(`cleanup-notification-${location.pathname}`, 'shown');
+      }
+    }
+  }
 };
 
 const ArticleHighlights: React.FC<ArticleHighlightsProps> = ({ articleId, children, articleTitle = 'Article', articleSlug = '', onShare }) => {
@@ -164,12 +331,13 @@ const ArticleHighlights: React.FC<ArticleHighlightsProps> = ({ articleId, childr
     
     // Add a small delay to ensure selection is stable on mobile
     setTimeout(() => {
-      const currentSelection = window.getSelection();
+    const currentSelection = window.getSelection();
       if (currentSelection && !currentSelection.isCollapsed) {
-        const selectedText = currentSelection.toString().trim();
+        const selectedText = currentSelection.toString();
+        const trimmedText = selectedText.trim();
         
         // Filter out selections that are too long (likely accidental)
-        if (selectedText && selectedText.length > 0 && selectedText.length < 1000) {
+        if (trimmedText && trimmedText.length > 0 && selectedText.length < 1000) {
           // Check if selection is within our article content
           const range = currentSelection.getRangeAt(0);
           const container = range.commonAncestorContainer;
@@ -178,10 +346,10 @@ const ArticleHighlights: React.FC<ArticleHighlightsProps> = ({ articleId, childr
             : (container as Element)?.closest('.article-highlight-container');
           
           if (articleContainer) {
-            setSelection(currentSelection);
-          } else {
-            setSelection(null);
-          }
+      setSelection(currentSelection);
+    } else {
+      setSelection(null);
+    }
         } else {
           setSelection(null);
         }
@@ -197,9 +365,9 @@ const ArticleHighlights: React.FC<ArticleHighlightsProps> = ({ articleId, childr
       // Get context for the selection
       const context = getSelectionContext(window.getSelection()!);
       
-      // Save highlight to database with tag
+      // Save highlight to database with tag (preserve original formatting)
       saveHighlight(
-        selectedText.trim(),
+        selectedText, // Don't trim - preserve exact formatting including line breaks
         context.prefix,
         context.suffix,
         articleId,
@@ -353,15 +521,33 @@ const ArticleHighlights: React.FC<ArticleHighlightsProps> = ({ articleId, childr
   
   // Apply highlights from database when they change
   useEffect(() => {
-    if (contentRef && highlights.length > 0) {
-      // Add a small delay to ensure DOM is stable after re-renders
+    if (contentRef) {
+      // Always try to apply highlights, even if array is empty (for cleanup)
       const timeoutId = setTimeout(() => {
-        applyHighlightsToContent(highlights, contentRef);
-      }, 50);
+        console.log(`🎨 Applying ${highlights.length} highlights to content`);
+      applyHighlightsToContent(highlights, contentRef);
+      }, 100); // Increased delay for better stability
       
       return () => clearTimeout(timeoutId);
     }
   }, [highlights, contentRef]);
+  
+  // Listen for cleanup events
+  useEffect(() => {
+    const handleCleanupEvent = (event: CustomEvent) => {
+      const highlightId = event.detail?.highlightId;
+      if (highlightId) {
+        console.log(`🗑️ Cleaning up broken highlight: ${highlightId}`);
+        removeHighlight(highlightId);
+      }
+    };
+    
+    window.addEventListener('cleanup-broken-highlight', handleCleanupEvent as EventListener);
+    
+    return () => {
+      window.removeEventListener('cleanup-broken-highlight', handleCleanupEvent as EventListener);
+    };
+  }, [removeHighlight]);
   
   // Get ref to content element
   const setRef = useCallback((node: HTMLElement | null) => {

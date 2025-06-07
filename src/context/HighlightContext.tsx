@@ -119,52 +119,31 @@ export const HighlightProvider: React.FC<HighlightProviderProps> = ({ children, 
   // Apply highlight styling to a DOM element with improved range handling
   const highlightElement = (range: Range, tag: HighlightTag): void => {
     try {
-      // Clean up the range to avoid partial word selections
-      const selectedText = range.toString().trim();
+      // Get the exact selected text without trimming to preserve formatting
+      const selectedText = range.toString();
       if (!selectedText) return;
       
-      // Create a new range to ensure clean boundaries
-      const cleanRange = document.createRange();
-      cleanRange.setStart(range.startContainer, range.startOffset);
-      cleanRange.setEnd(range.endContainer, range.endOffset);
-      
-      // Expand range to word boundaries if needed
-      const startContainer = cleanRange.startContainer;
-      const endContainer = cleanRange.endContainer;
-      
-      if (startContainer.nodeType === Node.TEXT_NODE) {
-        const text = startContainer.textContent || '';
-        let startOffset = cleanRange.startOffset;
-        
-        // Move start to word boundary if we're in the middle of a word
-        while (startOffset > 0 && /\S/.test(text.charAt(startOffset - 1))) {
-          startOffset--;
-        }
-        cleanRange.setStart(startContainer, startOffset);
-      }
-      
-      if (endContainer.nodeType === Node.TEXT_NODE) {
-        const text = endContainer.textContent || '';
-        let endOffset = cleanRange.endOffset;
-        
-        // Move end to word boundary if we're in the middle of a word
-        while (endOffset < text.length && /\S/.test(text.charAt(endOffset))) {
-          endOffset++;
-        }
-        cleanRange.setEnd(endContainer, endOffset);
-      }
-      
+      // Use the original range without modification to preserve exact selection
       const highlightMark = document.createElement('mark');
       highlightMark.className = `article-highlight highlight-${tag}`;
-      
-      // Try to surround the contents with the highlight
-      try {
-        cleanRange.surroundContents(highlightMark);
+    
+      // Use a safer approach that preserves text structure
+    try {
+        // Try surrounding contents first
+      range.surroundContents(highlightMark);
       } catch (error) {
-        // If surrounding fails (e.g., crosses element boundaries), extract and wrap
-        const fragment = cleanRange.extractContents();
-        highlightMark.appendChild(fragment);
-        cleanRange.insertNode(highlightMark);
+        // If that fails, try extracting and inserting
+        try {
+          const contents = range.extractContents();
+          highlightMark.appendChild(contents);
+          range.insertNode(highlightMark);
+        } catch (innerError) {
+          // Last resort: clone contents to avoid moving elements
+          const contents = range.cloneContents();
+          highlightMark.appendChild(contents);
+          range.deleteContents();
+          range.insertNode(highlightMark);
+        }
       }
       
       // Clear the selection to prevent UI confusion
@@ -172,6 +151,9 @@ export const HighlightProvider: React.FC<HighlightProviderProps> = ({ children, 
       
     } catch (error) {
       console.error('Error highlighting range:', error);
+      // Restore selection if highlight fails
+      window.getSelection()?.removeAllRanges();
+      window.getSelection()?.addRange(range);
     }
   };
 

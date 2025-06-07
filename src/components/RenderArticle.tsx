@@ -108,6 +108,56 @@ const isHtmlContent = (content: string): boolean => {
   return htmlTagPattern.test(content) || htmlEntityPattern.test(content);
 };
 
+// Detect if content is poetry or pre-formatted text that should preserve line breaks
+const isPoetryOrPreformatted = (content: string): boolean => {
+  if (!content || typeof content !== 'string') return false;
+  
+  // Poetry patterns: short lines with deliberate line breaks
+  const lines = content.split('\n').filter(line => line.trim().length > 0);
+  
+  // Check for poetry characteristics
+  const hasShortLines = lines.some(line => line.trim().length < 50);
+  const hasMultipleLines = lines.length > 2;
+  const hasCommas = content.includes(',');
+  const hasDeliberateBreaks = content.includes('\n');
+  
+  // Poetry often has lines ending with commas or deliberate short lines
+  const poetryPatterns = [
+    /,\s*\n/g, // Line ending with comma
+    /\n[A-Z]/g, // New line starting with capital (verses)
+    /\n\s*[A-Z][a-z]+ [a-z]+/g, // New line with capitalized words
+  ];
+  
+  const hasPoetryPatterns = poetryPatterns.some(pattern => pattern.test(content));
+  
+  return hasDeliberateBreaks && hasMultipleLines && (hasShortLines || hasPoetryPatterns || hasCommas);
+};
+
+// Custom renderer that preserves poetry formatting
+const renderTextContent = (content: string): React.ReactElement => {
+  if (isHtmlContent(content)) {
+    return <div dangerouslySetInnerHTML={{ __html: content }} />;
+  }
+  
+  if (isPoetryOrPreformatted(content)) {
+    // For poetry/pre-formatted text, preserve line breaks exactly as they are
+    const lines = content.split('\n');
+    return (
+      <div style={{ whiteSpace: 'pre-line', lineHeight: '1.6' }}>
+        {lines.map((line, index) => (
+          <React.Fragment key={index}>
+            {line}
+            {index < lines.length - 1 && <br />}
+          </React.Fragment>
+        ))}
+      </div>
+    );
+  }
+  
+  // For regular text, use ReactMarkdown
+  return <ReactMarkdown>{content}</ReactMarkdown>;
+};
+
 // Prepare username for URL to ensure consistent casing between client and server
 const prepareUsernameForUrl = (name?: string): string => {
   // Ensure the name is trimmed and lowercase for consistent URLs
@@ -582,7 +632,7 @@ const RenderArticle: React.FC<RenderArticleProps> = ({ article }) => {
             articleId={article.id}
             onShare={handleShareHighlighted}
           >
-            <div className="article-content">
+            <div className="article-content article-highlight-container">
             {isComplex(article) ? (
                 // Complex article with paragraphs
                 <>
@@ -596,11 +646,7 @@ const RenderArticle: React.FC<RenderArticleProps> = ({ article }) => {
                           className={`paragraph-block ${visibleParagraphs[paragraph.paragraphId || `p-${index}`] ? 'visible' : ''} ${readParagraphs[paragraph.paragraphId || `p-${index}`] ? 'read' : ''}`}
                       >
                           <div className="paragraph-text">
-                            {isHtmlContent(paragraph.text) ? (
-                              <div dangerouslySetInnerHTML={{ __html: paragraph.text }} />
-                    ) : (
-                              <ReactMarkdown>{paragraph.text}</ReactMarkdown>
-                            )}
+                            {renderTextContent(paragraph.text)}
                           </div>
                       </div>
                       
@@ -626,11 +672,7 @@ const RenderArticle: React.FC<RenderArticleProps> = ({ article }) => {
                     className={`paragraph-block visible ${readParagraphs['simple-body'] ? 'read' : ''}`}
                   >
                     <div className="paragraph-text">
-                      {isHtmlContent(article.body) ? (
-                        <div dangerouslySetInnerHTML={{ __html: article.body }} />
-                      ) : (
-                        <ReactMarkdown>{article.body}</ReactMarkdown>
-                      )}
+                      {renderTextContent(article.body)}
                     </div>
                   </div>
                   
