@@ -47,6 +47,8 @@ const LikeButton: React.FC<LikeButtonProps> = ({
     e.preventDefault();
     e.stopPropagation();
     
+    console.log('👍 LikeButton clicked - should NOT trigger parent re-render');
+    
     if (!currentUser) {
       alert('Please login to like articles');
       return;
@@ -62,13 +64,29 @@ const LikeButton: React.FC<LikeButtonProps> = ({
         const newLikes = likes.filter(uid => uid !== currentUser.uid);
         setLikes(newLikes);
         setIsLiked(false);
-        // TODO: Call API to update database
+        console.log('👍 Unlike completed - likes:', newLikes.length);
+        
+        // Update Firestore
+        const { doc, updateDoc, arrayRemove } = await import('firebase/firestore');
+        const { db } = await import('@/firebase/clientApp');
+        const articleRef = doc(db, 'articles', articleId);
+        await updateDoc(articleRef, {
+          likes: arrayRemove(currentUser.uid)
+        });
       } else {
         // Like
         const newLikes = [...likes, currentUser.uid];
         setLikes(newLikes);
         setIsLiked(true);
-        // TODO: Call API to update database
+        console.log('👍 Like completed - likes:', newLikes.length);
+        
+        // Update Firestore
+        const { doc, updateDoc, arrayUnion } = await import('firebase/firestore');
+        const { db } = await import('@/firebase/clientApp');
+        const articleRef = doc(db, 'articles', articleId);
+        await updateDoc(articleRef, {
+          likes: arrayUnion(currentUser.uid)
+        });
       }
     } catch (error) {
       console.error('Error updating like status:', error);

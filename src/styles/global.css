@@ -58,3 +58,93 @@
     background-position: 0% 50%;
   }
 }
+
+/* Mobile-specific global improvements */
+@media (max-width: 768px) {
+  /* Prevent zoom on form inputs */
+  input, textarea, select {
+    font-size: 16px !important;
+  }
+  
+  /* Improve touch scrolling */
+  body {
+    -webkit-overflow-scrolling: touch;
+    overflow-scrolling: touch;
+  }
+  
+  /* Better touch targets for interactive elements */
+  button, a, input, textarea {
+    touch-action: manipulation;
+  }
+  
+  /* Allow text selection on content areas */
+  .article-highlight-container,
+  .article-highlight-container * {
+    touch-action: auto;
+  }
+  
+  /* Smooth scroll behavior */
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  /* Better text selection on mobile */
+  ::selection {
+    background-color: rgba(26, 137, 23, 0.3);
+  }
+  
+  /* Reduce motion for users who prefer it */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* iPhone specific optimizations */
+@media (max-width: 480px) {
+  /* Better typography for small screens */
+  body {
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+  
+  /* Improve button accessibility */
+  button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Better focus states for keyboard users */
+  button:focus,
+  a:focus,
+  input:focus,
+  textarea:focus {
+    outline: 2px solid #1a8917;
+    outline-offset: 2px;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  /* Keep light theme for article content readability */
+  /* But add dark mode support for UI elements if needed */
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .article-highlight {
+    border: 2px solid currentColor;
+  }
+  
+  button, a {
+    border: 1px solid currentColor;
+  }
+}

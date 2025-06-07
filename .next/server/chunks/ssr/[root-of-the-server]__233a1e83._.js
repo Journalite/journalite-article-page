@@ -2503,29 +2503,28 @@ function highlightCode() {
     const code = codeBlock.textContent || '';
     let highlightedCode = code;
     
-    // Basic JavaScript/TypeScript highlighting
-    highlightedCode = highlightedCode
+    // Simplified highlighting to avoid regex issues
+    try {
       // Keywords
-      .replace(/\\b(const|let|var|function|class|interface|type|enum|import|export|from|as|return|if|else|for|while|switch|case|break|default|try|catch|finally|async|await|new|this|extends|implements|private|public|protected|static|get|set|super|void|yield)\\b/g, '<span style="color: #569cd6; font-weight: 500;">$1</span>')
+      const keywords = ['const', 'let', 'var', 'function', 'class', 'interface', 'type', 'enum', 'import', 'export', 'from', 'as', 'return', 'if', 'else', 'for', 'while', 'switch', 'case', 'break', 'default', 'try', 'catch', 'finally', 'async', 'await', 'new', 'this', 'extends', 'implements', 'private', 'public', 'protected', 'static'];
+      keywords.forEach(keyword => {
+        const regex = new RegExp('\\\\b' + keyword + '\\\\b', 'g');
+        highlightedCode = highlightedCode.replace(regex, '<span style="color: #569cd6; font-weight: 500;">' + keyword + '</span>');
+      });
       
-      // Strings
-      .replace(/(['"\`])((?:\\\\.|(?!\\1)[^\\\\\\r\\n])*?)\\1/g, '<span style="color: #ce9178;">$1$2$1</span>')
+      // Simple string highlighting
+      highlightedCode = highlightedCode.replace(/"([^"]*)"/g, '<span style="color: #ce9178;">"$1"</span>');
+      highlightedCode = highlightedCode.replace(/'([^']*)'/g, '<span style="color: #ce9178;">\'$1\'</span>');
       
       // Numbers
-      .replace(/\\b(\\d+(?:\\.\\d+)?)\\b/g, '<span style="color: #b5cea8;">$1</span>')
+      highlightedCode = highlightedCode.replace(/\\b\\d+\\.?\\d*\\b/g, '<span style="color: #b5cea8;">$&</span>');
       
       // Comments
-      .replace(/(\/\/.*?)$/gm, '<span style="color: #6a9955; font-style: italic;">$1</span>')
-      .replace(/(\/\\*[\\s\\S]*?\\*\/)/g, '<span style="color: #6a9955; font-style: italic;">$1</span>')
-      
-      // Functions
-      .replace(/([a-zA-Z_$][a-zA-Z0-9_$]*)\\s*\\(/g, '<span style="color: #dcdcaa;">$1</span>(')
-      
-      // Types/Classes (capitalized words)
-      .replace(/\\b([A-Z][a-zA-Z0-9_]*)\\b/g, '<span style="color: #4ec9b0;">$1</span>')
-      
-      // Operators
-      .replace(/([=!<>+\\-*/%&|^~?:;,.])/g, '<span style="color: #d4d4d4;">$1</span>');
+      highlightedCode = highlightedCode.replace(/\/\/.*$/gm, '<span style="color: #6a9955; font-style: italic;">$&</span>');
+    } catch (e) {
+      console.warn('Syntax highlighting failed:', e);
+      // Keep original code if highlighting fails
+    }
     
     codeBlock.innerHTML = highlightedCode;
     
@@ -8482,60 +8481,8 @@ function Article() {
     const toggleProfileMenu = ()=>{
         setIsProfileMenuOpen(!isProfileMenuOpen);
     };
-    const handleLikeArticle = async ()=>{
-        console.log('🔥 LIKE BUTTON CLICKED!');
-        console.log('Current user:', currentUser);
-        console.log('Article ID:', article?.id);
-        console.log('Is liked:', isLiked);
-        if (!currentUser) {
-            alert('Please login to like articles');
-            return;
-        }
-        if (!article?.id) {
-            console.error('❌ No article ID found');
-            return;
-        }
-        try {
-            // Import Firestore functions at the top of the function for debugging
-            const { doc, updateDoc, arrayUnion, arrayRemove } = await __turbopack_context__.r("[project]/node_modules/firebase/firestore/dist/index.mjs [app-ssr] (ecmascript, async loader)")(__turbopack_context__.i);
-            const { db } = await __turbopack_context__.r("[project]/src/firebase/clientApp.ts [app-ssr] (ecmascript, async loader)")(__turbopack_context__.i);
-            console.log('📝 Updating Firestore...');
-            const articleRef = doc(db, 'articles', article.id);
-            if (isLiked) {
-                console.log('👍 Removing like...');
-                await updateDoc(articleRef, {
-                    likes: arrayRemove(currentUser.uid)
-                });
-                setLikes(likes.filter((uid)=>uid !== currentUser.uid));
-                setIsLiked(false);
-                console.log('✅ Like removed successfully');
-            } else {
-                console.log('❤️ Adding like...');
-                await updateDoc(articleRef, {
-                    likes: arrayUnion(currentUser.uid)
-                });
-                setLikes([
-                    ...likes,
-                    currentUser.uid
-                ]);
-                setIsLiked(true);
-                console.log('✅ Like added successfully');
-            }
-        } catch (error) {
-            console.error('❌ Error updating like status:', error);
-            // Revert UI changes on error
-            if (isLiked) {
-                setLikes([
-                    ...likes,
-                    currentUser.uid
-                ]);
-                setIsLiked(true);
-            } else {
-                setLikes(likes.filter((uid)=>uid !== currentUser.uid));
-                setIsLiked(false);
-            }
-        }
-    };
+    // Debug console for re-renders
+    console.log('🔄 Articles page Article component re-rendered at:', new Date().toLocaleTimeString());
     if (isLoading) {
         return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
             className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$ArticlePage$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].loadingContainer,
@@ -8544,20 +8491,20 @@ function Article() {
                     className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$ArticlePage$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].loadingIndicator
                 }, void 0, false, {
                     fileName: "[project]/src/app/articles/page.tsx",
-                    lineNumber: 314,
+                    lineNumber: 262,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                     children: "Loading article..."
                 }, void 0, false, {
                     fileName: "[project]/src/app/articles/page.tsx",
-                    lineNumber: 315,
+                    lineNumber: 263,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/src/app/articles/page.tsx",
-            lineNumber: 313,
+            lineNumber: 261,
             columnNumber: 7
         }, this);
     }
@@ -8569,12 +8516,12 @@ function Article() {
                 children: error
             }, void 0, false, {
                 fileName: "[project]/src/app/articles/page.tsx",
-                lineNumber: 323,
+                lineNumber: 271,
                 columnNumber: 9
             }, this)
         }, void 0, false, {
             fileName: "[project]/src/app/articles/page.tsx",
-            lineNumber: 322,
+            lineNumber: 270,
             columnNumber: 7
         }, this);
     }
@@ -8642,7 +8589,7 @@ function Article() {
                             children: "← Back to Article"
                         }, void 0, false, {
                             fileName: "[project]/src/app/articles/page.tsx",
-                            lineNumber: 402,
+                            lineNumber: 350,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
@@ -8652,13 +8599,13 @@ function Article() {
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/articles/page.tsx",
-                            lineNumber: 405,
+                            lineNumber: 353,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/app/articles/page.tsx",
-                    lineNumber: 401,
+                    lineNumber: 349,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ArticleComposer$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -8666,13 +8613,13 @@ function Article() {
                     onUpdateComplete: handleUpdateComplete
                 }, void 0, false, {
                     fileName: "[project]/src/app/articles/page.tsx",
-                    lineNumber: 407,
+                    lineNumber: 355,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/src/app/articles/page.tsx",
-            lineNumber: 400,
+            lineNumber: 348,
             columnNumber: 7
         }, this);
     }
@@ -8706,7 +8653,7 @@ function Article() {
                         }
                     }, void 0, false, {
                         fileName: "[project]/src/app/articles/page.tsx",
-                        lineNumber: 421,
+                        lineNumber: 369,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -8731,7 +8678,7 @@ function Article() {
                         }
                     }, void 0, false, {
                         fileName: "[project]/src/app/articles/page.tsx",
-                        lineNumber: 443,
+                        lineNumber: 391,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -8756,7 +8703,7 @@ function Article() {
                         }
                     }, void 0, false, {
                         fileName: "[project]/src/app/articles/page.tsx",
-                        lineNumber: 466,
+                        lineNumber: 414,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -8782,7 +8729,7 @@ function Article() {
                         }
                     }, void 0, false, {
                         fileName: "[project]/src/app/articles/page.tsx",
-                        lineNumber: 489,
+                        lineNumber: 437,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -8806,7 +8753,7 @@ function Article() {
                         }
                     }, void 0, false, {
                         fileName: "[project]/src/app/articles/page.tsx",
-                        lineNumber: 513,
+                        lineNumber: 461,
                         columnNumber: 11
                     }, this)
                 ]
@@ -8856,12 +8803,12 @@ function Article() {
                                         children: "Journalite"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/articles/page.tsx",
-                                        lineNumber: 564,
+                                        lineNumber: 512,
                                         columnNumber: 17
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/articles/page.tsx",
-                                    lineNumber: 563,
+                                    lineNumber: 511,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -8869,7 +8816,7 @@ function Article() {
                                     children: [
                                         isAuthenticated && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$MinimalNotificationBell$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                                             fileName: "[project]/src/app/articles/page.tsx",
-                                            lineNumber: 580,
+                                            lineNumber: 528,
                                             columnNumber: 37
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -8884,7 +8831,7 @@ function Article() {
                                                         children: currentUser?.displayName?.charAt(0) || currentUser?.email?.charAt(0) || 'U'
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/articles/page.tsx",
-                                                        lineNumber: 585,
+                                                        lineNumber: 533,
                                                         columnNumber: 23
                                                     }, this),
                                                     isProfileMenuOpen && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -8896,7 +8843,7 @@ function Article() {
                                                                 children: "Home"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/articles/page.tsx",
-                                                                lineNumber: 595,
+                                                                lineNumber: 543,
                                                                 columnNumber: 27
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -8905,7 +8852,7 @@ function Article() {
                                                                 children: "My Thoughts"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/articles/page.tsx",
-                                                                lineNumber: 596,
+                                                                lineNumber: 544,
                                                                 columnNumber: 27
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -8914,7 +8861,7 @@ function Article() {
                                                                 children: "Dashboard"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/articles/page.tsx",
-                                                                lineNumber: 597,
+                                                                lineNumber: 545,
                                                                 columnNumber: 27
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -8923,7 +8870,7 @@ function Article() {
                                                                 children: "Write a story"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/articles/page.tsx",
-                                                                lineNumber: 598,
+                                                                lineNumber: 546,
                                                                 columnNumber: 27
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -8932,7 +8879,7 @@ function Article() {
                                                                 children: "Create Article"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/articles/page.tsx",
-                                                                lineNumber: 599,
+                                                                lineNumber: 547,
                                                                 columnNumber: 27
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -8941,7 +8888,7 @@ function Article() {
                                                                 children: "Explore"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/articles/page.tsx",
-                                                                lineNumber: 600,
+                                                                lineNumber: 548,
                                                                 columnNumber: 27
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -8950,7 +8897,7 @@ function Article() {
                                                                 children: "Profile"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/articles/page.tsx",
-                                                                lineNumber: 601,
+                                                                lineNumber: 549,
                                                                 columnNumber: 27
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -8959,7 +8906,7 @@ function Article() {
                                                                 children: "Settings"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/articles/page.tsx",
-                                                                lineNumber: 602,
+                                                                lineNumber: 550,
                                                                 columnNumber: 27
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -8968,13 +8915,13 @@ function Article() {
                                                                 children: "Sign out"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/articles/page.tsx",
-                                                                lineNumber: 603,
+                                                                lineNumber: 551,
                                                                 columnNumber: 27
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/articles/page.tsx",
-                                                        lineNumber: 594,
+                                                        lineNumber: 542,
                                                         columnNumber: 25
                                                     }, this)
                                                 ]
@@ -8987,7 +8934,7 @@ function Article() {
                                                         children: "Sign in"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/articles/page.tsx",
-                                                        lineNumber: 609,
+                                                        lineNumber: 557,
                                                         columnNumber: 23
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -8996,35 +8943,35 @@ function Article() {
                                                         children: "Get started"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/articles/page.tsx",
-                                                        lineNumber: 612,
+                                                        lineNumber: 560,
                                                         columnNumber: 23
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/articles/page.tsx",
-                                                lineNumber: 608,
+                                                lineNumber: 556,
                                                 columnNumber: 21
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/articles/page.tsx",
-                                            lineNumber: 582,
+                                            lineNumber: 530,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/articles/page.tsx",
-                                    lineNumber: 579,
+                                    lineNumber: 527,
                                     columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/articles/page.tsx",
-                            lineNumber: 562,
+                            lineNumber: 510,
                             columnNumber: 13
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/app/articles/page.tsx",
-                        lineNumber: 537,
+                        lineNumber: 485,
                         columnNumber: 13
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -9042,7 +8989,7 @@ function Article() {
                                         children: article.title
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/articles/page.tsx",
-                                        lineNumber: 625,
+                                        lineNumber: 573,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -9056,7 +9003,7 @@ function Article() {
                                                         children: article.authorName.charAt(0)
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/articles/page.tsx",
-                                                        lineNumber: 629,
+                                                        lineNumber: 577,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -9070,12 +9017,12 @@ function Article() {
                                                                     children: article.authorName
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/articles/page.tsx",
-                                                                    lineNumber: 635,
+                                                                    lineNumber: 583,
                                                                     columnNumber: 23
                                                                 }, this)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/articles/page.tsx",
-                                                                lineNumber: 631,
+                                                                lineNumber: 579,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -9088,19 +9035,19 @@ function Article() {
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/articles/page.tsx",
-                                                                lineNumber: 637,
+                                                                lineNumber: 585,
                                                                 columnNumber: 21
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/articles/page.tsx",
-                                                        lineNumber: 630,
+                                                        lineNumber: 578,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/articles/page.tsx",
-                                                lineNumber: 628,
+                                                lineNumber: 576,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -9122,25 +9069,25 @@ function Article() {
                                                                     d: "M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/articles/page.tsx",
-                                                                    lineNumber: 650,
+                                                                    lineNumber: 598,
                                                                     columnNumber: 23
                                                                 }, this)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/articles/page.tsx",
-                                                                lineNumber: 649,
+                                                                lineNumber: 597,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                                 children: likes.length > 0 ? likes.length : ''
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/articles/page.tsx",
-                                                                lineNumber: 652,
+                                                                lineNumber: 600,
                                                                 columnNumber: 21
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/articles/page.tsx",
-                                                        lineNumber: 644,
+                                                        lineNumber: 592,
                                                         columnNumber: 19
                                                     }, this),
                                                     isAuthenticated && article.authorId === currentUser?.uid && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -9149,19 +9096,19 @@ function Article() {
                                                         children: "Edit"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/articles/page.tsx",
-                                                        lineNumber: 656,
+                                                        lineNumber: 604,
                                                         columnNumber: 21
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/articles/page.tsx",
-                                                lineNumber: 643,
+                                                lineNumber: 591,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/articles/page.tsx",
-                                        lineNumber: 627,
+                                        lineNumber: 575,
                                         columnNumber: 15
                                     }, this),
                                     article.tags && article.tags.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -9171,18 +9118,18 @@ function Article() {
                                                 children: tag
                                             }, index, false, {
                                                 fileName: "[project]/src/app/articles/page.tsx",
-                                                lineNumber: 669,
+                                                lineNumber: 617,
                                                 columnNumber: 21
                                             }, this))
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/articles/page.tsx",
-                                        lineNumber: 667,
+                                        lineNumber: 615,
                                         columnNumber: 17
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/articles/page.tsx",
-                                lineNumber: 624,
+                                lineNumber: 572,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ArticleWithHighlights$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -9201,7 +9148,7 @@ function Article() {
                                 }
                             }, void 0, false, {
                                 fileName: "[project]/src/app/articles/page.tsx",
-                                lineNumber: 676,
+                                lineNumber: 624,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -9214,12 +9161,12 @@ function Article() {
                                     }
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/articles/page.tsx",
-                                    lineNumber: 694,
+                                    lineNumber: 642,
                                     columnNumber: 15
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/app/articles/page.tsx",
-                                lineNumber: 693,
+                                lineNumber: 641,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("aside", {
@@ -9230,7 +9177,7 @@ function Article() {
                                         children: "Related Tags"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/articles/page.tsx",
-                                        lineNumber: 705,
+                                        lineNumber: 653,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -9244,12 +9191,12 @@ function Article() {
                                                 ]
                                             }, tag, true, {
                                                 fileName: "[project]/src/app/articles/page.tsx",
-                                                lineNumber: 708,
+                                                lineNumber: 656,
                                                 columnNumber: 19
                                             }, this))
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/articles/page.tsx",
-                                        lineNumber: 706,
+                                        lineNumber: 654,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -9258,19 +9205,19 @@ function Article() {
                                         children: "Write"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/articles/page.tsx",
-                                        lineNumber: 718,
+                                        lineNumber: 666,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/articles/page.tsx",
-                                lineNumber: 704,
+                                lineNumber: 652,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/articles/page.tsx",
-                        lineNumber: 622,
+                        lineNumber: 570,
                         columnNumber: 23
                     }, this)
                 ]
@@ -9278,7 +9225,7 @@ function Article() {
         ]
     }, void 0, true, {
         fileName: "[project]/src/app/articles/page.tsx",
-        lineNumber: 413,
+        lineNumber: 361,
         columnNumber: 5
     }, this);
 }
@@ -9288,17 +9235,17 @@ function ArticlePage() {
             children: "Loading article..."
         }, void 0, false, {
             fileName: "[project]/src/app/articles/page.tsx",
-            lineNumber: 731,
+            lineNumber: 679,
             columnNumber: 25
         }, void 0),
         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Article, {}, void 0, false, {
             fileName: "[project]/src/app/articles/page.tsx",
-            lineNumber: 732,
+            lineNumber: 680,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/src/app/articles/page.tsx",
-        lineNumber: 731,
+        lineNumber: 679,
         columnNumber: 5
     }, this);
 }

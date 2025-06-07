@@ -41,18 +41,50 @@ const HighlightToolbar: React.FC<HighlightToolbarProps> = ({
     const range = selection.getRangeAt(0);
     const rect = range.getBoundingClientRect();
 
-    // Position the toolbar above the selection
+    // Get viewport and toolbar dimensions
+    const windowWidth = window.innerWidth;
     const windowHeight = window.innerHeight;
+    const toolbarWidth = toolbarRef.current?.offsetWidth || 280;
     const toolbarHeight = toolbarRef.current?.offsetHeight || 40;
     
-    // Calculate position (centered above the selection)
-    const top = rect.top - toolbarHeight - 10 + window.scrollY;
-    const left = rect.left + rect.width / 2;
+    // Calculate horizontal position (keep within viewport)
+    let left = rect.left + rect.width / 2;
+    const margin = 16; // Margin from screen edges
+    
+    // Ensure toolbar doesn't go off screen horizontally
+    if (left - toolbarWidth / 2 < margin) {
+      left = toolbarWidth / 2 + margin;
+    } else if (left + toolbarWidth / 2 > windowWidth - margin) {
+      left = windowWidth - toolbarWidth / 2 - margin;
+    }
+    
+    // Calculate vertical position
+    let top = rect.top - toolbarHeight - 10 + window.scrollY;
+    
+    // If toolbar would be above viewport, place it below selection
+    if (rect.top - toolbarHeight - 10 < 0) {
+      top = rect.bottom + 10 + window.scrollY;
+    }
+    
+    // Additional mobile-specific adjustments
+    const isMobile = windowWidth <= 768;
+    if (isMobile) {
+      // On mobile, ensure toolbar is always visible
+      const viewportTop = window.scrollY;
+      const viewportBottom = window.scrollY + windowHeight;
+      
+      // If toolbar would be above viewport
+      if (top < viewportTop + margin) {
+        top = viewportTop + margin;
+      }
+      
+      // If toolbar would be below viewport
+      if (top + toolbarHeight > viewportBottom - margin) {
+        top = viewportBottom - toolbarHeight - margin;
+      }
+    }
 
-    setPosition({ 
-      top: top < 0 ? rect.bottom + 10 + window.scrollY : top, // Handle if too high
-      left 
-    });
+    setPosition({ top, left });
     
     // Show the toolbar
     setIsVisible(true);

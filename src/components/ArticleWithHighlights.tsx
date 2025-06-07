@@ -451,10 +451,10 @@ const ArticleWithHighlights: React.FC<ArticleWithHighlightsProps> = ({
               onClick={toggleReflectionPanel}
               style={{
                 position: 'fixed',
-                bottom: '40px',
-                right: '40px',
-                width: '56px',
-                height: '56px',
+                bottom: window.innerWidth <= 768 ? '20px' : '40px',
+                right: window.innerWidth <= 768 ? '20px' : '40px',
+                width: window.innerWidth <= 768 ? '48px' : '56px',
+                height: window.innerWidth <= 768 ? '48px' : '56px',
                 borderRadius: '50%',
                 background: showReflectionPanel 
                   ? 'linear-gradient(135deg, #1d4ed8, #7c3aed)' 
@@ -493,18 +493,20 @@ const ArticleWithHighlights: React.FC<ArticleWithHighlightsProps> = ({
           {showReflectionPanel && reflectionsEnabled && (
             <div style={{
               position: 'fixed',
-              bottom: '110px',
-              right: '40px',
-              width: '380px',
-              maxHeight: '500px',
+              bottom: window.innerWidth <= 768 ? '80px' : '110px', // Adjust for smaller button on mobile
+              right: window.innerWidth <= 768 ? '20px' : '40px',
+              left: window.innerWidth <= 768 ? '20px' : 'auto', // Full width on mobile
+              width: window.innerWidth <= 768 ? 'auto' : '380px',
+              maxWidth: window.innerWidth <= 768 ? 'none' : '380px',
+              maxHeight: window.innerWidth <= 768 ? '400px' : '500px',
               background: 'rgba(255, 255, 255, 0.95)',
               backdropFilter: 'blur(20px)',
-              borderRadius: '24px',
+              borderRadius: window.innerWidth <= 768 ? '16px' : '24px',
               boxShadow: '0 20px 60px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.2)',
               border: '1px solid rgba(255, 255, 255, 0.3)',
               zIndex: 999,
               animation: 'gentleSlideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-              padding: '24px',
+              padding: window.innerWidth <= 768 ? '16px' : '24px',
               overflow: 'hidden'
             }}>
               <style>

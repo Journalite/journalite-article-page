@@ -22,6 +22,9 @@ const ArticleContent: React.FC<ArticleContentProps> = ({
   moodFeatureEnabled,
   onToggleMoodFeature
 }) => {
+  // Debug re-renders
+  console.log('📝 ArticleContent re-rendered at:', new Date().toLocaleTimeString());
+  
   return (
     <ArticleWithHighlights 
       articleId={articleId} 
@@ -39,12 +42,27 @@ const ArticleContent: React.FC<ArticleContentProps> = ({
 
 // Use React.memo with deep comparison for props
 export default React.memo(ArticleContent, (prevProps, nextProps) => {
-  return (
+  const shouldNotRerender = (
     prevProps.articleId === nextProps.articleId &&
     prevProps.articleHtml === nextProps.articleHtml &&
     prevProps.isAuthenticated === nextProps.isAuthenticated &&
     prevProps.articleTitle === nextProps.articleTitle &&
     prevProps.articleSlug === nextProps.articleSlug &&
-    prevProps.moodFeatureEnabled === nextProps.moodFeatureEnabled
+    prevProps.moodFeatureEnabled === nextProps.moodFeatureEnabled &&
+    prevProps.onToggleMoodFeature === nextProps.onToggleMoodFeature
   );
+  
+  if (!shouldNotRerender) {
+    console.log('📝 ArticleContent memo comparison - will re-render because:', {
+      articleId: prevProps.articleId !== nextProps.articleId,
+      articleHtml: prevProps.articleHtml !== nextProps.articleHtml,
+      isAuthenticated: prevProps.isAuthenticated !== nextProps.isAuthenticated,
+      articleTitle: prevProps.articleTitle !== nextProps.articleTitle,
+      articleSlug: prevProps.articleSlug !== nextProps.articleSlug,
+      moodFeatureEnabled: prevProps.moodFeatureEnabled !== nextProps.moodFeatureEnabled,
+      onToggleMoodFeature: prevProps.onToggleMoodFeature !== nextProps.onToggleMoodFeature
+    });
+  }
+  
+  return shouldNotRerender;
 }); 

@@ -157,17 +157,38 @@ const ArticleHighlights: React.FC<ArticleHighlightsProps> = ({ articleId, childr
     }, 150); // Match this with CSS transition duration
   }, []);
   
-  // Handle text selection
+  // Handle text selection with mobile-specific improvements
   const handleSelection = useCallback(() => {
     // If unhighlight toolbar is active, don't process regular selections
     if (showUnhighlightToolbar) return;
     
-    const currentSelection = window.getSelection();
-    if (currentSelection && !currentSelection.isCollapsed && currentSelection.toString().trim() !== '') {
-      setSelection(currentSelection);
-    } else {
-      setSelection(null);
-    }
+    // Add a small delay to ensure selection is stable on mobile
+    setTimeout(() => {
+      const currentSelection = window.getSelection();
+      if (currentSelection && !currentSelection.isCollapsed) {
+        const selectedText = currentSelection.toString().trim();
+        
+        // Filter out selections that are too long (likely accidental)
+        if (selectedText && selectedText.length > 0 && selectedText.length < 1000) {
+          // Check if selection is within our article content
+          const range = currentSelection.getRangeAt(0);
+          const container = range.commonAncestorContainer;
+          const articleContainer = container.nodeType === Node.TEXT_NODE 
+            ? container.parentElement?.closest('.article-highlight-container')
+            : (container as Element)?.closest('.article-highlight-container');
+          
+          if (articleContainer) {
+            setSelection(currentSelection);
+          } else {
+            setSelection(null);
+          }
+        } else {
+          setSelection(null);
+        }
+      } else {
+        setSelection(null);
+      }
+    }, 100); // Short delay for mobile stability
   }, [showUnhighlightToolbar]);
   
   // Handle highlight button click
@@ -276,11 +297,26 @@ const ArticleHighlights: React.FC<ArticleHighlightsProps> = ({ articleId, childr
     setShowAiModal(true);
   }, []);
   
-  // Set up selection event listener
+  // Set up selection event listener with mobile improvements
   useEffect(() => {
     document.addEventListener('selectionchange', handleSelection);
+    
+    // Additional mobile touch handling
+    const handleTouchEnd = () => {
+      // Small delay to ensure selection is finalized
+      setTimeout(handleSelection, 150);
+    };
+    
+    // Only add touch handlers on mobile devices
+    if ('ontouchstart' in window) {
+      document.addEventListener('touchend', handleTouchEnd);
+    }
+    
     return () => {
       document.removeEventListener('selectionchange', handleSelection);
+      if ('ontouchstart' in window) {
+        document.removeEventListener('touchend', handleTouchEnd);
+      }
     };
   }, [handleSelection]);
   

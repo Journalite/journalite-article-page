@@ -13,6 +13,7 @@ import LeftSidebar from '@/components/LeftSidebar'
 import ArticleWithHighlights from '@/components/ArticleWithHighlights'
 import CommentSection from '@/components/CommentSection'
 import ArticleComposer from '@/components/ArticleComposer'
+import LikeButton from '@/components/LikeButton'
 
 // Import Firestore article service
 import { getArticleBySlug } from '@/firebase/articles'
@@ -85,7 +86,6 @@ function Article() {
   const [windowWidth, setWindowWidth] = useState(0)
   const [articleHtml, setArticleHtml] = useState<string | null>(null)
   const [likes, setLikes] = useState<string[]>([])
-  const [isLiked, setIsLiked] = useState(false)
   const [currentUser, setCurrentUser] = useState<any>(null)
   const [isEditing, setIsEditing] = useState(false)
   
@@ -132,10 +132,7 @@ function Article() {
       setIsAuthenticated(!!user)
       setCurrentUser(user)
       
-      // Check if article is liked by current user
-      if (user && article?.likes) {
-        setIsLiked(article.likes.includes(user.uid))
-      }
+      // Note: Like status is now handled by LikeButton component
     })
     
     return () => unsubscribe()
@@ -252,61 +249,8 @@ function Article() {
     setIsProfileMenuOpen(!isProfileMenuOpen)
   }
   
-  const handleLikeArticle = async () => {
-    console.log('🔥 LIKE BUTTON CLICKED!')
-    console.log('Current user:', currentUser)
-    console.log('Article ID:', article?.id)
-    console.log('Is liked:', isLiked)
-    
-    if (!currentUser) {
-      alert('Please login to like articles')
-      return
-    }
-    
-    if (!article?.id) {
-      console.error('❌ No article ID found')
-      return
-    }
-    
-    try {
-      // Import Firestore functions at the top of the function for debugging
-      const { doc, updateDoc, arrayUnion, arrayRemove } = await import('firebase/firestore')
-      const { db } = await import('@/firebase/clientApp')
-      
-      console.log('📝 Updating Firestore...')
-      
-      const articleRef = doc(db, 'articles', article.id)
-      
-      if (isLiked) {
-        console.log('👍 Removing like...')
-        await updateDoc(articleRef, {
-          likes: arrayRemove(currentUser.uid)
-        })
-        setLikes(likes.filter(uid => uid !== currentUser.uid))
-        setIsLiked(false)
-        console.log('✅ Like removed successfully')
-      } else {
-        console.log('❤️ Adding like...')
-        await updateDoc(articleRef, {
-          likes: arrayUnion(currentUser.uid)
-        })
-        setLikes([...likes, currentUser.uid])
-        setIsLiked(true)
-        console.log('✅ Like added successfully')
-      }
-      
-    } catch (error) {
-      console.error('❌ Error updating like status:', error)
-      // Revert UI changes on error
-      if (isLiked) {
-        setLikes([...likes, currentUser.uid])
-        setIsLiked(true)
-      } else {
-        setLikes(likes.filter(uid => uid !== currentUser.uid))
-        setIsLiked(false)
-      }
-    }
-  }
+  // Debug console for re-renders
+  console.log('🔄 Articles page Article component re-rendered at:', new Date().toLocaleTimeString());
   
   if (isLoading) {
     return (
@@ -641,16 +585,12 @@ function Article() {
                 </div>
                 
                 <div className={articleStyles.articleActions}>
-                  <button 
-                    className={`${articleStyles.likeButton} ${isLiked ? articleStyles.liked : ''}`}
-                    onClick={handleLikeArticle}
-                    aria-label={isLiked ? 'Unlike article' : 'Like article'}
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill={isLiked ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" className={articleStyles.likeIcon}>
-                      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-                    </svg>
-                    <span>{likes.length > 0 ? likes.length : ''}</span>
-                  </button>
+                  <LikeButton 
+                    articleId={article.id}
+                    initialLikes={likes}
+                    className={`${articleStyles.likeButton}`}
+                    styles={articleStyles}
+                  />
                   
                   {isAuthenticated && article.authorId === currentUser?.uid && (
                     <button 

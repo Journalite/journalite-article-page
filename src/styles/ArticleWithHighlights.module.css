@@ -211,35 +211,230 @@
   text-align: center;
 }
 
-/* Responsive styles */
+/* Enhanced responsive styles for tablets and larger phones */
 @media (max-width: 768px) {
   .articleContainer {
-    padding: 16px;
+    padding: 20px 16px;
+    max-width: 100%;
+  }
+  
+  .articleContent {
+    font-size: 19px;
+    line-height: 1.7;
   }
   
   .articleContent h1 {
-    font-size: 30px;
-    margin: 32px 0 20px;
+    font-size: 32px;
+    margin: 40px 0 24px;
+    line-height: 1.2;
   }
   
   .articleContent h2 {
-    font-size: 26px;
-    margin: 28px 0 16px;
+    font-size: 28px;
+    margin: 36px 0 20px;
+    line-height: 1.2;
   }
   
   .articleContent h3 {
-    font-size: 22px;
-    margin: 24px 0 14px;
+    font-size: 24px;
+    margin: 32px 0 18px;
+    line-height: 1.2;
   }
   
-  .articleContent p,
-  .articleContent li,
+  .articleContent p {
+    font-size: 19px;
+    margin-bottom: 28px;
+    line-height: 1.7;
+  }
+  
+  .articleContent li {
+    font-size: 19px;
+    margin-bottom: 14px;
+    line-height: 1.7;
+  }
+  
+  .articleContent blockquote {
+    font-size: 19px;
+    margin: 32px 0;
+    padding-left: 20px;
+  }
+  
+  .articleContent ul, .articleContent ol {
+    padding-left: 28px;
+    margin-bottom: 28px;
+  }
+  
+  .articleContent img {
+    margin: 32px auto;
+  }
+  
+  .articleContent pre {
+    padding: 16px;
+    margin: 28px 0;
+    font-size: 14px;
+    overflow-x: auto;
+    border-radius: 8px;
+  }
+  
+  .articleContent code {
+    font-size: 14px;
+    padding: 3px 6px;
+  }
+}
+
+/* iPhone and smaller mobile devices */
+@media (max-width: 480px) {
+  .articleContainer {
+    padding: 16px 12px;
+  }
+  
+  .articleContent {
+    font-size: 18px;
+    line-height: 1.6;
+  }
+  
+  .articleContent h1 {
+    font-size: 28px;
+    margin: 32px 0 20px;
+    line-height: 1.1;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+  
+  .articleContent h2 {
+    font-size: 24px;
+    margin: 28px 0 16px;
+    line-height: 1.1;
+    word-wrap: break-word;
+  }
+  
+  .articleContent h3 {
+    font-size: 20px;
+    margin: 24px 0 14px;
+    line-height: 1.2;
+    word-wrap: break-word;
+  }
+  
+  .articleContent p {
+    font-size: 18px;
+    margin-bottom: 24px;
+    line-height: 1.6;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+  
+  .articleContent li {
+    font-size: 18px;
+    margin-bottom: 12px;
+    line-height: 1.6;
+  }
+  
   .articleContent blockquote {
     font-size: 18px;
+    margin: 28px 0;
+    padding-left: 16px;
+    margin-left: -4px;
+    margin-right: -4px;
+  }
+  
+  .articleContent ul, .articleContent ol {
+    padding-left: 24px;
     margin-bottom: 24px;
   }
   
   .articleContent img {
-    margin: 28px auto;
+    margin: 24px auto;
+    border-radius: 8px;
+    max-width: calc(100% + 24px);
+    margin-left: -12px;
+    margin-right: -12px;
+  }
+  
+  .articleContent pre {
+    padding: 12px;
+    margin: 24px 0;
+    font-size: 13px;
+    overflow-x: auto;
+    border-radius: 6px;
+    /* Allow horizontal scroll for code */
+    white-space: pre;
+    word-wrap: normal;
+    overflow-wrap: normal;
+  }
+  
+  .articleContent code {
+    font-size: 13px;
+    padding: 2px 4px;
+    word-wrap: break-word;
+  }
+  
+  .articleContent a {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+  
+  /* Better text selection on mobile */
+  .articleContent ::selection {
+    background-color: rgba(26, 137, 23, 0.3);
+  }
+  
+  /* Reading progress adjustments for mobile */
+  .articleContent :global(.trackable-paragraph.read) {
+    padding-left: 0.75rem;
+    margin-left: -0.75rem;
+  }
+}
+
+/* Extra small screens (iPhone SE, etc.) */
+@media (max-width: 375px) {
+  .articleContainer {
+    padding: 12px 8px;
+  }
+  
+  .articleContent {
+    font-size: 17px;
+  }
+  
+  .articleContent h1 {
+    font-size: 26px;
+    margin: 28px 0 18px;
+  }
+  
+  .articleContent h2 {
+    font-size: 22px;
+    margin: 24px 0 14px;
+  }
+  
+  .articleContent h3 {
+    font-size: 19px;
+    margin: 20px 0 12px;
+  }
+  
+  .articleContent p {
+    font-size: 17px;
+    margin-bottom: 20px;
+  }
+  
+  .articleContent li {
+    font-size: 17px;
+    margin-bottom: 10px;
+  }
+  
+  .articleContent blockquote {
+    font-size: 17px;
+    margin: 24px 0;
+    padding-left: 12px;
+  }
+  
+  .articleContent ul, .articleContent ol {
+    padding-left: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .articleContent img {
+    margin: 20px auto;
+    max-width: calc(100% + 16px);
+    margin-left: -8px;
+    margin-right: -8px;
   }
 } 

@@ -26,29 +26,28 @@ function highlightCode() {
     const code = codeBlock.textContent || '';
     let highlightedCode = code;
     
-    // Basic JavaScript/TypeScript highlighting
-    highlightedCode = highlightedCode
+    // Simplified highlighting to avoid regex issues
+    try {
       // Keywords
-      .replace(/\\b(const|let|var|function|class|interface|type|enum|import|export|from|as|return|if|else|for|while|switch|case|break|default|try|catch|finally|async|await|new|this|extends|implements|private|public|protected|static|get|set|super|void|yield)\\b/g, '<span style="color: #569cd6; font-weight: 500;">$1</span>')
+      const keywords = ['const', 'let', 'var', 'function', 'class', 'interface', 'type', 'enum', 'import', 'export', 'from', 'as', 'return', 'if', 'else', 'for', 'while', 'switch', 'case', 'break', 'default', 'try', 'catch', 'finally', 'async', 'await', 'new', 'this', 'extends', 'implements', 'private', 'public', 'protected', 'static'];
+      keywords.forEach(keyword => {
+        const regex = new RegExp('\\\\b' + keyword + '\\\\b', 'g');
+        highlightedCode = highlightedCode.replace(regex, '<span style="color: #569cd6; font-weight: 500;">' + keyword + '</span>');
+      });
       
-      // Strings
-      .replace(/(['"\`])((?:\\\\.|(?!\\1)[^\\\\\\r\\n])*?)\\1/g, '<span style="color: #ce9178;">$1$2$1</span>')
+      // Simple string highlighting
+      highlightedCode = highlightedCode.replace(/"([^"]*)"/g, '<span style="color: #ce9178;">"$1"</span>');
+      highlightedCode = highlightedCode.replace(/'([^']*)'/g, '<span style="color: #ce9178;">\'$1\'</span>');
       
       // Numbers
-      .replace(/\\b(\\d+(?:\\.\\d+)?)\\b/g, '<span style="color: #b5cea8;">$1</span>')
+      highlightedCode = highlightedCode.replace(/\\b\\d+\\.?\\d*\\b/g, '<span style="color: #b5cea8;">$&</span>');
       
       // Comments
-      .replace(/(\/\/.*?)$/gm, '<span style="color: #6a9955; font-style: italic;">$1</span>')
-      .replace(/(\/\\*[\\s\\S]*?\\*\/)/g, '<span style="color: #6a9955; font-style: italic;">$1</span>')
-      
-      // Functions
-      .replace(/([a-zA-Z_$][a-zA-Z0-9_$]*)\\s*\\(/g, '<span style="color: #dcdcaa;">$1</span>(')
-      
-      // Types/Classes (capitalized words)
-      .replace(/\\b([A-Z][a-zA-Z0-9_]*)\\b/g, '<span style="color: #4ec9b0;">$1</span>')
-      
-      // Operators
-      .replace(/([=!<>+\\-*/%&|^~?:;,.])/g, '<span style="color: #d4d4d4;">$1</span>');
+      highlightedCode = highlightedCode.replace(/\/\/.*$/gm, '<span style="color: #6a9955; font-style: italic;">$&</span>');
+    } catch (e) {
+      console.warn('Syntax highlighting failed:', e);
+      // Keep original code if highlighting fails
+    }
     
     codeBlock.innerHTML = highlightedCode;
     

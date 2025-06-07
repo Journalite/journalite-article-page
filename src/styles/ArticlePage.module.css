@@ -419,7 +419,7 @@
   background-color: rgba(0, 0, 0, 0.05);
 }
 
-/* Media queries for responsive design */
+/* Enhanced mobile responsiveness for tablets and larger phones */
 @media (max-width: 768px) {
   .pageHeader {
     height: 50px;
@@ -440,6 +440,7 @@
   .articleTitle {
     font-size: 36px;
     margin-bottom: 24px;
+    line-height: 1.1;
   }
   
   .authorAvatar {
@@ -458,8 +459,9 @@
   }
   
   .likeButton, .editButton {
-    padding: 6px 10px;
+    padding: 8px 12px;
     font-size: 14px;
+    min-height: 44px; /* Apple's minimum touch target */
   }
   
   .tagContainer {
@@ -470,26 +472,203 @@
     margin-top: 40px;
     padding-top: 30px;
   }
+  
+  .profileDropdown {
+    right: -10px; /* Better positioning on mobile */
+    width: 180px;
+  }
 }
 
+/* iPhone and smaller mobile devices */
 @media (max-width: 480px) {
+  .articlePageContainer {
+    font-size: 16px; /* Prevent zoom on form focus */
+  }
+  
+  .pageHeader {
+    height: 48px;
+    padding: 0;
+  }
+  
+  .headerContainer {
+    padding: 0 12px;
+  }
+  
+  .headerLogo {
+    font-size: 1.1rem;
+  }
+  
+  .pageContainer {
+    padding: 24px 16px;
+    max-width: 100%;
+  }
+  
+  .articleHeader {
+    margin-bottom: 40px;
+  }
+  
+  .articleTitle {
+    font-size: 28px;
+    line-height: 1.1;
+    margin-bottom: 20px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+  
   .articleMeta {
     flex-direction: column;
     align-items: flex-start;
-    gap: 20px;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  
+  .authorInfo {
+    gap: 12px;
+  }
+  
+  .authorAvatar {
+    width: 44px;
+    height: 44px;
+    font-size: 18px;
+  }
+  
+  .authorName {
+    font-size: 16px;
+    margin-bottom: 4px;
+  }
+  
+  .articleDetails {
+    font-size: 14px;
   }
   
   .articleActions {
     width: 100%;
-    justify-content: flex-end;
+    justify-content: flex-start;
+    gap: 12px;
   }
   
-  .articleTitle {
-    font-size: 32px;
+  .likeButton, .editButton {
+    padding: 10px 16px;
+    font-size: 14px;
+    min-height: 44px; /* Apple's minimum touch target */
+    border-radius: 22px;
+    flex: none;
+  }
+  
+  .likeIcon {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .tagContainer {
+    margin-bottom: 24px;
+    gap: 8px;
   }
   
   .tag {
-    padding: 4px 10px;
+    padding: 6px 12px;
+    font-size: 12px;
+    border-radius: 12px;
+  }
+  
+  .authButtons {
+    gap: 6px;
+  }
+  
+  .loginButton, .signupButton {
+    padding: 8px 12px;
+    font-size: 12px;
+    min-height: 36px;
+  }
+  
+  .profileCircle {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+  
+  .profileDropdown {
+    right: -8px;
+    width: 160px;
+    font-size: 14px;
+  }
+  
+  .dropdownItem {
+    padding: 10px 12px;
     font-size: 13px;
+  }
+  
+  .relatedTagsSection {
+    margin-top: 40px;
+    padding-top: 24px;
+  }
+  
+  .relatedTagsHeading {
+    font-size: 14px;
+    margin-bottom: 16px;
+  }
+  
+  .relatedTagsList {
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  
+  .relatedTag {
+    padding: 6px 10px;
+    font-size: 12px;
+    border-radius: 16px;
+  }
+  
+  .writeButton {
+    padding: 8px 20px;
+    font-size: 13px;
+    border-radius: 16px;
+  }
+  
+  .commentsContainer {
+    margin-top: 32px;
+    padding-top: 24px;
+  }
+  
+  .editingHeader {
+    padding: 12px 16px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  
+  .cancelButton {
+    padding: 8px 12px;
+    font-size: 13px;
+    min-height: 36px;
+  }
+}
+
+/* Extra small screens (iPhone SE, etc.) */
+@media (max-width: 375px) {
+  .headerContainer {
+    padding: 0 8px;
+  }
+  
+  .pageContainer {
+    padding: 20px 12px;
+  }
+  
+  .articleTitle {
+    font-size: 24px;
+    line-height: 1.2;
+  }
+  
+  .articleMeta {
+    gap: 12px;
+  }
+  
+  .articleActions {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .likeButton, .editButton {
+    padding: 8px 12px;
+    min-height: 40px;
   }
 } 

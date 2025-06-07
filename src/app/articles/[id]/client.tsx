@@ -1,11 +1,10 @@
 'use client'
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { auth } from '@/firebase/clientApp';
-import ArticleContent from '@/components/ArticleContent';
-import LikeButton from '@/components/LikeButton';
+import ArticleLayout from '@/components/ArticleLayout';
 import CommentSection from '@/components/CommentSection';
 import ArticleComposer from '@/components/ArticleComposer';
 import { getArticleById, Article } from '@/firebase/articles';
@@ -22,6 +21,9 @@ const ArticlePageClient: React.FC<ArticlePageClientProps> = ({ id }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const [articleHtml, setArticleHtml] = useState<string | null>(null);
+  
+  // Debug re-renders
+  console.log('🔄 ArticlePageClient re-rendered at:', new Date().toLocaleTimeString());
   const [article, setArticle] = useState<{
     title: string;
     authorName: string;
@@ -139,13 +141,26 @@ const ArticlePageClient: React.FC<ArticlePageClientProps> = ({ id }) => {
     }
   }, [articleHtml, isAuthenticated]);
 
-  const handleEditClick = () => {
+  // Stable callbacks to prevent re-renders
+  const handleEditClick = useCallback(() => {
     setIsEditing(true);
-  };
+  }, []);
 
-  const handleCancelEdit = () => {
+  const handleCancelEdit = useCallback(() => {
     setIsEditing(false);
-  };
+  }, []);
+
+  const handleToggleMoodFeature = useCallback((enabled: boolean) => {
+    setMoodFeatureEnabled(enabled);
+    localStorage.setItem('moodFeatureEnabled', JSON.stringify(enabled));
+  }, []);
+
+  // Memoized article title and slug to prevent re-computation
+  const articleTitle = useMemo(() => article?.title || 'Article', [article?.title]);
+  const articleSlug = useMemo(() => 
+    article?.title ? article.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') : id,
+    [article?.title, id]
+  );
 
   // Handle article updates
   const handleUpdateComplete = (updatedArticle?: Article | null) => {
@@ -343,78 +358,29 @@ const ArticlePageClient: React.FC<ArticlePageClientProps> = ({ id }) => {
         </div>
       </header>
       
-      <div className={styles.pageContainer}>
-        {/* Article header */}
-        {article && (
-          <header className={styles.articleHeader}>
-            <h1 className={styles.articleTitle}>{article.title}</h1>
-            
-            <div className={styles.articleMeta}>
-              <div className={styles.authorInfo}>
-                <div className={styles.authorAvatar}>{article.authorName.charAt(0)}</div>
-                <div className={styles.authorDetails}>
-                  <div className={styles.authorName}>{article.authorName}</div>
-                  <div className={styles.articleDetails}>
-                    {article.createdAt} · {article.readTime} min read
-                  </div>
-                </div>
-              </div>
-              
-              <div className={styles.articleActions}>
-                <LikeButton
-                  articleId={id}
-                  initialLikes={initialLikes}
-                  className={styles.likeButton}
-                  styles={styles}
-                />
-              
-                {currentUser && article.authorId === currentUser.uid && (
-                  <button 
-                    className={styles.editButton}
-                    onClick={handleEditClick}
-                  >
-                    Edit
-                  </button>
-                )}
-              </div>
-            </div>
-            
-            {article.tags && article.tags.length > 0 && (
-              <div className={styles.tagContainer}>
-                {article.tags.map((tag, index) => (
-                  <span key={index} className={styles.tag}>{tag}</span>
-                ))}
-              </div>
-            )}
-          </header>
-        )}
-        
-        {/* Article content with highlights */}
-        <ArticleContent 
+      <ArticleLayout
+        articleId={id}
+        articleHtml={articleHtml}
+        article={article}
+        initialLikes={initialLikes}
+        currentUser={currentUser}
+        isAuthenticated={isAuthenticated}
+        onEditClick={handleEditClick}
+        onToggleMoodFeature={handleToggleMoodFeature}
+        moodFeatureEnabled={moodFeatureEnabled}
+        articleTitle={articleTitle}
+        articleSlug={articleSlug}
+      />
+      
+      {/* Comments section */}
+      <div className={styles.commentsContainer}>
+        <CommentSection 
           articleId={id} 
-          articleHtml={articleHtml}
-          isAuthenticated={isAuthenticated}
-          articleTitle={article?.title || 'Article'}
-          articleSlug={article?.title ? article.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') : id}
           {...(isAuthenticated && {
-            moodFeatureEnabled: moodFeatureEnabled,
-            onToggleMoodFeature: (enabled: boolean) => {
-              setMoodFeatureEnabled(enabled);
-              localStorage.setItem('moodFeatureEnabled', JSON.stringify(enabled));
-            }
+            mood: mood,
+            moodFeatureEnabled: moodFeatureEnabled
           })}
         />
-        
-        {/* Comments section */}
-        <div className={styles.commentsContainer}>
-          <CommentSection 
-            articleId={id} 
-            {...(isAuthenticated && {
-              mood: mood,
-              moodFeatureEnabled: moodFeatureEnabled
-            })}
-          />
-        </div>
       </div>
     </div>
   );
