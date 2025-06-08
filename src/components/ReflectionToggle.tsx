@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { auth } from '@/firebase/clientApp';
 import { User } from 'firebase/auth';
+import { SparkleIcon, DiceIcon, WriteIcon, CloseIcon } from './icons/CustomIcons';
 
 interface ReflectionToggleProps {
   articleId: string;
@@ -58,7 +59,7 @@ const ReflectionToggle: React.FC<ReflectionToggleProps> = ({
   }, [showReflectionPanel, reflectionCount]);
 
   const toggleReflectionPanel = () => {
-    console.log('✍️ ReflectionToggle clicked - should NOT trigger parent re-render');
+    console.log('ReflectionToggle clicked - should NOT trigger parent re-render');
     
     setIsAnimating(true);
     setTimeout(() => setIsAnimating(false), 300);
@@ -153,14 +154,29 @@ const ReflectionToggle: React.FC<ReflectionToggleProps> = ({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          fontSize: '18px',
+          fontSize: '0',
+          padding: '0',
+          margin: '0',
+          lineHeight: '0',
+          textAlign: 'center',
+          verticalAlign: 'middle',
+          overflow: 'hidden',
+          boxSizing: 'border-box',
           transform: isAnimating ? 'scale(1.1)' : showReflectionPanel ? 'scale(1.05)' : 'scale(1)',
           backdropFilter: 'blur(10px)',
           ...style,
         }}
         title={showReflectionPanel ? "Close reflection" : "Open reflection"}
       >
-        {showReflectionPanel ? '✕' : '✍️'}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: '100%',
+          height: '100%'
+        }}>
+          {showReflectionPanel ? <CloseIcon size={14} color="#ffffff" /> : <WriteIcon size={14} color="#ffffff" />}
+        </div>
       </button>
 
       {/* Custom Floating Reflection Panel */}
@@ -207,9 +223,14 @@ const ReflectionToggle: React.FC<ReflectionToggleProps> = ({
               background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text'
+              backgroundClip: 'text',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px'
             }}>
-              Time to Reflect ✨
+              <SparkleIcon size={16} color="#3b82f6" />
+              Time to Reflect
             </h3>
             
             {/* Editable Prompt */}
@@ -273,11 +294,14 @@ const ReflectionToggle: React.FC<ReflectionToggleProps> = ({
                       fontSize: '12px',
                       color: '#3b82f6',
                       cursor: 'pointer',
-                      fontWeight: '500'
+                      fontWeight: '500',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
                     }}
                     title="Get different question"
                   >
-                    🎲
+                    <DiceIcon size={12} color="#3b82f6" />
                   </button>
                 </div>
               )}

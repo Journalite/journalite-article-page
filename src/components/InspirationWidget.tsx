@@ -1,7 +1,9 @@
 'use client'
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { getReflectionInspiration, getReflectionThemes } from '@/services/reflectionService';
+import { InspirationIcon, BulbIcon, ThoughtIcon, PaletteIcon } from './icons/CustomIcons';
+// import { useEffect, LoadingIcon } from 'react' and './icons/CustomIcons'; // Unused
 import styles from './InspirationWidget.module.css';
 
 interface InspirationWidgetProps {
@@ -66,7 +68,8 @@ const InspirationWidget: React.FC<InspirationWidgetProps> = ({ onInsert }) => {
                 className={styles.inspirationButton}
                 title="Get inspiration from your reflections"
             >
-                ✨ Inspiration
+                <InspirationIcon size={16} color="currentColor" />
+                Inspiration
             </button>
         );
     }
@@ -74,7 +77,10 @@ const InspirationWidget: React.FC<InspirationWidgetProps> = ({ onInsert }) => {
     return (
         <div className={styles.inspirationWidget}>
             <div className={styles.header}>
-                <h3>💡 Your Reflection Insights</h3>
+                <h3>
+                    <BulbIcon size={18} color="#f59e0b" />
+                    Your Reflection Insights
+                </h3>
                 <button 
                     onClick={() => setIsOpen(false)}
                     className={styles.closeButton}
@@ -108,7 +114,10 @@ const InspirationWidget: React.FC<InspirationWidgetProps> = ({ onInsert }) => {
                     <div className={styles.inspirationsList}>
                         {inspirations.length === 0 ? (
                             <div className={styles.empty}>
-                                <p>💭 No reflections yet!</p>
+                                <p>
+                                    <ThoughtIcon size={16} color="#6b7280" />
+                                    No reflections yet!
+                                </p>
                                 <p>Start reading articles and reflecting to build your inspiration library.</p>
                             </div>
                         ) : (
@@ -140,7 +149,10 @@ const InspirationWidget: React.FC<InspirationWidgetProps> = ({ onInsert }) => {
                     <div className={styles.themesList}>
                         {themes.length === 0 ? (
                             <div className={styles.empty}>
-                                <p>🎨 No themes identified yet!</p>
+                                <p>
+                                    <PaletteIcon size={16} color="#6b7280" />
+                                    No themes identified yet!
+                                </p>
                                 <p>Keep reflecting on articles to discover your writing themes.</p>
                             </div>
                         ) : (

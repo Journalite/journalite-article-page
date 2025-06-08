@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { moodThemes } from '@/utils/moodThemes';
+import { AutoIcon } from './icons/CustomIcons';
 
 interface GradientPanelProps {
   currentMood: keyof typeof moodThemes;
@@ -474,13 +475,8 @@ const GradientPanel: React.FC<GradientPanelProps> = ({
             position: 'fixed',
             bottom: window.innerWidth <= 768 ? '80px' : '110px',
             left: window.innerWidth <= 768 ? '20px' : '40px',
-            right: window.innerWidth <= 768 ? '20px' : 'auto',
-            width: window.innerWidth <= 768 ? 'auto' : '380px',
-            maxWidth: window.innerWidth <= 768 ? '340px' : '380px',
-            maxHeight: Math.min(
-              window.innerHeight - (window.innerWidth <= 768 ? 120 : 160), 
-              window.innerWidth <= 768 ? 400 : 500
-            ),
+            width: window.innerWidth <= 768 ? '340px' : '380px',
+            maxHeight: window.innerWidth <= 768 ? '400px' : '500px',
             background: 'rgba(255, 255, 255, 0.95)',
             backdropFilter: 'blur(20px)',
             borderRadius: window.innerWidth <= 768 ? '16px' : '24px',
@@ -489,7 +485,7 @@ const GradientPanel: React.FC<GradientPanelProps> = ({
             boxShadow: '0 20px 60px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.2)',
             zIndex: 999,
             animation: 'gentleSlideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-            overflow: 'auto'
+            overflow: 'hidden'
           }}>
           {/* Theme mode toggles */}
           <div style={{
@@ -499,7 +495,7 @@ const GradientPanel: React.FC<GradientPanelProps> = ({
             marginBottom: '1.5rem'
           }}>
             {[
-              { mode: 'auto' as const, icon: '✨', title: 'Auto' },
+              { mode: 'auto' as const, icon: AutoIcon, title: 'Auto' },
               { mode: 'light' as const, icon: '☀️', title: 'Light' },
               { mode: 'dark' as const, icon: '🌙', title: 'Dark' }
             ].map(({ mode, icon, title }) => (
@@ -518,11 +514,14 @@ const GradientPanel: React.FC<GradientPanelProps> = ({
                   background: themeConfig.mode === mode ? 'rgba(0, 122, 255, 0.1)' : 'rgba(0,0,0,0.05)',
                   fontSize: '20px',
                   cursor: 'pointer',
-                  transition: 'all 0.2s ease'
+                  transition: 'all 0.2s ease',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
                 }}
                 title={title}
               >
-                {icon}
+                {mode === 'auto' ? <AutoIcon size={20} color={themeConfig.mode === mode ? '#007AFF' : '#666'} /> : icon}
               </button>
             ))}
           </div>

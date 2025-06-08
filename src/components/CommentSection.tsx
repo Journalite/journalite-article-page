@@ -15,6 +15,7 @@ import {
   CommentReply as FirestoreReply
 } from '@/firebase/articles';
 import { moodThemes } from '@/utils/moodThemes';
+import { CommentIcon, SparkleIcon, SendIcon } from './icons/CustomIcons';
 import styles from '@/styles/comment.module.css';
 
 interface CommentSectionProps {
@@ -368,7 +369,8 @@ const CommentSection: React.FC<CommentSectionProps> = ({
             color: '#333'
           }}
         >
-          💬 Join the Discussion
+          <CommentIcon size={20} color={moodFeatureEnabled ? moodThemes[mood].accent : '#333'} />
+          Join the Discussion
         </h2>
       
       {error && (
@@ -464,7 +466,17 @@ const CommentSection: React.FC<CommentSectionProps> = ({
                   e.currentTarget.style.boxShadow = `0 4px 16px -4px ${moodThemes[mood].accent}40`;
                 } : undefined}
               >
-                {submitting ? '✨ Posting...' : '💬 Post'}
+                {submitting ? (
+                  <>
+                    <SparkleIcon size={16} color="white" />
+                    Posting...
+                  </>
+                ) : (
+                  <>
+                    <SendIcon size={16} color="white" />
+                    Post
+                  </>
+                )}
               </button>
             </>
           ) : (
@@ -526,7 +538,8 @@ const CommentSection: React.FC<CommentSectionProps> = ({
             fontWeight: '500',
             marginBottom: '1rem'
           } : {}}>
-            ✨ Loading comments...
+            <SparkleIcon size={16} color={moodFeatureEnabled ? moodThemes[mood].accent : '#6b7280'} />
+            Loading comments...
           </p>
           <div className={styles.loadingDots}>
             <div 
@@ -803,7 +816,17 @@ const CommentSection: React.FC<CommentSectionProps> = ({
                           transition: 'all 0.3s ease'
                         } : {}}
                       >
-                        {submittingReply ? '✨ Posting...' : '💬 Post Reply'}
+                        {submittingReply ? (
+                          <>
+                            <SparkleIcon size={14} color="white" />
+                            Posting...
+                          </>
+                        ) : (
+                          <>
+                            <SendIcon size={14} color="white" />
+                            Post Reply
+                          </>
+                        )}
                       </button>
                     </div>
                   </div>

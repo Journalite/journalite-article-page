@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createArticle } from '@/firebase/articles'
 import { auth } from '@/firebase/clientApp'
+import { WarningIcon, SparkleIcon } from './icons/CustomIcons'
 import styles from '@/styles/ArticleForm.module.css'
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
@@ -274,7 +275,9 @@ const ArticleForm = () => {
       
       {error && (
         <div className={styles.errorAlert}>
-          <span className={styles.errorIcon}>⚠️</span>
+                          <span className={styles.errorIcon}>
+                  <WarningIcon size={16} color="#ef4444" />
+                </span>
           <span>{error}</span>
         </div>
       )}
@@ -476,7 +479,10 @@ const ArticleForm = () => {
             </span>
           </div>
           <div className={styles.formHint}>
-            <span>✨ Tip: {randomTip}</span>
+                            <span>
+                  <SparkleIcon size={14} color="#f59e0b" />
+                  Tip: {randomTip}
+                </span>
           </div>
         </div>
         

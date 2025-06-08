@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import HighlightToolbar from './HighlightToolbar';
 import { useHighlights } from '@/context/HighlightContext';
-import { Highlight, HighlightTag, generateHighlightShareUrl } from '@/services/highlightService';
+import { HighlightTag, generateHighlightShareUrl } from '@/services/highlightService';
+// import { Highlight } from '@/services/highlightService'; // Unused type import
 import ShareModal from './ShareModal';
 
 interface ArticleHighlightsProps {
@@ -9,7 +10,7 @@ interface ArticleHighlightsProps {
   children: React.ReactNode;
   articleTitle?: string;
   articleSlug?: string;
-  onShare?: (text: string) => void; // Optional share handler
+  // onShare?: (text: string) => void; // Optional share handler - currently unused
 }
 
 // Get context for a selection with improved handling that preserves formatting
@@ -299,7 +300,7 @@ const applyHighlightsToContent = (highlights: any[], articleContent: HTMLElement
   }
 };
 
-const ArticleHighlights: React.FC<ArticleHighlightsProps> = ({ articleId, children, articleTitle = 'Article', articleSlug = '', onShare }) => {
+const ArticleHighlights: React.FC<ArticleHighlightsProps> = ({ articleId, children, articleTitle = 'Article', articleSlug = '' }) => {
   const [selection, setSelection] = useState<Selection | null>(null);
   const { highlights, saveHighlight, removeHighlight, highlightElement } = useHighlights();
   const [contentRef, setContentRef] = useState<HTMLElement | null>(null);

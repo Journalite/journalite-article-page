@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { ReflectionPrompt, saveReflectionResponse, getPromptByIndex } from '@/services/reflectionService';
+import { SparkleIcon, ThoughtIcon } from './icons/CustomIcons';
 import styles from './SideReflection.module.css';
 
 interface SideReflectionProps {
@@ -79,12 +80,16 @@ const SideReflection: React.FC<SideReflectionProps> = ({
         <div className={styles.sideReflectionContainer}>
             {showThankYou ? (
                 <div className={styles.thankYouMessage}>
-                    <div className={styles.thankYouIcon}>✨</div>
+                    <div className={styles.thankYouIcon}>
+                        <SparkleIcon size={20} color="#22c55e" />
+                    </div>
                     <p>Saved!</p>
                 </div>
             ) : !isExpanded ? (
                 <div className={styles.reflectionPrompt} onClick={handleExpand}>
-                    <div className={styles.promptIcon}>💭</div>
+                    <div className={styles.promptIcon}>
+                        <ThoughtIcon size={18} color="#6b7280" />
+                    </div>
                     <div className={styles.promptText}>
                         {prompt.text}
                     </div>
@@ -93,7 +98,9 @@ const SideReflection: React.FC<SideReflectionProps> = ({
             ) : (
                 <div className={styles.reflectionForm}>
                     <div className={styles.formHeader}>
-                        <div className={styles.promptIcon}>💭</div>
+                        <div className={styles.promptIcon}>
+                            <ThoughtIcon size={18} color="#3b82f6" />
+                        </div>
                         <p className={styles.formPrompt}>{prompt.text}</p>
                     </div>
                     

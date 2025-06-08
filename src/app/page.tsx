@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
+// import Image from 'next/image' // Unused
 import styles from '@/styles/home.module.css'
 import { auth } from '../firebase/clientApp'
 import { onAuthStateChanged, signOut } from 'firebase/auth'

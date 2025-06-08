@@ -20,7 +20,7 @@ export async function generateStaticParams() {
   ]
 }
 
-export default function FirebaseAuthPage({ params }: { params: { firebase_auth: string[] } }) {
+export default function FirebaseAuthPage({ params: _params }: { params: { firebase_auth: string[] } }) {
   // This page handles Firebase authentication redirects
   return (
     <div>

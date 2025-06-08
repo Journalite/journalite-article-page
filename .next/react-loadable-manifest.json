@@ -1,14 +1,10 @@
 {
-  "src/app/articles/page.tsx -> @/firebase/clientApp": {
+  "src/components/LikeButton.tsx -> @/firebase/clientApp": {
     "id": 3201,
     "files": []
   },
-  "src/app/articles/page.tsx -> firebase/firestore": {
+  "src/components/LikeButton.tsx -> firebase/firestore": {
     "id": 5317,
-    "files": []
-  },
-  "src/components/ArticleWithHighlights.tsx -> @/services/reflectionService": {
-    "id": 9122,
     "files": []
   },
   "src/components/ReflectionJournal.tsx -> @/firebase/articles": {
@@ -16,6 +12,10 @@
     "files": [
       "static/chunks/9210.b9db254b1c3591b1.js"
     ]
+  },
+  "src/components/ReflectionToggle.tsx -> @/services/reflectionService": {
+    "id": 9122,
+    "files": []
   },
   "src/services/highlightService.ts -> firebase/firestore": {
     "id": 5317,

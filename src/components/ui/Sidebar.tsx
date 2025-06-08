@@ -4,6 +4,7 @@ import React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion } from 'framer-motion'
+import { StarIcon, ComputerIcon, TheaterIcon, UserIcon, SettingsIcon, WriteIcon } from '@/components/icons/CustomIcons'
 
 interface SidebarProps {
   onClose?: () => void
@@ -19,7 +20,7 @@ const navigationItems = [
   { 
     label: 'News+', 
     href: '/news-plus', 
-    icon: '⭐',
+    icon: StarIcon,
     isPremium: true 
   },
   { 
@@ -35,7 +36,7 @@ const navigationItems = [
   { 
     label: 'Technology', 
     href: '/tag/technology', 
-    icon: '💻' 
+    icon: ComputerIcon 
   },
   { 
     label: 'Science', 
@@ -45,7 +46,7 @@ const navigationItems = [
   { 
     label: 'Culture', 
     href: '/tag/culture', 
-    icon: '🎭' 
+    icon: TheaterIcon 
   },
   { 
     label: 'Puzzles', 
@@ -58,7 +59,7 @@ const userItems = [
   { 
     label: 'My Profile', 
     href: '/my-profile', 
-    icon: '👤' 
+    icon: UserIcon 
   },
   { 
     label: 'My Articles', 
@@ -68,12 +69,12 @@ const userItems = [
   { 
     label: 'Compose', 
     href: '/compose', 
-    icon: '✍️' 
+    icon: WriteIcon 
   },
   { 
     label: 'Settings', 
     href: '/settings', 
-    icon: '⚙️' 
+    icon: SettingsIcon 
   },
 ]
 
@@ -151,7 +152,9 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
                     ${item.isHighlighted ? 'bg-gradient-to-r from-accent-warm-start/5 to-transparent' : ''}
                   `}
                 >
-                  <span className="mr-3 text-base">{item.icon}</span>
+                  <span className="mr-3 text-base">
+                    {typeof item.icon === 'string' ? item.icon : <item.icon size={18} />}
+                  </span>
                   <span className="flex-1">{item.label}</span>
                   {item.isPremium && (
                     <span className="text-xs bg-gradient-warm text-white px-2 py-0.5 rounded-full font-medium">
@@ -190,7 +193,9 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
                     }
                   `}
                 >
-                  <span className="mr-3 text-base">{item.icon}</span>
+                  <span className="mr-3 text-base">
+                    {typeof item.icon === 'string' ? item.icon : <item.icon size={18} />}
+                  </span>
                   <span className="flex-1">{item.label}</span>
                 </Link>
               </motion.div>

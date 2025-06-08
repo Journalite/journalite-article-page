@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import { HighlightProvider } from '@/context/HighlightContext';
+import { AtmosphereIcon, LockClosedIcon, EnhancedIcon } from './icons/CustomIcons';
 import ArticleHighlights from './ArticleHighlights';
 import MoodToggle from './MoodToggle';
 import ReflectionToggle from './ReflectionToggle';
@@ -28,7 +29,7 @@ const ArticleWithHighlights: React.FC<ArticleWithHighlightsProps> = ({
   articleTitle = 'Article',
   articleSlug = ''
 }) => {
-  const [moodFeatureEnabled, setMoodFeatureEnabled] = useState(true);
+  // const [moodFeatureEnabled, setMoodFeatureEnabled] = useState(true); // Unused
   const [article, setArticle] = useState<{ title: string; body: string } | null>(null);
   const [isLoading, setIsLoading] = useState(!initialHtml);
   const [error, setError] = useState('');
@@ -178,7 +179,17 @@ const ArticleWithHighlights: React.FC<ArticleWithHighlightsProps> = ({
               fontSize: '0.875rem',
               opacity: 0.9
             }}>
-              {isAuthenticated ? '🎨 Atmosphere adapted' : '🔒 Sign in for enhanced features'}
+              {isAuthenticated ? (
+                <>
+                  <AtmosphereIcon size={16} color="#F7FAFC" />
+                  Atmosphere adapted
+                </>
+              ) : (
+                <>
+                  <LockClosedIcon size={16} color="#F7FAFC" />
+                  Sign in for enhanced features
+                </>
+              )}
             </span>
             {isAuthenticated && (
               <span style={{ 
@@ -186,7 +197,8 @@ const ArticleWithHighlights: React.FC<ArticleWithHighlightsProps> = ({
                 fontWeight: '600',
                 fontSize: '0.875rem'
               }}>
-                ✨ Enhanced features active
+                <EnhancedIcon size={16} color="#F7FAFC" />
+                Enhanced features active
               </span>
             )}
           </div>

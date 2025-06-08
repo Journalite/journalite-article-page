@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import styles from './ShareModal.module.css'; // We will create this CSS module next
+import { SparkleIcon } from './icons/CustomIcons';
+// import styles from './ShareModal.module.css'; // Unused
 import { createPortal } from 'react-dom';
 
 interface ShareModalProps {
@@ -71,7 +72,7 @@ const ShareModal: React.FC<ShareModalProps> = ({
     }
   };
 
-  const shareText = `"${highlightText}" - from "${articleTitle}"`;
+  // const shareText = `"${highlightText}" - from "${articleTitle}"`; // Unused
 
   if (!isOpen) return null;
 
@@ -135,7 +136,8 @@ const ShareModal: React.FC<ShareModalProps> = ({
             fontWeight: '600',
             color: '#1F2937'
           }}>
-            ✨ Share Highlight
+            <SparkleIcon size={20} color="#3b82f6" />
+            Share Highlight
           </h3>
           <p style={{
             margin: 0,

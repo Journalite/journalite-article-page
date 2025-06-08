@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { ReflectionPrompt, saveReflectionResponse, getPromptByIndex } from '@/services/reflectionService';
+import { SparkleIcon, ThoughtIcon, LockIcon } from './icons/CustomIcons';
 import styles from './InlineReflection.module.css';
 
 interface InlineReflectionProps {
@@ -86,13 +87,17 @@ const InlineReflection: React.FC<InlineReflectionProps> = ({
         <div className={`${styles.reflectionContainer} ${className || ''}`}>
             {showThankYou ? (
                 <div className={styles.thankYouMessage}>
-                    <div className={styles.thankYouIcon}>✨</div>
+                    <div className={styles.thankYouIcon}>
+                        <SparkleIcon size={24} color="#22c55e" />
+                    </div>
                     <p>Thank you for sharing your reflection!</p>
                     <small>Your thoughts have been saved to your private reading journal.</small>
                 </div>
             ) : !isExpanded ? (
                 <div className={styles.reflectionPrompt} onClick={handleExpand}>
-                    <div className={styles.promptIcon}>💭</div>
+                    <div className={styles.promptIcon}>
+                        <ThoughtIcon size={20} color="#6b7280" />
+                    </div>
                     <div className={styles.promptContent}>
                         <p className={styles.promptText}>{prompt.text}</p>
                         <small className={styles.promptHint}>Click to reflect and respond</small>
@@ -102,7 +107,9 @@ const InlineReflection: React.FC<InlineReflectionProps> = ({
             ) : (
                 <div className={styles.reflectionForm}>
                     <div className={styles.formHeader}>
-                        <div className={styles.promptIcon}>💭</div>
+                        <div className={styles.promptIcon}>
+                            <ThoughtIcon size={20} color="#3b82f6" />
+                        </div>
                         <h4 className={styles.formTitle}>{prompt.text}</h4>
                     </div>
                     
@@ -136,7 +143,8 @@ const InlineReflection: React.FC<InlineReflectionProps> = ({
                     </form>
                     
                     <small className={styles.privacyNote}>
-                        🔒 Your reflections are private and only visible to you
+                        <LockIcon size={12} color="#6b7280" />
+                        Your reflections are private and only visible to you
                     </small>
                 </div>
             )}

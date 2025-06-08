@@ -1,20 +1,179 @@
 import { Meta } from "@storybook/blocks";
-import Image from "next/image";
 
 import Github from "./assets/github.svg";
 import Discord from "./assets/discord.svg";
 import Youtube from "./assets/youtube.svg";
 import Tutorials from "./assets/tutorials.svg";
-import Styling from "./assets/styling.png";
-import Context from "./assets/context.png";
-import Assets from "./assets/assets.png";
-import Docs from "./assets/docs.png";
-import Share from "./assets/share.png";
-import FigmaPlugin from "./assets/figma-plugin.png";
-import Testing from "./assets/testing.png";
-import Accessibility from "./assets/accessibility.png";
-import Theming from "./assets/theming.png";
-import AddonLibrary from "./assets/addon-library.png";
+
+// Custom SVG icons to replace PNG images
+export const StylingIcon = () => (
+  <svg width="100%" height="auto" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="120" height="120" rx="12" fill="#667eea"/>
+    <rect x="20" y="20" width="80" height="80" rx="8" fill="white"/>
+    <rect x="30" y="30" width="60" height="8" rx="4" fill="#667eea"/>
+    <rect x="30" y="45" width="40" height="6" rx="3" fill="#a0aec0"/>
+    <rect x="30" y="57" width="50" height="6" rx="3" fill="#a0aec0"/>
+    <circle cx="75" cy="75" r="8" fill="#667eea"/>
+    <rect x="30" y="69" width="35" height="6" rx="3" fill="#a0aec0"/>
+    <rect x="30" y="81" width="25" height="6" rx="3" fill="#a0aec0"/>
+  </svg>
+);
+
+export const ContextIcon = () => (
+  <svg width="100%" height="auto" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="120" height="120" rx="12" fill="#48bb78"/>
+    <circle cx="40" cy="40" r="15" fill="white"/>
+    <circle cx="80" cy="40" r="15" fill="white"/>
+    <circle cx="60" cy="80" r="15" fill="white"/>
+    <line x1="40" y1="55" x2="60" y2="65" stroke="white" strokeWidth="3" strokeLinecap="round"/>
+    <line x1="80" y1="55" x2="60" y2="65" stroke="white" strokeWidth="3" strokeLinecap="round"/>
+    <circle cx="40" cy="40" r="6" fill="#48bb78"/>
+    <circle cx="80" cy="40" r="6" fill="#48bb78"/>
+    <circle cx="60" cy="80" r="6" fill="#48bb78"/>
+  </svg>
+);
+
+export const AssetsIcon = () => (
+  <svg width="100%" height="auto" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="120" height="120" rx="12" fill="#ed8936"/>
+    <rect x="20" y="20" width="80" height="50" rx="6" fill="white"/>
+    <rect x="25" y="25" width="70" height="40" rx="3" fill="#fed7aa"/>
+    <circle cx="35" cy="35" r="4" fill="#ed8936"/>
+    <polygon points="50,45 60,35 70,40 85,30 85,60 25,60" fill="#ed8936" opacity="0.7"/>
+    <rect x="20" y="80" width="25" height="20" rx="3" fill="white"/>
+    <rect x="50" y="80" width="25" height="20" rx="3" fill="white"/>
+    <rect x="80" y="80" width="20" height="20" rx="3" fill="white"/>
+    <rect x="23" y="83" width="19" height="4" rx="2" fill="#ed8936"/>
+    <rect x="53" y="83" width="19" height="4" rx="2" fill="#ed8936"/>
+    <rect x="83" y="83" width="14" height="4" rx="2" fill="#ed8936"/>
+  </svg>
+);
+
+export const DocsIcon = () => (
+  <svg width="100%" height="auto" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="120" height="120" rx="12" fill="#4299e1"/>
+    <rect x="25" y="20" width="70" height="80" rx="4" fill="white"/>
+    <rect x="35" y="35" width="50" height="4" rx="2" fill="#4299e1"/>
+    <rect x="35" y="45" width="35" height="3" rx="1.5" fill="#a0aec0"/>
+    <rect x="35" y="53" width="40" height="3" rx="1.5" fill="#a0aec0"/>
+    <rect x="35" y="61" width="30" height="3" rx="1.5" fill="#a0aec0"/>
+    <rect x="35" y="69" width="45" height="3" rx="1.5" fill="#a0aec0"/>
+    <rect x="35" y="77" width="25" height="3" rx="1.5" fill="#a0aec0"/>
+    <circle cx="75" cy="75" r="8" fill="#4299e1"/>
+    <path d="M72 75L74 77L78 73" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+export const ShareIcon = () => (
+  <svg width="100%" height="auto" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="120" height="120" rx="12" fill="#9f7aea"/>
+    <rect x="20" y="30" width="80" height="60" rx="8" fill="white"/>
+    <rect x="25" y="20" width="70" height="20" rx="6" fill="white"/>
+    <circle cx="40" cy="30" r="3" fill="#9f7aea"/>
+    <circle cx="50" cy="30" r="3" fill="#9f7aea"/>
+    <circle cx="60" cy="30" r="3" fill="#9f7aea"/>
+    <rect x="30" y="45" width="60" height="3" rx="1.5" fill="#9f7aea"/>
+    <rect x="30" y="53" width="40" height="3" rx="1.5" fill="#a0aec0"/>
+    <rect x="30" y="61" width="50" height="3" rx="1.5" fill="#a0aec0"/>
+    <circle cx="85" cy="55" r="10" fill="#9f7aea"/>
+    <path d="M82 55L84 57L88 53" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+export const FigmaIcon = () => (
+  <svg width="100%" height="auto" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="120" height="120" rx="12" fill="#f56565"/>
+    <rect x="35" y="25" width="15" height="30" rx="7.5" fill="#0acf83"/>
+    <rect x="50" y="25" width="15" height="15" rx="7.5" fill="#ff7262"/>
+    <rect x="50" y="40" width="15" height="15" rx="7.5" fill="#f24e1e"/>
+    <rect x="50" y="55" width="15" height="15" rx="7.5" fill="#a259ff"/>
+    <rect x="35" y="55" width="15" height="30" rx="7.5" fill="#1abcfe"/>
+    <circle cx="57.5" cy="32.5" r="7.5" fill="#ff7262"/>
+    <rect x="70" y="25" width="15" height="70" rx="4" fill="white"/>
+    <rect x="73" y="30" width="9" height="3" rx="1.5" fill="#f56565"/>
+    <rect x="73" y="38" width="6" height="2" rx="1" fill="#a0aec0"/>
+    <rect x="73" y="44" width="7" height="2" rx="1" fill="#a0aec0"/>
+  </svg>
+);
+
+export const TestingIcon = () => (
+  <svg width="100%" height="auto" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="120" height="120" rx="12" fill="#38b2ac"/>
+    <rect x="20" y="30" width="80" height="60" rx="6" fill="white"/>
+    <rect x="30" y="40" width="60" height="3" rx="1.5" fill="#38b2ac"/>
+    <rect x="30" y="48" width="25" height="3" rx="1.5" fill="#68d391"/>
+    <rect x="30" y="56" width="35" height="3" rx="1.5" fill="#68d391"/>
+    <rect x="30" y="64" width="20" height="3" rx="1.5" fill="#fc8181"/>
+    <rect x="30" y="72" width="30" height="3" rx="1.5" fill="#68d391"/>
+    <circle cx="25" cy="48" r="2" fill="#68d391"/>
+    <circle cx="25" cy="56" r="2" fill="#68d391"/>
+    <circle cx="25" cy="64" r="2" fill="#fc8181"/>
+    <circle cx="25" cy="72" r="2" fill="#68d391"/>
+    <rect x="75" y="45" width="20" height="25" rx="4" fill="#38b2ac"/>
+    <path d="M82 55L84 57L88 53" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+export const AccessibilityIcon = () => (
+  <svg width="100%" height="auto" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="120" height="120" rx="12" fill="#805ad5"/>
+    <circle cx="60" cy="60" r="35" fill="white"/>
+    <circle cx="60" cy="45" r="8" fill="#805ad5"/>
+    <path d="M35 65 L60 60 L85 65" stroke="#805ad5" strokeWidth="4" strokeLinecap="round"/>
+    <path d="M45 75 L50 90" stroke="#805ad5" strokeWidth="4" strokeLinecap="round"/>
+    <path d="M75 75 L70 90" stroke="#805ad5" strokeWidth="4" strokeLinecap="round"/>
+    <path d="M40 55 L50 65" stroke="#805ad5" strokeWidth="4" strokeLinecap="round"/>
+    <path d="M80 55 L70 65" stroke="#805ad5" strokeWidth="4" strokeLinecap="round"/>
+    <circle cx="60" cy="60" r="30" stroke="#805ad5" strokeWidth="2" fill="none"/>
+  </svg>
+);
+
+export const ThemingIcon = () => (
+  <svg width="100%" height="auto" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="120" height="120" rx="12" fill="#2d3748"/>
+    <rect x="15" y="15" width="45" height="90" rx="6" fill="white"/>
+    <rect x="20" y="25" width="35" height="4" rx="2" fill="#2d3748"/>
+    <rect x="20" y="35" width="25" height="3" rx="1.5" fill="#a0aec0"/>
+    <rect x="20" y="43" width="30" height="3" rx="1.5" fill="#a0aec0"/>
+    <rect x="60" y="15" width="45" height="90" rx="6" fill="#2d3748"/>
+    <rect x="65" y="25" width="35" height="4" rx="2" fill="white"/>
+    <rect x="65" y="35" width="25" height="3" rx="1.5" fill="#718096"/>
+    <rect x="65" y="43" width="30" height="3" rx="1.5" fill="#718096"/>
+    <circle cx="82.5" cy="60" r="12" fill="#fbd38d"/>
+    <path d="M82.5 52 A8 8 0 0 1 82.5 68" fill="#f6ad55"/>
+  </svg>
+);
+
+export const AddonLibraryIcon = () => (
+  <svg width="650" height="347" viewBox="0 0 650 347" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="650" height="347" rx="12" fill="#667eea"/>
+    <rect x="40" y="40" width="570" height="267" rx="8" fill="white"/>
+    <rect x="60" y="60" width="150" height="100" rx="6" fill="#667eea" opacity="0.1"/>
+    <rect x="65" y="70" width="60" height="8" rx="4" fill="#667eea"/>
+    <rect x="65" y="85" width="40" height="6" rx="3" fill="#a0aec0"/>
+    <rect x="65" y="97" width="50" height="6" rx="3" fill="#a0aec0"/>
+    <rect x="230" y="60" width="150" height="100" rx="6" fill="#48bb78" opacity="0.1"/>
+    <rect x="235" y="70" width="60" height="8" rx="4" fill="#48bb78"/>
+    <rect x="235" y="85" width="40" height="6" rx="3" fill="#a0aec0"/>
+    <rect x="235" y="97" width="50" height="6" rx="3" fill="#a0aec0"/>
+    <rect x="400" y="60" width="150" height="100" rx="6" fill="#ed8936" opacity="0.1"/>
+    <rect x="405" y="70" width="60" height="8" rx="4" fill="#ed8936"/>
+    <rect x="405" y="85" width="40" height="6" rx="3" fill="#a0aec0"/>
+    <rect x="405" y="97" width="50" height="6" rx="3" fill="#a0aec0"/>
+    <rect x="60" y="180" width="150" height="100" rx="6" fill="#9f7aea" opacity="0.1"/>
+    <rect x="65" y="190" width="60" height="8" rx="4" fill="#9f7aea"/>
+    <rect x="65" y="205" width="40" height="6" rx="3" fill="#a0aec0"/>
+    <rect x="65" y="217" width="50" height="6" rx="3" fill="#a0aec0"/>
+    <rect x="230" y="180" width="150" height="100" rx="6" fill="#38b2ac" opacity="0.1"/>
+    <rect x="235" y="190" width="60" height="8" rx="4" fill="#38b2ac"/>
+    <rect x="235" y="205" width="40" height="6" rx="3" fill="#a0aec0"/>
+    <rect x="235" y="217" width="50" height="6" rx="3" fill="#a0aec0"/>
+    <rect x="400" y="180" width="150" height="100" rx="6" fill="#f56565" opacity="0.1"/>
+    <rect x="405" y="190" width="60" height="8" rx="4" fill="#f56565"/>
+    <rect x="405" y="205" width="40" height="6" rx="3" fill="#a0aec0"/>
+    <rect x="405" y="217" width="50" height="6" rx="3" fill="#a0aec0"/>
+  </svg>
+);
 
 export const RightArrow = () => <svg 
     viewBox="0 0 14 14" 
@@ -42,13 +201,7 @@ export const RightArrow = () => <svg
   </div>
   <div className="sb-section">
     <div className="sb-section-item">
-      <Image
-        src={Styling}
-        alt="A wall of logos representing different styling technologies"
-        width={0}
-        height={0}
-        style={{ width: '100%', height: 'auto' }}
-      />
+      <StylingIcon />
       <h4 className="sb-section-item-heading">Add styling and CSS</h4>
       <p className="sb-section-item-paragraph">Like with web applications, there are many ways to include CSS within Storybook. Learn more about setting up styling within Storybook.</p>
       <a
@@ -57,13 +210,7 @@ export const RightArrow = () => <svg
       >Learn more<RightArrow /></a>
     </div>
     <div className="sb-section-item">
-      <Image 
-        width={0}
-        height={0}
-        style={{ width: '100%', height: 'auto' }}
-        src={Context}
-        alt="An abstraction representing the composition of data for a component"
-      />
+      <ContextIcon />
       <h4 className="sb-section-item-heading">Provide context and mocking</h4>
       <p className="sb-section-item-paragraph">Often when a story doesn't render, it's because your component is expecting a specific environment or context (like a theme provider) to be available.</p>
       <a
@@ -72,13 +219,7 @@ export const RightArrow = () => <svg
       >Learn more<RightArrow /></a>
     </div>
     <div className="sb-section-item">
-      <Image 
-        width={0}
-        height={0}
-        style={{ width: '100%', height: 'auto' }} 
-        src={Assets} 
-        alt="A representation of typography and image assets" 
-      />
+      <AssetsIcon />
       <div>
         <h4 className="sb-section-item-heading">Load assets and resources</h4>
         <p className="sb-section-item-paragraph">To link static files (like fonts) to your projects and stories, use the
@@ -102,13 +243,7 @@ export const RightArrow = () => <svg
   <div className="sb-section">
     <div className="sb-features-grid">
       <div className="sb-grid-item">
-        <Image 
-          width={0}
-          height={0}
-          style={{ width: '100%', height: 'auto' }} 
-          src={Docs} 
-          alt="A screenshot showing the autodocs tag being set, pointing a docs page being generated" 
-        />
+        <DocsIcon />
         <h4 className="sb-section-item-heading">Autodocs</h4>
         <p className="sb-section-item-paragraph">Auto-generate living,
           interactive reference documentation from your components and stories.</p>
@@ -118,13 +253,7 @@ export const RightArrow = () => <svg
         >Learn more<RightArrow /></a>
       </div>
       <div className="sb-grid-item">
-        <Image 
-          width={0}
-          height={0}
-          style={{ width: '100%', height: 'auto' }} 
-          src={Share} 
-          alt="A browser window showing a Storybook being published to a chromatic.com URL" 
-        />
+        <ShareIcon />
         <h4 className="sb-section-item-heading">Publish to Chromatic</h4>
         <p className="sb-section-item-paragraph">Publish your Storybook to review and collaborate with your entire team.</p>
         <a
@@ -133,13 +262,7 @@ export const RightArrow = () => <svg
         >Learn more<RightArrow /></a>
       </div>
       <div className="sb-grid-item">
-        <Image 
-          width={0}
-          height={0}
-          style={{ width: '100%', height: 'auto' }} 
-          src={FigmaPlugin} 
-          alt="Windows showing the Storybook plugin in Figma" 
-        />
+        <FigmaIcon />
         <h4 className="sb-section-item-heading">Figma Plugin</h4>
         <p className="sb-section-item-paragraph">Embed your stories into Figma to cross-reference the design and live
           implementation in one place.</p>
@@ -149,13 +272,7 @@ export const RightArrow = () => <svg
         >Learn more<RightArrow /></a>
       </div>
       <div className="sb-grid-item">
-        <Image 
-          width={0}
-          height={0}
-          style={{ width: '100%', height: 'auto' }} 
-          src={Testing} 
-          alt="Screenshot of tests passing and failing" 
-        />
+        <TestingIcon />
         <h4 className="sb-section-item-heading">Testing</h4>
         <p className="sb-section-item-paragraph">Use stories to test a component in all its variations, no matter how
           complex.</p>
@@ -165,13 +282,7 @@ export const RightArrow = () => <svg
         >Learn more<RightArrow /></a>
       </div>
       <div className="sb-grid-item">
-        <Image 
-          width={0}
-          height={0}
-          style={{ width: '100%', height: 'auto' }} 
-          src={Accessibility} 
-          alt="Screenshot of accessibility tests passing and failing" 
-        />
+        <AccessibilityIcon />
         <h4 className="sb-section-item-heading">Accessibility</h4>
         <p className="sb-section-item-paragraph">Automatically test your components for a11y issues as you develop.</p>
         <a
@@ -180,13 +291,7 @@ export const RightArrow = () => <svg
         >Learn more<RightArrow /></a>
       </div>
       <div className="sb-grid-item">
-        <Image 
-          width={0}
-          height={0}
-          style={{ width: '100%', height: 'auto' }} 
-          src={Theming} 
-          alt="Screenshot of Storybook in light and dark mode" 
-        />
+        <ThemingIcon />
         <h4 className="sb-section-item-heading">Theming</h4>
         <p className="sb-section-item-paragraph">Theme Storybook's UI to personalize it to your project.</p>
         <a
@@ -207,25 +312,22 @@ export const RightArrow = () => <svg
       >Discover all addons<RightArrow /></a>
   </div>
   <div className='sb-addon-img'>
-    <Image 
-      width={650}
-      height={347}
-      src={AddonLibrary} 
-      alt="Integrate your tools with Storybook to connect workflows." 
-    />
+    <AddonLibraryIcon />
   </div>
 </div>
 
 <div className="sb-section sb-socials">
     <div className="sb-section-item">
-      <Image 
+      <svg 
         width={32}
         height={32}
-        layout="fixed"
-        src={Github} 
-        alt="Github logo" 
+        viewBox="0 0 24 24"
+        fill="currentColor"
         className="sb-explore-image"
-      />
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+      </svg>
       Join our contributors building the future of UI development.
 
       <a
@@ -234,14 +336,16 @@ export const RightArrow = () => <svg
       >Star on GitHub<RightArrow /></a>
     </div>
     <div className="sb-section-item">
-      <Image 
+      <svg 
         width={33}
         height={32}
-        layout="fixed"
-        src={Discord} 
-        alt="Discord logo" 
+        viewBox="0 0 24 24"
+        fill="currentColor"
         className="sb-explore-image"
-      />
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419-.0189 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1568 2.4189Z"/>
+      </svg>
       <div>
         Get support and chat with frontend developers.
 
@@ -252,14 +356,16 @@ export const RightArrow = () => <svg
       </div>
     </div>
     <div className="sb-section-item">
-      <Image 
+      <svg 
         width={32}
         height={32}
-        layout="fixed"
-        src={Youtube} 
-        alt="Youtube logo" 
+        viewBox="0 0 24 24"
+        fill="currentColor"
         className="sb-explore-image"
-      />
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+      </svg>
       <div>
         Watch tutorials, feature previews and interviews.
 
@@ -270,14 +376,19 @@ export const RightArrow = () => <svg
       </div>
     </div>
     <div className="sb-section-item">
-      <Image 
+      <svg 
         width={33}
         height={32}
-        layout="fixed"
-        src={Tutorials} 
-        alt="A book" 
+        viewBox="0 0 24 24"
+        fill="currentColor"
         className="sb-explore-image"
-      />
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4l4 4 4-4h4c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-5 9l-3-3-3 3 1.5 1.5L12 11l1.5 1.5L15 11z"/>
+        <circle cx="6" cy="8" r="1"/>
+        <circle cx="12" cy="8" r="1"/>
+        <circle cx="18" cy="8" r="1"/>
+      </svg>
       <p>Follow guided walkthroughs on for key workflows.</p>
 
       <a

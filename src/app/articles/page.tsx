@@ -4,12 +4,12 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { Suspense } from 'react'
-import styles from '@/styles/home.module.css'
+// import styles from '@/styles/home.module.css' // Unused
 import articleStyles from '@/styles/ArticlePage.module.css'
 import { auth } from '@/firebase/clientApp'
 import { onAuthStateChanged, signOut } from 'firebase/auth'
 import MinimalNotificationBell from '@/components/MinimalNotificationBell'
-import LeftSidebar from '@/components/LeftSidebar'
+// import LeftSidebar from '@/components/LeftSidebar' // Unused
 import ArticleWithHighlights from '@/components/ArticleWithHighlights'
 import CommentSection from '@/components/CommentSection'
 import ArticleComposer from '@/components/ArticleComposer'
@@ -20,16 +20,16 @@ import { getArticleBySlug } from '@/firebase/articles'
 import { getMoodFromText } from '@/utils/getMoodFromText'
 import { moodThemes } from '@/utils/moodThemes'
 
-// Author mapping from homepage for consistency
-const authorMapping: { [key: string]: string } = {
-  '84b2f82c-1e93-498a-983e-3b30a8379e63': 'Samuel Green',
-  user_002: 'Alex Martinez',
-  'kristen-lee-id': 'Kristen Lee',
-  'alex-wen-id': 'Alex Wen',
-  'hannah-cole-id': 'Hannah Cole'
-}
+// Author mapping from homepage for consistency - currently unused
+// const authorMapping: { [key: string]: string } = {
+//   '84b2f82c-1e93-498a-983e-3b30a8379e63': 'Samuel Green',
+//   user_002: 'Alex Martinez',
+//   'kristen-lee-id': 'Kristen Lee',
+//   'alex-wen-id': 'Alex Wen',
+//   'hannah-cole-id': 'Hannah Cole'
+// }
 
-// Convert Firestore article to UI format for RenderArticle
+/* Convert Firestore article to UI format for RenderArticle - currently unused
 // This adapter should ensure the object passed to RenderArticle has the fields RenderArticle expects.
 const adaptFirestoreArticle = (firestoreArticle: any): any => { // Using 'any' for return type temporarily due to unknown FirestoreArticle structure
   const slug = firestoreArticle.slug || (firestoreArticle.title || 'untitled').toLowerCase().replace(/[\s\W-]+/g, '-').replace(/^-+|-+$/g, '');
@@ -70,10 +70,11 @@ const adaptFirestoreArticle = (firestoreArticle: any): any => { // Using 'any' f
 
   return adapted;
 };
+*/
 
 function Article() {
   const params = useSearchParams()
-  const router = useRouter()
+  // const router = useRouter() // Unused
   const slug = params?.get('slug')
   
   const [article, setArticle] = useState<any>(null)
@@ -83,7 +84,7 @@ function Article() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true)
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false)
-  const [windowWidth, setWindowWidth] = useState(0)
+  // const [windowWidth, setWindowWidth] = useState(0) // Unused
   const [articleHtml, setArticleHtml] = useState<string | null>(null)
   const [likes, setLikes] = useState<string[]>([])
   const [currentUser, setCurrentUser] = useState<any>(null)
@@ -93,17 +94,17 @@ function Article() {
   const [mood, setMood] = useState<'joyful' | 'reflective' | 'sad' | 'angry' | 'peaceful' | 'energetic'>('reflective')
   const [moodFeatureEnabled, setMoodFeatureEnabled] = useState(true)
   
-  // Initialize window width on client side
-  useEffect(() => {
-    setWindowWidth(window.innerWidth)
-    
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth)
-    }
-    
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [])
+  // Initialize window width on client side - currently unused
+  // useEffect(() => {
+  //   setWindowWidth(window.innerWidth)
+  //   
+  //   const handleResize = () => {
+  //     setWindowWidth(window.innerWidth)
+  //   }
+  //   
+  //   window.addEventListener('resize', handleResize)
+  //   return () => window.removeEventListener('resize', handleResize)
+  // }, [])
   
   // Load mood feature preference from localStorage (only for authenticated users)
   useEffect(() => {
@@ -244,9 +245,9 @@ function Article() {
     }
   }
   
-  const toggleSidebar = () => {
-    setIsSidebarCollapsed(!isSidebarCollapsed)
-  }
+  // const toggleSidebar = () => {
+  //   setIsSidebarCollapsed(!isSidebarCollapsed)
+  // }
 
   const toggleProfileMenu = () => {
     setIsProfileMenuOpen(!isProfileMenuOpen)

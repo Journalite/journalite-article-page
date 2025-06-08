@@ -111,7 +111,7 @@ export default function ClientSideHighlighter() {
       // Cleanup if needed
       try {
         document.head.removeChild(script);
-      } catch (e) {
+      } catch (_e) {
         // Script might already be removed
       }
     };

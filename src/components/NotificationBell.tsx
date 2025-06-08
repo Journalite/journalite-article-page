@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { getUnreadNotificationsCount, getUserNotifications, markNotificationAsRead, Notification } from '@/firebase/notifications'
+import { NotificationIcon } from './icons/CustomIcons'
 import styles from './NotificationBell.module.css'
 
 const NotificationBell = () => {
@@ -122,7 +123,9 @@ const NotificationBell = () => {
   return (
     <div className={styles.notificationContainer} ref={notificationRef}>
       <button className={styles.bellButton} onClick={handleToggle}>
-        <span className={styles.bellIcon}>🔔</span>
+        <span className={styles.bellIcon}>
+          <NotificationIcon size={20} color="#6b7280" />
+        </span>
         {unreadCount > 0 && (
           <span className={styles.unreadBadge}>{unreadCount}</span>
         )}

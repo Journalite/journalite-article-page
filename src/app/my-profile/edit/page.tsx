@@ -213,7 +213,7 @@ export default function EditMyProfilePage() {
   };
 
   const getInputClasses = (fieldName: string, hasError: boolean, isValid?: boolean | null) => {
-    let base = "w-full px-4 py-3 bg-white border border-stone-300 rounded-lg shadow-sm transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-amber-500 focus:border-amber-500 placeholder-stone-400 text-stone-700";
+    const base = "w-full px-4 py-3 bg-white border border-stone-300 rounded-lg shadow-sm transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-amber-500 focus:border-amber-500 placeholder-stone-400 text-stone-700";
     if (hasError) return `${base} border-red-400 focus:ring-red-400 bg-red-50 text-red-700 placeholder-red-400`;
     if (isValid === true && fieldName === 'username' && username !== originalUsername) return `${base} border-green-400 focus:ring-green-400 bg-green-50 text-green-700`;
     return `${base} hover:border-stone-400`;

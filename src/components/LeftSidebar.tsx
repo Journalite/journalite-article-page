@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { ReflectionIcon } from './icons/CustomIcons';
 import styles from '@/styles/home.module.css';
 import SearchBar from './SearchBar';
 
@@ -58,7 +59,9 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({
             className={`${styles['nav-link']} ${styles['nav-reflections']}`}
             style={{ paddingLeft: '2rem', fontSize: '0.9rem' }}
           >
-            <span className={styles['nav-icon']}>💭</span>
+            <span className={styles['nav-icon']}>
+              <ReflectionIcon size={16} color="currentColor" />
+            </span>
             <span className={styles['nav-text']}>Reflections</span>
           </Link>
           <Link 

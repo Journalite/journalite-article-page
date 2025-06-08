@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { onAuthStateChanged } from 'firebase/auth'
 import { auth } from '@/firebase/clientApp'
 import { getUserNotifications, markNotificationAsRead, markAllNotificationsAsRead, deleteNotification, Notification } from '@/firebase/notifications'
+import { NotificationIcon } from '@/components/icons/CustomIcons'
 import styles from '@/styles/home.module.css'
 import notificationStyles from './notifications.module.css'
 
@@ -230,7 +231,9 @@ export default function NotificationsPage() {
 
         {notifications.length === 0 ? (
           <div className={notificationStyles.emptyState}>
-            <div className={notificationStyles.emptyIcon}>🔔</div>
+                            <div className={notificationStyles.emptyIcon}>
+                  <NotificationIcon size={48} color="#9ca3af" />
+                </div>
             <h2>No notifications yet</h2>
             <p>When you receive notifications, they will appear here.</p>
           </div>

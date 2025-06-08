@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { getArticleById, updateArticle } from '@/firebase/articles'
 import { auth } from '@/firebase/clientApp'
+import { WarningIcon, SparkleIcon } from './icons/CustomIcons'
 import styles from '@/styles/ArticleForm.module.css'
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
@@ -107,6 +108,12 @@ const EditArticleForm = ({ articleId }: EditArticleFormProps) => {
       try {
         setIsLoading(true)
         const article = await getArticleById(articleId)
+        
+        // Check if article exists before setting form fields
+        if (!article) {
+          setError('Article not found')
+          return
+        }
         
         // Set form fields with article data
         setTitle(article.title)
@@ -325,7 +332,9 @@ const EditArticleForm = ({ articleId }: EditArticleFormProps) => {
       
       {error && (
         <div className={styles.errorAlert}>
-          <span className={styles.errorIcon}>⚠️</span>
+                          <span className={styles.errorIcon}>
+                  <WarningIcon size={16} color="#ef4444" />
+                </span>
           <span>{error}</span>
         </div>
       )}
@@ -532,7 +541,10 @@ const EditArticleForm = ({ articleId }: EditArticleFormProps) => {
             </span>
           </div>
           <div className={styles.formHint}>
-            <span>✨ Tip: {randomTip}</span>
+                            <span>
+                  <SparkleIcon size={14} color="#f59e0b" />
+                  Tip: {randomTip}
+                </span>
           </div>
         </div>
         

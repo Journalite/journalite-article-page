@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Highlight, HighlightTag, addReactionToHighlight, removeReactionFromHighlight, generateHighlightShareUrl } from '@/services/highlightService';
 import { auth } from '@/firebase/clientApp';
 import { User } from 'firebase/auth';
+import { ThumbsUpIcon, HeartIcon, ThinkingIcon, BulbIcon, ShareIcon } from './icons/CustomIcons';
 import ShareModal from './ShareModal';
 
 interface HighlightDisplayProps {
@@ -11,7 +12,12 @@ interface HighlightDisplayProps {
   onUpdate?: () => void;
 }
 
-const availableReactions = ['👍', '❤️', '🤔', '💡'];
+const availableReactions = [
+  { emoji: 'thumbsUp', component: ThumbsUpIcon, color: '#22c55e' },
+  { emoji: 'heart', component: HeartIcon, color: '#ef4444' },
+  { emoji: 'thinking', component: ThinkingIcon, color: '#3b82f6' },
+  { emoji: 'bulb', component: BulbIcon, color: '#f59e0b' }
+];
 
 const HighlightDisplay: React.FC<HighlightDisplayProps> = ({ 
   highlight, 
@@ -47,21 +53,21 @@ const HighlightDisplay: React.FC<HighlightDisplayProps> = ({
     }
   }, [highlight.id]);
 
-  const handleReaction = async (emoji: string) => {
+  const handleReaction = async (reactionType: string) => {
     if (!currentUser) return;
 
     try {
       const userCurrentReaction = highlight.userReactions?.[currentUser.uid];
       
-      if (userCurrentReaction === emoji) {
+      if (userCurrentReaction === reactionType) {
         // Remove reaction
-        await removeReactionFromHighlight(highlight.id, currentUser.uid, emoji);
+        await removeReactionFromHighlight(highlight.id, currentUser.uid, reactionType);
       } else {
         // Add or change reaction
         if (userCurrentReaction) {
           await removeReactionFromHighlight(highlight.id, currentUser.uid, userCurrentReaction);
         }
-        await addReactionToHighlight(highlight.id, currentUser.uid, emoji);
+        await addReactionToHighlight(highlight.id, currentUser.uid, reactionType);
       }
       
       onUpdate?.();
@@ -131,26 +137,45 @@ const HighlightDisplay: React.FC<HighlightDisplayProps> = ({
             }}
             title="Share highlight"
           >
-            📤 Share
+            <ShareIcon size={14} color="#6b7280" /> Share
           </button>
 
           {/* Reactions */}
           <div className="highlight-reactions">
-            {availableReactions.map(emoji => {
-              const count = highlight.reactions?.[emoji] || 0;
-              const isActive = userReaction === emoji;
+            {availableReactions.map(reaction => {
+              const count = highlight.reactions?.[reaction.emoji] || 0;
+              const isActive = userReaction === reaction.emoji;
+              const IconComponent = reaction.component;
               
               return (
                 <button
-                  key={emoji}
-                  onClick={() => handleReaction(emoji)}
+                  key={reaction.emoji}
+                  onClick={() => handleReaction(reaction.emoji)}
                   className={`highlight-reaction-btn ${isActive ? 'active' : ''}`}
                   disabled={!currentUser}
-                  style={{ opacity: !currentUser ? 0.5 : 1 }}
+                  style={{ 
+                    opacity: !currentUser ? 0.5 : 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.25rem',
+                    background: 'none',
+                    border: isActive ? `1px solid ${reaction.color}` : '1px solid transparent',
+                    borderRadius: '0.25rem',
+                    padding: '0.25rem',
+                    cursor: 'pointer'
+                  }}
                 >
-                  <span className="highlight-reaction-emoji">{emoji}</span>
+                  <IconComponent 
+                    size={14} 
+                    color={isActive ? reaction.color : '#6b7280'} 
+                  />
                   {count > 0 && (
-                    <span className="highlight-reaction-count">{count}</span>
+                    <span 
+                      className="highlight-reaction-count"
+                      style={{ fontSize: '0.75rem', color: isActive ? reaction.color : '#6b7280' }}
+                    >
+                      {count}
+                    </span>
                   )}
                 </button>
               );

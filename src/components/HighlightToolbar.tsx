@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { HighlightTag } from '@/services/highlightService';
+import { BulbIcon, ThinkingIcon, CommentIcon, StarIcon } from './icons/CustomIcons';
 
 interface HighlightToolbarProps {
   selection: Selection | null;
@@ -10,11 +11,11 @@ interface HighlightToolbarProps {
   onAiAssist?: (selectedText: string) => void;
 }
 
-const highlightTags: { tag: HighlightTag; label: string; color: string; icon: string }[] = [
-  { tag: 'insight', label: 'Insight', color: '#3B82F6', icon: '💡' },
-  { tag: 'question', label: 'Question', color: '#F59E0B', icon: '❓' },
-  { tag: 'quote', label: 'Quote', color: '#10B981', icon: '💬' },
-  { tag: 'important', label: 'Important', color: '#EF4444', icon: '⭐' }
+const highlightTags: { tag: HighlightTag; label: string; color: string; icon: React.FC<any> }[] = [
+  { tag: 'insight', label: 'Insight', color: '#3B82F6', icon: BulbIcon },
+  { tag: 'question', label: 'Question', color: '#F59E0B', icon: ThinkingIcon },
+  { tag: 'quote', label: 'Quote', color: '#10B981', icon: CommentIcon },
+  { tag: 'important', label: 'Important', color: '#EF4444', icon: StarIcon }
 ];
 
 const HighlightToolbar: React.FC<HighlightToolbarProps> = ({ 
@@ -205,18 +206,23 @@ const HighlightToolbar: React.FC<HighlightToolbarProps> = ({
       ) : (
         <div className="highlight-color-options">
           <span className="highlight-color-label">Choose highlight type:</span>
-          {highlightTags.map((tagInfo) => (
-            <button
-              key={tagInfo.tag}
-              onClick={() => handleHighlight(tagInfo.tag)}
-              className="highlight-color-btn"
-              style={{ backgroundColor: tagInfo.color }}
-              title={tagInfo.label}
-            >
-              <span className="highlight-icon">{tagInfo.icon}</span>
-              <span className="highlight-label">{tagInfo.label}</span>
-            </button>
-          ))}
+          {highlightTags.map((tagInfo) => {
+            const IconComponent = tagInfo.icon;
+            return (
+              <button
+                key={tagInfo.tag}
+                onClick={() => handleHighlight(tagInfo.tag)}
+                className="highlight-color-btn"
+                style={{ backgroundColor: tagInfo.color }}
+                title={tagInfo.label}
+              >
+                <span className="highlight-icon">
+                  <IconComponent size={14} color="white" />
+                </span>
+                <span className="highlight-label">{tagInfo.label}</span>
+              </button>
+            );
+          })}
           <button onClick={toggleColorOptions} className="highlight-btn highlight-btn-cancel">
             Cancel
           </button>

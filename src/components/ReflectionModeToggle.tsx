@@ -48,7 +48,7 @@ const ReflectionModeToggle: React.FC<ReflectionModeToggleProps> = ({
   }, []);
 
   const handleToggle = () => {
-    console.log('✍️ ReflectionModeToggle clicked - should NOT trigger parent re-render');
+    console.log('ReflectionModeToggle clicked - should NOT trigger parent re-render');
     
     if (!currentUser) return;
 
@@ -60,7 +60,7 @@ const ReflectionModeToggle: React.FC<ReflectionModeToggleProps> = ({
     setReflectionsEnabled(newEnabled);
     localStorage.setItem('reflectionsEnabled', JSON.stringify(newEnabled));
     
-    console.log('✍️ Reflection mode toggled to:', newEnabled);
+    console.log('Reflection mode toggled to:', newEnabled);
     
     // Force immediate DOM updates for reflection components
     const reflectionElements = document.querySelectorAll('[data-reflection-element]') as NodeListOf<HTMLElement>;
