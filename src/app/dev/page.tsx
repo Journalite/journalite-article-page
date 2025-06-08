@@ -1927,6 +1927,252 @@ const syncPendingHighlights = async () => {
   `
 };
 
+const journaColorDoc: DocSection = {
+  id: 'journa-color',
+  title: 'Journa Color - Advanced Theme Customization',
+  content: `
+## Overview
+
+Journa Color is an advanced theme customization system that allows users to create personalized gradients, colors, and visual effects for their reading experience. Inspired by modern design tools, it provides real-time visual customization with intuitive controls.
+
+## Core Features
+
+### 🎨 Interactive Gradient Editor
+
+\`\`\`tsx[src/components/GradientPanel.tsx]
+const GradientPanel: React.FC<GradientPanelProps> = ({
+  currentMood,
+  isVisible,
+  moodFeatureEnabled
+}) => {
+  const [themeConfig, setThemeConfig] = useState<ThemeConfig>({
+    colorStops: [
+      { id: '1', color: '#007AFF', x: 30, y: 40, isSelected: true }
+    ],
+    opacity: 80,
+    grain: 30,
+    mode: 'auto'
+  });
+  
+  // Generate real-time gradients with grain effects
+  const generateJournaColorGradient = (config: ThemeConfig) => {
+    // Multi-layer gradient generation with grain overlay
+    // Supports 1-3 color stops with advanced blending
+  };
+};
+\`\`\`
+
+### 🎛️ Tactile Rotary Controls
+
+- **Grain Control**: Rotary knob with 24 detent positions for tactile feedback
+- **Opacity Slider**: Squiggly line design for transparency control
+- **Color Stops**: Draggable colored circles (up to 3) in canvas area
+- **Theme Modes**: Auto, Light, Dark toggles
+
+\`\`\`tsx
+// Tactile knob with detents every 15 degrees
+const detentSize = 15; // degrees per detent
+const rawGrain = (angle / 360) * 100;
+const detentIndex = Math.round(rawGrain / (100 / (360 / detentSize)));
+const snappedGrain = Math.max(0, Math.min(100, (detentIndex * (100 / (360 / detentSize)))));
+
+// Haptic feedback on mobile devices
+if (navigator.vibrate) {
+  navigator.vibrate(10); // Short vibration on detent hit
+}
+\`\`\`
+
+## Visual Components
+
+### 🌈 Multi-Stop Gradient System
+
+\`\`\`tsx
+interface ColorStop {
+  id: string;
+  color: string;
+  x: number; // 0-100 canvas position
+  y: number; // 0-100 canvas position
+  isSelected: boolean;
+}
+
+// Supports 1-3 color stops with different blending modes
+if (colorStops.length === 1) {
+  return \`radial-gradient(circle at \${stop.x}% \${stop.y}%, 
+    \${stop.color}\${alpha}, transparent 70%)\`;
+} else if (colorStops.length === 2) {
+  // Dual-radial blend
+} else if (colorStops.length === 3) {
+  // Triple-radial blend
+}
+\`\`\`
+
+### 🔘 Grain & Texture Effects
+
+\`\`\`tsx
+// Realistic film grain overlay
+const grainPattern = \`
+  radial-gradient(circle at 15% 15%, rgba(255,255,255,\${grainOpacity}) 0.5px, transparent \${grainSize}px),
+  radial-gradient(circle at 85% 25%, rgba(0,0,0,\${grainOpacity * 0.8}) 0.5px, transparent \${grainSize * 0.7}px),
+  radial-gradient(circle at 45% 85%, rgba(255,255,255,\${grainOpacity * 0.6}) 0.5px, transparent \${grainSize * 1.1}px)
+\`;
+
+return grainPattern ? \`\${grainPattern}\${baseGradient}\` : baseGradient;
+\`\`\`
+
+## Real-Time Application System
+
+### 🎯 Smart Element Targeting
+
+\`\`\`tsx
+const updateThemeRealTime = (config: ThemeConfig) => {
+  const gradientCSS = generateJournaColorGradient(config);
+  const clearerGradientCSS = generateClearerGradient(config);
+  
+  // Update background mood elements
+  const moodElements = document.querySelectorAll('[data-mood-element]');
+  moodElements.forEach(element => {
+    element.style.backgroundImage = gradientCSS;
+    element.style.transition = 'background-image 0.2s ease';
+  });
+
+  // Update UI bars with clearer version
+  const toggleBar = document.querySelector('[data-toggle-bar="true"]');
+  if (toggleBar) {
+    toggleBar.style.backgroundImage = clearerGradientCSS;
+  }
+};
+\`\`\`
+
+### 📱 Responsive Design
+
+\`\`\`tsx
+// Floating button with dynamic gradient background
+<button
+  style={{
+    width: '56px',
+    height: '56px',
+    borderRadius: '50%',
+    background: currentGradient || '#007AFF',
+    position: 'fixed',
+    bottom: '20px',
+    left: '20px',
+    zIndex: 9999
+  }}
+>
+  <svg width="24" height="24" viewBox="0 0 24 24">
+    <circle cx="8" cy="8" r="3" fill="url(#iconGradient)"/>
+    <circle cx="16" cy="12" r="2.5" fill="url(#iconGradient)"/>
+    <circle cx="12" cy="18" r="2" fill="url(#iconGradient)"/>
+  </svg>
+</button>
+\`\`\`
+
+## Architecture & Performance
+
+### 💾 Persistent Storage
+
+\`\`\`tsx
+// Configuration automatically saved to localStorage
+localStorage.setItem('journaColorThemeConfig', JSON.stringify(config));
+
+// Restored on page load
+useEffect(() => {
+  const saved = localStorage.getItem('journaColorThemeConfig');
+  if (saved) {
+    const config = JSON.parse(saved);
+    setThemeConfig(config);
+    updateThemeRealTime(config);
+  }
+}, []);
+\`\`\`
+
+### ⚡ Optimized Rendering
+
+- **Direct DOM manipulation** for performance (no React re-renders)
+- **Debounced updates** during dragging operations
+- **CSS transitions** for smooth visual changes
+- **Hardware acceleration** via CSS transforms
+
+### 🎨 Color Palette Integration
+
+\`\`\`tsx
+const presetColors = [
+  '#FFFFFF', '#FFB3D9', '#B19CD9', '#FF6B6B', 
+  '#FF8E53', '#FFD93D', '#6BCF7F', '#4ECDC4', '#45B7D1'
+];
+
+// Quick color application to selected stop
+const changeSelectedColor = (color: string) => {
+  const selectedStop = themeConfig.colorStops.find(stop => stop.isSelected);
+  if (!selectedStop) return;
+  
+  const newConfig = {
+    ...themeConfig,
+    colorStops: themeConfig.colorStops.map(stop => 
+      stop.isSelected ? { ...stop, color } : stop
+    )
+  };
+  
+  setThemeConfig(newConfig);
+  updateThemeRealTime(newConfig);
+};
+\`\`\`
+
+## User Experience Features
+
+### 🎚️ Intuitive Controls
+
+- **Visual feedback**: Selected elements have enlarged appearance
+- **Color harmony**: Smart color suggestions based on current palette
+- **Undo/Redo**: State management for experimentation
+- **Preview mode**: See changes before applying
+
+### 🔄 Integration with Mood System
+
+- **Mood-aware defaults**: Starting colors based on detected article mood
+- **Seamless transitions**: Smooth blending between mood and custom themes
+- **Context preservation**: Custom themes respect reading context
+
+### 📊 Usage Analytics
+
+\`\`\`tsx
+// Track user interactions for UX improvements
+const trackCustomization = (action: string, value: any) => {
+  console.log(\`Journa Color: \${action}\`, value);
+  // Can be extended with analytics service
+};
+
+// Example usage
+trackCustomization('color_changed', { from: oldColor, to: newColor });
+trackCustomization('grain_adjusted', grainValue);
+trackCustomization('preset_selected', presetIndex);
+\`\`\`
+
+## Technical Implementation
+
+### 🏗️ Component Structure
+
+\`\`\`
+GradientPanel/
+├── ThemeConfig interface
+├── ColorStop management
+├── Real-time gradient generation
+├── Tactile control handlers
+├── localStorage persistence
+└── DOM manipulation utilities
+\`\`\`
+
+### 🎯 Performance Optimizations
+
+- **RAF-based updates**: Smooth 60fps interactions
+- **Memoized calculations**: Cached gradient computations
+- **Efficient selectors**: Minimal DOM queries
+- **CSS-only animations**: Hardware-accelerated transitions
+
+This system provides users with professional-grade theme customization while maintaining optimal performance and intuitive user experience.
+  `
+};
+
 // Collection of all documentation sections
 const docSections: DocSection[] = [
   projectStructureDoc,
@@ -1941,6 +2187,7 @@ const docSections: DocSection[] = [
   bestPracticesDoc,
   tagFeatureDoc,
   moodFeaturesDoc,
+  journaColorDoc,
   enhancedHighlightsDoc
 ];
 

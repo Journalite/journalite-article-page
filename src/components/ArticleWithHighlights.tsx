@@ -152,23 +152,25 @@ const ArticleWithHighlights: React.FC<ArticleWithHighlightsProps> = ({
       <ClientSideHighlighter />
       <article className={styles.articleContainer}>
         {/* Reflection Settings */}
-        <div style={{ 
-          display: 'flex', 
-          justifyContent: 'space-between', 
-          alignItems: 'center', 
-          gap: '1rem', 
-          margin: '1rem 0',
-          padding: '1rem',
-          backgroundImage: isAuthenticated 
-            ? `linear-gradient(270deg, ${moodThemes[mood].gradientStart}, ${moodThemes[mood].gradientEnd})`
-            : 'linear-gradient(270deg, #9CA3AF, #6B7280)',
-          backgroundSize: '200% 200%',
-          animation: 'slideGradient 8s ease infinite alternate',
-          borderRadius: '20px',
-          border: '1px solid rgba(255, 255, 255, 0.5)',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-          fontSize: '0.875rem'
-        }}>
+        <div 
+          data-toggle-bar="true"
+          style={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'center', 
+            gap: '1rem', 
+            margin: '1rem 0',
+            padding: '1rem',
+            backgroundImage: isAuthenticated 
+              ? `linear-gradient(270deg, ${moodThemes[mood].gradientStart}, ${moodThemes[mood].gradientEnd})`
+              : 'linear-gradient(270deg, #9CA3AF, #6B7280)',
+            backgroundSize: '200% 200%',
+            animation: 'slideGradient 8s ease infinite alternate',
+            borderRadius: '20px',
+            border: '1px solid rgba(255, 255, 255, 0.5)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+            fontSize: '0.875rem'
+          }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <span style={{ 
               color: '#F7FAFC',

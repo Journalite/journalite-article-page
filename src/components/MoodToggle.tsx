@@ -3,17 +3,21 @@
 import React, { useState, useEffect } from 'react';
 import { auth } from '@/firebase/clientApp';
 import { User } from 'firebase/auth';
+import GradientPanel from './GradientPanel';
+import { moodThemes } from '@/utils/moodThemes';
 
 interface MoodToggleProps {
   initialEnabled?: boolean;
   className?: string;
   style?: React.CSSProperties;
+  currentMood?: keyof typeof moodThemes;
 }
 
 const MoodToggle: React.FC<MoodToggleProps> = ({ 
   initialEnabled = true, 
   className = '',
-  style = {}
+  style = {},
+  currentMood = 'joyful'
 }) => {
   const [moodFeatureEnabled, setMoodFeatureEnabled] = useState(initialEnabled);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -190,18 +194,27 @@ const MoodToggle: React.FC<MoodToggleProps> = ({
   }
 
   return (
-    <button
-      onClick={handleToggle}
-      className={className}
-      style={{
-        ...style,
-        transition: 'all 0.3s ease',
-        transform: isAnimating ? 'scale(1.1)' : 'scale(1)',
-      }}
-      title={moodFeatureEnabled ? "Turn off mood feature" : "Turn on mood feature"}
-    >
-      {moodFeatureEnabled ? 'ON' : 'OFF'}
-    </button>
+    <>
+      <button
+        onClick={handleToggle}
+        className={className}
+        style={{
+          ...style,
+          transition: 'all 0.3s ease',
+          transform: isAnimating ? 'scale(1.1)' : 'scale(1)',
+        }}
+        title={moodFeatureEnabled ? "Turn off mood feature" : "Turn on mood feature"}
+      >
+        {moodFeatureEnabled ? 'ON' : 'OFF'}
+      </button>
+
+      {/* Real-time gradient panel */}
+      <GradientPanel
+        currentMood={currentMood}
+        isVisible={!!currentUser}
+        moodFeatureEnabled={moodFeatureEnabled}
+      />
+    </>
   );
 };
 

@@ -2447,6 +2447,649 @@ const ArticleHighlights = ({ articleId, children, articleTitle = 'Article', arti
 };
 const __TURBOPACK__default__export__ = ArticleHighlights;
 }}),
+"[project]/src/utils/moodThemes.ts [app-ssr] (ecmascript)": ((__turbopack_context__) => {
+"use strict";
+
+var { g: global, __dirname } = __turbopack_context__;
+{
+__turbopack_context__.s({
+    "generateGradientStyle": (()=>generateGradientStyle),
+    "gradientTypes": (()=>gradientTypes),
+    "moodThemes": (()=>moodThemes),
+    "updateAllGradients": (()=>updateAllGradients)
+});
+const moodThemes = {
+    joyful: {
+        gradientStart: '#FFD700',
+        gradientEnd: '#FF6B6B',
+        accent: '#FF4757' // Bright red
+    },
+    angry: {
+        gradientStart: '#FF416C',
+        gradientEnd: '#FF4B2B',
+        accent: '#B71C1C' // Dark red
+    },
+    energetic: {
+        gradientStart: '#00F260',
+        gradientEnd: '#0575E6',
+        accent: '#1565C0' // Deep blue
+    },
+    peaceful: {
+        gradientStart: '#A8E6CF',
+        gradientEnd: '#88D8C0',
+        accent: '#4CAF50' // Forest green
+    },
+    reflective: {
+        gradientStart: '#667eea',
+        gradientEnd: '#764ba2',
+        accent: '#5E35B1' // Royal purple
+    },
+    sad: {
+        gradientStart: '#4facfe',
+        gradientEnd: '#00f2fe',
+        accent: '#0288D1' // Ocean blue
+    }
+};
+const gradientTypes = {
+    linear: 'linear',
+    radial: 'radial',
+    conic: 'conic',
+    waves: 'waves',
+    dots: 'dots',
+    mesh: 'mesh'
+};
+const generateGradientStyle = (mood, gradientType, opacity = 0.4)=>{
+    const theme = moodThemes[mood];
+    const opacityHex = Math.round(opacity * 255).toString(16).padStart(2, '0');
+    switch(gradientType){
+        case 'linear':
+            return `linear-gradient(45deg, ${theme.gradientStart}${opacityHex}, ${theme.gradientEnd}${opacityHex})`;
+        case 'radial':
+            return `radial-gradient(circle at 50% 50%, ${theme.gradientStart}${opacityHex} 0%, ${theme.gradientEnd}${opacityHex} 100%)`;
+        case 'conic':
+            return `conic-gradient(from 0deg at 50% 50%, ${theme.gradientStart}${opacityHex}, ${theme.gradientEnd}${opacityHex}, ${theme.accent}${opacityHex}, ${theme.gradientStart}${opacityHex})`;
+        case 'waves':
+            return `
+        radial-gradient(ellipse 200% 100% at 50% 0%, ${theme.gradientStart}${opacityHex}, transparent 50%), 
+        radial-gradient(ellipse 200% 100% at 50% 100%, ${theme.gradientEnd}${opacityHex}, transparent 50%)
+      `;
+        case 'dots':
+            return `
+        radial-gradient(circle at 20% 20%, ${theme.gradientStart}${opacityHex} 8px, transparent 8px),
+        radial-gradient(circle at 80% 80%, ${theme.gradientEnd}${opacityHex} 8px, transparent 8px),
+        radial-gradient(circle at 40% 60%, ${theme.accent}${Math.round(opacity * 0.6 * 255).toString(16).padStart(2, '0')} 4px, transparent 4px)
+      `;
+        case 'mesh':
+            return `
+        radial-gradient(circle at 20% 20%, ${theme.gradientStart}${opacityHex}, transparent 50%), 
+        radial-gradient(circle at 80% 60%, ${theme.gradientEnd}${opacityHex}, transparent 50%),
+        radial-gradient(circle at 40% 90%, ${theme.accent}${Math.round(opacity * 0.8 * 255).toString(16).padStart(2, '0')}, transparent 50%),
+        radial-gradient(circle at 70% 30%, ${theme.gradientStart}${Math.round(opacity * 0.6 * 255).toString(16).padStart(2, '0')}, transparent 50%)
+      `;
+        default:
+            return `linear-gradient(45deg, ${theme.gradientStart}${opacityHex}, ${theme.gradientEnd}${opacityHex})`;
+    }
+};
+const updateAllGradients = (mood, gradientType)=>{
+    const elements = document.querySelectorAll('[data-mood-element]');
+    elements.forEach((element)=>{
+        const elementType = element.getAttribute('data-mood-element');
+        element.style.backgroundImage = generateGradientStyle(mood, gradientType, 0.4);
+        element.style.transition = 'background-image 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
+    });
+};
+}}),
+"[project]/src/components/GradientPanel.tsx [app-ssr] (ecmascript)": ((__turbopack_context__) => {
+"use strict";
+
+var { g: global, __dirname } = __turbopack_context__;
+{
+__turbopack_context__.s({
+    "default": (()=>__TURBOPACK__default__export__)
+});
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react-jsx-dev-runtime.js [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react.js [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$moodThemes$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/utils/moodThemes.ts [app-ssr] (ecmascript)");
+'use client';
+;
+;
+;
+const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
+    const [isExpanded, setIsExpanded] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
+    const [activeConfig, setActiveConfig] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])({
+        type: 'linear',
+        angle: 45,
+        centerX: 50,
+        centerY: 50,
+        stops: [
+            {
+                color: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$moodThemes$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["moodThemes"][currentMood].gradientStart,
+                position: 0
+            },
+            {
+                color: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$moodThemes$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["moodThemes"][currentMood].gradientEnd,
+                position: 100
+            }
+        ]
+    });
+    const [isDragging, setIsDragging] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])({
+        type: null
+    });
+    const canvasRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])(null);
+    // Preset configurations
+    const presets = [
+        {
+            type: 'linear',
+            angle: 45,
+            name: 'Diagonal'
+        },
+        {
+            type: 'linear',
+            angle: 90,
+            name: 'Vertical'
+        },
+        {
+            type: 'linear',
+            angle: 0,
+            name: 'Horizontal'
+        },
+        {
+            type: 'radial',
+            angle: 0,
+            name: 'Radial'
+        },
+        {
+            type: 'conic',
+            angle: 0,
+            name: 'Conic'
+        }
+    ];
+    // Generate CSS gradient string from config
+    const generateAdvancedGradient = (config)=>{
+        const { type, angle, centerX, centerY, stops } = config;
+        const sortedStops = stops.sort((a, b)=>a.position - b.position);
+        const stopString = sortedStops.map((stop)=>`${stop.color} ${stop.position}%`).join(', ');
+        switch(type){
+            case 'linear':
+                return `linear-gradient(${angle}deg, ${stopString})`;
+            case 'radial':
+                return `radial-gradient(circle at ${centerX}% ${centerY}%, ${stopString})`;
+            case 'conic':
+                return `conic-gradient(from ${angle}deg at ${centerX}% ${centerY}%, ${stopString})`;
+            default:
+                return `linear-gradient(${angle}deg, ${stopString})`;
+        }
+    };
+    // Real-time gradient update function
+    const updateGradientsRealTime = (config)=>{
+        const gradientCSS = generateAdvancedGradient(config);
+        // Find all mood elements and update them immediately
+        const moodElements = document.querySelectorAll('[data-mood-element]');
+        moodElements.forEach((element)=>{
+            element.style.backgroundImage = gradientCSS;
+            element.style.transition = 'background-image 0.3s ease';
+        });
+        // Update mood headers in real-time
+        const moodHeaders = document.querySelectorAll('[data-mood-header]');
+        moodHeaders.forEach((element)=>{
+            element.style.backgroundImage = gradientCSS;
+            element.style.transition = 'background-image 0.3s ease';
+        });
+        // Save configuration
+        localStorage.setItem('advancedGradientConfig', JSON.stringify(config));
+    };
+    // Handle mouse events for dragging
+    const handleMouseDown = (e, type, index)=>{
+        e.preventDefault();
+        setIsDragging({
+            type,
+            index
+        });
+    };
+    const handleMouseMove = (e)=>{
+        if (!isDragging.type || !canvasRef.current) return;
+        const rect = canvasRef.current.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width * 100;
+        const y = (e.clientY - rect.top) / rect.height * 100;
+        let newConfig = {
+            ...activeConfig
+        };
+        switch(isDragging.type){
+            case 'stop':
+                if (isDragging.index !== undefined) {
+                    newConfig.stops[isDragging.index].position = Math.max(0, Math.min(100, x));
+                }
+                break;
+            case 'angle':
+                const centerX = 50;
+                const centerY = 50;
+                const radians = Math.atan2(y - centerY, x - centerX);
+                newConfig.angle = (radians * 180 / Math.PI + 360) % 360;
+                break;
+            case 'center':
+                newConfig.centerX = Math.max(0, Math.min(100, x));
+                newConfig.centerY = Math.max(0, Math.min(100, y));
+                break;
+        }
+        setActiveConfig(newConfig);
+        if (moodFeatureEnabled) {
+            updateGradientsRealTime(newConfig);
+        }
+    };
+    const handleMouseUp = ()=>{
+        setIsDragging({
+            type: null
+        });
+    };
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
+        if (isDragging.type) {
+            document.addEventListener('mousemove', handleMouseMove);
+            document.addEventListener('mouseup', handleMouseUp);
+            return ()=>{
+                document.removeEventListener('mousemove', handleMouseMove);
+                document.removeEventListener('mouseup', handleMouseUp);
+            };
+        }
+    }, [
+        isDragging,
+        activeConfig,
+        moodFeatureEnabled
+    ]);
+    // Load saved configuration
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
+        const saved = localStorage.getItem('advancedGradientConfig');
+        if (saved) {
+            try {
+                const config = JSON.parse(saved);
+                setActiveConfig(config);
+            } catch (e) {
+                console.error('Failed to load gradient config:', e);
+            }
+        }
+    }, []);
+    // Update when mood changes
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
+        setActiveConfig((prev)=>({
+                ...prev,
+                stops: prev.stops.map((stop, index)=>({
+                        ...stop,
+                        color: index === 0 ? __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$moodThemes$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["moodThemes"][currentMood].gradientStart : index === 1 ? __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$moodThemes$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["moodThemes"][currentMood].gradientEnd : stop.color
+                    }))
+            }));
+    }, [
+        currentMood
+    ]);
+    if (!isVisible || !moodFeatureEnabled) return null;
+    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+        style: {
+            position: 'fixed',
+            bottom: '20px',
+            left: '20px',
+            zIndex: 9999,
+            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+        },
+        children: [
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                onClick: ()=>setIsExpanded(!isExpanded),
+                style: {
+                    width: '56px',
+                    height: '56px',
+                    borderRadius: '50%',
+                    border: 'none',
+                    background: generateAdvancedGradient(activeConfig),
+                    color: 'white',
+                    fontSize: '20px',
+                    cursor: 'pointer',
+                    boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
+                    transform: isExpanded ? 'rotate(45deg)' : 'rotate(0deg)',
+                    transition: 'all 0.3s ease',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backdropFilter: 'blur(10px)'
+                },
+                title: "Gradient Editor",
+                children: "🎨"
+            }, void 0, false, {
+                fileName: "[project]/src/components/GradientPanel.tsx",
+                lineNumber: 190,
+                columnNumber: 7
+            }, this),
+            isExpanded && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                style: {
+                    position: 'absolute',
+                    bottom: '70px',
+                    left: '0',
+                    background: 'rgba(255, 255, 255, 0.98)',
+                    backdropFilter: 'blur(20px)',
+                    borderRadius: '24px',
+                    padding: '2rem',
+                    border: '1px solid rgba(0, 0, 0, 0.08)',
+                    boxShadow: '0 20px 60px rgba(0, 0, 0, 0.15)',
+                    minWidth: '420px',
+                    maxWidth: '520px',
+                    transform: 'translateY(0)',
+                    opacity: '1',
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+                },
+                children: [
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        style: {
+                            marginBottom: '1.5rem',
+                            textAlign: 'center'
+                        },
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
+                                style: {
+                                    margin: '0 0 0.5rem 0',
+                                    fontSize: '18px',
+                                    fontWeight: '700',
+                                    background: generateAdvancedGradient(activeConfig),
+                                    WebkitBackgroundClip: 'text',
+                                    WebkitTextFillColor: 'transparent',
+                                    backgroundClip: 'text'
+                                },
+                                children: "Advanced Gradient Editor"
+                            }, void 0, false, {
+                                fileName: "[project]/src/components/GradientPanel.tsx",
+                                lineNumber: 234,
+                                columnNumber: 13
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                style: {
+                                    margin: '0',
+                                    fontSize: '13px',
+                                    color: '#64748b',
+                                    fontWeight: '500'
+                                },
+                                children: "Drag to customize • Live preview"
+                            }, void 0, false, {
+                                fileName: "[project]/src/components/GradientPanel.tsx",
+                                lineNumber: 245,
+                                columnNumber: 13
+                            }, this)
+                        ]
+                    }, void 0, true, {
+                        fileName: "[project]/src/components/GradientPanel.tsx",
+                        lineNumber: 233,
+                        columnNumber: 11
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        ref: canvasRef,
+                        style: {
+                            width: '100%',
+                            height: '120px',
+                            borderRadius: '16px',
+                            marginBottom: '1.5rem',
+                            background: generateAdvancedGradient(activeConfig),
+                            border: '2px solid rgba(0,0,0,0.05)',
+                            position: 'relative',
+                            cursor: isDragging.type ? 'grabbing' : 'grab',
+                            overflow: 'hidden'
+                        },
+                        children: [
+                            activeConfig.type === 'linear' && activeConfig.stops.map((stop, index)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    onMouseDown: (e)=>handleMouseDown(e, 'stop', index),
+                                    style: {
+                                        position: 'absolute',
+                                        top: '50%',
+                                        left: `${stop.position}%`,
+                                        transform: 'translate(-50%, -50%)',
+                                        width: '16px',
+                                        height: '16px',
+                                        borderRadius: '50%',
+                                        background: stop.color,
+                                        border: '3px solid white',
+                                        boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+                                        cursor: 'grab',
+                                        transition: 'transform 0.2s ease'
+                                    },
+                                    onMouseEnter: (e)=>{
+                                        if (!isDragging.type) {
+                                            e.currentTarget.style.transform = 'translate(-50%, -50%) scale(1.2)';
+                                        }
+                                    },
+                                    onMouseLeave: (e)=>{
+                                        if (!isDragging.type) {
+                                            e.currentTarget.style.transform = 'translate(-50%, -50%) scale(1)';
+                                        }
+                                    }
+                                }, index, false, {
+                                    fileName: "[project]/src/components/GradientPanel.tsx",
+                                    lineNumber: 272,
+                                    columnNumber: 15
+                                }, this)),
+                            (activeConfig.type === 'radial' || activeConfig.type === 'conic') && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                onMouseDown: (e)=>handleMouseDown(e, 'center'),
+                                style: {
+                                    position: 'absolute',
+                                    top: `${activeConfig.centerY}%`,
+                                    left: `${activeConfig.centerX}%`,
+                                    transform: 'translate(-50%, -50%)',
+                                    width: '20px',
+                                    height: '20px',
+                                    borderRadius: '50%',
+                                    background: 'rgba(255,255,255,0.9)',
+                                    border: '3px solid rgba(0,0,0,0.4)',
+                                    cursor: 'grab',
+                                    boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
+                                }
+                            }, void 0, false, {
+                                fileName: "[project]/src/components/GradientPanel.tsx",
+                                lineNumber: 304,
+                                columnNumber: 15
+                            }, this),
+                            (activeConfig.type === 'linear' || activeConfig.type === 'conic') && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                onMouseDown: (e)=>handleMouseDown(e, 'angle'),
+                                style: {
+                                    position: 'absolute',
+                                    top: '50%',
+                                    left: '50%',
+                                    width: '40px',
+                                    height: '2px',
+                                    background: 'rgba(255,255,255,0.8)',
+                                    borderRadius: '1px',
+                                    transformOrigin: 'left center',
+                                    transform: `translate(-50%, -50%) rotate(${activeConfig.angle}deg)`,
+                                    cursor: 'grab',
+                                    boxShadow: '0 1px 4px rgba(0,0,0,0.3)'
+                                }
+                            }, void 0, false, {
+                                fileName: "[project]/src/components/GradientPanel.tsx",
+                                lineNumber: 324,
+                                columnNumber: 15
+                            }, this)
+                        ]
+                    }, void 0, true, {
+                        fileName: "[project]/src/components/GradientPanel.tsx",
+                        lineNumber: 256,
+                        columnNumber: 11
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        style: {
+                            marginBottom: '1.5rem'
+                        },
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                style: {
+                                    fontSize: '14px',
+                                    marginBottom: '0.8rem',
+                                    color: '#374151',
+                                    fontWeight: '600'
+                                },
+                                children: "Quick Presets:"
+                            }, void 0, false, {
+                                fileName: "[project]/src/components/GradientPanel.tsx",
+                                lineNumber: 345,
+                                columnNumber: 13
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                style: {
+                                    display: 'flex',
+                                    gap: '0.5rem',
+                                    flexWrap: 'wrap'
+                                },
+                                children: presets.map((preset, index)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                        onClick: ()=>{
+                                            const newConfig = {
+                                                ...activeConfig,
+                                                type: preset.type,
+                                                angle: preset.angle
+                                            };
+                                            setActiveConfig(newConfig);
+                                            if (moodFeatureEnabled) {
+                                                updateGradientsRealTime(newConfig);
+                                            }
+                                        },
+                                        style: {
+                                            padding: '8px 16px',
+                                            borderRadius: '12px',
+                                            border: activeConfig.type === preset.type ? '2px solid #3b82f6' : '2px solid rgba(0,0,0,0.1)',
+                                            background: activeConfig.type === preset.type ? '#3b82f630' : 'white',
+                                            color: activeConfig.type === preset.type ? '#3b82f6' : '#64748b',
+                                            cursor: 'pointer',
+                                            fontSize: '12px',
+                                            fontWeight: '600',
+                                            transition: 'all 0.2s ease'
+                                        },
+                                        children: preset.name
+                                    }, index, false, {
+                                        fileName: "[project]/src/components/GradientPanel.tsx",
+                                        lineNumber: 359,
+                                        columnNumber: 17
+                                    }, this))
+                            }, void 0, false, {
+                                fileName: "[project]/src/components/GradientPanel.tsx",
+                                lineNumber: 353,
+                                columnNumber: 13
+                            }, this)
+                        ]
+                    }, void 0, true, {
+                        fileName: "[project]/src/components/GradientPanel.tsx",
+                        lineNumber: 344,
+                        columnNumber: 11
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        style: {
+                            marginBottom: '1.5rem'
+                        },
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                style: {
+                                    fontSize: '14px',
+                                    marginBottom: '0.8rem',
+                                    color: '#374151',
+                                    fontWeight: '600'
+                                },
+                                children: "Mood Colors:"
+                            }, void 0, false, {
+                                fileName: "[project]/src/components/GradientPanel.tsx",
+                                lineNumber: 392,
+                                columnNumber: 13
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                style: {
+                                    display: 'flex',
+                                    gap: '0.5rem',
+                                    flexWrap: 'wrap'
+                                },
+                                children: Object.keys(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$moodThemes$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["moodThemes"]).map((mood)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                        onClick: ()=>{
+                                            const newConfig = {
+                                                ...activeConfig,
+                                                stops: [
+                                                    {
+                                                        ...activeConfig.stops[0],
+                                                        color: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$moodThemes$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["moodThemes"][mood].gradientStart
+                                                    },
+                                                    {
+                                                        ...activeConfig.stops[1],
+                                                        color: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$moodThemes$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["moodThemes"][mood].gradientEnd
+                                                    }
+                                                ]
+                                            };
+                                            setActiveConfig(newConfig);
+                                            if (moodFeatureEnabled) {
+                                                updateGradientsRealTime(newConfig);
+                                            }
+                                        },
+                                        style: {
+                                            width: '40px',
+                                            height: '40px',
+                                            borderRadius: '50%',
+                                            border: currentMood === mood ? '3px solid #3b82f6' : '2px solid rgba(0,0,0,0.1)',
+                                            background: `linear-gradient(45deg, ${__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$moodThemes$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["moodThemes"][mood].gradientStart}, ${__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$moodThemes$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["moodThemes"][mood].gradientEnd})`,
+                                            cursor: 'pointer',
+                                            transform: currentMood === mood ? 'scale(1.1)' : 'scale(1)',
+                                            transition: 'all 0.2s ease'
+                                        },
+                                        title: mood
+                                    }, mood, false, {
+                                        fileName: "[project]/src/components/GradientPanel.tsx",
+                                        lineNumber: 406,
+                                        columnNumber: 17
+                                    }, this))
+                            }, void 0, false, {
+                                fileName: "[project]/src/components/GradientPanel.tsx",
+                                lineNumber: 400,
+                                columnNumber: 13
+                            }, this)
+                        ]
+                    }, void 0, true, {
+                        fileName: "[project]/src/components/GradientPanel.tsx",
+                        lineNumber: 391,
+                        columnNumber: 11
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        style: {
+                            background: 'rgba(59, 130, 246, 0.05)',
+                            borderRadius: '12px',
+                            padding: '1rem',
+                            border: '1px solid rgba(59, 130, 246, 0.1)'
+                        },
+                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                            style: {
+                                margin: '0',
+                                fontSize: '12px',
+                                color: '#1e40af',
+                                lineHeight: '1.5'
+                            },
+                            children: [
+                                "💡 ",
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("strong", {
+                                    children: "Drag the controls:"
+                                }, void 0, false, {
+                                    fileName: "[project]/src/components/GradientPanel.tsx",
+                                    lineNumber: 450,
+                                    columnNumber: 18
+                                }, this),
+                                " Move gradient stops along the bottom, drag the line to change angle, or move the center point for radial gradients. Changes apply instantly!"
+                            ]
+                        }, void 0, true, {
+                            fileName: "[project]/src/components/GradientPanel.tsx",
+                            lineNumber: 444,
+                            columnNumber: 13
+                        }, this)
+                    }, void 0, false, {
+                        fileName: "[project]/src/components/GradientPanel.tsx",
+                        lineNumber: 438,
+                        columnNumber: 11
+                    }, this)
+                ]
+            }, void 0, true, {
+                fileName: "[project]/src/components/GradientPanel.tsx",
+                lineNumber: 216,
+                columnNumber: 9
+            }, this)
+        ]
+    }, void 0, true, {
+        fileName: "[project]/src/components/GradientPanel.tsx",
+        lineNumber: 182,
+        columnNumber: 5
+    }, this);
+};
+const __TURBOPACK__default__export__ = GradientPanel;
+}}),
 "[project]/src/components/MoodToggle.tsx [app-ssr] (ecmascript)": ((__turbopack_context__) => {
 "use strict";
 
@@ -2458,7 +3101,9 @@ __turbopack_context__.s({
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react-jsx-dev-runtime.js [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react.js [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$firebase$2f$clientApp$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/firebase/clientApp.ts [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$GradientPanel$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/GradientPanel.tsx [app-ssr] (ecmascript)");
 'use client';
+;
 ;
 ;
 ;
@@ -2609,21 +3254,34 @@ const MoodToggle = ({ initialEnabled = true, className = '', style = {}, current
     if (!currentUser) {
         return null; // Don't show toggle for unauthenticated users
     }
-    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-        onClick: handleToggle,
-        className: className,
-        style: {
-            ...style,
-            transition: 'all 0.3s ease',
-            transform: isAnimating ? 'scale(1.1)' : 'scale(1)'
-        },
-        title: moodFeatureEnabled ? "Turn off mood feature" : "Turn on mood feature",
-        children: moodFeatureEnabled ? 'ON' : 'OFF'
-    }, void 0, false, {
-        fileName: "[project]/src/components/MoodToggle.tsx",
-        lineNumber: 197,
-        columnNumber: 5
-    }, this);
+    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
+        children: [
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                onClick: handleToggle,
+                className: className,
+                style: {
+                    ...style,
+                    transition: 'all 0.3s ease',
+                    transform: isAnimating ? 'scale(1.1)' : 'scale(1)'
+                },
+                title: moodFeatureEnabled ? "Turn off mood feature" : "Turn on mood feature",
+                children: moodFeatureEnabled ? 'ON' : 'OFF'
+            }, void 0, false, {
+                fileName: "[project]/src/components/MoodToggle.tsx",
+                lineNumber: 198,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$GradientPanel$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
+                currentMood: currentMood,
+                isVisible: !!currentUser,
+                moodFeatureEnabled: moodFeatureEnabled
+            }, void 0, false, {
+                fileName: "[project]/src/components/MoodToggle.tsx",
+                lineNumber: 212,
+                columnNumber: 7
+            }, this)
+        ]
+    }, void 0, true);
 };
 const __TURBOPACK__default__export__ = /*#__PURE__*/ __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].memo(MoodToggle);
 }}),
@@ -3013,98 +3671,6 @@ const ReflectionToggle = ({ articleId, className = '', style = {} })=>{
     }, void 0, true);
 };
 const __TURBOPACK__default__export__ = /*#__PURE__*/ __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].memo(ReflectionToggle);
-}}),
-"[project]/src/utils/moodThemes.ts [app-ssr] (ecmascript)": ((__turbopack_context__) => {
-"use strict";
-
-var { g: global, __dirname } = __turbopack_context__;
-{
-__turbopack_context__.s({
-    "generateGradientStyle": (()=>generateGradientStyle),
-    "gradientTypes": (()=>gradientTypes),
-    "moodThemes": (()=>moodThemes),
-    "updateAllGradients": (()=>updateAllGradients)
-});
-const moodThemes = {
-    joyful: {
-        gradientStart: '#FFD700',
-        gradientEnd: '#FF6B6B',
-        accent: '#FF4757' // Bright red
-    },
-    angry: {
-        gradientStart: '#FF416C',
-        gradientEnd: '#FF4B2B',
-        accent: '#B71C1C' // Dark red
-    },
-    energetic: {
-        gradientStart: '#00F260',
-        gradientEnd: '#0575E6',
-        accent: '#1565C0' // Deep blue
-    },
-    peaceful: {
-        gradientStart: '#A8E6CF',
-        gradientEnd: '#88D8C0',
-        accent: '#4CAF50' // Forest green
-    },
-    reflective: {
-        gradientStart: '#667eea',
-        gradientEnd: '#764ba2',
-        accent: '#5E35B1' // Royal purple
-    },
-    sad: {
-        gradientStart: '#4facfe',
-        gradientEnd: '#00f2fe',
-        accent: '#0288D1' // Ocean blue
-    }
-};
-const gradientTypes = {
-    linear: 'linear',
-    radial: 'radial',
-    conic: 'conic',
-    waves: 'waves',
-    dots: 'dots',
-    mesh: 'mesh'
-};
-const generateGradientStyle = (mood, gradientType, opacity = 0.4)=>{
-    const theme = moodThemes[mood];
-    const opacityHex = Math.round(opacity * 255).toString(16).padStart(2, '0');
-    switch(gradientType){
-        case 'linear':
-            return `linear-gradient(45deg, ${theme.gradientStart}${opacityHex}, ${theme.gradientEnd}${opacityHex})`;
-        case 'radial':
-            return `radial-gradient(circle at 50% 50%, ${theme.gradientStart}${opacityHex} 0%, ${theme.gradientEnd}${opacityHex} 100%)`;
-        case 'conic':
-            return `conic-gradient(from 0deg at 50% 50%, ${theme.gradientStart}${opacityHex}, ${theme.gradientEnd}${opacityHex}, ${theme.accent}${opacityHex}, ${theme.gradientStart}${opacityHex})`;
-        case 'waves':
-            return `
-        radial-gradient(ellipse 200% 100% at 50% 0%, ${theme.gradientStart}${opacityHex}, transparent 50%), 
-        radial-gradient(ellipse 200% 100% at 50% 100%, ${theme.gradientEnd}${opacityHex}, transparent 50%)
-      `;
-        case 'dots':
-            return `
-        radial-gradient(circle at 20% 20%, ${theme.gradientStart}${opacityHex} 8px, transparent 8px),
-        radial-gradient(circle at 80% 80%, ${theme.gradientEnd}${opacityHex} 8px, transparent 8px),
-        radial-gradient(circle at 40% 60%, ${theme.accent}${Math.round(opacity * 0.6 * 255).toString(16).padStart(2, '0')} 4px, transparent 4px)
-      `;
-        case 'mesh':
-            return `
-        radial-gradient(circle at 20% 20%, ${theme.gradientStart}${opacityHex}, transparent 50%), 
-        radial-gradient(circle at 80% 60%, ${theme.gradientEnd}${opacityHex}, transparent 50%),
-        radial-gradient(circle at 40% 90%, ${theme.accent}${Math.round(opacity * 0.8 * 255).toString(16).padStart(2, '0')}, transparent 50%),
-        radial-gradient(circle at 70% 30%, ${theme.gradientStart}${Math.round(opacity * 0.6 * 255).toString(16).padStart(2, '0')}, transparent 50%)
-      `;
-        default:
-            return `linear-gradient(45deg, ${theme.gradientStart}${opacityHex}, ${theme.gradientEnd}${opacityHex})`;
-    }
-};
-const updateAllGradients = (mood, gradientType)=>{
-    const elements = document.querySelectorAll('[data-mood-element]');
-    elements.forEach((element)=>{
-        const elementType = element.getAttribute('data-mood-element');
-        element.style.backgroundImage = generateGradientStyle(mood, gradientType, 0.4);
-        element.style.transition = 'background-image 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
-    });
-};
 }}),
 "[project]/src/components/ReflectionModeToggle.tsx [app-ssr] (ecmascript)": ((__turbopack_context__) => {
 "use strict";
@@ -9818,4 +10384,4 @@ function ArticlePage() {
 
 };
 
-//# sourceMappingURL=%5Broot-of-the-server%5D__d153d8c4._.js.map
+//# sourceMappingURL=%5Broot-of-the-server%5D__83e52e35._.js.map
