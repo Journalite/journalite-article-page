@@ -2831,44 +2831,23 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
     const generateJournaColorGradient = (config)=>{
         const { colorStops, opacity, grain } = config;
         const alpha = opacity / 100;
-        // Generate uniform film grain overlay like Arc browser
+        // Generate smooth film grain overlay based on grain value (much smoother)
         const grainIntensity = grain / 100;
         let grainPattern = '';
         if (grainIntensity > 0.1) {
-            // Create uniform grain effect with fine noise simulation (static pattern)
-            const grainOpacity = grainIntensity * 0.08; // Visible but subtle grain like Arc
-            // Pre-defined static pattern that resembles Arc's uniform grain
+            // Much lower opacity and larger, softer patterns for smooth grain
+            const grainOpacity = grainIntensity * 0.08; // Much more subtle
+            const grainBlur = Math.max(15, 25 - grainIntensity * 8); // Larger, softer spots
+            // Create smooth film grain with larger, softer patterns
             grainPattern = `
-        radial-gradient(circle at 7% 12%, rgba(255,255,255,${grainOpacity}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 23% 8%, rgba(0,0,0,${grainOpacity * 0.8}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 41% 15%, rgba(255,255,255,${grainOpacity * 0.6}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 59% 7%, rgba(0,0,0,${grainOpacity * 0.9}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 73% 14%, rgba(255,255,255,${grainOpacity * 0.7}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 91% 9%, rgba(0,0,0,${grainOpacity * 0.5}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 13% 31%, rgba(255,255,255,${grainOpacity * 0.8}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 29% 28%, rgba(0,0,0,${grainOpacity * 0.6}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 47% 33%, rgba(255,255,255,${grainOpacity}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 61% 29%, rgba(0,0,0,${grainOpacity * 0.7}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 79% 32%, rgba(255,255,255,${grainOpacity * 0.5}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 97% 27%, rgba(0,0,0,${grainOpacity * 0.8}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 5% 53%, rgba(255,255,255,${grainOpacity * 0.6}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 21% 47%, rgba(0,0,0,${grainOpacity}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 37% 52%, rgba(255,255,255,${grainOpacity * 0.7}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 55% 48%, rgba(0,0,0,${grainOpacity * 0.5}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 71% 51%, rgba(255,255,255,${grainOpacity * 0.9}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 87% 49%, rgba(0,0,0,${grainOpacity * 0.6}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 11% 71%, rgba(255,255,255,${grainOpacity * 0.8}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 25% 68%, rgba(0,0,0,${grainOpacity * 0.7}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 43% 73%, rgba(255,255,255,${grainOpacity}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 57% 67%, rgba(0,0,0,${grainOpacity * 0.5}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 75% 72%, rgba(255,255,255,${grainOpacity * 0.6}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 93% 69%, rgba(0,0,0,${grainOpacity * 0.8}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 9% 89%, rgba(255,255,255,${grainOpacity * 0.7}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 27% 87%, rgba(0,0,0,${grainOpacity * 0.9}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 45% 92%, rgba(255,255,255,${grainOpacity * 0.5}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 63% 88%, rgba(0,0,0,${grainOpacity * 0.6}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 81% 91%, rgba(255,255,255,${grainOpacity * 0.8}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 99% 89%, rgba(0,0,0,${grainOpacity}) 0.3px, transparent 0.8px)
+        radial-gradient(ellipse at 12% 18%, rgba(255,255,255,${grainOpacity}) 3px, transparent ${grainBlur}px),
+        radial-gradient(ellipse at 87% 23%, rgba(0,0,0,${grainOpacity * 0.7}) 2px, transparent ${grainBlur * 1.2}px),
+        radial-gradient(ellipse at 43% 82%, rgba(255,255,255,${grainOpacity * 0.5}) 4px, transparent ${grainBlur * 0.9}px),
+        radial-gradient(ellipse at 71% 64%, rgba(0,0,0,${grainOpacity * 0.6}) 2.5px, transparent ${grainBlur * 1.1}px),
+        radial-gradient(ellipse at 29% 57%, rgba(255,255,255,${grainOpacity * 0.4}) 3.5px, transparent ${grainBlur * 1.3}px),
+        radial-gradient(ellipse at 93% 11%, rgba(0,0,0,${grainOpacity * 0.3}) 2px, transparent ${grainBlur * 0.8}px),
+        radial-gradient(ellipse at 6% 89%, rgba(255,255,255,${grainOpacity * 0.6}) 3px, transparent ${grainBlur * 1.4}px),
+        radial-gradient(ellipse at 78% 91%, rgba(0,0,0,${grainOpacity * 0.4}) 2.5px, transparent ${grainBlur * 1.1}px),
       `;
         }
         let baseGradient = '';
@@ -2895,20 +2874,15 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
     const generateClearerGradient = (config)=>{
         const { colorStops, opacity, grain } = config;
         const alpha = Math.max(0.7, opacity / 100); // Higher minimum opacity for bars
-        // Light grain for UI elements (matches background but lighter)
+        // Very light, smooth grain for UI elements so it doesn't interfere with readability
         const grainIntensity = grain / 100;
         let lightGrainPattern = '';
         if (grainIntensity > 0.3) {
-            const grainOpacity = grainIntensity * 0.03; // Light grain for UI readability
+            const grainOpacity = grainIntensity * 0.04; // Even lighter grain for UI elements
             lightGrainPattern = `
-        radial-gradient(circle at 15% 25%, rgba(255,255,255,${grainOpacity}) 0.2px, transparent 0.6px),
-        radial-gradient(circle at 35% 15%, rgba(0,0,0,${grainOpacity * 0.7}) 0.2px, transparent 0.6px),
-        radial-gradient(circle at 55% 35%, rgba(255,255,255,${grainOpacity * 0.5}) 0.2px, transparent 0.6px),
-        radial-gradient(circle at 75% 25%, rgba(0,0,0,${grainOpacity * 0.8}) 0.2px, transparent 0.6px),
-        radial-gradient(circle at 25% 65%, rgba(255,255,255,${grainOpacity * 0.6}) 0.2px, transparent 0.6px),
-        radial-gradient(circle at 45% 55%, rgba(0,0,0,${grainOpacity * 0.4}) 0.2px, transparent 0.6px),
-        radial-gradient(circle at 65% 75%, rgba(255,255,255,${grainOpacity * 0.7}) 0.2px, transparent 0.6px),
-        radial-gradient(circle at 85% 65%, rgba(0,0,0,${grainOpacity * 0.5}) 0.2px, transparent 0.6px),
+        radial-gradient(ellipse at 25% 25%, rgba(255,255,255,${grainOpacity}) 4px, transparent 20px),
+        radial-gradient(ellipse at 75% 75%, rgba(0,0,0,${grainOpacity * 0.5}) 3px, transparent 25px),
+        radial-gradient(ellipse at 50% 15%, rgba(255,255,255,${grainOpacity * 0.7}) 3.5px, transparent 22px),
       `;
         }
         let clearBaseGradient = '';
@@ -3222,7 +3196,7 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                                         stopOpacity: "0.9"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/GradientPanel.tsx",
-                                        lineNumber: 463,
+                                        lineNumber: 437,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("stop", {
@@ -3231,18 +3205,18 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                                         stopOpacity: "0.7"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/GradientPanel.tsx",
-                                        lineNumber: 464,
+                                        lineNumber: 438,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/GradientPanel.tsx",
-                                lineNumber: 462,
+                                lineNumber: 436,
                                 columnNumber: 13
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/src/components/GradientPanel.tsx",
-                            lineNumber: 461,
+                            lineNumber: 435,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("circle", {
@@ -3252,7 +3226,7 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                             fill: "url(#iconGradient)"
                         }, void 0, false, {
                             fileName: "[project]/src/components/GradientPanel.tsx",
-                            lineNumber: 467,
+                            lineNumber: 441,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("circle", {
@@ -3262,7 +3236,7 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                             fill: "url(#iconGradient)"
                         }, void 0, false, {
                             fileName: "[project]/src/components/GradientPanel.tsx",
-                            lineNumber: 468,
+                            lineNumber: 442,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("circle", {
@@ -3272,7 +3246,7 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                             fill: "url(#iconGradient)"
                         }, void 0, false, {
                             fileName: "[project]/src/components/GradientPanel.tsx",
-                            lineNumber: 469,
+                            lineNumber: 443,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
@@ -3282,18 +3256,18 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                             strokeLinecap: "round"
                         }, void 0, false, {
                             fileName: "[project]/src/components/GradientPanel.tsx",
-                            lineNumber: 470,
+                            lineNumber: 444,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/components/GradientPanel.tsx",
-                    lineNumber: 454,
+                    lineNumber: 428,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/components/GradientPanel.tsx",
-                lineNumber: 434,
+                lineNumber: 408,
                 columnNumber: 7
             }, this),
             isExpanded && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3359,12 +3333,12 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                                 children: icon
                             }, mode, false, {
                                 fileName: "[project]/src/components/GradientPanel.tsx",
-                                lineNumber: 508,
+                                lineNumber: 482,
                                 columnNumber: 15
                             }, this))
                     }, void 0, false, {
                         fileName: "[project]/src/components/GradientPanel.tsx",
-                        lineNumber: 497,
+                        lineNumber: 471,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3404,12 +3378,12 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                                 }
                             }, stop.id, false, {
                                 fileName: "[project]/src/components/GradientPanel.tsx",
-                                lineNumber: 554,
+                                lineNumber: 528,
                                 columnNumber: 15
                             }, this))
                     }, void 0, false, {
                         fileName: "[project]/src/components/GradientPanel.tsx",
-                        lineNumber: 533,
+                        lineNumber: 507,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3440,7 +3414,7 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                                 children: "−"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/GradientPanel.tsx",
-                                lineNumber: 584,
+                                lineNumber: 558,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -3456,7 +3430,7 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/GradientPanel.tsx",
-                                lineNumber: 604,
+                                lineNumber: 578,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -3478,13 +3452,13 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                                 children: "+"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/GradientPanel.tsx",
-                                lineNumber: 613,
+                                lineNumber: 587,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/GradientPanel.tsx",
-                        lineNumber: 577,
+                        lineNumber: 551,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3509,12 +3483,12 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                                 }
                             }, index, false, {
                                 fileName: "[project]/src/components/GradientPanel.tsx",
-                                lineNumber: 643,
+                                lineNumber: 617,
                                 columnNumber: 15
                             }, this))
                     }, void 0, false, {
                         fileName: "[project]/src/components/GradientPanel.tsx",
-                        lineNumber: 635,
+                        lineNumber: 609,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3552,7 +3526,7 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                                         }
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/GradientPanel.tsx",
-                                        lineNumber: 685,
+                                        lineNumber: 659,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3569,13 +3543,13 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                                         }
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/GradientPanel.tsx",
-                                        lineNumber: 695,
+                                        lineNumber: 669,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/GradientPanel.tsx",
-                                lineNumber: 668,
+                                lineNumber: 642,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3616,7 +3590,7 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                                             }
                                         }, i, false, {
                                             fileName: "[project]/src/components/GradientPanel.tsx",
-                                            lineNumber: 726,
+                                            lineNumber: 700,
                                             columnNumber: 18
                                         }, this)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3648,7 +3622,7 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                                                 }
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/GradientPanel.tsx",
-                                                lineNumber: 756,
+                                                lineNumber: 730,
                                                 columnNumber: 18
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3664,13 +3638,13 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                                                 }
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/GradientPanel.tsx",
-                                                lineNumber: 770,
+                                                lineNumber: 744,
                                                 columnNumber: 18
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/GradientPanel.tsx",
-                                        lineNumber: 743,
+                                        lineNumber: 717,
                                         columnNumber: 16
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3689,31 +3663,31 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/GradientPanel.tsx",
-                                        lineNumber: 783,
+                                        lineNumber: 757,
                                         columnNumber: 16
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/GradientPanel.tsx",
-                                lineNumber: 709,
+                                lineNumber: 683,
                                 columnNumber: 14
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/GradientPanel.tsx",
-                        lineNumber: 661,
+                        lineNumber: 635,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/GradientPanel.tsx",
-                lineNumber: 481,
+                lineNumber: 455,
                 columnNumber: 9
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/GradientPanel.tsx",
-        lineNumber: 426,
+        lineNumber: 400,
         columnNumber: 5
     }, this);
 };

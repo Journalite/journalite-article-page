@@ -49,46 +49,25 @@ const GradientPanel: React.FC<GradientPanelProps> = ({
     const { colorStops, opacity, grain } = config;
     const alpha = opacity / 100;
     
-    // Generate uniform film grain overlay like Arc browser
+    // Generate smooth film grain overlay based on grain value (much smoother)
     const grainIntensity = grain / 100;
     let grainPattern = '';
     
     if (grainIntensity > 0.1) {
-      // Create uniform grain effect with fine noise simulation (static pattern)
-      const grainOpacity = grainIntensity * 0.08; // Visible but subtle grain like Arc
+      // Much lower opacity and larger, softer patterns for smooth grain
+      const grainOpacity = grainIntensity * 0.08; // Much more subtle
+      const grainBlur = Math.max(15, 25 - (grainIntensity * 8)); // Larger, softer spots
       
-      // Pre-defined static pattern that resembles Arc's uniform grain
+      // Create smooth film grain with larger, softer patterns
       grainPattern = `
-        radial-gradient(circle at 7% 12%, rgba(255,255,255,${grainOpacity}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 23% 8%, rgba(0,0,0,${grainOpacity * 0.8}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 41% 15%, rgba(255,255,255,${grainOpacity * 0.6}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 59% 7%, rgba(0,0,0,${grainOpacity * 0.9}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 73% 14%, rgba(255,255,255,${grainOpacity * 0.7}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 91% 9%, rgba(0,0,0,${grainOpacity * 0.5}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 13% 31%, rgba(255,255,255,${grainOpacity * 0.8}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 29% 28%, rgba(0,0,0,${grainOpacity * 0.6}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 47% 33%, rgba(255,255,255,${grainOpacity}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 61% 29%, rgba(0,0,0,${grainOpacity * 0.7}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 79% 32%, rgba(255,255,255,${grainOpacity * 0.5}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 97% 27%, rgba(0,0,0,${grainOpacity * 0.8}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 5% 53%, rgba(255,255,255,${grainOpacity * 0.6}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 21% 47%, rgba(0,0,0,${grainOpacity}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 37% 52%, rgba(255,255,255,${grainOpacity * 0.7}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 55% 48%, rgba(0,0,0,${grainOpacity * 0.5}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 71% 51%, rgba(255,255,255,${grainOpacity * 0.9}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 87% 49%, rgba(0,0,0,${grainOpacity * 0.6}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 11% 71%, rgba(255,255,255,${grainOpacity * 0.8}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 25% 68%, rgba(0,0,0,${grainOpacity * 0.7}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 43% 73%, rgba(255,255,255,${grainOpacity}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 57% 67%, rgba(0,0,0,${grainOpacity * 0.5}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 75% 72%, rgba(255,255,255,${grainOpacity * 0.6}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 93% 69%, rgba(0,0,0,${grainOpacity * 0.8}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 9% 89%, rgba(255,255,255,${grainOpacity * 0.7}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 27% 87%, rgba(0,0,0,${grainOpacity * 0.9}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 45% 92%, rgba(255,255,255,${grainOpacity * 0.5}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 63% 88%, rgba(0,0,0,${grainOpacity * 0.6}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 81% 91%, rgba(255,255,255,${grainOpacity * 0.8}) 0.3px, transparent 0.8px),
-        radial-gradient(circle at 99% 89%, rgba(0,0,0,${grainOpacity}) 0.3px, transparent 0.8px)
+        radial-gradient(ellipse at 12% 18%, rgba(255,255,255,${grainOpacity}) 3px, transparent ${grainBlur}px),
+        radial-gradient(ellipse at 87% 23%, rgba(0,0,0,${grainOpacity * 0.7}) 2px, transparent ${grainBlur * 1.2}px),
+        radial-gradient(ellipse at 43% 82%, rgba(255,255,255,${grainOpacity * 0.5}) 4px, transparent ${grainBlur * 0.9}px),
+        radial-gradient(ellipse at 71% 64%, rgba(0,0,0,${grainOpacity * 0.6}) 2.5px, transparent ${grainBlur * 1.1}px),
+        radial-gradient(ellipse at 29% 57%, rgba(255,255,255,${grainOpacity * 0.4}) 3.5px, transparent ${grainBlur * 1.3}px),
+        radial-gradient(ellipse at 93% 11%, rgba(0,0,0,${grainOpacity * 0.3}) 2px, transparent ${grainBlur * 0.8}px),
+        radial-gradient(ellipse at 6% 89%, rgba(255,255,255,${grainOpacity * 0.6}) 3px, transparent ${grainBlur * 1.4}px),
+        radial-gradient(ellipse at 78% 91%, rgba(0,0,0,${grainOpacity * 0.4}) 2.5px, transparent ${grainBlur * 1.1}px),
       `;
     }
     
@@ -120,21 +99,16 @@ const GradientPanel: React.FC<GradientPanelProps> = ({
     const { colorStops, opacity, grain } = config;
     const alpha = Math.max(0.7, opacity / 100); // Higher minimum opacity for bars
     
-    // Light grain for UI elements (matches background but lighter)
+    // Very light, smooth grain for UI elements so it doesn't interfere with readability
     const grainIntensity = grain / 100;
     let lightGrainPattern = '';
     
     if (grainIntensity > 0.3) {
-      const grainOpacity = grainIntensity * 0.03; // Light grain for UI readability
+      const grainOpacity = grainIntensity * 0.04; // Even lighter grain for UI elements
       lightGrainPattern = `
-        radial-gradient(circle at 15% 25%, rgba(255,255,255,${grainOpacity}) 0.2px, transparent 0.6px),
-        radial-gradient(circle at 35% 15%, rgba(0,0,0,${grainOpacity * 0.7}) 0.2px, transparent 0.6px),
-        radial-gradient(circle at 55% 35%, rgba(255,255,255,${grainOpacity * 0.5}) 0.2px, transparent 0.6px),
-        radial-gradient(circle at 75% 25%, rgba(0,0,0,${grainOpacity * 0.8}) 0.2px, transparent 0.6px),
-        radial-gradient(circle at 25% 65%, rgba(255,255,255,${grainOpacity * 0.6}) 0.2px, transparent 0.6px),
-        radial-gradient(circle at 45% 55%, rgba(0,0,0,${grainOpacity * 0.4}) 0.2px, transparent 0.6px),
-        radial-gradient(circle at 65% 75%, rgba(255,255,255,${grainOpacity * 0.7}) 0.2px, transparent 0.6px),
-        radial-gradient(circle at 85% 65%, rgba(0,0,0,${grainOpacity * 0.5}) 0.2px, transparent 0.6px),
+        radial-gradient(ellipse at 25% 25%, rgba(255,255,255,${grainOpacity}) 4px, transparent 20px),
+        radial-gradient(ellipse at 75% 75%, rgba(0,0,0,${grainOpacity * 0.5}) 3px, transparent 25px),
+        radial-gradient(ellipse at 50% 15%, rgba(255,255,255,${grainOpacity * 0.7}) 3.5px, transparent 22px),
       `;
     }
     
