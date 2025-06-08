@@ -399,29 +399,32 @@ const GradientPanel: React.FC<GradientPanelProps> = ({
   return (
     <div style={{
       position: 'fixed',
-      bottom: '20px',
-      left: '20px',
-      zIndex: 9999,
+      bottom: window.innerWidth <= 768 ? '20px' : '40px',
+      left: window.innerWidth <= 768 ? '20px' : '40px',
+      zIndex: 1000,
       transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
     }}>
       {/* Floating toggle button */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
         style={{
-          width: '56px',
-          height: '56px',
+          width: window.innerWidth <= 768 ? '48px' : '56px',
+          height: window.innerWidth <= 768 ? '48px' : '56px',
           borderRadius: '50%',
           border: 'none',
           background: currentGradient || '#007AFF',
           color: 'white',
           fontSize: '20px',
           cursor: 'pointer',
-          boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
-          transform: isExpanded ? 'rotate(45deg)' : 'rotate(0deg)',
-          transition: 'all 0.3s ease',
+          boxShadow: isExpanded
+            ? '0 8px 25px rgba(0, 122, 255, 0.4), 0 0 0 2px rgba(0, 122, 255, 0.2)'
+            : '0 6px 20px rgba(0, 122, 255, 0.3)',
+          transform: isExpanded ? 'scale(1.05) rotate(45deg)' : 'scale(1) rotate(0deg)',
+          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'center'
+          justifyContent: 'center',
+          backdropFilter: 'blur(10px)'
         }}
         title="Journa Color Editor"
       >
@@ -452,21 +455,42 @@ const GradientPanel: React.FC<GradientPanelProps> = ({
 
       {/* Expanded Journa Color-style panel */}
       {isExpanded && (
-        <div style={{
-          position: 'absolute',
-          bottom: '70px',
-          left: '0',
-          background: 'rgba(255, 255, 255, 0.98)',
-          backdropFilter: 'blur(20px)',
-          borderRadius: '24px',
-          padding: '1.5rem',
-          border: '1px solid rgba(0, 0, 0, 0.08)',
-          boxShadow: '0 20px 60px rgba(0, 0, 0, 0.15)',
-          width: '380px',
-          transform: 'translateY(0)',
-          opacity: '1',
-          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
-        }}>
+        <>
+          <style>
+            {`
+              @keyframes gentleSlideUp {
+                from {
+                  opacity: 0;
+                  transform: translateY(20px) scale(0.98);
+                }
+                to {
+                  opacity: 1;
+                  transform: translateY(0) scale(1);
+                }
+              }
+            `}
+          </style>
+                    <div style={{
+            position: 'fixed',
+            bottom: window.innerWidth <= 768 ? '80px' : '110px',
+            left: window.innerWidth <= 768 ? '20px' : '40px',
+            right: window.innerWidth <= 768 ? '20px' : 'auto',
+            width: window.innerWidth <= 768 ? 'auto' : '380px',
+            maxWidth: window.innerWidth <= 768 ? '340px' : '380px',
+            maxHeight: Math.min(
+              window.innerHeight - (window.innerWidth <= 768 ? 120 : 160), 
+              window.innerWidth <= 768 ? 400 : 500
+            ),
+            background: 'rgba(255, 255, 255, 0.95)',
+            backdropFilter: 'blur(20px)',
+            borderRadius: window.innerWidth <= 768 ? '16px' : '24px',
+            padding: window.innerWidth <= 768 ? '16px' : '24px',
+            border: '1px solid rgba(255, 255, 255, 0.3)',
+            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.2)',
+            zIndex: 999,
+            animation: 'gentleSlideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+            overflow: 'auto'
+          }}>
           {/* Theme mode toggles */}
           <div style={{
             display: 'flex',
@@ -768,6 +792,7 @@ const GradientPanel: React.FC<GradientPanelProps> = ({
              </div>
           </div>
         </div>
+        </>
       )}
     </div>
   );

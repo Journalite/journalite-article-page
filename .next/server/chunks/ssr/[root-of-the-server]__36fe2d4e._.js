@@ -2795,29 +2795,30 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         style: {
             position: 'fixed',
-            bottom: '20px',
-            left: '20px',
-            zIndex: 9999,
+            bottom: window.innerWidth <= 768 ? '20px' : '40px',
+            left: window.innerWidth <= 768 ? '20px' : '40px',
+            zIndex: 1000,
             transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
         },
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                 onClick: ()=>setIsExpanded(!isExpanded),
                 style: {
-                    width: '56px',
-                    height: '56px',
+                    width: window.innerWidth <= 768 ? '48px' : '56px',
+                    height: window.innerWidth <= 768 ? '48px' : '56px',
                     borderRadius: '50%',
                     border: 'none',
                     background: currentGradient || '#007AFF',
                     color: 'white',
                     fontSize: '20px',
                     cursor: 'pointer',
-                    boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
-                    transform: isExpanded ? 'rotate(45deg)' : 'rotate(0deg)',
-                    transition: 'all 0.3s ease',
+                    boxShadow: isExpanded ? '0 8px 25px rgba(0, 122, 255, 0.4), 0 0 0 2px rgba(0, 122, 255, 0.2)' : '0 6px 20px rgba(0, 122, 255, 0.3)',
+                    transform: isExpanded ? 'scale(1.05) rotate(45deg)' : 'scale(1) rotate(0deg)',
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center'
+                    justifyContent: 'center',
+                    backdropFilter: 'blur(10px)'
                 },
                 title: "Journa Color Editor",
                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
@@ -2841,7 +2842,7 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                                         stopOpacity: "0.9"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/GradientPanel.tsx",
-                                        lineNumber: 437,
+                                        lineNumber: 440,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("stop", {
@@ -2850,18 +2851,18 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                                         stopOpacity: "0.7"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/GradientPanel.tsx",
-                                        lineNumber: 438,
+                                        lineNumber: 441,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/GradientPanel.tsx",
-                                lineNumber: 436,
+                                lineNumber: 439,
                                 columnNumber: 13
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/src/components/GradientPanel.tsx",
-                            lineNumber: 435,
+                            lineNumber: 438,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("circle", {
@@ -2871,7 +2872,7 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                             fill: "url(#iconGradient)"
                         }, void 0, false, {
                             fileName: "[project]/src/components/GradientPanel.tsx",
-                            lineNumber: 441,
+                            lineNumber: 444,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("circle", {
@@ -2881,7 +2882,7 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                             fill: "url(#iconGradient)"
                         }, void 0, false, {
                             fileName: "[project]/src/components/GradientPanel.tsx",
-                            lineNumber: 442,
+                            lineNumber: 445,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("circle", {
@@ -2891,7 +2892,7 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                             fill: "url(#iconGradient)"
                         }, void 0, false, {
                             fileName: "[project]/src/components/GradientPanel.tsx",
-                            lineNumber: 443,
+                            lineNumber: 446,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
@@ -2901,13 +2902,13 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                             strokeLinecap: "round"
                         }, void 0, false, {
                             fileName: "[project]/src/components/GradientPanel.tsx",
-                            lineNumber: 444,
+                            lineNumber: 447,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/components/GradientPanel.tsx",
-                    lineNumber: 428,
+                    lineNumber: 431,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
@@ -2915,420 +2916,445 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                 lineNumber: 408,
                 columnNumber: 7
             }, this),
-            isExpanded && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                style: {
-                    position: 'absolute',
-                    bottom: '70px',
-                    left: '0',
-                    background: 'rgba(255, 255, 255, 0.98)',
-                    backdropFilter: 'blur(20px)',
-                    borderRadius: '24px',
-                    padding: '1.5rem',
-                    border: '1px solid rgba(0, 0, 0, 0.08)',
-                    boxShadow: '0 20px 60px rgba(0, 0, 0, 0.15)',
-                    width: '380px',
-                    transform: 'translateY(0)',
-                    opacity: '1',
-                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
-                },
+            isExpanded && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
                 children: [
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        style: {
-                            display: 'flex',
-                            justifyContent: 'center',
-                            gap: '1rem',
-                            marginBottom: '1.5rem'
-                        },
-                        children: [
-                            {
-                                mode: 'auto',
-                                icon: '✨',
-                                title: 'Auto'
-                            },
-                            {
-                                mode: 'light',
-                                icon: '☀️',
-                                title: 'Light'
-                            },
-                            {
-                                mode: 'dark',
-                                icon: '🌙',
-                                title: 'Dark'
-                            }
-                        ].map(({ mode, icon, title })=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                onClick: ()=>{
-                                    const newConfig = {
-                                        ...themeConfig,
-                                        mode
-                                    };
-                                    setThemeConfig(newConfig);
-                                    updateThemeRealTime(newConfig);
-                                },
-                                style: {
-                                    width: '48px',
-                                    height: '48px',
-                                    borderRadius: '12px',
-                                    border: themeConfig.mode === mode ? '2px solid #007AFF' : '2px solid rgba(0,0,0,0.1)',
-                                    background: themeConfig.mode === mode ? 'rgba(0, 122, 255, 0.1)' : 'rgba(0,0,0,0.05)',
-                                    fontSize: '20px',
-                                    cursor: 'pointer',
-                                    transition: 'all 0.2s ease'
-                                },
-                                title: title,
-                                children: icon
-                            }, mode, false, {
-                                fileName: "[project]/src/components/GradientPanel.tsx",
-                                lineNumber: 482,
-                                columnNumber: 15
-                            }, this))
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("style", {
+                        children: `
+              @keyframes gentleSlideUp {
+                from {
+                  opacity: 0;
+                  transform: translateY(20px) scale(0.98);
+                }
+                to {
+                  opacity: 1;
+                  transform: translateY(0) scale(1);
+                }
+              }
+            `
                     }, void 0, false, {
                         fileName: "[project]/src/components/GradientPanel.tsx",
-                        lineNumber: 471,
+                        lineNumber: 459,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        ref: canvasRef,
                         style: {
-                            width: '100%',
-                            height: '180px',
-                            borderRadius: '16px',
-                            background: `
+                            position: 'fixed',
+                            bottom: window.innerWidth <= 768 ? '80px' : '110px',
+                            left: window.innerWidth <= 768 ? '20px' : '40px',
+                            right: window.innerWidth <= 768 ? '20px' : 'auto',
+                            width: window.innerWidth <= 768 ? 'auto' : '380px',
+                            maxWidth: window.innerWidth <= 768 ? '340px' : '380px',
+                            maxHeight: Math.min(window.innerHeight - (window.innerWidth <= 768 ? 120 : 160), window.innerWidth <= 768 ? 400 : 500),
+                            background: 'rgba(255, 255, 255, 0.95)',
+                            backdropFilter: 'blur(20px)',
+                            borderRadius: window.innerWidth <= 768 ? '16px' : '24px',
+                            padding: window.innerWidth <= 768 ? '16px' : '24px',
+                            border: '1px solid rgba(255, 255, 255, 0.3)',
+                            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.2)',
+                            zIndex: 999,
+                            animation: 'gentleSlideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                            overflow: 'auto'
+                        },
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                style: {
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    gap: '1rem',
+                                    marginBottom: '1.5rem'
+                                },
+                                children: [
+                                    {
+                                        mode: 'auto',
+                                        icon: '✨',
+                                        title: 'Auto'
+                                    },
+                                    {
+                                        mode: 'light',
+                                        icon: '☀️',
+                                        title: 'Light'
+                                    },
+                                    {
+                                        mode: 'dark',
+                                        icon: '🌙',
+                                        title: 'Dark'
+                                    }
+                                ].map(({ mode, icon, title })=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                        onClick: ()=>{
+                                            const newConfig = {
+                                                ...themeConfig,
+                                                mode
+                                            };
+                                            setThemeConfig(newConfig);
+                                            updateThemeRealTime(newConfig);
+                                        },
+                                        style: {
+                                            width: '48px',
+                                            height: '48px',
+                                            borderRadius: '12px',
+                                            border: themeConfig.mode === mode ? '2px solid #007AFF' : '2px solid rgba(0,0,0,0.1)',
+                                            background: themeConfig.mode === mode ? 'rgba(0, 122, 255, 0.1)' : 'rgba(0,0,0,0.05)',
+                                            fontSize: '20px',
+                                            cursor: 'pointer',
+                                            transition: 'all 0.2s ease'
+                                        },
+                                        title: title,
+                                        children: icon
+                                    }, mode, false, {
+                                        fileName: "[project]/src/components/GradientPanel.tsx",
+                                        lineNumber: 506,
+                                        columnNumber: 15
+                                    }, this))
+                            }, void 0, false, {
+                                fileName: "[project]/src/components/GradientPanel.tsx",
+                                lineNumber: 495,
+                                columnNumber: 11
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                ref: canvasRef,
+                                style: {
+                                    width: '100%',
+                                    height: '180px',
+                                    borderRadius: '16px',
+                                    background: `
                 radial-gradient(circle at 50% 50%, rgba(100, 100, 100, 0.1) 0%, transparent 70%),
                 repeating-linear-gradient(0deg, rgba(255,255,255,0.03), rgba(255,255,255,0.03) 1px, transparent 1px, transparent 8px),
                 repeating-linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.03) 1px, transparent 1px, transparent 8px),
                 linear-gradient(135deg, #f0f0f0, #e8e8e8)
               `,
-                            position: 'relative',
-                            cursor: 'grab',
-                            marginBottom: '1.5rem',
-                            border: '1px solid rgba(0,0,0,0.1)',
-                            overflow: 'hidden'
-                        },
-                        children: themeConfig.colorStops.map((stop)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                onMouseDown: (e)=>handleColorStopMouseDown(e, stop.id),
-                                style: {
-                                    position: 'absolute',
-                                    top: `${stop.y}%`,
-                                    left: `${stop.x}%`,
-                                    transform: 'translate(-50%, -50%)',
-                                    width: stop.isSelected ? '24px' : '20px',
-                                    height: stop.isSelected ? '24px' : '20px',
-                                    borderRadius: '50%',
-                                    background: stop.color,
-                                    border: stop.isSelected ? '3px solid white' : '2px solid white',
-                                    boxShadow: stop.isSelected ? '0 4px 12px rgba(0,0,0,0.4)' : '0 2px 8px rgba(0,0,0,0.3)',
-                                    cursor: isDragging === stop.id ? 'grabbing' : 'grab',
-                                    transition: isDragging === stop.id ? 'none' : 'all 0.2s ease',
-                                    zIndex: stop.isSelected ? 10 : 5
-                                }
-                            }, stop.id, false, {
-                                fileName: "[project]/src/components/GradientPanel.tsx",
-                                lineNumber: 528,
-                                columnNumber: 15
-                            }, this))
-                    }, void 0, false, {
-                        fileName: "[project]/src/components/GradientPanel.tsx",
-                        lineNumber: 507,
-                        columnNumber: 11
-                    }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        style: {
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            gap: '1rem',
-                            marginBottom: '1.5rem'
-                        },
-                        children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                onClick: removeColorStop,
-                                disabled: themeConfig.colorStops.length <= 1,
-                                style: {
-                                    width: '36px',
-                                    height: '36px',
-                                    borderRadius: '8px',
-                                    border: '1px solid rgba(0,0,0,0.2)',
-                                    background: themeConfig.colorStops.length <= 1 ? 'rgba(0,0,0,0.05)' : 'white',
-                                    fontSize: '18px',
-                                    cursor: themeConfig.colorStops.length <= 1 ? 'not-allowed' : 'pointer',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    opacity: themeConfig.colorStops.length <= 1 ? 0.5 : 1
-                                },
-                                children: "−"
-                            }, void 0, false, {
-                                fileName: "[project]/src/components/GradientPanel.tsx",
-                                lineNumber: 558,
-                                columnNumber: 13
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                style: {
-                                    fontSize: '14px',
-                                    color: '#666',
-                                    minWidth: '80px',
-                                    textAlign: 'center'
-                                },
-                                children: [
-                                    themeConfig.colorStops.length,
-                                    "/3 colors"
-                                ]
-                            }, void 0, true, {
-                                fileName: "[project]/src/components/GradientPanel.tsx",
-                                lineNumber: 578,
-                                columnNumber: 13
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                onClick: addColorStop,
-                                disabled: themeConfig.colorStops.length >= 3,
-                                style: {
-                                    width: '36px',
-                                    height: '36px',
-                                    borderRadius: '8px',
-                                    border: '1px solid rgba(0,0,0,0.2)',
-                                    background: themeConfig.colorStops.length >= 3 ? 'rgba(0,0,0,0.05)' : 'white',
-                                    fontSize: '18px',
-                                    cursor: themeConfig.colorStops.length >= 3 ? 'not-allowed' : 'pointer',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    opacity: themeConfig.colorStops.length >= 3 ? 0.5 : 1
-                                },
-                                children: "+"
-                            }, void 0, false, {
-                                fileName: "[project]/src/components/GradientPanel.tsx",
-                                lineNumber: 587,
-                                columnNumber: 13
-                            }, this)
-                        ]
-                    }, void 0, true, {
-                        fileName: "[project]/src/components/GradientPanel.tsx",
-                        lineNumber: 551,
-                        columnNumber: 11
-                    }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        style: {
-                            display: 'flex',
-                            justifyContent: 'center',
-                            gap: '0.5rem',
-                            marginBottom: '1.5rem',
-                            flexWrap: 'wrap'
-                        },
-                        children: presetColors.map((color, index)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                onClick: ()=>changeSelectedColor(color),
-                                style: {
-                                    width: '32px',
-                                    height: '32px',
-                                    borderRadius: '50%',
-                                    border: selectedStop.color === color ? '3px solid #007AFF' : '2px solid rgba(0,0,0,0.1)',
-                                    background: color,
-                                    cursor: 'pointer',
-                                    transform: selectedStop.color === color ? 'scale(1.15)' : 'scale(1)',
-                                    transition: 'all 0.2s ease'
-                                }
-                            }, index, false, {
-                                fileName: "[project]/src/components/GradientPanel.tsx",
-                                lineNumber: 617,
-                                columnNumber: 15
-                            }, this))
-                    }, void 0, false, {
-                        fileName: "[project]/src/components/GradientPanel.tsx",
-                        lineNumber: 609,
-                        columnNumber: 11
-                    }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        style: {
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            gap: '1rem'
-                        },
-                        children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                ref: opacitySliderRef,
-                                onMouseDown: handleOpacityMouseDown,
-                                style: {
-                                    flex: 1,
-                                    height: '40px',
-                                    background: 'rgba(0,0,0,0.05)',
-                                    borderRadius: '20px',
                                     position: 'relative',
-                                    cursor: 'pointer',
+                                    cursor: 'grab',
+                                    marginBottom: '1.5rem',
+                                    border: '1px solid rgba(0,0,0,0.1)',
+                                    overflow: 'hidden'
+                                },
+                                children: themeConfig.colorStops.map((stop)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        onMouseDown: (e)=>handleColorStopMouseDown(e, stop.id),
+                                        style: {
+                                            position: 'absolute',
+                                            top: `${stop.y}%`,
+                                            left: `${stop.x}%`,
+                                            transform: 'translate(-50%, -50%)',
+                                            width: stop.isSelected ? '24px' : '20px',
+                                            height: stop.isSelected ? '24px' : '20px',
+                                            borderRadius: '50%',
+                                            background: stop.color,
+                                            border: stop.isSelected ? '3px solid white' : '2px solid white',
+                                            boxShadow: stop.isSelected ? '0 4px 12px rgba(0,0,0,0.4)' : '0 2px 8px rgba(0,0,0,0.3)',
+                                            cursor: isDragging === stop.id ? 'grabbing' : 'grab',
+                                            transition: isDragging === stop.id ? 'none' : 'all 0.2s ease',
+                                            zIndex: stop.isSelected ? 10 : 5
+                                        }
+                                    }, stop.id, false, {
+                                        fileName: "[project]/src/components/GradientPanel.tsx",
+                                        lineNumber: 552,
+                                        columnNumber: 15
+                                    }, this))
+                            }, void 0, false, {
+                                fileName: "[project]/src/components/GradientPanel.tsx",
+                                lineNumber: 531,
+                                columnNumber: 11
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                style: {
                                     display: 'flex',
+                                    justifyContent: 'center',
                                     alignItems: 'center',
-                                    paddingLeft: '12px',
-                                    paddingRight: '12px'
+                                    gap: '1rem',
+                                    marginBottom: '1.5rem'
                                 },
                                 children: [
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                        onClick: removeColorStop,
+                                        disabled: themeConfig.colorStops.length <= 1,
                                         style: {
-                                            position: 'absolute',
-                                            left: '12px',
-                                            right: '12px',
-                                            height: '4px',
-                                            background: `repeating-linear-gradient(to right, #ccc 0px, #ccc 3px, transparent 3px, transparent 6px)`,
-                                            borderRadius: '2px'
-                                        }
+                                            width: '36px',
+                                            height: '36px',
+                                            borderRadius: '8px',
+                                            border: '1px solid rgba(0,0,0,0.2)',
+                                            background: themeConfig.colorStops.length <= 1 ? 'rgba(0,0,0,0.05)' : 'white',
+                                            fontSize: '18px',
+                                            cursor: themeConfig.colorStops.length <= 1 ? 'not-allowed' : 'pointer',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            opacity: themeConfig.colorStops.length <= 1 ? 0.5 : 1
+                                        },
+                                        children: "−"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/GradientPanel.tsx",
-                                        lineNumber: 659,
-                                        columnNumber: 15
+                                        lineNumber: 582,
+                                        columnNumber: 13
                                     }, this),
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                         style: {
-                                            position: 'absolute',
-                                            left: `${12 + themeConfig.opacity / 100 * (100 - 24)}%`,
-                                            width: '16px',
-                                            height: '16px',
-                                            background: 'white',
-                                            borderRadius: '50%',
-                                            border: '2px solid #007AFF',
-                                            boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
-                                            transform: 'translateX(-50%)'
-                                        }
+                                            fontSize: '14px',
+                                            color: '#666',
+                                            minWidth: '80px',
+                                            textAlign: 'center'
+                                        },
+                                        children: [
+                                            themeConfig.colorStops.length,
+                                            "/3 colors"
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "[project]/src/components/GradientPanel.tsx",
+                                        lineNumber: 602,
+                                        columnNumber: 13
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                        onClick: addColorStop,
+                                        disabled: themeConfig.colorStops.length >= 3,
+                                        style: {
+                                            width: '36px',
+                                            height: '36px',
+                                            borderRadius: '8px',
+                                            border: '1px solid rgba(0,0,0,0.2)',
+                                            background: themeConfig.colorStops.length >= 3 ? 'rgba(0,0,0,0.05)' : 'white',
+                                            fontSize: '18px',
+                                            cursor: themeConfig.colorStops.length >= 3 ? 'not-allowed' : 'pointer',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            opacity: themeConfig.colorStops.length >= 3 ? 0.5 : 1
+                                        },
+                                        children: "+"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/GradientPanel.tsx",
-                                        lineNumber: 669,
-                                        columnNumber: 15
+                                        lineNumber: 611,
+                                        columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/GradientPanel.tsx",
-                                lineNumber: 642,
-                                columnNumber: 13
+                                lineNumber: 575,
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                ref: grainSliderRef,
-                                onMouseDown: handleGrainMouseDown,
                                 style: {
-                                    width: '60px',
-                                    height: '60px',
-                                    borderRadius: '50%',
-                                    background: 'linear-gradient(145deg, #f0f0f0, #d9d9d9)',
-                                    position: 'relative',
-                                    cursor: isDragging === 'grain' ? 'grabbing' : 'grab',
-                                    border: '1px solid rgba(0,0,0,0.1)',
-                                    boxShadow: isDragging === 'grain' ? 'inset 0 2px 4px rgba(0,0,0,0.2)' : '0 2px 4px rgba(0,0,0,0.1)',
-                                    transition: isDragging === 'grain' ? 'none' : 'all 0.2s ease'
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    gap: '0.5rem',
+                                    marginBottom: '1.5rem',
+                                    flexWrap: 'wrap'
+                                },
+                                children: presetColors.map((color, index)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                        onClick: ()=>changeSelectedColor(color),
+                                        style: {
+                                            width: '32px',
+                                            height: '32px',
+                                            borderRadius: '50%',
+                                            border: selectedStop.color === color ? '3px solid #007AFF' : '2px solid rgba(0,0,0,0.1)',
+                                            background: color,
+                                            cursor: 'pointer',
+                                            transform: selectedStop.color === color ? 'scale(1.15)' : 'scale(1)',
+                                            transition: 'all 0.2s ease'
+                                        }
+                                    }, index, false, {
+                                        fileName: "[project]/src/components/GradientPanel.tsx",
+                                        lineNumber: 641,
+                                        columnNumber: 15
+                                    }, this))
+                            }, void 0, false, {
+                                fileName: "[project]/src/components/GradientPanel.tsx",
+                                lineNumber: 633,
+                                columnNumber: 11
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                style: {
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                    gap: '1rem'
                                 },
                                 children: [
-                                    [
-                                        0,
-                                        45,
-                                        90,
-                                        135,
-                                        180,
-                                        225,
-                                        270,
-                                        315
-                                    ].map((angle, i)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                            style: {
-                                                position: 'absolute',
-                                                top: '50%',
-                                                left: '50%',
-                                                width: '2px',
-                                                height: '6px',
-                                                background: 'rgba(0,0,0,0.3)',
-                                                borderRadius: '1px',
-                                                transform: `translate(-50%, -50%) rotate(${angle}deg) translateY(-22px)`,
-                                                transformOrigin: 'center'
-                                            }
-                                        }, i, false, {
-                                            fileName: "[project]/src/components/GradientPanel.tsx",
-                                            lineNumber: 700,
-                                            columnNumber: 18
-                                        }, this)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        ref: opacitySliderRef,
+                                        onMouseDown: handleOpacityMouseDown,
                                         style: {
-                                            position: 'absolute',
-                                            top: '50%',
-                                            left: '50%',
-                                            width: '40px',
+                                            flex: 1,
                                             height: '40px',
-                                            borderRadius: '50%',
-                                            background: 'linear-gradient(145deg, #ffffff, #e8e8e8)',
-                                            transform: 'translate(-50%, -50%)',
-                                            border: '1px solid rgba(0,0,0,0.1)',
-                                            boxShadow: isDragging === 'grain' ? 'inset 0 1px 3px rgba(0,0,0,0.2)' : '0 1px 3px rgba(0,0,0,0.1)'
+                                            background: 'rgba(0,0,0,0.05)',
+                                            borderRadius: '20px',
+                                            position: 'relative',
+                                            cursor: 'pointer',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            paddingLeft: '12px',
+                                            paddingRight: '12px'
                                         },
                                         children: [
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                 style: {
                                                     position: 'absolute',
-                                                    top: '6px',
-                                                    left: '50%',
-                                                    width: '3px',
-                                                    height: '12px',
-                                                    background: '#007AFF',
-                                                    borderRadius: '1.5px',
-                                                    transform: `translateX(-50%) rotate(${themeConfig.grain / 100 * 360}deg)`,
-                                                    transformOrigin: '50% 14px',
-                                                    transition: isDragging === 'grain' ? 'none' : 'transform 0.2s ease'
+                                                    left: '12px',
+                                                    right: '12px',
+                                                    height: '4px',
+                                                    background: `repeating-linear-gradient(to right, #ccc 0px, #ccc 3px, transparent 3px, transparent 6px)`,
+                                                    borderRadius: '2px'
                                                 }
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/GradientPanel.tsx",
-                                                lineNumber: 730,
-                                                columnNumber: 18
+                                                lineNumber: 683,
+                                                columnNumber: 15
                                             }, this),
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                style: {
+                                                    position: 'absolute',
+                                                    left: `${12 + themeConfig.opacity / 100 * (100 - 24)}%`,
+                                                    width: '16px',
+                                                    height: '16px',
+                                                    background: 'white',
+                                                    borderRadius: '50%',
+                                                    border: '2px solid #007AFF',
+                                                    boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+                                                    transform: 'translateX(-50%)'
+                                                }
+                                            }, void 0, false, {
+                                                fileName: "[project]/src/components/GradientPanel.tsx",
+                                                lineNumber: 693,
+                                                columnNumber: 15
+                                            }, this)
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "[project]/src/components/GradientPanel.tsx",
+                                        lineNumber: 666,
+                                        columnNumber: 13
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        ref: grainSliderRef,
+                                        onMouseDown: handleGrainMouseDown,
+                                        style: {
+                                            width: '60px',
+                                            height: '60px',
+                                            borderRadius: '50%',
+                                            background: 'linear-gradient(145deg, #f0f0f0, #d9d9d9)',
+                                            position: 'relative',
+                                            cursor: isDragging === 'grain' ? 'grabbing' : 'grab',
+                                            border: '1px solid rgba(0,0,0,0.1)',
+                                            boxShadow: isDragging === 'grain' ? 'inset 0 2px 4px rgba(0,0,0,0.2)' : '0 2px 4px rgba(0,0,0,0.1)',
+                                            transition: isDragging === 'grain' ? 'none' : 'all 0.2s ease'
+                                        },
+                                        children: [
+                                            [
+                                                0,
+                                                45,
+                                                90,
+                                                135,
+                                                180,
+                                                225,
+                                                270,
+                                                315
+                                            ].map((angle, i)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                    style: {
+                                                        position: 'absolute',
+                                                        top: '50%',
+                                                        left: '50%',
+                                                        width: '2px',
+                                                        height: '6px',
+                                                        background: 'rgba(0,0,0,0.3)',
+                                                        borderRadius: '1px',
+                                                        transform: `translate(-50%, -50%) rotate(${angle}deg) translateY(-22px)`,
+                                                        transformOrigin: 'center'
+                                                    }
+                                                }, i, false, {
+                                                    fileName: "[project]/src/components/GradientPanel.tsx",
+                                                    lineNumber: 724,
+                                                    columnNumber: 18
+                                                }, this)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                 style: {
                                                     position: 'absolute',
                                                     top: '50%',
                                                     left: '50%',
-                                                    width: '4px',
-                                                    height: '4px',
-                                                    background: '#007AFF',
+                                                    width: '40px',
+                                                    height: '40px',
                                                     borderRadius: '50%',
-                                                    transform: 'translate(-50%, -50%)'
-                                                }
-                                            }, void 0, false, {
+                                                    background: 'linear-gradient(145deg, #ffffff, #e8e8e8)',
+                                                    transform: 'translate(-50%, -50%)',
+                                                    border: '1px solid rgba(0,0,0,0.1)',
+                                                    boxShadow: isDragging === 'grain' ? 'inset 0 1px 3px rgba(0,0,0,0.2)' : '0 1px 3px rgba(0,0,0,0.1)'
+                                                },
+                                                children: [
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                        style: {
+                                                            position: 'absolute',
+                                                            top: '6px',
+                                                            left: '50%',
+                                                            width: '3px',
+                                                            height: '12px',
+                                                            background: '#007AFF',
+                                                            borderRadius: '1.5px',
+                                                            transform: `translateX(-50%) rotate(${themeConfig.grain / 100 * 360}deg)`,
+                                                            transformOrigin: '50% 14px',
+                                                            transition: isDragging === 'grain' ? 'none' : 'transform 0.2s ease'
+                                                        }
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/src/components/GradientPanel.tsx",
+                                                        lineNumber: 754,
+                                                        columnNumber: 18
+                                                    }, this),
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                        style: {
+                                                            position: 'absolute',
+                                                            top: '50%',
+                                                            left: '50%',
+                                                            width: '4px',
+                                                            height: '4px',
+                                                            background: '#007AFF',
+                                                            borderRadius: '50%',
+                                                            transform: 'translate(-50%, -50%)'
+                                                        }
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/src/components/GradientPanel.tsx",
+                                                        lineNumber: 768,
+                                                        columnNumber: 18
+                                                    }, this)
+                                                ]
+                                            }, void 0, true, {
                                                 fileName: "[project]/src/components/GradientPanel.tsx",
-                                                lineNumber: 744,
-                                                columnNumber: 18
+                                                lineNumber: 741,
+                                                columnNumber: 16
+                                            }, this),
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                style: {
+                                                    position: 'absolute',
+                                                    bottom: '-20px',
+                                                    left: '50%',
+                                                    transform: 'translateX(-50%)',
+                                                    fontSize: '10px',
+                                                    color: '#666',
+                                                    fontWeight: '500'
+                                                },
+                                                children: [
+                                                    Math.round(themeConfig.grain),
+                                                    "%"
+                                                ]
+                                            }, void 0, true, {
+                                                fileName: "[project]/src/components/GradientPanel.tsx",
+                                                lineNumber: 781,
+                                                columnNumber: 16
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/GradientPanel.tsx",
-                                        lineNumber: 717,
-                                        columnNumber: 16
-                                    }, this),
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                        style: {
-                                            position: 'absolute',
-                                            bottom: '-20px',
-                                            left: '50%',
-                                            transform: 'translateX(-50%)',
-                                            fontSize: '10px',
-                                            color: '#666',
-                                            fontWeight: '500'
-                                        },
-                                        children: [
-                                            Math.round(themeConfig.grain),
-                                            "%"
-                                        ]
-                                    }, void 0, true, {
-                                        fileName: "[project]/src/components/GradientPanel.tsx",
-                                        lineNumber: 757,
-                                        columnNumber: 16
+                                        lineNumber: 707,
+                                        columnNumber: 14
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/GradientPanel.tsx",
-                                lineNumber: 683,
-                                columnNumber: 14
+                                lineNumber: 659,
+                                columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/GradientPanel.tsx",
-                        lineNumber: 635,
-                        columnNumber: 11
+                        lineNumber: 473,
+                        columnNumber: 21
                     }, this)
                 ]
-            }, void 0, true, {
-                fileName: "[project]/src/components/GradientPanel.tsx",
-                lineNumber: 455,
-                columnNumber: 9
-            }, this)
+            }, void 0, true)
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/GradientPanel.tsx",
