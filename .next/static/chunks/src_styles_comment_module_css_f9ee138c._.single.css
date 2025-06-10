@@ -1,8 +1,6 @@
 /* [project]/src/styles/comment.module.css [app-client] (css) */
 .comment-module__H_rXLG__commentSection {
-  border-top: 1px solid #eaeaea;
-  margin-top: 2.5rem;
-  padding: 2rem 0;
+  position: relative;
 }
 
 .comment-module__H_rXLG__commentSectionTitle {
@@ -31,7 +29,6 @@
 .comment-module__H_rXLG__commentInputContainer {
   align-items: flex-start;
   gap: 1rem;
-  transition: opacity .2s;
   display: flex;
 }
 
@@ -58,21 +55,17 @@
 
 .comment-module__H_rXLG__commentInput, .comment-module__H_rXLG__replyInput {
   resize: vertical;
-  background-color: #f9f9f9;
-  border: 1px solid #eaeaea;
-  border-radius: 6px;
+  color: #2d3748;
+  background: none;
+  border: none;
+  border-radius: 16px;
+  outline: none;
   width: 100%;
   min-height: 100px;
   margin-right: 1rem;
   padding: .75rem 1rem;
+  font-family: inherit;
   font-size: .95rem;
-  transition: border-color .2s;
-}
-
-.comment-module__H_rXLG__commentInput:focus, .comment-module__H_rXLG__replyInput:focus {
-  background-color: #fff;
-  border-color: #aaa;
-  outline: none;
 }
 
 .comment-module__H_rXLG__replyInput {

@@ -492,10 +492,10 @@ const Editor = React.forwardRef(({
     }, []);
 
     return (
-        <div className={styles.editor} style={{ maxWidth: '800px', margin: '0 auto', padding: '20px' }}>
+        <div className={`${styles.editor} ${className === 'seamless-editor' ? styles.seamlessEditor : ''}`} style={className === 'seamless-editor' ? {} : { maxWidth: '800px', margin: '0 auto', padding: '20px' }}>
             {/* Modern Toolbar - Always visible for now */}
             {isReady && (
-                <div className={styles.modernToolbar} style={{ opacity: 1, visibility: 'visible', position: 'relative', top: 'auto', left: 'auto', transform: 'none', marginBottom: '20px' }}>
+                <div className={styles.modernToolbar} style={className === 'seamless-editor' ? {} : { opacity: 1, visibility: 'visible', position: 'relative', top: 'auto', left: 'auto', transform: 'none', marginBottom: '20px' }}>
                     <div className={styles.toolbarContainer}>
                         {/* Text formatting */}
                         <div className={styles.formatGroup}>
@@ -656,8 +656,18 @@ const Editor = React.forwardRef(({
                 className={styles.prosemirrorEditor}
                 aria-label="Rich text editor"
                 style={{
-                    minHeight: '400px',
-                    opacity: isReady ? 1 : 0.3
+                    minHeight: className === 'seamless-editor' ? '500px' : '400px',
+                    opacity: isReady ? 1 : 0.3,
+                    ...(className === 'seamless-editor' ? {
+                        background: 'transparent',
+                        border: 'none',
+                        boxShadow: 'none',
+                        padding: 0,
+                        margin: 0,
+                        fontSize: '18px',
+                        lineHeight: '1.6',
+                        color: '#1f2937'
+                    } : {})
                 }}
             />
         </div>

@@ -72,17 +72,7 @@ function EditArticleContent() {
   }
 
   return (
-    <div className={styles.fullWidthContainer}>
-      <div className={styles.editorHeader}>
-        <Link href="/my-thoughts" className={styles.backButton}>
-          ← Back to My Thoughts
-        </Link>
-        <h1>Edit Article</h1>
-      </div>
-      <div className={styles.editorContainer}>
-        <ArticleComposer articleId={articleId} />
-      </div>
-    </div>
+    <ArticleComposer articleId={articleId} />
   )
 }
 

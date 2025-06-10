@@ -345,15 +345,12 @@ function Article() {
 
   if (isEditing && article) {
     return (
-      <div>
-        <div className={articleStyles.editingHeader}>
-          <button onClick={() => setIsEditing(false)} className={articleStyles.cancelButton}>
-            ← Back to Article
-          </button>
-          <h2>Editing: {article.title}</h2>
-        </div>
-        <ArticleComposer articleId={article.id} onUpdateComplete={handleUpdateComplete} />
-      </div>
+      <ArticleComposer 
+        articleId={article.id} 
+        onUpdateComplete={handleUpdateComplete}
+        backToArticleAction={() => setIsEditing(false)}
+        editingTitle={article.title}
+      />
     );
   }
   

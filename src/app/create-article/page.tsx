@@ -47,16 +47,6 @@ export default function CreateArticlePage() {
   }
 
   return (
-    <div className={styles.fullWidthContainer}>
-      <div className={styles.editorHeader}>
-        <Link href="/" className={styles.backButton}>
-          ← Back to Home
-          </Link>
-        <h1>Journalite</h1>
-          </div>
-      <div className={styles.editorContainer}>
-        <ArticleComposer />
-        </div>
-    </div>
+    <ArticleComposer />
   )
 } 

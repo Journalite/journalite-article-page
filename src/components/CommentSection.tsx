@@ -294,25 +294,53 @@ const CommentSection: React.FC<CommentSectionProps> = ({
   return (
     <section 
       className={styles.commentSection}
-      style={moodFeatureEnabled ? {
-        background: `linear-gradient(160deg, 
-          rgba(255, 255, 255, 0.1) 0%, 
-          ${moodThemes[mood].gradientStart}08 30%, 
-          ${moodThemes[mood].gradientEnd}06 70%, 
-          rgba(255, 255, 255, 0.05) 100%)`,
+      style={{
+        background: moodFeatureEnabled 
+          ? `linear-gradient(160deg, 
+              rgba(255, 255, 255, 0.1) 0%, 
+              ${moodThemes[mood].gradientStart}08 30%, 
+              ${moodThemes[mood].gradientEnd}06 70%, 
+              rgba(255, 255, 255, 0.05) 100%)`
+          : 'rgba(255, 255, 255, 0.08)',
         borderRadius: '32px',
-        border: `1px solid ${moodThemes[mood].gradientStart}12`,
-        boxShadow: `
-          0 8px 32px -8px ${moodThemes[mood].gradientStart}08,
-          inset 0 1px 0 rgba(255, 255, 255, 0.1)
-        `,
-        backdropFilter: 'blur(20px) saturate(1.1)',
+        border: moodFeatureEnabled 
+          ? `1px solid ${moodThemes[mood].gradientStart}12`
+          : '1.5px solid rgba(255, 255, 255, 0.15)',
+        boxShadow: moodFeatureEnabled
+          ? `0 8px 32px -8px ${moodThemes[mood].gradientStart}08,
+             inset 0 1px 0 rgba(255, 255, 255, 0.1)`
+          : `0 8px 32px rgba(0, 0, 0, 0.1),
+             inset 0 1px 0 rgba(255, 255, 255, 0.2)`,
+        backdropFilter: 'blur(16px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(16px) saturate(180%)',
         transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
         position: 'relative',
         overflow: 'hidden',
-        padding: '2rem'
-      } : {}}
+        padding: '2rem',
+        marginTop: '2rem'
+      }}
     >
+      {/* Liquid Glass Highlight Effect */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: '50%',
+          background: moodFeatureEnabled
+            ? `linear-gradient(180deg, 
+                rgba(255, 255, 255, 0.2) 0%, 
+                ${moodThemes[mood].gradientStart}15 50%,
+                rgba(255, 255, 255, 0.05) 100%)`
+            : 'linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.1) 100%)',
+          borderRadius: '32px 32px 0 0',
+          pointerEvents: 'none',
+          opacity: 0.6,
+          zIndex: 1
+        }}
+      />
+
       {moodFeatureEnabled && (
         <>
           {/* Subtle animated background */}
@@ -333,28 +361,9 @@ const CommentSection: React.FC<CommentSectionProps> = ({
               zIndex: 0
             }}
           />
-          {/* Decorative border glow */}
-          <div
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              borderRadius: '32px',
-              background: `linear-gradient(45deg, 
-                ${moodThemes[mood].gradientStart}05, 
-                transparent, 
-                ${moodThemes[mood].gradientEnd}05)`,
-              filter: 'blur(1px)',
-              opacity: 0.6,
-              pointerEvents: 'none',
-              zIndex: 0
-            }}
-          />
         </>
       )}
-      <div style={{ position: 'relative', zIndex: 1 }}>
+      <div style={{ position: 'relative', zIndex: 2 }}>
         <h2 
           className={styles.commentSectionTitle}
           style={moodFeatureEnabled ? {
@@ -387,25 +396,34 @@ const CommentSection: React.FC<CommentSectionProps> = ({
       <form className={styles.commentForm} onSubmit={handleCommentSubmit}>
         <div
           className={styles.commentInputContainer}
-          style={moodFeatureEnabled ? {
-            background: `linear-gradient(135deg, 
-              rgba(255, 255, 255, ${focusState ? '0.15' : '0.08'}), 
-              ${moodThemes[mood].gradientStart}${focusState ? '12' : '06'}, 
-              ${moodThemes[mood].gradientEnd}${focusState ? '08' : '04'})`,
-            border: `1px solid ${moodThemes[mood].gradientStart}${focusState ? '25' : '15'}`,
+          style={{
+            background: moodFeatureEnabled 
+              ? `linear-gradient(135deg, 
+                  rgba(255, 255, 255, ${focusState ? '0.15' : '0.08'}), 
+                  ${moodThemes[mood].gradientStart}${focusState ? '12' : '06'}, 
+                  ${moodThemes[mood].gradientEnd}${focusState ? '08' : '04'})`
+              : `rgba(255, 255, 255, ${focusState ? '0.12' : '0.06'})`,
+            border: moodFeatureEnabled 
+              ? `1px solid ${moodThemes[mood].gradientStart}${focusState ? '25' : '15'}`
+              : `1.5px solid rgba(255, 255, 255, ${focusState ? '0.25' : '0.15'})`,
             borderRadius: '24px',
-            boxShadow: focusState 
-              ? `0 8px 32px -4px ${moodThemes[mood].gradientStart}20, 
-                 inset 0 1px 0 rgba(255, 255, 255, 0.2)`
-              : `0 4px 16px -4px ${moodThemes[mood].gradientStart}10`,
-            backdropFilter: 'blur(12px)',
+            boxShadow: moodFeatureEnabled
+              ? (focusState 
+                  ? `0 8px 32px -4px ${moodThemes[mood].gradientStart}20, 
+                     inset 0 1px 0 rgba(255, 255, 255, 0.2)`
+                  : `0 4px 16px -4px ${moodThemes[mood].gradientStart}10`)
+              : (focusState
+                  ? `0 8px 32px rgba(0, 0, 0, 0.12),
+                     inset 0 1px 0 rgba(255, 255, 255, 0.25)`
+                  : `0 4px 16px rgba(0, 0, 0, 0.08),
+                     inset 0 1px 0 rgba(255, 255, 255, 0.15)`),
+            backdropFilter: 'blur(16px) saturate(180%)',
+            WebkitBackdropFilter: 'blur(16px) saturate(180%)',
             transform: focusState ? 'translateY(-2px)' : 'translateY(0)',
             transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
             position: 'relative',
-            overflow: 'hidden'
-          } : { 
-            opacity: focusState ? 1 : 0.85,
-            transition: 'opacity 0.3s ease'
+            overflow: 'hidden',
+            padding: '1.5rem'
           }}
         >
           {isAuthenticated ? (
@@ -520,18 +538,28 @@ const CommentSection: React.FC<CommentSectionProps> = ({
       )}
 
       {loading ? (
-        <div 
+                <div 
           className={styles.commentLoading}
-          style={moodFeatureEnabled ? {
-            background: `linear-gradient(135deg, 
-              rgba(255, 255, 255, 0.1), 
-              ${moodThemes[mood].gradientStart}06)`,
-                         borderRadius: '24px',
-             padding: '2rem',
-            backdropFilter: 'blur(10px)',
-            border: `1px solid ${moodThemes[mood].gradientStart}10`,
+          style={{
+            background: moodFeatureEnabled 
+              ? `linear-gradient(135deg, 
+                  rgba(255, 255, 255, 0.1), 
+                  ${moodThemes[mood].gradientStart}06)`
+              : 'rgba(255, 255, 255, 0.06)',
+            borderRadius: '24px',
+            padding: '2rem',
+            backdropFilter: 'blur(12px) saturate(150%)',
+            WebkitBackdropFilter: 'blur(12px) saturate(150%)',
+            border: moodFeatureEnabled 
+              ? `1px solid ${moodThemes[mood].gradientStart}10`
+              : '1px solid rgba(255, 255, 255, 0.1)',
+            boxShadow: moodFeatureEnabled
+              ? `0 4px 16px rgba(0, 0, 0, 0.06),
+                 inset 0 1px 0 rgba(255, 255, 255, 0.1)`
+              : `0 4px 16px rgba(0, 0, 0, 0.08),
+                 inset 0 1px 0 rgba(255, 255, 255, 0.15)`,
             textAlign: 'center'
-          } : {}}
+          }}
         >
           <p style={moodFeatureEnabled ? {
             color: moodThemes[mood].accent,
@@ -565,24 +593,30 @@ const CommentSection: React.FC<CommentSectionProps> = ({
       ) : comments.length === 0 ? (
         <div 
           className={styles.noComments}
-          style={moodFeatureEnabled ? {
-            background: `linear-gradient(135deg, 
-              rgba(255, 255, 255, 0.15) 0%, 
-              ${moodThemes[mood].gradientStart}08 50%, 
-              ${moodThemes[mood].gradientEnd}06 100%)`,
-            border: `1px solid ${moodThemes[mood].gradientStart}12`,
+          style={{
+            background: moodFeatureEnabled 
+              ? `linear-gradient(135deg, 
+                  rgba(255, 255, 255, 0.15) 0%, 
+                  ${moodThemes[mood].gradientStart}08 50%, 
+                  ${moodThemes[mood].gradientEnd}06 100%)`
+              : 'rgba(255, 255, 255, 0.08)',
+            border: moodFeatureEnabled 
+              ? `1px solid ${moodThemes[mood].gradientStart}12`
+              : '1px solid rgba(255, 255, 255, 0.12)',
             borderRadius: '24px',
-            boxShadow: `
-              0 6px 24px -8px ${moodThemes[mood].gradientStart}10,
-              inset 0 1px 0 rgba(255, 255, 255, 0.12)
-            `,
-            backdropFilter: 'blur(12px)',
-            color: moodThemes[mood].accent,
+            boxShadow: moodFeatureEnabled
+              ? `0 6px 24px -8px ${moodThemes[mood].gradientStart}10,
+                 inset 0 1px 0 rgba(255, 255, 255, 0.12)`
+              : `0 6px 24px rgba(0, 0, 0, 0.06),
+                 inset 0 1px 0 rgba(255, 255, 255, 0.18)`,
+            backdropFilter: 'blur(12px) saturate(150%)',
+            WebkitBackdropFilter: 'blur(12px) saturate(150%)',
+            color: moodFeatureEnabled ? moodThemes[mood].accent : '#6b7280',
             fontWeight: '500',
             padding: '2rem',
             textAlign: 'center',
             transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
-          } : {}}
+          }}
         >
           Be the first to share your thoughts on this article.
         </div>
@@ -594,22 +628,29 @@ const CommentSection: React.FC<CommentSectionProps> = ({
               <div 
                 key={commentId} 
                 className={styles.commentItem}
-                style={moodFeatureEnabled ? {
-                  background: `linear-gradient(135deg, 
-                    rgba(255, 255, 255, 0.12) 0%, 
-                    ${moodThemes[mood].gradientStart}06 50%, 
-                    ${moodThemes[mood].gradientEnd}04 100%)`,
-                  border: `1px solid ${moodThemes[mood].gradientStart}10`,
+                style={{
+                  background: moodFeatureEnabled 
+                    ? `linear-gradient(135deg, 
+                        rgba(255, 255, 255, 0.12) 0%, 
+                        ${moodThemes[mood].gradientStart}06 50%, 
+                        ${moodThemes[mood].gradientEnd}04 100%)`
+                    : 'rgba(255, 255, 255, 0.06)',
+                  border: moodFeatureEnabled 
+                    ? `1px solid ${moodThemes[mood].gradientStart}10`
+                    : '1px solid rgba(255, 255, 255, 0.1)',
                   borderRadius: '24px',
-                  boxShadow: `
-                    0 4px 20px -6px ${moodThemes[mood].gradientStart}08,
-                    inset 0 1px 0 rgba(255, 255, 255, 0.1)
-                  `,
-                  backdropFilter: 'blur(10px)',
+                  boxShadow: moodFeatureEnabled
+                    ? `0 4px 20px -6px ${moodThemes[mood].gradientStart}08,
+                       inset 0 1px 0 rgba(255, 255, 255, 0.1)`
+                    : `0 6px 24px rgba(0, 0, 0, 0.08),
+                       inset 0 1px 0 rgba(255, 255, 255, 0.15)`,
+                  backdropFilter: 'blur(12px) saturate(150%)',
+                  WebkitBackdropFilter: 'blur(12px) saturate(150%)',
                   transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                   position: 'relative',
-                  overflow: 'hidden'
-                } : {}}
+                  overflow: 'hidden',
+                  marginBottom: '1.5rem'
+                }}
                 onMouseEnter={moodFeatureEnabled ? (e) => {
                   e.currentTarget.style.transform = 'translateY(-1px)';
                   e.currentTarget.style.boxShadow = `

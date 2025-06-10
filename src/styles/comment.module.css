@@ -1,8 +1,7 @@
 /* Comment Section Styles */
 .commentSection {
-  margin-top: 2.5rem;
-  padding: 2rem 0;
-  border-top: 1px solid #eaeaea;
+  /* Liquid glass styling applied via inline styles */
+  position: relative;
 }
 
 .commentSectionTitle {
@@ -32,7 +31,7 @@
   display: flex;
   align-items: flex-start;
   gap: 1rem;
-  transition: opacity 0.2s ease;
+  /* Liquid glass styling applied via inline styles */
 }
 
 .loginPromptContainer {
@@ -57,22 +56,22 @@
 }
 
 .commentInput, .replyInput {
-  background-color: #f9f9f9;
-  border: 1px solid #eaeaea;
-  border-radius: 6px;
+  background: transparent;
+  border: none;
+  border-radius: 16px;
   padding: 0.75rem 1rem;
   width: 100%;
   font-size: 0.95rem;
   resize: vertical;
   min-height: 100px;
   margin-right: 1rem;
-  transition: border-color 0.2s ease;
+  outline: none;
+  color: #2d3748;
+  font-family: inherit;
 }
 
 .commentInput:focus, .replyInput:focus {
-  outline: none;
-  border-color: #aaa;
-  background-color: #fff;
+  /* Focus styling handled by parent container */
 }
 
 .replyInput {

@@ -7,15 +7,17 @@ import { createArticle, updateArticle, getArticleById, Article } from '@/firebas
 import { auth } from '@/firebase/clientApp';
 import Editor from './Editor';
 import InspirationWidget from './InspirationWidget';
-import styles from '@/styles/ArticleComposer.module.css';
+import styles from '@/styles/home.module.css';
 import { User } from 'firebase/auth';
 
 interface ArticleComposerProps {
   articleId?: string; // Optional - if provided, edit mode, otherwise create mode
   onUpdateComplete?: (updatedArticle?: Article | null) => void; // Callback when update is complete
+  backToArticleAction?: () => void; // Action to go back to article view
+  editingTitle?: string; // Title for editing mode display
 }
 
-const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId, onUpdateComplete }) => {
+const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId, onUpdateComplete, backToArticleAction, editingTitle }) => {
   const router = useRouter();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -199,57 +201,43 @@ const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId, onUpdateCo
     }
   };
   
-  // Save article (draft or published)
+  // Save article function
   const saveArticle = async (status: 'drafts' | 'published' = 'drafts') => {
     if (!user) {
-      setError('You must be logged in to save an article');
+      setError('You must be logged in to save articles');
       return;
     }
-    
+
     if (!title.trim()) {
       setError('Title is required');
       return;
     }
-    
-    if (!content.trim()) {
-      setError('Content is required');
-      return;
-    }
-    
+
     try {
-      setIsSaving(true);
       setError('');
-      
-      // Clean HTML content to avoid any strange formatting
-      const cleanContent = content.replace(/data-[\w-]+="[^"]*"/g, '');
+      setIsSaving(true);
+
+      const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
       
       const articleData = {
         title: title.trim(),
-        body: cleanContent,
+        body: content,
         tags,
-        coverImage: coverImage.trim(),
-        status
+        coverImage,
+        status,
+        authorId: user.uid,
+        authorName: user.displayName || user.email || 'Anonymous',
+        slug,
       };
-      
-      console.log('Saving article data:', articleData);
-      
+
       if (articleId) {
+        // Update existing article
         try {
-          // Update existing article
-          const updatedArticle = await updateArticle(articleId, articleData);
-          console.log('Article updated successfully:', updatedArticle?.title);
-          
-          // Show saved indicator
+          console.log('Updating article with ID:', articleId);
+          const updatedArticleData = await updateArticle(articleId, articleData);
+          console.log('Article updated successfully');
           setIsSaved(true);
           
-          // Wait a moment for Firebase to fully process the update
-          await new Promise(resolve => setTimeout(resolve, 500));
-          
-          // Get the updated article with fresh data
-          const updatedArticleData = await getArticleById(articleId);
-          console.log('Fetched updated article data:', updatedArticleData?.title);
-          
-          // Call the callback if provided, pass the updated article data
           if (onUpdateComplete) {
             console.log('Calling onUpdateComplete callback instead of navigating');
             onUpdateComplete(updatedArticleData);
@@ -257,7 +245,7 @@ const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId, onUpdateCo
             // Only navigate if no callback is provided (standalone editor usage)
             console.log('No callback provided, navigating to article page');
             setTimeout(() => {
-              window.location.href = `/articles/${articleId}/view?updated=true&time=${Date.now()}`;
+              router.push(`/articles/?slug=${slug}`);
             }, 1000);
           }
         } catch (error) {
@@ -269,8 +257,8 @@ const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId, onUpdateCo
         // Create new article
         const newArticle = await createArticle(articleData);
         if (status === 'published') {
-          // Redirect to the new article page
-          router.push(`/articles/${newArticle.id}`);
+          // Redirect to the new article page using slug
+          router.push(`/articles/?slug=${slug}`);
         } else {
           // Redirect to dashboard
           router.push(`/dashboard`);
@@ -327,121 +315,186 @@ const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId, onUpdateCo
   
   if (isLoading) {
     return (
-      <div className={styles.composerLoading}>
-        <div className={styles.loadingIndicator}></div>
-        <p>Loading article...</p>
+      <div className="min-h-screen flex items-center justify-center" style={{
+        background: 'linear-gradient(135deg, #f0f9ff 0%, #f7fafc 20%, #fef7ff 40%, #f0fdfa 60%, #fff7ed 80%, #f3f4f6 100%)',
+        backgroundAttachment: 'fixed'
+      }}>
+        <div className={styles['glass-loading']}>
+          <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-stone-600 text-lg">Loading your article...</p>
+        </div>
       </div>
     );
   }
   
   return (
-    <div className={styles.articleComposer}>
-      {/* Header with actions */}
-      <header className={styles.composerHeader}>
-        <div className={styles.logoContainer}>
-          <div className={styles.logo}>Journalite</div>
-        </div>
+    <div className={`${styles['glass-container']} min-h-screen w-full`} style={{
+      background: 'linear-gradient(135deg, #f0f9ff 0%, #f7fafc 20%, #fef7ff 40%, #f0fdfa 60%, #fff7ed 80%, #f3f4f6 100%)',
+      backgroundAttachment: 'fixed',
+      position: 'relative',
+      borderRadius: '0px',
+      border: 'none'
+    }}>
+      {/* Glass highlight for entire page */}
+      <div className={styles['glass-highlight']} />
+
+      {/* Floating Header */}
+      <header className={`${styles['glass-container']} fixed top-6 left-6 right-6 z-50 max-w-6xl mx-auto`} style={{
+        backdropFilter: 'blur(20px) saturate(180%)',
+      }}>
+        <div className={styles['glass-highlight']} />
         
-        <div className={styles.actionButtons}>
-          {isSaved && (
-            <span className={styles.savedIndicator}>
-              <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" />
-              </svg>
-              Saved
-            </span>
-          )}
+        <div className={`${styles['glass-content']} flex items-center justify-between p-4`}>
+          <div className="flex items-center gap-4">
+            {backToArticleAction ? (
+              <button
+                onClick={backToArticleAction}
+                className={`${styles['glass-button']} flex items-center gap-2 px-3 py-2 text-sm font-medium text-stone-700 hover:text-stone-900 transition-colors`}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.42-1.41L7.83 13H20v-2z" />
+                </svg>
+                Back to Article
+              </button>
+            ) : (
+              <div className="text-xl font-bold text-stone-800 font-serif">Journalite</div>
+            )}
+            
+            <div className="text-stone-500 text-sm">
+              {articleId ? (editingTitle ? `Editing: ${editingTitle}` : 'Editing') : 'Writing'}
+            </div>
+            
+            {isSaved && (
+              <div className="flex items-center gap-2 text-green-600 text-sm">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                  <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" />
+                </svg>
+                Saved
+              </div>
+            )}
+          </div>
           
-          <button
-            className={styles.actionButton}
-            onClick={handleSaveDraft}
-            disabled={isSaving || isPublishing}
-          >
-            Save draft
-          </button>
-          
-          <button
-            className={styles.publishButton}
-            onClick={handlePublish}
-            disabled={isSaving || isPublishing || !title.trim() || !content.trim()}
-          >
-            {articleId ? 'Update' : 'Publish'}
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              className={`${styles['glass-button']} px-4 py-2 text-sm font-semibold disabled:opacity-50`}
+              onClick={handleSaveDraft}
+              disabled={isSaving || isPublishing}
+            >
+              {isSaving ? 'Saving...' : 'Save Draft'}
+            </button>
+            
+            <button
+              className={`${styles['glass-button']} ${styles['glass-button-primary']} px-4 py-2 text-sm font-semibold disabled:opacity-50`}
+              onClick={handlePublish}
+              disabled={isSaving || isPublishing || !title.trim() || !content.trim()}
+            >
+              {isPublishing ? 'Publishing...' : (articleId ? 'Update' : 'Publish')}
+            </button>
+          </div>
         </div>
       </header>
       
-      {/* Main content area */}
-      <main className={styles.composerContent}>
-        {/* Title input */}
+      {/* Glass content wrapper for seamless editor with Medium-style layout */}
+      <div className={`${styles['glass-content']} pt-32 pb-16 min-h-screen w-full max-w-4xl mx-auto`} style={{ paddingLeft: '64px', paddingRight: '64px' }}>
+        {/* Title - completely seamless */}
         <textarea
           ref={titleRef}
-          className={styles.titleInput}
           value={title}
           onChange={handleTitleChange}
           onKeyDown={handleTitleKeyDown}
           placeholder="Title"
           rows={1}
+          className="w-full bg-transparent border-none outline-none resize-none overflow-hidden text-5xl font-bold text-stone-800 placeholder-stone-400 font-serif leading-tight mb-8 focus:outline-none"
+          style={{
+            minHeight: '60px'
+          }}
         />
+
+        {/* Cover Image - seamless integration */}
+        {(coverImage || title.length > 10) && (
+          <div className="mb-8">
+            {!coverImage && (
+              <input
+                type="text"
+                value={coverImage}
+                onChange={handleCoverImageChange}
+                placeholder="Add a cover image URL..."
+                className="w-full bg-transparent border-none outline-none text-stone-600 placeholder-stone-400 py-2 border-b border-stone-200 focus:border-stone-400 transition-colors"
+              />
+            )}
+            {coverImage && (
+              <div className="relative group">
+                <img 
+                  src={coverImage} 
+                  alt="Cover" 
+                  className="w-full h-64 object-cover rounded-2xl mb-4"
+                />
+                <input
+                  type="text"
+                  value={coverImage}
+                  onChange={handleCoverImageChange}
+                  placeholder="Cover image URL..."
+                  className="w-full bg-white/80 backdrop-blur border border-stone-200 outline-none text-stone-600 placeholder-stone-400 py-2 px-4 rounded-lg focus:border-stone-400 transition-colors"
+                />
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Tags - seamless inline */}
+        {(tags.length > 0 || title.length > 5) && (
+          <div className="mb-8 flex flex-wrap gap-2 items-center">
+            {tags.map(tag => (
+              <div key={tag} className="px-3 py-1 bg-blue-100/60 backdrop-blur text-blue-700 rounded-full text-sm font-medium flex items-center gap-2">
+                {tag}
+                <button 
+                  className="text-blue-600 hover:text-blue-800 font-bold text-base leading-none"
+                  onClick={() => removeTag(tag)}
+                  aria-label={`Remove ${tag} tag`}
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+            
+            {tags.length < 5 && (
+              <input
+                ref={tagInputRef}
+                type="text"
+                value={currentTag}
+                onChange={handleTagInputChange}
+                onKeyDown={handleTagInputKeyDown}
+                onBlur={addTag}
+                placeholder={tags.length === 0 ? "Add tags..." : "Add tag..."}
+                className="bg-transparent border-none outline-none text-stone-600 placeholder-stone-400 min-w-24 py-1"
+              />
+            )}
+          </div>
+        )}
+
+        {/* Error Message */}
+        {error && (
+          <div className="mb-6 p-4 bg-red-50/80 border border-red-200 rounded-xl text-red-700 text-sm">
+            {error}
+          </div>
+        )}
         
-        {/* Cover image input */}
-        <div className={styles.coverImageInput}>
-          <input
-            type="text"
-            value={coverImage}
-            onChange={handleCoverImageChange}
-            placeholder="Add a cover image (enter image URL)"
-            className={styles.imageUrlInput}
-          />
-          {coverImage && (
-            <div className={styles.coverImagePreview}>
-              <img src={coverImage} alt="Cover preview" />
-            </div>
-          )}
-        </div>
-        
-        {/* Tag input */}
-        <div className={styles.tagContainer}>
-          {tags.map(tag => (
-            <div key={tag} className={styles.tag}>
-              {tag}
-              <button 
-                className={styles.removeTagButton} 
-                onClick={() => removeTag(tag)}
-                aria-label={`Remove ${tag} tag`}
-              >
-                &times;
-              </button>
-            </div>
-          ))}
-          
-          {tags.length < 5 && (
-            <input
-              ref={tagInputRef}
-              type="text"
-              value={currentTag}
-              onChange={handleTagInputChange}
-              onKeyDown={handleTagInputKeyDown}
-              onBlur={addTag}
-              placeholder={tags.length === 0 ? "Add up to 5 tags..." : "Add another tag..."}
-              className={styles.tagInput}
-            />
-          )}
-        </div>
-        
-        {/* Error message */}
-        {error && <div className={styles.errorMessage}>{error}</div>}
-        
-        {/* Article editor */}
-        <div className={styles.editorContainer}>
+        {/* Article Editor - completely seamless, full width */}
+        <div className="min-h-[500px] w-full" style={{
+          background: 'transparent'
+        }}>
           <Editor
             ref={editorRef}
-            articleId={articleId || uuidv4()}
-            initialContent={content}
-            onChange={handleEditorChange}
-            placeholder="Tell your story..."
+            {...({
+              articleId: articleId || uuidv4(),
+              initialContent: content,
+              onChange: handleEditorChange,
+              placeholder: "Write your story...",
+              className: "seamless-editor"
+            } as any)}
           />
         </div>
-      </main>
+      </div>
 
       {/* Inspiration Widget */}
       <InspirationWidget onInsert={handleInsertInspiration} />

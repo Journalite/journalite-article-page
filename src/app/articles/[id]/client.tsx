@@ -208,15 +208,12 @@ const ArticlePageClient: React.FC<ArticlePageClientProps> = ({ id }) => {
 
   if (isEditing) {
     return (
-      <div>
-        <div className={styles.editingHeader}>
-          <button onClick={handleCancelEdit} className={styles.cancelButton}>
-            ← Back to Article
-          </button>
-          <h2>Editing: {article?.title}</h2>
-        </div>
-        <ArticleComposer articleId={id} onUpdateComplete={handleUpdateComplete} />
-      </div>
+      <ArticleComposer 
+        articleId={id} 
+        onUpdateComplete={handleUpdateComplete}
+        backToArticleAction={handleCancelEdit}
+        editingTitle={article?.title}
+      />
     );
   }
   
