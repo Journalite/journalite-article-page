@@ -173,59 +173,93 @@ export default function NotificationsPage() {
 
       {/* MAIN CONTENT */}
       <main className={styles['center-column']}>
-        <div className={notificationStyles.header}>
-          <h1 className={notificationStyles.title}>Notifications</h1>
-          {notifications.length > 0 && (
-            <button 
-              className={notificationStyles.markAllButton}
-              onClick={handleMarkAllAsRead}
-            >
-              Mark all as read
-            </button>
-          )}
+        {/* Header Section - Liquid Glass */}
+        <div className={`${styles['glass-container']} mb-8 p-8`}>
+          <div className={styles['glass-highlight']} />
+          
+          <div className={styles['glass-content']}>
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-4xl font-bold text-stone-800 mb-2 font-serif">Notifications</h1>
+                <p className="text-stone-600 text-lg">Stay updated with your latest activities</p>
+              </div>
+              {notifications.length > 0 && (
+                <button 
+                  className={`${styles['glass-button']} ${styles['glass-button-success']} flex items-center gap-2 px-6 py-3 font-semibold`}
+                  onClick={handleMarkAllAsRead}
+                >
+                  Mark all as read
+                </button>
+              )}
+            </div>
+          </div>
         </div>
 
+        {/* Notifications Content */}
         {notifications.length === 0 ? (
-          <div className={notificationStyles.emptyState}>
-                            <div className={notificationStyles.emptyIcon}>
-                  <NotificationIcon size={48} color="#9ca3af" />
-                </div>
-            <h2>No notifications yet</h2>
-            <p>When you receive notifications, they will appear here.</p>
+          <div className={styles['glass-empty-state']}>
+            <div className="w-16 h-16 mx-auto mb-6 rounded-full flex items-center justify-center" style={{
+              background: 'rgba(156, 163, 175, 0.2)',
+              backdropFilter: 'blur(10px)'
+            }}>
+              <NotificationIcon size={32} color="#9ca3af" />
+            </div>
+            <h2 className="text-2xl font-bold text-stone-800 mb-4 font-serif">No notifications yet</h2>
+            <p className="text-stone-600 text-lg">When you receive notifications, they'll appear here.</p>
           </div>
         ) : (
-          <div className={notificationStyles.notificationsList}>
+          <div className="space-y-4">
             {notifications.map((notification) => (
               <div 
                 key={notification.id} 
-                className={`${notificationStyles.notificationCard} ${!notification.read ? notificationStyles.unread : ''}`}
+                className={`${styles['glass-card']} ${!notification.read ? styles['glass-notification-unread'] : styles['glass-notification-read']} p-6`}
               >
-                <div className={notificationStyles.notificationContent}>
-                  <p className={notificationStyles.message}>{notification.message}</p>
-                  <p className={notificationStyles.time}>{formatTime(notification.createdAt)}</p>
-                </div>
-                <div className={notificationStyles.notificationActions}>
-                  <Link
-                    href={getNotificationLink(notification)}
-                    className={notificationStyles.viewButton}
-                    onClick={() => handleMarkAsRead(notification)}
-                  >
-                    View
-                  </Link>
-                  {!notification.read && (
-                    <button
-                      className={notificationStyles.readButton}
+                <div className={styles['glass-card-highlight']} />
+                
+                {/* Unread indicator */}
+                {!notification.read && (
+                  <div 
+                    className="absolute top-4 left-4 w-3 h-3 rounded-full"
+                    style={{
+                      background: 'rgba(59, 130, 246, 0.8)',
+                      boxShadow: '0 0 8px rgba(59, 130, 246, 0.4)'
+                    }}
+                  />
+                )}
+                
+                <div className="relative z-10 flex justify-between items-start">
+                  <div className="flex-1" style={{ marginLeft: !notification.read ? '1rem' : '0' }}>
+                    <p className="text-stone-800 mb-2 text-base leading-relaxed font-medium">
+                      {notification.message}
+                    </p>
+                    <p className="text-stone-500 text-sm">
+                      {formatTime(notification.createdAt)}
+                    </p>
+                  </div>
+                  
+                  <div className="flex flex-col gap-2 ml-6">
+                    <Link
+                      href={getNotificationLink(notification)}
+                      className={`${styles['glass-button']} ${styles['glass-button-primary']} px-4 py-2 text-sm font-medium`}
                       onClick={() => handleMarkAsRead(notification)}
                     >
-                      Mark as read
+                      View
+                    </Link>
+                    {!notification.read && (
+                      <button
+                        className={`${styles['glass-button']} ${styles['glass-button-success']} px-4 py-2 text-sm font-medium`}
+                        onClick={() => handleMarkAsRead(notification)}
+                      >
+                        Mark as read
+                      </button>
+                    )}
+                    <button
+                      className={`${styles['glass-button']} ${styles['glass-button-danger']} px-4 py-2 text-sm font-medium`}
+                      onClick={() => notification.id && handleDelete(notification.id)}
+                    >
+                      Delete
                     </button>
-                  )}
-                  <button
-                    className={notificationStyles.deleteButton}
-                    onClick={() => notification.id && handleDelete(notification.id)}
-                  >
-                    Delete
-                  </button>
+                  </div>
                 </div>
               </div>
             ))}
@@ -235,23 +269,32 @@ export default function NotificationsPage() {
 
       {/* RIGHT SIDEBAR */}
       <aside className={styles['right-sidebar']}>
-        <h2 className={styles['sidebar-heading']}>Notifications Summary</h2>
-        {notifications.length > 0 && (
-          <div className={notificationStyles.summary}>
-            <div className={notificationStyles.statCard}>
-              <span className={notificationStyles.statValue}>
-                {notifications.filter(n => !n.read).length}
-              </span>
-              <span className={notificationStyles.statLabel}>Unread</span>
-            </div>
-            <div className={notificationStyles.statCard}>
-              <span className={notificationStyles.statValue}>
-                {notifications.length}
-              </span>
-              <span className={notificationStyles.statLabel}>Total</span>
-            </div>
+        {/* Summary Container - Liquid Glass */}
+        <div className={`${styles['glass-container']} mb-6 p-6`}>
+          <div className={styles['glass-highlight']} />
+          
+          <div className={styles['glass-content']}>
+            <h2 className="text-xl font-bold text-stone-800 mb-4 font-serif">Notifications Summary</h2>
+            {notifications.length > 0 ? (
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-stone-600">Unread</span>
+                  <span className="text-2xl font-bold text-blue-600">
+                    {notifications.filter(n => !n.read).length}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-stone-600">Total</span>
+                  <span className="text-2xl font-bold text-stone-600">
+                    {notifications.length}
+                  </span>
+                </div>
+              </div>
+            ) : (
+              <p className="text-stone-500 text-center">No notifications yet</p>
+            )}
           </div>
-        )}
+        </div>
       </aside>
     </div>
   )

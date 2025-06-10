@@ -6,6 +6,8 @@ import Link from 'next/link';
 import { auth } from '../../firebase/clientApp';
 import { onAuthStateChanged, User, signOut } from 'firebase/auth';
 import { updateUserInterests, getUserProfile, UserProfile, isUsernameTaken, createUserProfile, deleteUserAccount } from '../../services/userService';
+import TopLeftLogo from '@/components/TopLeftLogo';
+import styles from '@/styles/home.module.css';
 
 // Consistent list of interests (can be moved to a shared constants file later)
 const ALL_INTERESTS = [
@@ -35,6 +37,8 @@ export default function SettingsPage() {
 
   // State for Delete Account Modal
   const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteConfirmation, setDeleteConfirmation] = useState('');
   const [isDeletingAccount, setIsDeletingAccount] = useState(false);
 
   // General Page States
@@ -43,6 +47,12 @@ export default function SettingsPage() {
   const [profileError, setProfileError] = useState(''); // Specific errors for profile section
   const [successMessage, setSuccessMessage] = useState(''); // For interest updates
   const [profileSuccessMessage, setProfileSuccessMessage] = useState(''); // For profile updates
+  const [profileMessage, setProfileMessage] = useState('');
+  const [interestsMessage, setInterestsMessage] = useState('');
+  const [usernameError, setUsernameError] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+  const [isSavingInterests, setIsSavingInterests] = useState(false);
+  const [availableInterests] = useState(ALL_INTERESTS);
   
   const router = useRouter();
 
@@ -264,11 +274,50 @@ export default function SettingsPage() {
     return `${baseClasses} hover:border-neutral-400`;
   };
 
+  // --- Helper Functions ---
+  const handleSaveProfile = async () => {
+    setIsSaving(true);
+    setProfileMessage('');
+    try {
+      await handleProfileSubmit();
+      setProfileMessage('Profile saved successfully!');
+    } catch (error) {
+      setProfileMessage('Error saving profile. Please try again.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleSaveInterests = async () => {
+    setIsSavingInterests(true);
+    setInterestsMessage('');
+    try {
+      await handleInterestsSubmit();
+      setInterestsMessage('Interests saved successfully!');
+    } catch (error) {
+      setInterestsMessage('Error saving interests. Please try again.');
+    } finally {
+      setIsSavingInterests(false);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    if (deleteConfirmation !== 'DELETE') return;
+    setIsDeletingAccount(true);
+    try {
+      await handleConfirmDelete();
+    } catch (error) {
+      console.error('Error deleting account:', error);
+    } finally {
+      setIsDeletingAccount(false);
+    }
+  };
+
   // --- Delete Account Logic ---
   const handleDeleteAccountClick = () => {
     setProfileError(''); // Clear other errors
     setError('');
-    setShowDeleteConfirmModal(true);
+    setShowDeleteModal(true);
   };
 
   const handleCancelDelete = () => {
@@ -331,14 +380,235 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-6">Settings</h1>
-      <p>This is the settings page. Content will be loaded dynamically.</p>
-      <div className="mt-4">
-        <Link href="/" className="text-blue-500 hover:underline">
-          Back to Home
-        </Link>
-      </div>
+    <div className={`${styles['three-column-layout']}`}>
+      <TopLeftLogo />
+      
+      <main className={styles['center-column']}>
+        <div className={`${styles['glass-container']} mb-8 p-8`}>
+          <div className={styles['glass-highlight']} />
+          
+          <div className={styles['glass-content']}>
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-4xl font-bold text-stone-800 mb-2 font-serif">Settings</h1>
+                <p className="text-stone-600 text-lg">Customize your Journalite experience</p>
+              </div>
+              <Link 
+                href="/" 
+                className={`${styles['glass-button']} text-stone-600 hover:text-stone-800 flex items-center gap-2 px-4 py-2`}
+              >
+                ← Back to Home
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid lg:grid-cols-2 gap-8">
+          <div className={`${styles['glass-container']} p-8`}>
+            <div className={styles['glass-highlight']} />
+            
+            <div className={styles['glass-content']}>
+              <h2 className="text-2xl font-bold text-stone-800 mb-6 font-serif">Profile Information</h2>
+              
+              <form className="space-y-6">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-stone-700 mb-2">
+                      First Name
+                    </label>
+                    <input
+                      type="text"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      className="w-full px-4 py-3 rounded-xl border border-stone-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all"
+                      style={{ background: 'rgba(255, 255, 255, 0.8)' }}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-stone-700 mb-2">
+                      Last Name
+                    </label>
+                    <input
+                      type="text"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      className="w-full px-4 py-3 rounded-xl border border-stone-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all"
+                      style={{ background: 'rgba(255, 255, 255, 0.8)' }}
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-stone-700 mb-2">
+                    Username
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      className="w-full px-4 py-3 rounded-xl border border-stone-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all"
+                      style={{ background: 'rgba(255, 255, 255, 0.8)' }}
+                    />
+                    {isCheckingUsername && (
+                      <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                        <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                      </div>
+                    )}
+                  </div>
+                  {usernameAvailable === false && (
+                    <p className="text-red-500 text-sm mt-1">Username not available</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-stone-700 mb-2">
+                    Bio (Optional)
+                  </label>
+                  <textarea
+                    value={bio}
+                    onChange={(e) => setBio(e.target.value)}
+                    rows={4}
+                    className="w-full px-4 py-3 rounded-xl border border-stone-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all resize-none"
+                    style={{ background: 'rgba(255, 255, 255, 0.8)' }}
+                    placeholder="Tell us a bit about yourself..."
+                  />
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleProfileSubmit}
+                  disabled={isSubmittingProfile || isCheckingUsername}
+                  className={`${styles['glass-button']} ${styles['glass-button-primary']} w-full py-4 font-semibold disabled:opacity-50`}
+                >
+                  {isSubmittingProfile ? 'Saving...' : 'Save Profile'}
+                </button>
+
+                {profileSuccessMessage && (
+                  <div className={`p-4 rounded-xl ${styles['glass-button-success']}`}>
+                    {profileSuccessMessage}
+                  </div>
+                )}
+              </form>
+            </div>
+          </div>
+
+          <div className={`${styles['glass-container']} p-8`}>
+            <div className={styles['glass-highlight']} />
+            
+            <div className={styles['glass-content']}>
+              <h2 className="text-2xl font-bold text-stone-800 mb-6 font-serif">Your Interests</h2>
+              
+              <p className="text-stone-600 mb-6">
+                Select at least 3 interests to personalize your experience
+              </p>
+
+              <div className="grid grid-cols-2 gap-3 mb-6">
+                {ALL_INTERESTS.map((interest) => (
+                  <button
+                    key={interest}
+                    onClick={() => toggleInterest(interest)}
+                    className={`p-3 rounded-xl text-sm font-medium transition-all ${
+                      selectedInterests.includes(interest)
+                        ? `${styles['glass-button-primary']}`
+                        : `${styles['glass-button']}`
+                    }`}
+                  >
+                    {interest}
+                  </button>
+                ))}
+              </div>
+
+              <div className="mb-6">
+                <div className={`${styles['glass-tag']} inline-flex items-center gap-2`}>
+                  <span className="text-sm font-medium">
+                    {selectedInterests.length} / 3 minimum selected
+                  </span>
+                </div>
+              </div>
+
+              <button
+                onClick={handleInterestsSubmit}
+                disabled={selectedInterests.length < 3 || isSubmittingInterests}
+                className={`${styles['glass-button']} ${styles['glass-button-success']} w-full py-4 font-semibold disabled:opacity-50`}
+              >
+                {isSubmittingInterests ? 'Saving...' : 'Save Interests'}
+              </button>
+
+              {successMessage && (
+                <div className={`mt-4 p-4 rounded-xl ${styles['glass-button-success']}`}>
+                  {successMessage}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className={`${styles['glass-container']} mt-8 p-8`} style={{
+          borderColor: 'rgba(239, 68, 68, 0.2)',
+          background: 'rgba(239, 68, 68, 0.05)'
+        }}>
+          <div className={styles['glass-highlight']} />
+          
+          <div className={styles['glass-content']}>
+            <h2 className="text-2xl font-bold text-red-700 mb-4 font-serif">Danger Zone</h2>
+            <p className="text-stone-600 mb-6">
+              Once you delete your account, there is no going back. Please be certain.
+            </p>
+            
+            <button
+              onClick={handleDeleteAccountClick}
+              className={`${styles['glass-button']} ${styles['glass-button-danger']} px-6 py-3 font-semibold`}
+            >
+              Delete Account
+            </button>
+          </div>
+        </div>
+      </main>
+
+      {showDeleteModal && (
+        <div className={styles['glass-modal-overlay']}>
+          <div className={`${styles['glass-modal']} p-8`}>
+            <h3 className="text-xl font-bold text-red-700 mb-4 font-serif">Delete Account</h3>
+            <p className="text-stone-700 mb-6">
+              Are you absolutely sure? This action cannot be undone. This will permanently delete your account and remove all of your data from our servers.
+            </p>
+            
+            <div className="mb-6">
+              <label className="block text-sm font-semibold text-stone-700 mb-2">
+                Type "DELETE" to confirm:
+              </label>
+              <input
+                type="text"
+                value={deleteConfirmation}
+                onChange={(e) => setDeleteConfirmation(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl border border-stone-200 focus:border-red-400 focus:ring-2 focus:ring-red-100 transition-all"
+                style={{ background: 'rgba(255, 255, 255, 0.9)' }}
+                placeholder="Type DELETE"
+              />
+            </div>
+            
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  setShowDeleteModal(false)
+                  setDeleteConfirmation('')
+                }}
+                className={`${styles['glass-button']} flex-1 py-3 font-medium`}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteAccount}
+                disabled={deleteConfirmation !== 'DELETE' || isDeletingAccount}
+                className={`${styles['glass-button']} ${styles['glass-button-danger']} flex-1 py-3 font-medium disabled:opacity-50`}
+              >
+                {isDeletingAccount ? 'Deleting...' : 'Delete Account'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 } 

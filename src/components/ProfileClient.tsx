@@ -1,16 +1,17 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
 import { collection, query, where, getDocs, orderBy, Timestamp } from 'firebase/firestore';
-import { db } from '@/firebase/clientApp';
-import { UserProfile } from '@/services/userService';
-import styles from '@/styles/home.module.css';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { auth, db } from '@/firebase/clientApp';
 import Image from 'next/image';
-import FollowButton from '@/components/FollowButton';
-import FollowersList from '@/components/FollowersList';
-import FollowingList from '@/components/FollowingList';
-import LeftSidebar from '@/components/LeftSidebar';
+import Link from 'next/link';
+import LeftSidebar from './LeftSidebar';
+import FollowButton from './FollowButton';
+import FollowersList from './FollowersList';
+import FollowingList from './FollowingList';
+import TopLeftLogo from './TopLeftLogo';
+import styles from '@/styles/home.module.css';
 
 // Create an interface to represent articles from Firestore
 interface ArticleData {
@@ -26,48 +27,37 @@ interface ArticleData {
   createdAt: Timestamp;
 }
 
+interface UserProfile {
+  uid: string;
+  firstName: string;
+  lastName: string;
+  username: string;
+  bio?: string;
+  followersCount?: number;
+  followingCount?: number;
+  createdAt?: Timestamp;
+}
+
 // Format date in a consistent way that doesn't depend on user's locale
 const formatDate = (date: Date): string => {
-  try {
-    // Use fixed options for consistent formatting
-    const options: Intl.DateTimeFormatOptions = { 
-      year: 'numeric', 
-      month: 'short', 
-      day: 'numeric',
-      timeZone: 'UTC' // Use UTC to avoid timezone differences
-    };
-    
-    return date.toLocaleDateString('en-US', options);
-  } catch (error) {
-    console.error('Error formatting date:', error);
-    return 'Invalid date'; // Fallback
-  }
+  return new Intl.DateTimeFormat('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  }).format(date);
 };
 
 // Format longer date for the "Member since" display
 const formatMemberSince = (date: Date): string => {
-  try {
-    const options: Intl.DateTimeFormatOptions = { 
-      year: 'numeric', 
-      month: 'long',
-      timeZone: 'UTC'
-    };
-    
-    return date.toLocaleDateString('en-US', options);
-  } catch (error) {
-    console.error('Error formatting member date:', error);
-    return 'Unknown date'; // Fallback
-  }
+  return new Intl.DateTimeFormat('en-US', {
+    year: 'numeric',
+    month: 'long'
+  }).format(date);
 };
 
 // Helper function to strip HTML tags
 const stripHtmlTags = (html: string): string => {
-  if (typeof document !== 'undefined') {
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = html;
-    return tempDiv.textContent || tempDiv.innerText || '';
-  }
-  // Fallback for server-side or environments without document
+  if (!html) return '';
   return html.replace(/<[^>]*>/g, '');
 };
 
@@ -82,6 +72,49 @@ export default function ProfileClient({ username }: ProfileClientProps) {
   const [memberSinceDate, setMemberSinceDate] = useState<string>('Unknown');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(0);
+
+  // Check authentication status
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setIsAuthenticated(!!currentUser);
+    });
+    
+    return () => unsubscribe();
+  }, []);
+
+  // Set window width for responsive design
+  useEffect(() => {
+    setWindowWidth(window.innerWidth);
+    
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+      if (window.innerWidth < 768) {
+        setIsSidebarCollapsed(true);
+      }
+    };
+    
+    window.addEventListener('resize', handleResize);
+    handleResize();
+    
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
+
+  const toggleSidebar = () => {
+    setIsSidebarCollapsed(!isSidebarCollapsed);
+  };
 
   useEffect(() => {
     const fetchUserAndArticles = async () => {
@@ -139,10 +172,13 @@ export default function ProfileClient({ username }: ProfileClientProps) {
 
   if (isLoading) {
     return (
-      <div className={styles.container}>
-        <div className={styles.loading}>
-          <div className={styles.loadingSpinner}></div>
-          <p>Loading profile...</p>
+      <div className="min-h-screen" style={{
+        background: 'linear-gradient(135deg, #f0f9ff 0%, #f7fafc 20%, #fef7ff 40%, #f0fdfa 60%, #fff7ed 80%, #f3f4f6 100%)',
+        backgroundAttachment: 'fixed'
+      }}>
+        <div className={styles['glass-loading']}>
+          <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-stone-600 text-lg">Loading profile...</p>
         </div>
       </div>
     );
@@ -150,138 +186,273 @@ export default function ProfileClient({ username }: ProfileClientProps) {
 
   if (error || !user) {
     return (
-      <div className={styles.container}>
-        <div className={styles.errorAlert}>
-          <p>{error || 'User not found'}</p>
-          <Link href="/" className={styles.backLink}>
-            Back to home
-          </Link>
+      <div className="min-h-screen" style={{
+        background: 'linear-gradient(135deg, #f0f9ff 0%, #f7fafc 20%, #fef7ff 40%, #f0fdfa 60%, #fff7ed 80%, #f3f4f6 100%)',
+        backgroundAttachment: 'fixed'
+      }}>
+        <div className="py-8 px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center min-h-screen">
+          <div className={styles['glass-empty-state']}>
+            <div className="text-6xl mb-4">😕</div>
+            <h2 className="text-2xl font-bold text-stone-800 mb-4 font-serif">User Not Found</h2>
+            <p className="text-stone-600 mb-8 text-lg">{error || 'The user you\'re looking for doesn\'t exist.'}</p>
+            <Link 
+              href="/" 
+              className={`${styles['glass-button']} ${styles['glass-button-primary']} inline-flex items-center gap-2 px-8 py-4 font-semibold`}
+            >
+              ← Back to Home
+            </Link>
+          </div>
         </div>
       </div>
     );
   }
   
   return (
-    <div className={styles['three-column-layout']}>
-      {/* LEFT SIDEBAR */}
-      <LeftSidebar 
-        isAuthenticated={false}
-        handleLogout={() => {}}
-        toggleSidebar={() => {}}
-        isSidebarCollapsed={false}
-      />
-      
-      {/* CENTER COLUMN - User profile and articles */}
-      <main className={styles['center-column']}>
-        <div className={styles.profileHeader}>
-          <div className={styles.profileAvatar}>
-            {/* Placeholder avatar - first letter of first and last name */}
-            <div className={styles.avatarPlaceholder}>
-              {user.firstName.charAt(0)}{user.lastName.charAt(0)}
-            </div>
-          </div>
-          
-          <div className={styles.profileInfo}>
-            <div className="flex justify-between items-start w-full">
-              <div>
-                <h1 className={styles.profileName}>{user.firstName} {user.lastName}</h1>
-                <p className={styles.profileUsername}>@{user.username}</p>
-              </div>
-              <FollowButton targetUserId={user.uid} targetUsername={user.username} />
-            </div>
-            
-            {/* Follower and following counts */}
-            <div className="flex space-x-6 mt-3">
-              <Link 
-                href={`/user/${username}/followers`}
-                className="text-sm hover:underline focus:outline-none"
-              >
-                <span className="font-semibold">{user.followersCount || 0}</span> Followers
-              </Link>
-              <Link 
-                href={`/user/${username}/following`}
-                className="text-sm hover:underline focus:outline-none"
-              >
-                <span className="font-semibold">{user.followingCount || 0}</span> Following
-              </Link>
-            </div>
-            
-            {user.bio && (
-              <div className={styles.profileBio}>
-                <p>{user.bio}</p>
-              </div>
-            )}
-          </div>
-        </div>
+    <div className="min-h-screen" style={{
+      background: 'linear-gradient(135deg, #f0f9ff 0%, #f7fafc 20%, #fef7ff 40%, #f0fdfa 60%, #fff7ed 80%, #f3f4f6 100%)',
+      backgroundAttachment: 'fixed'
+    }}>
+      <div className={styles['three-column-layout']}>
+        {/* Background overlay for mobile */}
+        {windowWidth < 768 && !isSidebarCollapsed && (
+          <div className={`${styles['menu-overlay']} ${styles['active']}`} onClick={toggleSidebar}></div>
+        )}
+
+        {/* TOP LEFT LOGO */}
+        <TopLeftLogo />
+
+        {/* LEFT SIDEBAR - Fixed authentication */}
+        <LeftSidebar 
+          isAuthenticated={isAuthenticated}
+          handleLogout={handleSignOut}
+          toggleSidebar={toggleSidebar}
+          isSidebarCollapsed={isSidebarCollapsed}
+        />
+
+        {/* Mobile sidebar toggle button */}
+        {windowWidth < 768 && (
+          <button 
+            className={styles['toggle-button']} 
+            onClick={toggleSidebar}
+            aria-label={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            {isSidebarCollapsed ? "☰" : "✕"}
+          </button>
+        )}
         
-        <div className={styles.profileContent}>
-          <h2 className={styles.sectionHeading}>Articles by {user.firstName}</h2>
+        {/* CENTER COLUMN - User profile and articles */}
+        <main className={styles['center-column']}>
+          {/* Back Link - Liquid Glass */}
+          <div className="mb-8">
+            <Link 
+              href="/" 
+              className={`${styles['glass-button']} inline-flex items-center gap-2 px-6 py-3 font-medium`}
+            >
+              ← Back to Home
+            </Link>
+          </div>
+
+          {/* Profile Card - Liquid Glass */}
+          <div className={`${styles['glass-profile-container']} w-full mb-10`}>
+            <div className={styles['glass-highlight']} />
+
+            {/* Header Section */}
+            <div className="relative z-10 p-8 sm:p-12">
+              <div className="flex flex-col sm:flex-row items-center sm:items-start">
+                {/* Avatar */}
+                <div className="relative">
+                  <div 
+                    className="w-32 h-32 sm:w-40 sm:h-40 rounded-full flex items-center justify-center text-white text-5xl sm:text-6xl font-semibold shadow-lg"
+                    style={{
+                      background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                      border: '4px solid rgba(255, 255, 255, 0.3)'
+                    }}
+                  >
+                    {user.firstName.charAt(0)}{user.lastName.charAt(0)}
+                  </div>
+                </div>
+                
+                {/* Profile Info */}
+                <div className="mt-6 sm:mt-0 sm:ml-8 text-center sm:text-left flex-1">
+                  <h1 className="text-4xl sm:text-5xl font-bold text-stone-800 mb-2 font-serif">
+                    {user.firstName} {user.lastName}
+                  </h1>
+                  <p className="text-blue-600 text-xl mb-2 font-medium">@{user.username}</p>
+                  
+                  {/* Follower and following counts */}
+                  <div className="flex justify-center sm:justify-start space-x-6 mt-3 mb-4">
+                    <Link 
+                      href={`/user/${username}/followers`}
+                      className={`${styles['glass-tag']} text-sm hover:underline focus:outline-none`}
+                    >
+                      <span className="font-semibold">{user.followersCount || 0}</span> Followers
+                    </Link>
+                    <Link 
+                      href={`/user/${username}/following`}
+                      className={`${styles['glass-tag']} text-sm hover:underline focus:outline-none`}
+                    >
+                      <span className="font-semibold">{user.followingCount || 0}</span> Following
+                    </Link>
+                  </div>
+
+                  {/* Member Since */}
+                  <div className={`${styles['glass-tag']} mt-4 inline-flex items-center gap-2`}>
+                    <span className="text-sm font-medium">
+                      Member since {memberSinceDate}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Follow Button */}
+                <div className="mt-6 sm:mt-0">
+                  <FollowButton targetUserId={user.uid} targetUsername={user.username} />
+                </div>
+              </div>
+
+              {/* Bio Section */}
+              {user.bio && (
+                <div className={`${styles['glass-profile-header']} mt-8 p-6`}>
+                  <h2 className="text-xl font-bold text-stone-800 mb-3 font-serif">About</h2>
+                  <p className="text-stone-700 leading-relaxed whitespace-pre-wrap text-lg">
+                    {user.bio}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Articles Section */}
+          <div className={`${styles['glass-container']} mb-8 p-6 text-center`}>
+            <div className={styles['glass-highlight']} />
+            
+            <div className={styles['glass-content']}>
+              <h2 className="text-3xl font-bold text-stone-800 mb-2 font-serif">Articles by {user.firstName}</h2>
+              <p className="text-stone-600 text-lg">{articles.length} published {articles.length === 1 ? 'article' : 'articles'}</p>
+            </div>
+          </div>
           
           {articles.length > 0 ? (
-            <div className={styles['article-grid']}>
+            <div className="space-y-6">
               {articles.map((article) => (
                 <Link 
                   href={`/articles?slug=${article.slug}`} 
                   key={article.id}
-                  className={styles['article-card']}
+                  className={`${styles['glass-card']} block`}
                 >
-                  {article.coverImage && (
-                    <div className={styles['article-image']}>
-                      {/* Replace img with Next.js Image component */}
-                      <Image 
-                        src={article.coverImage} 
-                        alt={article.title}
-                        width={300}
-                        height={180}
-                        style={{ objectFit: 'cover', width: '100%', height: '100%' }}
-                      />
+                  <div className={styles['glass-card-highlight']} />
+                  
+                  <div className="relative z-10 md:flex">
+                    {/* Cover Image */}
+                    <div className="md:w-1/3 h-48 md:h-64 relative overflow-hidden">
+                      {article.coverImage ? (
+                        <Image 
+                          src={article.coverImage} 
+                          alt={article.title} 
+                          layout="fill"
+                          objectFit="cover"
+                          className="transition-transform duration-500 ease-in-out hover:scale-105"
+                        />
+                      ) : (
+                        <div 
+                          className="w-full h-full flex items-center justify-center"
+                          style={{
+                            background: 'linear-gradient(135deg, rgba(156, 163, 175, 0.2), rgba(209, 213, 219, 0.2))'
+                          }}
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-stone-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                        </div>
+                      )}
                     </div>
-                  )}
-                  <div className={styles['article-content']}>
-                    <h3 className={styles['article-title']}>{article.title}</h3>
-                    <div className={styles['article-meta']}>
-                      <span>
-                        {formatDate(article.createdAt.toDate())}
-                      </span>
+                    
+                    {/* Content */}
+                    <div className="p-6 md:w-2/3 flex flex-col justify-between">
+                      <div>
+                        <h3 className="text-2xl font-bold text-stone-800 mb-3 leading-tight font-serif hover:text-blue-600 transition-colors">
+                          {article.title}
+                        </h3>
+                        
+                        <p className="text-stone-500 text-sm mb-4">
+                          {formatDate(article.createdAt.toDate())}
+                        </p>
+                        
+                        <p className="text-stone-600 mb-4 leading-relaxed line-clamp-3">
+                          {stripHtmlTags(article.body).substring(0, 200)}...
+                        </p>
+                      </div>
+                      
+                      {/* Tags */}
+                      {article.tags && article.tags.length > 0 && (
+                        <div className="flex flex-wrap gap-2">
+                          {article.tags.slice(0, 3).map(tag => (
+                            <span key={tag} className={styles['glass-tag']}>
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
                     </div>
-                    <p className={styles['article-excerpt']}>
-                      {stripHtmlTags(article.body).substring(0, 150)}...
-                    </p>
                   </div>
                 </Link>
               ))}
             </div>
           ) : (
-            <div className={styles.emptyState}>
-              <p>No articles published yet.</p>
+            <div className={styles['glass-empty-state']}>
+              <div className="w-16 h-16 mx-auto mb-6 rounded-full flex items-center justify-center" style={{
+                background: 'rgba(156, 163, 175, 0.2)',
+                backdropFilter: 'blur(10px)'
+              }}>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-stone-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+              <h3 className="text-2xl font-bold text-stone-800 mb-4 font-serif">No Articles Yet</h3>
+              <p className="text-stone-600 text-lg">{user.firstName} hasn't published any articles yet.</p>
             </div>
           )}
-        </div>
-      </main>
-      
-      {/* RIGHT SIDEBAR */}
-      <aside className={styles['right-sidebar']}>
-        <h2 className={styles['sidebar-heading']}>About</h2>
-        <div className={styles.sidebarSection}>
-          <p>Member since {memberSinceDate}</p>
-        </div>
+        </main>
         
-        {/* Followers section */}
-        <div className={styles.sidebarSection}>
-          <h3 className={styles['sidebar-subheading']}>Followers</h3>
-          <FollowersList userId={user.uid} maxDisplay={5} username={username} />
-        </div>
-        
-        {/* Following section */}
-        <div className={styles.sidebarSection}>
-          <h3 className={styles['sidebar-subheading']}>Following</h3>
-          <FollowingList userId={user.uid} maxDisplay={5} username={username} />
-        </div>
-        
-        <Link href="/" className={styles['write-button']}>
-          Home
-        </Link>
-      </aside>
+        {/* RIGHT SIDEBAR */}
+        <aside className={styles['right-sidebar']}>
+          {/* About Section - Liquid Glass */}
+          <div className={`${styles['glass-container']} mb-6 p-6`}>
+            <div className={styles['glass-highlight']} />
+            
+            <div className={styles['glass-content']}>
+              <h2 className="text-xl font-bold text-stone-800 mb-4 font-serif">About</h2>
+              <p className="text-stone-600">Member since {memberSinceDate}</p>
+            </div>
+          </div>
+          
+          {/* Followers section - Liquid Glass */}
+          <div className={`${styles['glass-container']} mb-6 p-6`}>
+            <div className={styles['glass-highlight']} />
+            
+            <div className={styles['glass-content']}>
+              <h3 className="text-lg font-bold text-stone-800 mb-4 font-serif">Followers</h3>
+              <FollowersList userId={user.uid} maxDisplay={5} username={username} />
+            </div>
+          </div>
+          
+          {/* Following section - Liquid Glass */}
+          <div className={`${styles['glass-container']} mb-6 p-6`}>
+            <div className={styles['glass-highlight']} />
+            
+            <div className={styles['glass-content']}>
+              <h3 className="text-lg font-bold text-stone-800 mb-4 font-serif">Following</h3>
+              <FollowingList userId={user.uid} maxDisplay={5} username={username} />
+            </div>
+          </div>
+          
+          <Link 
+            href="/" 
+            className={`${styles['glass-button']} ${styles['glass-button-primary']} block w-full px-6 py-4 text-center font-semibold`}
+          >
+            Home
+          </Link>
+        </aside>
+      </div>
     </div>
   );
 } 

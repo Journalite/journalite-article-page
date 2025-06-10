@@ -231,86 +231,110 @@ export default function MyThoughtsPage() {
 
       {/* MAIN CONTENT */}
       <main className={styles['center-column']}>
-        <div className={thoughtStyles.header}>
-          <h1 className={thoughtStyles.title}>My Thoughts</h1>
-          <div className={thoughtStyles.actions}>
-            <Link href="/create-article" className={thoughtStyles.createButton}>
-              New Article
-            </Link>
+        {/* Header Section - Liquid Glass */}
+        <div className={`${styles['glass-container']} mb-8 p-8`}>
+          <div className={styles['glass-highlight']} />
+          
+          <div className={styles['glass-content']}>
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-4xl font-bold text-stone-800 mb-2 font-serif">My Thoughts</h1>
+                <p className="text-stone-600 text-lg">Your personal collection of ideas and insights</p>
+              </div>
+              <Link 
+                href="/create-article" 
+                className={`${styles['glass-button']} ${styles['glass-button-primary']} flex items-center gap-2 px-6 py-3 font-semibold`}
+              >
+                + New Article
+              </Link>
+            </div>
           </div>
         </div>
 
-        <div className={thoughtStyles.tabs}>
+        {/* Tabs Section - Liquid Glass */}
+        <div className={`${styles['glass-nav-container']} mb-8 p-2 flex gap-2`}>
           <button
-            className={`${thoughtStyles.tabButton} ${
-              view === 'published' ? thoughtStyles.active : ''
-            }`}
+            className={`${styles['glass-nav-button']} ${view === 'published' ? 'active' : ''} flex-1 px-6 py-3`}
             onClick={() => setView('published')}
           >
             Published
           </button>
           <button
-            className={`${thoughtStyles.tabButton} ${
-              view === 'drafts' ? thoughtStyles.active : ''
-            }`}
+            className={`${styles['glass-nav-button']} ${view === 'drafts' ? 'active' : ''} flex-1 px-6 py-3`}
             onClick={() => setView('drafts')}
           >
             Drafts
           </button>
         </div>
 
+        {/* Articles Content */}
         {articles.length === 0 ? (
-          <div className={thoughtStyles.emptyState}>
-            <p>You don't have any {view} articles yet.</p>
-            {view === 'published' ? (
-              <p>When you publish your articles, they will appear here.</p>
-            ) : (
-              <p>Save your work as drafts to continue later.</p>
-            )}
-            <Link href="/create-article" className={thoughtStyles.emptyStateButton}>
+          <div className={`${styles['glass-empty-state']}`}>
+            <div className="text-6xl mb-4">✍️</div>
+            <h3 className="text-2xl font-bold text-stone-800 mb-4 font-serif">
+              No {view} articles yet
+            </h3>
+            <p className="text-stone-600 mb-8 text-lg">
+              {view === 'published' 
+                ? "When you publish your articles, they'll appear here." 
+                : "Save your work as drafts to continue later."
+              }
+            </p>
+            <Link 
+              href="/create-article" 
+              className={`${styles['glass-button']} ${styles['glass-button-primary']} inline-flex items-center gap-2 px-8 py-4 font-semibold`}
+            >
               Create Your First Article
             </Link>
           </div>
         ) : (
-          <div className={thoughtStyles.articlesList}>
+          <div className="space-y-6">
             {articles.map((article) => (
-              <div key={article.id} className={thoughtStyles.articleCard}>
-                <div className={thoughtStyles.articleContent}>
-                  <h2 className={thoughtStyles.articleTitle}>
-                    <Link href={`/articles?slug=${article.slug}`}>
-                      {article.title}
-                    </Link>
-                  </h2>
-                  <p className={thoughtStyles.articleDate}>
-                    {formatDate(article.createdAt)}
-                  </p>
-                  <p className={thoughtStyles.articleExcerpt}>
-                    {getExcerpt(article.body)}
-                  </p>
-                  <div className={thoughtStyles.articleTags}>
-                    {article.tags?.map((tag, index) => (
-                      <span key={index} className={thoughtStyles.articleTag}>
-                        {tag}
-                      </span>
-                    ))}
+              <div key={article.id} className={`${styles['glass-card']} p-6`}>
+                <div className={styles['glass-card-highlight']} />
+                
+                <div className="relative z-10 flex justify-between items-start">
+                  <div className="flex-1">
+                    <h2 className="text-2xl font-bold text-stone-800 mb-2 font-serif hover:text-blue-600 transition-colors">
+                      <Link href={`/articles?slug=${article.slug}`}>
+                        {article.title}
+                      </Link>
+                    </h2>
+                    <p className="text-stone-500 mb-3 text-sm">
+                      {formatDate(article.createdAt)}
+                    </p>
+                    <p className="text-stone-600 mb-4 text-base leading-relaxed">
+                      {getExcerpt(article.body)}
+                    </p>
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {article.tags?.map((tag, index) => (
+                        <span key={index} className={styles['glass-tag']}>
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
                   </div>
-                </div>
-                <div className={thoughtStyles.articleActions}>
-                  <Link href={`/articles?slug=${article.slug}`} className={thoughtStyles.viewButton}>
-                    View
-                  </Link>
-                  <Link 
-                    href={`/edit-article?id=${article.id}`} 
-                    className={thoughtStyles.editButton}
-                  >
-                    Edit
-                  </Link>
-                  <button
-                    className={thoughtStyles.deleteButton}
-                    onClick={() => confirmDelete(article.id || '')}
-                  >
-                    Delete
-                  </button>
+                  
+                  <div className="flex flex-col gap-2 ml-6">
+                    <Link 
+                      href={`/articles?slug=${article.slug}`} 
+                      className={`${styles['glass-button']} ${styles['glass-button-success']} px-4 py-2 text-sm font-medium`}
+                    >
+                      View
+                    </Link>
+                    <Link 
+                      href={`/edit-article?id=${article.id}`} 
+                      className={`${styles['glass-button']} ${styles['glass-button-primary']} px-4 py-2 text-sm font-medium`}
+                    >
+                      Edit
+                    </Link>
+                    <button
+                      className={`${styles['glass-button']} ${styles['glass-button-danger']} px-4 py-2 text-sm font-medium`}
+                      onClick={() => confirmDelete(article.id || '')}
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
@@ -320,38 +344,50 @@ export default function MyThoughtsPage() {
 
       {/* RIGHT SIDEBAR */}
       <aside className={styles['right-sidebar']}>
-        <h2 className={styles['sidebar-heading']}>Your Stats</h2>
-        <NotificationBell />
-        <div className={thoughtStyles.statsContainer}>
-          <div className={thoughtStyles.statCard}>
-            <span className={thoughtStyles.statValue}>
-              {articles.filter(a => a.status === 'published').length}
-            </span>
-            <span className={thoughtStyles.statLabel}>Published</span>
-          </div>
-          <div className={thoughtStyles.statCard}>
-            <span className={thoughtStyles.statValue}>
-              {articles.filter(a => a.status === 'drafts').length}
-            </span>
-            <span className={thoughtStyles.statLabel}>Drafts</span>
+        {/* Stats Container - Liquid Glass */}
+        <div className={`${styles['glass-container']} mb-6 p-6`}>
+          <div className={styles['glass-highlight']} />
+          
+          <div className={styles['glass-content']}>
+            <h2 className="text-xl font-bold text-stone-800 mb-4 font-serif">Your Stats</h2>
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <span className="text-stone-600">Published</span>
+                <span className="text-2xl font-bold text-green-600">
+                  {articles.filter(a => a.status === 'published').length}
+                </span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-stone-600">Drafts</span>
+                <span className="text-2xl font-bold text-blue-600">
+                  {articles.filter(a => a.status === 'drafts').length}
+                </span>
+              </div>
+            </div>
           </div>
         </div>
-        <Link href="/create-article" className={styles['write-button']}>
+        
+        <NotificationBell />
+        
+        <Link 
+          href="/create-article" 
+          className={`${styles['glass-button']} ${styles['glass-button-primary']} block w-full px-6 py-4 text-center font-semibold mt-4`}
+        >
           Write
         </Link>
       </aside>
 
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (
-        <div className={thoughtStyles.modalOverlay}>
-          <div className={thoughtStyles.modal}>
-            <h3 className={thoughtStyles.modalTitle}>Confirm Delete</h3>
-            <p className={thoughtStyles.modalText}>
+        <div className={styles['glass-modal-overlay']}>
+          <div className={`${styles['glass-modal']} p-8`}>
+            <h3 className="text-xl font-bold text-red-700 mb-4 font-serif">Confirm Delete</h3>
+            <p className="text-stone-700 mb-6">
               Are you sure you want to delete this article? This action cannot be undone.
             </p>
-            <div className={thoughtStyles.modalButtons}>
+            <div className="flex gap-3">
               <button
-                className={thoughtStyles.cancelButton}
+                className={`${styles['glass-button']} flex-1 px-4 py-3 font-medium`}
                 onClick={() => {
                   setShowDeleteModal(false)
                   setArticleToDelete(null)
@@ -359,7 +395,10 @@ export default function MyThoughtsPage() {
               >
                 Cancel
               </button>
-              <button className={thoughtStyles.confirmButton} onClick={handleDelete}>
+              <button 
+                className={`${styles['glass-button']} ${styles['glass-button-danger']} flex-1 px-4 py-3 font-medium`}
+                onClick={handleDelete}
+              >
                 Delete
               </button>
             </div>
