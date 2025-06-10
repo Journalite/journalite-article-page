@@ -8,6 +8,7 @@ import { onAuthStateChanged, signOut } from 'firebase/auth'
 import { getArticles, getArticlesByTag, Article as FirestoreArticle } from '@/firebase/articles'
 import NotificationBell from '@/components/NotificationBell'
 import LeftSidebar from '@/components/LeftSidebar'
+import TopLeftLogo from '@/components/TopLeftLogo'
 import ShareModal from '@/components/ShareModal'
 
 // Types for article data
@@ -290,6 +291,9 @@ export default function ExploreClient() {
         <div className={`${styles['menu-overlay']} ${styles['active']}`} onClick={toggleSidebar}></div>
       )}
     
+      {/* TOP LEFT LOGO */}
+      <TopLeftLogo />
+    
       {/* LEFT SIDEBAR */}
       <LeftSidebar 
         isAuthenticated={isAuthenticated} 
@@ -445,10 +449,9 @@ export default function ExploreClient() {
         <ShareModal 
           isOpen={isShareModalOpen}
           onClose={handleCloseShareModal}
+          highlightText={sharingArticleDetails.excerpt || 'Check out this article'}
           articleTitle={sharingArticleDetails.title}
-          articleUrl={`https://mvp.journalite.app/articles?slug=${encodeURIComponent(sharingArticleDetails.slug)}`}
-          coverImageUrl={sharingArticleDetails.coverImageUrl}
-          excerpt={sharingArticleDetails.excerpt}
+          shareUrl={`https://mvp.journalite.app/articles?slug=${encodeURIComponent(sharingArticleDetails.slug)}`}
         />
       )}
     </div>

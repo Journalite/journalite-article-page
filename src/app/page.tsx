@@ -12,6 +12,7 @@ import LeftSidebar from '@/components/LeftSidebar'
 import ShareModal from '@/components/ShareModal'
 import CenterSearchBar from '@/components/CenterSearchBar'
 import Head from 'next/head'
+import TopLeftLogo from '@/components/TopLeftLogo'
 
 // Types for our article data based on actual API structure
 interface Article {
@@ -349,6 +350,9 @@ export default function HomePage() {
         <div className={`${styles['menu-overlay']} ${styles['active']}`} onClick={toggleSidebar}></div>
       )}
     
+      {/* TOP LEFT LOGO */}
+      <TopLeftLogo />
+    
       {/* LEFT SIDEBAR */}
       <LeftSidebar 
         isAuthenticated={isAuthenticated} 
@@ -490,10 +494,9 @@ export default function HomePage() {
           <ShareModal 
             isOpen={isShareModalOpen}
             onClose={handleCloseShareModal}
+            highlightText={sharingArticleDetails.excerpt || 'Check out this article'}
             articleTitle={sharingArticleDetails.title}
-            articleUrl={`${'https://mvp.journalite.app'}/articles?slug=${encodeURIComponent(sharingArticleDetails.slug)}`}
-            coverImageUrl={sharingArticleDetails.coverImageUrl}
-            excerpt={sharingArticleDetails.excerpt}
+            shareUrl={`${'https://mvp.journalite.app'}/articles?slug=${encodeURIComponent(sharingArticleDetails.slug)}`}
           />
         )}
     </div>

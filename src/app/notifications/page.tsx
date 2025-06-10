@@ -10,6 +10,7 @@ import { NotificationIcon } from '@/components/icons/CustomIcons'
 import styles from '@/styles/home.module.css'
 import notificationStyles from './notifications.module.css'
 import LeftSidebar from '@/components/LeftSidebar'
+import TopLeftLogo from '@/components/TopLeftLogo'
 
 export default function NotificationsPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -159,6 +160,9 @@ export default function NotificationsPage() {
 
   return (
     <div className={styles['three-column-layout']}>
+      {/* TOP LEFT LOGO */}
+      <TopLeftLogo />
+      
       {/* LEFT SIDEBAR */}
       <LeftSidebar 
         isAuthenticated={isAuthenticated}

@@ -1,276 +1,5 @@
 (globalThis.TURBOPACK = globalThis.TURBOPACK || []).push([typeof document === "object" ? document.currentScript : undefined, {
 
-"[project]/src/styles/home.module.css [app-client] (css module)": ((__turbopack_context__) => {
-
-var { g: global, __dirname } = __turbopack_context__;
-{
-__turbopack_context__.v({
-  "active": "home-module__i0QXTG__active",
-  "activeTab": "home-module__i0QXTG__activeTab",
-  "adminAvatar": "home-module__i0QXTG__adminAvatar",
-  "alertInfo": "home-module__i0QXTG__alertInfo",
-  "alertSuccess": "home-module__i0QXTG__alertSuccess",
-  "alertWarning": "home-module__i0QXTG__alertWarning",
-  "article-card": "home-module__i0QXTG__article-card",
-  "article-container": "home-module__i0QXTG__article-container",
-  "article-content": "home-module__i0QXTG__article-content",
-  "article-cover-image": "home-module__i0QXTG__article-cover-image",
-  "article-excerpt": "home-module__i0QXTG__article-excerpt",
-  "article-grid": "home-module__i0QXTG__article-grid",
-  "article-header": "home-module__i0QXTG__article-header",
-  "article-image": "home-module__i0QXTG__article-image",
-  "article-meta": "home-module__i0QXTG__article-meta",
-  "article-page": "home-module__i0QXTG__article-page",
-  "article-paragraph": "home-module__i0QXTG__article-paragraph",
-  "article-tag": "home-module__i0QXTG__article-tag",
-  "article-tags": "home-module__i0QXTG__article-tags",
-  "article-title": "home-module__i0QXTG__article-title",
-  "articleForm": "home-module__i0QXTG__articleForm",
-  "articleFormContainer": "home-module__i0QXTG__articleFormContainer",
-  "articleFormHeader": "home-module__i0QXTG__articleFormHeader",
-  "articleFormSubtitle": "home-module__i0QXTG__articleFormSubtitle",
-  "articleFormTitle": "home-module__i0QXTG__articleFormTitle",
-  "author-avatar": "home-module__i0QXTG__author-avatar",
-  "author-info": "home-module__i0QXTG__author-info",
-  "author-name": "home-module__i0QXTG__author-name",
-  "avatarPlaceholder": "home-module__i0QXTG__avatarPlaceholder",
-  "back-link": "home-module__i0QXTG__back-link",
-  "backButton": "home-module__i0QXTG__backButton",
-  "backLink": "home-module__i0QXTG__backLink",
-  "backToAllButton": "home-module__i0QXTG__backToAllButton",
-  "cancelButton": "home-module__i0QXTG__cancelButton",
-  "cancelReplyButton": "home-module__i0QXTG__cancelReplyButton",
-  "center-column": "home-module__i0QXTG__center-column",
-  "centerSearchContainer": "home-module__i0QXTG__centerSearchContainer",
-  "centerSearchInput": "home-module__i0QXTG__centerSearchInput",
-  "centerSearchNoResults": "home-module__i0QXTG__centerSearchNoResults",
-  "centerSearchResultItem": "home-module__i0QXTG__centerSearchResultItem",
-  "centerSearchResults": "home-module__i0QXTG__centerSearchResults",
-  "centerSearchWrapper": "home-module__i0QXTG__centerSearchWrapper",
-  "clearSearchButton": "home-module__i0QXTG__clearSearchButton",
-  "closePromptButton": "home-module__i0QXTG__closePromptButton",
-  "codeBlock": "home-module__i0QXTG__codeBlock",
-  "codeBlockContainer": "home-module__i0QXTG__codeBlockContainer",
-  "codeContent": "home-module__i0QXTG__codeContent",
-  "codeLineNumbers": "home-module__i0QXTG__codeLineNumbers",
-  "comment": "home-module__i0QXTG__comment",
-  "commentActions": "home-module__i0QXTG__commentActions",
-  "commentAuthor": "home-module__i0QXTG__commentAuthor",
-  "commentAvatar": "home-module__i0QXTG__commentAvatar",
-  "commentContent": "home-module__i0QXTG__commentContent",
-  "commentControls": "home-module__i0QXTG__commentControls",
-  "commentDate": "home-module__i0QXTG__commentDate",
-  "commentForm": "home-module__i0QXTG__commentForm",
-  "commentHeader": "home-module__i0QXTG__commentHeader",
-  "commentInput": "home-module__i0QXTG__commentInput",
-  "commentInputContainer": "home-module__i0QXTG__commentInputContainer",
-  "commentInputWrapper": "home-module__i0QXTG__commentInputWrapper",
-  "commentItem": "home-module__i0QXTG__commentItem",
-  "commentMeta": "home-module__i0QXTG__commentMeta",
-  "commentsList": "home-module__i0QXTG__commentsList",
-  "container": "home-module__i0QXTG__container",
-  "copyButton": "home-module__i0QXTG__copyButton",
-  "cover-image": "home-module__i0QXTG__cover-image",
-  "cta-button": "home-module__i0QXTG__cta-button",
-  "deleteButton": "home-module__i0QXTG__deleteButton",
-  "developerAvatar": "home-module__i0QXTG__developerAvatar",
-  "discussionSection": "home-module__i0QXTG__discussionSection",
-  "discussionTitle": "home-module__i0QXTG__discussionTitle",
-  "docContent": "home-module__i0QXTG__docContent",
-  "docNav": "home-module__i0QXTG__docNav",
-  "docNavItem": "home-module__i0QXTG__docNavItem",
-  "docNavItemActive": "home-module__i0QXTG__docNavItemActive",
-  "docSearchContainer": "home-module__i0QXTG__docSearchContainer",
-  "docSearchInput": "home-module__i0QXTG__docSearchInput",
-  "docSidebar": "home-module__i0QXTG__docSidebar",
-  "docSubheading": "home-module__i0QXTG__docSubheading",
-  "docText": "home-module__i0QXTG__docText",
-  "docTitle": "home-module__i0QXTG__docTitle",
-  "docsContainer": "home-module__i0QXTG__docsContainer",
-  "documentationContainer": "home-module__i0QXTG__documentationContainer",
-  "edit-button": "home-module__i0QXTG__edit-button",
-  "editorContainer": "home-module__i0QXTG__editorContainer",
-  "editorHeader": "home-module__i0QXTG__editorHeader",
-  "emptyState": "home-module__i0QXTG__emptyState",
-  "errorAlert": "home-module__i0QXTG__errorAlert",
-  "errorIcon": "home-module__i0QXTG__errorIcon",
-  "errorMessage": "home-module__i0QXTG__errorMessage",
-  "expanded": "home-module__i0QXTG__expanded",
-  "explore-container": "home-module__i0QXTG__explore-container",
-  "explore-header": "home-module__i0QXTG__explore-header",
-  "explore-section": "home-module__i0QXTG__explore-section",
-  "explore-subtitle": "home-module__i0QXTG__explore-subtitle",
-  "explore-title": "home-module__i0QXTG__explore-title",
-  "fadeIn": "home-module__i0QXTG__fadeIn",
-  "feature-desc": "home-module__i0QXTG__feature-desc",
-  "feature-large": "home-module__i0QXTG__feature-large",
-  "feature-title": "home-module__i0QXTG__feature-title",
-  "featured-articles-grid": "home-module__i0QXTG__featured-articles-grid",
-  "featured-card": "home-module__i0QXTG__featured-card",
-  "featured-content": "home-module__i0QXTG__featured-content",
-  "featured-excerpt": "home-module__i0QXTG__featured-excerpt",
-  "featured-image": "home-module__i0QXTG__featured-image",
-  "featured-label": "home-module__i0QXTG__featured-label",
-  "featured-meta": "home-module__i0QXTG__featured-meta",
-  "featured-title": "home-module__i0QXTG__featured-title",
-  "features": "home-module__i0QXTG__features",
-  "focused": "home-module__i0QXTG__focused",
-  "follow-button": "home-module__i0QXTG__follow-button",
-  "footer": "home-module__i0QXTG__footer",
-  "formActions": "home-module__i0QXTG__formActions",
-  "formControl": "home-module__i0QXTG__formControl",
-  "formGroup": "home-module__i0QXTG__formGroup",
-  "formLabel": "home-module__i0QXTG__formLabel",
-  "formTextarea": "home-module__i0QXTG__formTextarea",
-  "fullWidthContainer": "home-module__i0QXTG__fullWidthContainer",
-  "function": "home-module__i0QXTG__function",
-  "header": "home-module__i0QXTG__header",
-  "hero": "home-module__i0QXTG__hero",
-  "hero-subtitle": "home-module__i0QXTG__hero-subtitle",
-  "hero-title": "home-module__i0QXTG__hero-title",
-  "highlight": "home-module__i0QXTG__highlight",
-  "holographic-shine": "home-module__i0QXTG__holographic-shine",
-  "imagePreview": "home-module__i0QXTG__imagePreview",
-  "keyword": "home-module__i0QXTG__keyword",
-  "left-sidebar": "home-module__i0QXTG__left-sidebar",
-  "likeButton": "home-module__i0QXTG__likeButton",
-  "liked": "home-module__i0QXTG__liked",
-  "loading": "home-module__i0QXTG__loading",
-  "loadingSpinner": "home-module__i0QXTG__loadingSpinner",
-  "loginButton": "home-module__i0QXTG__loginButton",
-  "loginLink": "home-module__i0QXTG__loginLink",
-  "loginPrompt": "home-module__i0QXTG__loginPrompt",
-  "loginPromptButtons": "home-module__i0QXTG__loginPromptButtons",
-  "logo": "home-module__i0QXTG__logo",
-  "main-grid": "home-module__i0QXTG__main-grid",
-  "menu-overlay": "home-module__i0QXTG__menu-overlay",
-  "nav-create": "home-module__i0QXTG__nav-create",
-  "nav-explore": "home-module__i0QXTG__nav-explore",
-  "nav-home": "home-module__i0QXTG__nav-home",
-  "nav-icon": "home-module__i0QXTG__nav-icon",
-  "nav-learn": "home-module__i0QXTG__nav-learn",
-  "nav-link": "home-module__i0QXTG__nav-link",
-  "nav-login": "home-module__i0QXTG__nav-login",
-  "nav-news": "home-module__i0QXTG__nav-news",
-  "nav-signin": "home-module__i0QXTG__nav-signin",
-  "nav-text": "home-module__i0QXTG__nav-text",
-  "nav-thoughts": "home-module__i0QXTG__nav-thoughts",
-  "nav-trending": "home-module__i0QXTG__nav-trending",
-  "no-results": "home-module__i0QXTG__no-results",
-  "noComments": "home-module__i0QXTG__noComments",
-  "noResults": "home-module__i0QXTG__noResults",
-  "number": "home-module__i0QXTG__number",
-  "open": "home-module__i0QXTG__open",
-  "operator": "home-module__i0QXTG__operator",
-  "optionalLabel": "home-module__i0QXTG__optionalLabel",
-  "profile-button": "home-module__i0QXTG__profile-button",
-  "profile-dropdown": "home-module__i0QXTG__profile-dropdown",
-  "profile-dropdown-item": "home-module__i0QXTG__profile-dropdown-item",
-  "profile-dropdown-separator": "home-module__i0QXTG__profile-dropdown-separator",
-  "profileAvatar": "home-module__i0QXTG__profileAvatar",
-  "profileBio": "home-module__i0QXTG__profileBio",
-  "profileContent": "home-module__i0QXTG__profileContent",
-  "profileHeader": "home-module__i0QXTG__profileHeader",
-  "profileInfo": "home-module__i0QXTG__profileInfo",
-  "profileName": "home-module__i0QXTG__profileName",
-  "profileUsername": "home-module__i0QXTG__profileUsername",
-  "quote-card": "home-module__i0QXTG__quote-card",
-  "quote-tag": "home-module__i0QXTG__quote-tag",
-  "reaction-bar": "home-module__i0QXTG__reaction-bar",
-  "reaction-button": "home-module__i0QXTG__reaction-button",
-  "reaction-icon": "home-module__i0QXTG__reaction-icon",
-  "read-link": "home-module__i0QXTG__read-link",
-  "repliesList": "home-module__i0QXTG__repliesList",
-  "replyActions": "home-module__i0QXTG__replyActions",
-  "replyAuthor": "home-module__i0QXTG__replyAuthor",
-  "replyAvatar": "home-module__i0QXTG__replyAvatar",
-  "replyButton": "home-module__i0QXTG__replyButton",
-  "replyContent": "home-module__i0QXTG__replyContent",
-  "replyDate": "home-module__i0QXTG__replyDate",
-  "replyForm": "home-module__i0QXTG__replyForm",
-  "replyHeader": "home-module__i0QXTG__replyHeader",
-  "replyInput": "home-module__i0QXTG__replyInput",
-  "replyInputContainer": "home-module__i0QXTG__replyInputContainer",
-  "replyItem": "home-module__i0QXTG__replyItem",
-  "replyMeta": "home-module__i0QXTG__replyMeta",
-  "resultUserAvatar": "home-module__i0QXTG__resultUserAvatar",
-  "resultUserInfo": "home-module__i0QXTG__resultUserInfo",
-  "resultUserName": "home-module__i0QXTG__resultUserName",
-  "resultUserUsername": "home-module__i0QXTG__resultUserUsername",
-  "right-sidebar": "home-module__i0QXTG__right-sidebar",
-  "roleSelect": "home-module__i0QXTG__roleSelect",
-  "roleTag": "home-module__i0QXTG__roleTag",
-  "searchContainer": "home-module__i0QXTG__searchContainer",
-  "searchIcon": "home-module__i0QXTG__searchIcon",
-  "searchInput": "home-module__i0QXTG__searchInput",
-  "searchInputWrapper": "home-module__i0QXTG__searchInputWrapper",
-  "searchLoadingIcon": "home-module__i0QXTG__searchLoadingIcon",
-  "searchResultAvatar": "home-module__i0QXTG__searchResultAvatar",
-  "searchResultInfo": "home-module__i0QXTG__searchResultInfo",
-  "searchResultItem": "home-module__i0QXTG__searchResultItem",
-  "searchResultName": "home-module__i0QXTG__searchResultName",
-  "searchResultRole": "home-module__i0QXTG__searchResultRole",
-  "searchResultRoleAdmin": "home-module__i0QXTG__searchResultRoleAdmin",
-  "searchResultRoleDeveloper": "home-module__i0QXTG__searchResultRoleDeveloper",
-  "searchResultRoleUser": "home-module__i0QXTG__searchResultRoleUser",
-  "searchResultUsername": "home-module__i0QXTG__searchResultUsername",
-  "searchResults": "home-module__i0QXTG__searchResults",
-  "searchResultsContainer": "home-module__i0QXTG__searchResultsContainer",
-  "searchResultsTitle": "home-module__i0QXTG__searchResultsTitle",
-  "section-title": "home-module__i0QXTG__section-title",
-  "sectionHeading": "home-module__i0QXTG__sectionHeading",
-  "sectionTitle": "home-module__i0QXTG__sectionTitle",
-  "shimmer": "home-module__i0QXTG__shimmer",
-  "sidebar-collapse-button": "home-module__i0QXTG__sidebar-collapse-button",
-  "sidebar-footer": "home-module__i0QXTG__sidebar-footer",
-  "sidebar-header": "home-module__i0QXTG__sidebar-header",
-  "sidebar-heading": "home-module__i0QXTG__sidebar-heading",
-  "sidebarSection": "home-module__i0QXTG__sidebarSection",
-  "slideDown": "home-module__i0QXTG__slideDown",
-  "spin": "home-module__i0QXTG__spin",
-  "statBox": "home-module__i0QXTG__statBox",
-  "statLabel": "home-module__i0QXTG__statLabel",
-  "statNumber": "home-module__i0QXTG__statNumber",
-  "statsContainer": "home-module__i0QXTG__statsContainer",
-  "string": "home-module__i0QXTG__string",
-  "submitButton": "home-module__i0QXTG__submitButton",
-  "submitReplyButton": "home-module__i0QXTG__submitReplyButton",
-  "tabButton": "home-module__i0QXTG__tabButton",
-  "tabContainer": "home-module__i0QXTG__tabContainer",
-  "tag": "home-module__i0QXTG__tag",
-  "tag-button": "home-module__i0QXTG__tag-button",
-  "tag-button-active": "home-module__i0QXTG__tag-button-active",
-  "tag-description": "home-module__i0QXTG__tag-description",
-  "tag-header": "home-module__i0QXTG__tag-header",
-  "tag-list": "home-module__i0QXTG__tag-list",
-  "tags-selector": "home-module__i0QXTG__tags-selector",
-  "tagsPreview": "home-module__i0QXTG__tagsPreview",
-  "three-column-layout": "home-module__i0QXTG__three-column-layout",
-  "toggle-button": "home-module__i0QXTG__toggle-button",
-  "toggleRepliesButton": "home-module__i0QXTG__toggleRepliesButton",
-  "top-left-logo": "home-module__i0QXTG__top-left-logo",
-  "topic-tag": "home-module__i0QXTG__topic-tag",
-  "topics": "home-module__i0QXTG__topics",
-  "trending-list": "home-module__i0QXTG__trending-list",
-  "trending-tag": "home-module__i0QXTG__trending-tag",
-  "type": "home-module__i0QXTG__type",
-  "userAvatar": "home-module__i0QXTG__userAvatar",
-  "userManagementContainer": "home-module__i0QXTG__userManagementContainer",
-  "userTableCell": "home-module__i0QXTG__userTableCell",
-  "usersTable": "home-module__i0QXTG__usersTable",
-  "usersTableContainer": "home-module__i0QXTG__usersTableContainer",
-  "variable": "home-module__i0QXTG__variable",
-  "vertical-nav": "home-module__i0QXTG__vertical-nav",
-  "write-button": "home-module__i0QXTG__write-button",
-  "writer-avatar": "home-module__i0QXTG__writer-avatar",
-  "writer-info": "home-module__i0QXTG__writer-info",
-  "writer-item": "home-module__i0QXTG__writer-item",
-  "writer-name": "home-module__i0QXTG__writer-name",
-  "writers": "home-module__i0QXTG__writers",
-  "writing-tip": "home-module__i0QXTG__writing-tip",
-  "writing-tips": "home-module__i0QXTG__writing-tips",
-});
-}}),
 "[project]/src/firebase/clientApp.ts [app-client] (ecmascript)": ((__turbopack_context__) => {
 "use strict";
 
@@ -940,6 +669,316 @@ async function getArticlesByTag(tag, options = {}) {
 if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelpers !== null) {
     __turbopack_context__.k.registerExports(module, globalThis.$RefreshHelpers$);
 }
+}}),
+"[project]/src/styles/home.module.css [app-client] (css module)": ((__turbopack_context__) => {
+
+var { g: global, __dirname } = __turbopack_context__;
+{
+__turbopack_context__.v({
+  "active": "home-module__i0QXTG__active",
+  "activeTab": "home-module__i0QXTG__activeTab",
+  "adminAvatar": "home-module__i0QXTG__adminAvatar",
+  "alertInfo": "home-module__i0QXTG__alertInfo",
+  "alertSuccess": "home-module__i0QXTG__alertSuccess",
+  "alertWarning": "home-module__i0QXTG__alertWarning",
+  "article-card": "home-module__i0QXTG__article-card",
+  "article-container": "home-module__i0QXTG__article-container",
+  "article-content": "home-module__i0QXTG__article-content",
+  "article-cover-image": "home-module__i0QXTG__article-cover-image",
+  "article-excerpt": "home-module__i0QXTG__article-excerpt",
+  "article-grid": "home-module__i0QXTG__article-grid",
+  "article-header": "home-module__i0QXTG__article-header",
+  "article-image": "home-module__i0QXTG__article-image",
+  "article-meta": "home-module__i0QXTG__article-meta",
+  "article-page": "home-module__i0QXTG__article-page",
+  "article-paragraph": "home-module__i0QXTG__article-paragraph",
+  "article-tag": "home-module__i0QXTG__article-tag",
+  "article-tags": "home-module__i0QXTG__article-tags",
+  "article-title": "home-module__i0QXTG__article-title",
+  "articleForm": "home-module__i0QXTG__articleForm",
+  "articleFormContainer": "home-module__i0QXTG__articleFormContainer",
+  "articleFormHeader": "home-module__i0QXTG__articleFormHeader",
+  "articleFormSubtitle": "home-module__i0QXTG__articleFormSubtitle",
+  "articleFormTitle": "home-module__i0QXTG__articleFormTitle",
+  "author-avatar": "home-module__i0QXTG__author-avatar",
+  "author-info": "home-module__i0QXTG__author-info",
+  "author-name": "home-module__i0QXTG__author-name",
+  "avatarPlaceholder": "home-module__i0QXTG__avatarPlaceholder",
+  "back-link": "home-module__i0QXTG__back-link",
+  "backButton": "home-module__i0QXTG__backButton",
+  "backLink": "home-module__i0QXTG__backLink",
+  "backToAllButton": "home-module__i0QXTG__backToAllButton",
+  "cancelButton": "home-module__i0QXTG__cancelButton",
+  "cancelReplyButton": "home-module__i0QXTG__cancelReplyButton",
+  "center-column": "home-module__i0QXTG__center-column",
+  "centerSearchContainer": "home-module__i0QXTG__centerSearchContainer",
+  "centerSearchInput": "home-module__i0QXTG__centerSearchInput",
+  "centerSearchNoResults": "home-module__i0QXTG__centerSearchNoResults",
+  "centerSearchResultItem": "home-module__i0QXTG__centerSearchResultItem",
+  "centerSearchResults": "home-module__i0QXTG__centerSearchResults",
+  "centerSearchWrapper": "home-module__i0QXTG__centerSearchWrapper",
+  "clearSearchButton": "home-module__i0QXTG__clearSearchButton",
+  "closePromptButton": "home-module__i0QXTG__closePromptButton",
+  "codeBlock": "home-module__i0QXTG__codeBlock",
+  "codeBlockContainer": "home-module__i0QXTG__codeBlockContainer",
+  "codeContent": "home-module__i0QXTG__codeContent",
+  "codeLineNumbers": "home-module__i0QXTG__codeLineNumbers",
+  "comment": "home-module__i0QXTG__comment",
+  "commentActions": "home-module__i0QXTG__commentActions",
+  "commentAuthor": "home-module__i0QXTG__commentAuthor",
+  "commentAvatar": "home-module__i0QXTG__commentAvatar",
+  "commentContent": "home-module__i0QXTG__commentContent",
+  "commentControls": "home-module__i0QXTG__commentControls",
+  "commentDate": "home-module__i0QXTG__commentDate",
+  "commentForm": "home-module__i0QXTG__commentForm",
+  "commentHeader": "home-module__i0QXTG__commentHeader",
+  "commentInput": "home-module__i0QXTG__commentInput",
+  "commentInputContainer": "home-module__i0QXTG__commentInputContainer",
+  "commentInputWrapper": "home-module__i0QXTG__commentInputWrapper",
+  "commentItem": "home-module__i0QXTG__commentItem",
+  "commentMeta": "home-module__i0QXTG__commentMeta",
+  "commentsList": "home-module__i0QXTG__commentsList",
+  "container": "home-module__i0QXTG__container",
+  "copyButton": "home-module__i0QXTG__copyButton",
+  "cover-image": "home-module__i0QXTG__cover-image",
+  "cta-button": "home-module__i0QXTG__cta-button",
+  "deleteButton": "home-module__i0QXTG__deleteButton",
+  "developerAvatar": "home-module__i0QXTG__developerAvatar",
+  "discussionSection": "home-module__i0QXTG__discussionSection",
+  "discussionTitle": "home-module__i0QXTG__discussionTitle",
+  "docContent": "home-module__i0QXTG__docContent",
+  "docNav": "home-module__i0QXTG__docNav",
+  "docNavItem": "home-module__i0QXTG__docNavItem",
+  "docNavItemActive": "home-module__i0QXTG__docNavItemActive",
+  "docSearchContainer": "home-module__i0QXTG__docSearchContainer",
+  "docSearchInput": "home-module__i0QXTG__docSearchInput",
+  "docSidebar": "home-module__i0QXTG__docSidebar",
+  "docSubheading": "home-module__i0QXTG__docSubheading",
+  "docText": "home-module__i0QXTG__docText",
+  "docTitle": "home-module__i0QXTG__docTitle",
+  "docsContainer": "home-module__i0QXTG__docsContainer",
+  "documentationContainer": "home-module__i0QXTG__documentationContainer",
+  "edit-button": "home-module__i0QXTG__edit-button",
+  "editorContainer": "home-module__i0QXTG__editorContainer",
+  "editorHeader": "home-module__i0QXTG__editorHeader",
+  "emptyState": "home-module__i0QXTG__emptyState",
+  "errorAlert": "home-module__i0QXTG__errorAlert",
+  "errorIcon": "home-module__i0QXTG__errorIcon",
+  "errorMessage": "home-module__i0QXTG__errorMessage",
+  "expanded": "home-module__i0QXTG__expanded",
+  "explore-container": "home-module__i0QXTG__explore-container",
+  "explore-header": "home-module__i0QXTG__explore-header",
+  "explore-section": "home-module__i0QXTG__explore-section",
+  "explore-subtitle": "home-module__i0QXTG__explore-subtitle",
+  "explore-title": "home-module__i0QXTG__explore-title",
+  "fadeIn": "home-module__i0QXTG__fadeIn",
+  "feature-desc": "home-module__i0QXTG__feature-desc",
+  "feature-large": "home-module__i0QXTG__feature-large",
+  "feature-title": "home-module__i0QXTG__feature-title",
+  "featured-articles-grid": "home-module__i0QXTG__featured-articles-grid",
+  "featured-card": "home-module__i0QXTG__featured-card",
+  "featured-content": "home-module__i0QXTG__featured-content",
+  "featured-excerpt": "home-module__i0QXTG__featured-excerpt",
+  "featured-image": "home-module__i0QXTG__featured-image",
+  "featured-label": "home-module__i0QXTG__featured-label",
+  "featured-meta": "home-module__i0QXTG__featured-meta",
+  "featured-title": "home-module__i0QXTG__featured-title",
+  "features": "home-module__i0QXTG__features",
+  "focused": "home-module__i0QXTG__focused",
+  "follow-button": "home-module__i0QXTG__follow-button",
+  "footer": "home-module__i0QXTG__footer",
+  "formActions": "home-module__i0QXTG__formActions",
+  "formControl": "home-module__i0QXTG__formControl",
+  "formGroup": "home-module__i0QXTG__formGroup",
+  "formLabel": "home-module__i0QXTG__formLabel",
+  "formTextarea": "home-module__i0QXTG__formTextarea",
+  "fullWidthContainer": "home-module__i0QXTG__fullWidthContainer",
+  "function": "home-module__i0QXTG__function",
+  "header": "home-module__i0QXTG__header",
+  "hero": "home-module__i0QXTG__hero",
+  "hero-subtitle": "home-module__i0QXTG__hero-subtitle",
+  "hero-title": "home-module__i0QXTG__hero-title",
+  "highlight": "home-module__i0QXTG__highlight",
+  "holographic-shine": "home-module__i0QXTG__holographic-shine",
+  "imagePreview": "home-module__i0QXTG__imagePreview",
+  "keyword": "home-module__i0QXTG__keyword",
+  "left-sidebar": "home-module__i0QXTG__left-sidebar",
+  "likeButton": "home-module__i0QXTG__likeButton",
+  "liked": "home-module__i0QXTG__liked",
+  "loading": "home-module__i0QXTG__loading",
+  "loadingSpinner": "home-module__i0QXTG__loadingSpinner",
+  "loginButton": "home-module__i0QXTG__loginButton",
+  "loginLink": "home-module__i0QXTG__loginLink",
+  "loginPrompt": "home-module__i0QXTG__loginPrompt",
+  "loginPromptButtons": "home-module__i0QXTG__loginPromptButtons",
+  "logo": "home-module__i0QXTG__logo",
+  "main-grid": "home-module__i0QXTG__main-grid",
+  "menu-overlay": "home-module__i0QXTG__menu-overlay",
+  "nav-create": "home-module__i0QXTG__nav-create",
+  "nav-explore": "home-module__i0QXTG__nav-explore",
+  "nav-home": "home-module__i0QXTG__nav-home",
+  "nav-icon": "home-module__i0QXTG__nav-icon",
+  "nav-learn": "home-module__i0QXTG__nav-learn",
+  "nav-link": "home-module__i0QXTG__nav-link",
+  "nav-login": "home-module__i0QXTG__nav-login",
+  "nav-news": "home-module__i0QXTG__nav-news",
+  "nav-signin": "home-module__i0QXTG__nav-signin",
+  "nav-text": "home-module__i0QXTG__nav-text",
+  "nav-thoughts": "home-module__i0QXTG__nav-thoughts",
+  "nav-trending": "home-module__i0QXTG__nav-trending",
+  "no-results": "home-module__i0QXTG__no-results",
+  "noComments": "home-module__i0QXTG__noComments",
+  "noResults": "home-module__i0QXTG__noResults",
+  "number": "home-module__i0QXTG__number",
+  "open": "home-module__i0QXTG__open",
+  "operator": "home-module__i0QXTG__operator",
+  "optionalLabel": "home-module__i0QXTG__optionalLabel",
+  "profile-button": "home-module__i0QXTG__profile-button",
+  "profile-dropdown": "home-module__i0QXTG__profile-dropdown",
+  "profile-dropdown-item": "home-module__i0QXTG__profile-dropdown-item",
+  "profile-dropdown-separator": "home-module__i0QXTG__profile-dropdown-separator",
+  "profileAvatar": "home-module__i0QXTG__profileAvatar",
+  "profileBio": "home-module__i0QXTG__profileBio",
+  "profileContent": "home-module__i0QXTG__profileContent",
+  "profileHeader": "home-module__i0QXTG__profileHeader",
+  "profileInfo": "home-module__i0QXTG__profileInfo",
+  "profileName": "home-module__i0QXTG__profileName",
+  "profileUsername": "home-module__i0QXTG__profileUsername",
+  "quote-card": "home-module__i0QXTG__quote-card",
+  "quote-tag": "home-module__i0QXTG__quote-tag",
+  "reaction-bar": "home-module__i0QXTG__reaction-bar",
+  "reaction-button": "home-module__i0QXTG__reaction-button",
+  "reaction-icon": "home-module__i0QXTG__reaction-icon",
+  "read-link": "home-module__i0QXTG__read-link",
+  "repliesList": "home-module__i0QXTG__repliesList",
+  "replyActions": "home-module__i0QXTG__replyActions",
+  "replyAuthor": "home-module__i0QXTG__replyAuthor",
+  "replyAvatar": "home-module__i0QXTG__replyAvatar",
+  "replyButton": "home-module__i0QXTG__replyButton",
+  "replyContent": "home-module__i0QXTG__replyContent",
+  "replyDate": "home-module__i0QXTG__replyDate",
+  "replyForm": "home-module__i0QXTG__replyForm",
+  "replyHeader": "home-module__i0QXTG__replyHeader",
+  "replyInput": "home-module__i0QXTG__replyInput",
+  "replyInputContainer": "home-module__i0QXTG__replyInputContainer",
+  "replyItem": "home-module__i0QXTG__replyItem",
+  "replyMeta": "home-module__i0QXTG__replyMeta",
+  "resultUserAvatar": "home-module__i0QXTG__resultUserAvatar",
+  "resultUserInfo": "home-module__i0QXTG__resultUserInfo",
+  "resultUserName": "home-module__i0QXTG__resultUserName",
+  "resultUserUsername": "home-module__i0QXTG__resultUserUsername",
+  "right-sidebar": "home-module__i0QXTG__right-sidebar",
+  "roleSelect": "home-module__i0QXTG__roleSelect",
+  "roleTag": "home-module__i0QXTG__roleTag",
+  "searchContainer": "home-module__i0QXTG__searchContainer",
+  "searchIcon": "home-module__i0QXTG__searchIcon",
+  "searchInput": "home-module__i0QXTG__searchInput",
+  "searchInputWrapper": "home-module__i0QXTG__searchInputWrapper",
+  "searchLoadingIcon": "home-module__i0QXTG__searchLoadingIcon",
+  "searchResultAvatar": "home-module__i0QXTG__searchResultAvatar",
+  "searchResultInfo": "home-module__i0QXTG__searchResultInfo",
+  "searchResultItem": "home-module__i0QXTG__searchResultItem",
+  "searchResultName": "home-module__i0QXTG__searchResultName",
+  "searchResultRole": "home-module__i0QXTG__searchResultRole",
+  "searchResultRoleAdmin": "home-module__i0QXTG__searchResultRoleAdmin",
+  "searchResultRoleDeveloper": "home-module__i0QXTG__searchResultRoleDeveloper",
+  "searchResultRoleUser": "home-module__i0QXTG__searchResultRoleUser",
+  "searchResultUsername": "home-module__i0QXTG__searchResultUsername",
+  "searchResults": "home-module__i0QXTG__searchResults",
+  "searchResultsContainer": "home-module__i0QXTG__searchResultsContainer",
+  "searchResultsTitle": "home-module__i0QXTG__searchResultsTitle",
+  "section-title": "home-module__i0QXTG__section-title",
+  "sectionHeading": "home-module__i0QXTG__sectionHeading",
+  "sectionTitle": "home-module__i0QXTG__sectionTitle",
+  "shimmer": "home-module__i0QXTG__shimmer",
+  "sidebar-collapse-button": "home-module__i0QXTG__sidebar-collapse-button",
+  "sidebar-footer": "home-module__i0QXTG__sidebar-footer",
+  "sidebar-header": "home-module__i0QXTG__sidebar-header",
+  "sidebar-heading": "home-module__i0QXTG__sidebar-heading",
+  "sidebarSection": "home-module__i0QXTG__sidebarSection",
+  "slideDown": "home-module__i0QXTG__slideDown",
+  "spin": "home-module__i0QXTG__spin",
+  "statBox": "home-module__i0QXTG__statBox",
+  "statLabel": "home-module__i0QXTG__statLabel",
+  "statNumber": "home-module__i0QXTG__statNumber",
+  "statsContainer": "home-module__i0QXTG__statsContainer",
+  "string": "home-module__i0QXTG__string",
+  "submitButton": "home-module__i0QXTG__submitButton",
+  "submitReplyButton": "home-module__i0QXTG__submitReplyButton",
+  "tabButton": "home-module__i0QXTG__tabButton",
+  "tabContainer": "home-module__i0QXTG__tabContainer",
+  "tag": "home-module__i0QXTG__tag",
+  "tag-button": "home-module__i0QXTG__tag-button",
+  "tag-button-active": "home-module__i0QXTG__tag-button-active",
+  "tag-description": "home-module__i0QXTG__tag-description",
+  "tag-header": "home-module__i0QXTG__tag-header",
+  "tag-list": "home-module__i0QXTG__tag-list",
+  "tags-selector": "home-module__i0QXTG__tags-selector",
+  "tagsPreview": "home-module__i0QXTG__tagsPreview",
+  "three-column-layout": "home-module__i0QXTG__three-column-layout",
+  "toggle-button": "home-module__i0QXTG__toggle-button",
+  "toggleRepliesButton": "home-module__i0QXTG__toggleRepliesButton",
+  "top-left-logo": "home-module__i0QXTG__top-left-logo",
+  "topic-tag": "home-module__i0QXTG__topic-tag",
+  "topics": "home-module__i0QXTG__topics",
+  "trending-list": "home-module__i0QXTG__trending-list",
+  "trending-tag": "home-module__i0QXTG__trending-tag",
+  "type": "home-module__i0QXTG__type",
+  "userAvatar": "home-module__i0QXTG__userAvatar",
+  "userManagementContainer": "home-module__i0QXTG__userManagementContainer",
+  "userTableCell": "home-module__i0QXTG__userTableCell",
+  "usersTable": "home-module__i0QXTG__usersTable",
+  "usersTableContainer": "home-module__i0QXTG__usersTableContainer",
+  "variable": "home-module__i0QXTG__variable",
+  "vertical-nav": "home-module__i0QXTG__vertical-nav",
+  "write-button": "home-module__i0QXTG__write-button",
+  "writer-avatar": "home-module__i0QXTG__writer-avatar",
+  "writer-info": "home-module__i0QXTG__writer-info",
+  "writer-item": "home-module__i0QXTG__writer-item",
+  "writer-name": "home-module__i0QXTG__writer-name",
+  "writers": "home-module__i0QXTG__writers",
+  "writing-tip": "home-module__i0QXTG__writing-tip",
+  "writing-tips": "home-module__i0QXTG__writing-tips",
+});
+}}),
+"[project]/src/app/my-thoughts/my-thoughts.module.css [app-client] (css module)": ((__turbopack_context__) => {
+
+var { g: global, __dirname } = __turbopack_context__;
+{
+__turbopack_context__.v({
+  "actions": "my-thoughts-module__AMxrYW__actions",
+  "active": "my-thoughts-module__AMxrYW__active",
+  "articleActions": "my-thoughts-module__AMxrYW__articleActions",
+  "articleCard": "my-thoughts-module__AMxrYW__articleCard",
+  "articleContent": "my-thoughts-module__AMxrYW__articleContent",
+  "articleDate": "my-thoughts-module__AMxrYW__articleDate",
+  "articleExcerpt": "my-thoughts-module__AMxrYW__articleExcerpt",
+  "articleTag": "my-thoughts-module__AMxrYW__articleTag",
+  "articleTags": "my-thoughts-module__AMxrYW__articleTags",
+  "articleTitle": "my-thoughts-module__AMxrYW__articleTitle",
+  "articlesList": "my-thoughts-module__AMxrYW__articlesList",
+  "cancelButton": "my-thoughts-module__AMxrYW__cancelButton",
+  "confirmButton": "my-thoughts-module__AMxrYW__confirmButton",
+  "createButton": "my-thoughts-module__AMxrYW__createButton",
+  "deleteButton": "my-thoughts-module__AMxrYW__deleteButton",
+  "editButton": "my-thoughts-module__AMxrYW__editButton",
+  "emptyState": "my-thoughts-module__AMxrYW__emptyState",
+  "emptyStateButton": "my-thoughts-module__AMxrYW__emptyStateButton",
+  "header": "my-thoughts-module__AMxrYW__header",
+  "modal": "my-thoughts-module__AMxrYW__modal",
+  "modalButtons": "my-thoughts-module__AMxrYW__modalButtons",
+  "modalOverlay": "my-thoughts-module__AMxrYW__modalOverlay",
+  "modalText": "my-thoughts-module__AMxrYW__modalText",
+  "modalTitle": "my-thoughts-module__AMxrYW__modalTitle",
+  "statCard": "my-thoughts-module__AMxrYW__statCard",
+  "statLabel": "my-thoughts-module__AMxrYW__statLabel",
+  "statValue": "my-thoughts-module__AMxrYW__statValue",
+  "statsContainer": "my-thoughts-module__AMxrYW__statsContainer",
+  "tabButton": "my-thoughts-module__AMxrYW__tabButton",
+  "tabs": "my-thoughts-module__AMxrYW__tabs",
+  "title": "my-thoughts-module__AMxrYW__title",
+  "viewButton": "my-thoughts-module__AMxrYW__viewButton",
+});
 }}),
 "[project]/src/components/icons/CustomIcons.tsx [app-client] (ecmascript)": ((__turbopack_context__) => {
 "use strict";
@@ -2990,7 +3029,7 @@ if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelper
     __turbopack_context__.k.registerExports(module, globalThis.$RefreshHelpers$);
 }
 }}),
-"[project]/src/components/ShareModal.tsx [app-client] (ecmascript)": ((__turbopack_context__) => {
+"[project]/src/components/TopLeftLogo.tsx [app-client] (ecmascript)": ((__turbopack_context__) => {
 "use strict";
 
 var { g: global, __dirname, k: __turbopack_refresh__, m: module } = __turbopack_context__;
@@ -2999,1041 +3038,58 @@ __turbopack_context__.s({
     "default": (()=>__TURBOPACK__default__export__)
 });
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/jsx-dev-runtime.js [app-client] (ecmascript)");
-var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$styled$2d$jsx$2f$style$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/styled-jsx/style.js [app-client] (ecmascript)");
-var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
-var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$icons$2f$CustomIcons$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/icons/CustomIcons.tsx [app-client] (ecmascript)");
-// import styles from './ShareModal.module.css'; // Unused
-var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2d$dom$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react-dom/index.js [app-client] (ecmascript)");
-;
-var _s = __turbopack_context__.k.signature();
-'use client';
-;
-;
-;
-;
-const ShareModal = ({ isOpen, onClose, highlightText, articleTitle, shareUrl })=>{
-    _s();
-    const [copied, setCopied] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
-    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
-        "ShareModal.useEffect": ()=>{
-            if (copied) {
-                const timer = setTimeout({
-                    "ShareModal.useEffect.timer": ()=>setCopied(false)
-                }["ShareModal.useEffect.timer"], 3000);
-                return ({
-                    "ShareModal.useEffect": ()=>clearTimeout(timer)
-                })["ShareModal.useEffect"];
-            }
-        }
-    }["ShareModal.useEffect"], [
-        copied
-    ]);
-    // Handle escape key
-    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
-        "ShareModal.useEffect": ()=>{
-            const handleEscape = {
-                "ShareModal.useEffect.handleEscape": (e)=>{
-                    if (e.key === 'Escape') onClose();
-                }
-            }["ShareModal.useEffect.handleEscape"];
-            if (isOpen) {
-                document.addEventListener('keydown', handleEscape);
-                document.body.style.overflow = 'hidden';
-            }
-            return ({
-                "ShareModal.useEffect": ()=>{
-                    document.removeEventListener('keydown', handleEscape);
-                    document.body.style.overflow = 'unset';
-                }
-            })["ShareModal.useEffect"];
-        }
-    }["ShareModal.useEffect"], [
-        isOpen,
-        onClose
-    ]);
-    const handleCopyLink = async ()=>{
-        try {
-            await navigator.clipboard.writeText(shareUrl);
-            setCopied(true);
-        } catch (error) {
-            console.error('Failed to copy link:', error);
-        }
-    };
-    const handleNativeShare = async ()=>{
-        if (navigator.share) {
-            try {
-                await navigator.share({
-                    title: `Highlight from "${articleTitle}"`,
-                    text: `"${highlightText}" - from "${articleTitle}"`,
-                    url: shareUrl
-                });
-                onClose();
-            } catch (error) {
-                if (error.name !== 'AbortError') {
-                    console.error('Error sharing:', error);
-                }
-            }
-        }
-    };
-    // const shareText = `"${highlightText}" - from "${articleTitle}"`; // Unused
-    if (!isOpen) return null;
-    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2d$dom$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["createPortal"])(/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-        style: {
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 10000,
-            padding: '1rem'
-        },
-        onClick: onClose,
-        className: "jsx-8795408d21c696e",
-        children: [
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                style: {
-                    backgroundColor: 'white',
-                    borderRadius: '1rem',
-                    padding: '2rem',
-                    maxWidth: '500px',
-                    width: '100%',
-                    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-                    position: 'relative',
-                    animation: 'modalSlideIn 0.3s ease-out'
-                },
-                onClick: (e)=>e.stopPropagation(),
-                className: "jsx-8795408d21c696e",
-                children: [
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                        onClick: onClose,
-                        style: {
-                            position: 'absolute',
-                            top: '1rem',
-                            right: '1rem',
-                            background: 'none',
-                            border: 'none',
-                            fontSize: '1.5rem',
-                            cursor: 'pointer',
-                            color: '#6B7280',
-                            padding: '0.25rem',
-                            borderRadius: '0.375rem',
-                            transition: 'color 0.2s ease'
-                        },
-                        onMouseOver: (e)=>e.currentTarget.style.color = '#374151',
-                        onMouseOut: (e)=>e.currentTarget.style.color = '#6B7280',
-                        className: "jsx-8795408d21c696e",
-                        children: "×"
-                    }, void 0, false, {
-                        fileName: "[project]/src/components/ShareModal.tsx",
-                        lineNumber: 110,
-                        columnNumber: 9
-                    }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        style: {
-                            marginBottom: '1.5rem'
-                        },
-                        className: "jsx-8795408d21c696e",
-                        children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
-                                style: {
-                                    margin: '0 0 0.5rem 0',
-                                    fontSize: '1.25rem',
-                                    fontWeight: '600',
-                                    color: '#1F2937'
-                                },
-                                className: "jsx-8795408d21c696e",
-                                children: [
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$icons$2f$CustomIcons$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SparkleIcon"], {
-                                        size: 20,
-                                        color: "#3b82f6"
-                                    }, void 0, false, {
-                                        fileName: "[project]/src/components/ShareModal.tsx",
-                                        lineNumber: 139,
-                                        columnNumber: 13
-                                    }, this),
-                                    "Share Highlight"
-                                ]
-                            }, void 0, true, {
-                                fileName: "[project]/src/components/ShareModal.tsx",
-                                lineNumber: 133,
-                                columnNumber: 11
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                style: {
-                                    margin: 0,
-                                    color: '#6B7280',
-                                    fontSize: '0.875rem'
-                                },
-                                className: "jsx-8795408d21c696e",
-                                children: [
-                                    'Share this highlight from "',
-                                    articleTitle,
-                                    '"'
-                                ]
-                            }, void 0, true, {
-                                fileName: "[project]/src/components/ShareModal.tsx",
-                                lineNumber: 142,
-                                columnNumber: 11
-                            }, this)
-                        ]
-                    }, void 0, true, {
-                        fileName: "[project]/src/components/ShareModal.tsx",
-                        lineNumber: 132,
-                        columnNumber: 9
-                    }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        style: {
-                            backgroundColor: '#F9FAFB',
-                            border: '2px solid #E5E7EB',
-                            borderRadius: '0.75rem',
-                            padding: '1.25rem',
-                            marginBottom: '1.5rem'
-                        },
-                        className: "jsx-8795408d21c696e",
-                        children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                style: {
-                                    fontSize: '1rem',
-                                    lineHeight: '1.6',
-                                    color: '#374151',
-                                    fontStyle: 'italic',
-                                    marginBottom: '0.75rem'
-                                },
-                                className: "jsx-8795408d21c696e",
-                                children: [
-                                    '"',
-                                    highlightText,
-                                    '"'
-                                ]
-                            }, void 0, true, {
-                                fileName: "[project]/src/components/ShareModal.tsx",
-                                lineNumber: 159,
-                                columnNumber: 11
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                style: {
-                                    fontSize: '0.875rem',
-                                    color: '#6B7280',
-                                    fontWeight: '500'
-                                },
-                                className: "jsx-8795408d21c696e",
-                                children: [
-                                    '— from "',
-                                    articleTitle,
-                                    '"'
-                                ]
-                            }, void 0, true, {
-                                fileName: "[project]/src/components/ShareModal.tsx",
-                                lineNumber: 168,
-                                columnNumber: 11
-                            }, this)
-                        ]
-                    }, void 0, true, {
-                        fileName: "[project]/src/components/ShareModal.tsx",
-                        lineNumber: 152,
-                        columnNumber: 9
-                    }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        style: {
-                            marginBottom: '1.5rem'
-                        },
-                        className: "jsx-8795408d21c696e",
-                        children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
-                                style: {
-                                    display: 'block',
-                                    fontSize: '0.875rem',
-                                    fontWeight: '500',
-                                    color: '#374151',
-                                    marginBottom: '0.5rem'
-                                },
-                                className: "jsx-8795408d21c696e",
-                                children: "Share Link"
-                            }, void 0, false, {
-                                fileName: "[project]/src/components/ShareModal.tsx",
-                                lineNumber: 179,
-                                columnNumber: 11
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                style: {
-                                    display: 'flex',
-                                    gap: '0.5rem'
-                                },
-                                className: "jsx-8795408d21c696e",
-                                children: [
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
-                                        type: "text",
-                                        value: shareUrl,
-                                        readOnly: true,
-                                        style: {
-                                            flex: 1,
-                                            padding: '0.75rem',
-                                            border: '1px solid #D1D5DB',
-                                            borderRadius: '0.5rem',
-                                            fontSize: '0.875rem',
-                                            backgroundColor: '#F9FAFB',
-                                            fontFamily: 'monospace'
-                                        },
-                                        className: "jsx-8795408d21c696e"
-                                    }, void 0, false, {
-                                        fileName: "[project]/src/components/ShareModal.tsx",
-                                        lineNumber: 192,
-                                        columnNumber: 13
-                                    }, this),
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                        onClick: handleCopyLink,
-                                        style: {
-                                            padding: '0.75rem 1rem',
-                                            backgroundColor: copied ? '#10B981' : '#3B82F6',
-                                            color: 'white',
-                                            border: 'none',
-                                            borderRadius: '0.5rem',
-                                            fontSize: '0.875rem',
-                                            fontWeight: '500',
-                                            cursor: 'pointer',
-                                            transition: 'all 0.2s ease',
-                                            whiteSpace: 'nowrap'
-                                        },
-                                        className: "jsx-8795408d21c696e",
-                                        children: copied ? '✓ Copied!' : '📋 Copy'
-                                    }, void 0, false, {
-                                        fileName: "[project]/src/components/ShareModal.tsx",
-                                        lineNumber: 206,
-                                        columnNumber: 13
-                                    }, this)
-                                ]
-                            }, void 0, true, {
-                                fileName: "[project]/src/components/ShareModal.tsx",
-                                lineNumber: 188,
-                                columnNumber: 11
-                            }, this)
-                        ]
-                    }, void 0, true, {
-                        fileName: "[project]/src/components/ShareModal.tsx",
-                        lineNumber: 178,
-                        columnNumber: 9
-                    }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        style: {
-                            display: 'flex',
-                            gap: '0.75rem',
-                            justifyContent: 'flex-end'
-                        },
-                        className: "jsx-8795408d21c696e",
-                        children: [
-                            "object" !== 'undefined' && typeof navigator !== 'undefined' && 'share' in navigator && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                onClick: handleNativeShare,
-                                style: {
-                                    padding: '0.75rem 1.5rem',
-                                    backgroundColor: '#6366F1',
-                                    color: 'white',
-                                    border: 'none',
-                                    borderRadius: '0.5rem',
-                                    fontSize: '0.875rem',
-                                    fontWeight: '500',
-                                    cursor: 'pointer',
-                                    transition: 'background-color 0.2s ease',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '0.5rem'
-                                },
-                                onMouseOver: (e)=>e.currentTarget.style.backgroundColor = '#5B21B6',
-                                onMouseOut: (e)=>e.currentTarget.style.backgroundColor = '#6366F1',
-                                className: "jsx-8795408d21c696e",
-                                children: "📤 Share"
-                            }, void 0, false, {
-                                fileName: "[project]/src/components/ShareModal.tsx",
-                                lineNumber: 233,
-                                columnNumber: 13
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                onClick: onClose,
-                                style: {
-                                    padding: '0.75rem 1.5rem',
-                                    backgroundColor: '#F3F4F6',
-                                    color: '#374151',
-                                    border: 'none',
-                                    borderRadius: '0.5rem',
-                                    fontSize: '0.875rem',
-                                    fontWeight: '500',
-                                    cursor: 'pointer',
-                                    transition: 'background-color 0.2s ease'
-                                },
-                                onMouseOver: (e)=>e.currentTarget.style.backgroundColor = '#E5E7EB',
-                                onMouseOut: (e)=>e.currentTarget.style.backgroundColor = '#F3F4F6',
-                                className: "jsx-8795408d21c696e",
-                                children: "Close"
-                            }, void 0, false, {
-                                fileName: "[project]/src/components/ShareModal.tsx",
-                                lineNumber: 256,
-                                columnNumber: 11
-                            }, this)
-                        ]
-                    }, void 0, true, {
-                        fileName: "[project]/src/components/ShareModal.tsx",
-                        lineNumber: 227,
-                        columnNumber: 9
-                    }, this)
-                ]
-            }, void 0, true, {
-                fileName: "[project]/src/components/ShareModal.tsx",
-                lineNumber: 96,
-                columnNumber: 7
-            }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$styled$2d$jsx$2f$style$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
-                id: "8795408d21c696e",
-                children: "@keyframes modalSlideIn{0%{opacity:0;transform:translateY(-20px)scale(.95)}to{opacity:1;transform:translateY(0)scale(1)}}"
-            }, void 0, false, void 0, this)
-        ]
-    }, void 0, true, {
-        fileName: "[project]/src/components/ShareModal.tsx",
-        lineNumber: 80,
-        columnNumber: 5
-    }, this), document.body);
-};
-_s(ShareModal, "iLRnj6p1aUC92XRQ4XjssuOA6JM=");
-_c = ShareModal;
-const __TURBOPACK__default__export__ = ShareModal;
-var _c;
-__turbopack_context__.k.register(_c, "ShareModal");
-if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelpers !== null) {
-    __turbopack_context__.k.registerExports(module, globalThis.$RefreshHelpers$);
-}
-}}),
-"[project]/src/services/userService.ts [app-client] (ecmascript)": ((__turbopack_context__) => {
-"use strict";
-
-var { g: global, __dirname, k: __turbopack_refresh__, m: module } = __turbopack_context__;
-{
-__turbopack_context__.s({
-    "createUserProfile": (()=>createUserProfile),
-    "deleteUserAccount": (()=>deleteUserAccount),
-    "followUser": (()=>followUser),
-    "getFollowers": (()=>getFollowers),
-    "getFollowing": (()=>getFollowing),
-    "getUserProfile": (()=>getUserProfile),
-    "getUserProfileByEmail": (()=>getUserProfileByEmail),
-    "isFollowing": (()=>isFollowing),
-    "isUsernameTaken": (()=>isUsernameTaken),
-    "searchUsers": (()=>searchUsers),
-    "unfollowUser": (()=>unfollowUser),
-    "updateUserBio": (()=>updateUserBio),
-    "updateUserInterests": (()=>updateUserInterests)
-});
-var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$firebase$2f$firestore$2f$dist$2f$esm$2f$index$2e$esm$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$module__evaluation$3e$__ = __turbopack_context__.i("[project]/node_modules/firebase/firestore/dist/esm/index.esm.js [app-client] (ecmascript) <module evaluation>");
-var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/@firebase/firestore/dist/index.esm2017.js [app-client] (ecmascript)");
-var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$firebase$2f$auth$2f$dist$2f$esm$2f$index$2e$esm$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$module__evaluation$3e$__ = __turbopack_context__.i("[project]/node_modules/firebase/auth/dist/esm/index.esm.js [app-client] (ecmascript) <module evaluation>");
-var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$auth$2f$dist$2f$esm2017$2f$index$2d$c92d61ad$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__al__as__updateProfile$3e$__ = __turbopack_context__.i("[project]/node_modules/@firebase/auth/dist/esm2017/index-c92d61ad.js [app-client] (ecmascript) <export al as updateProfile>");
-var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$auth$2f$dist$2f$esm2017$2f$index$2d$c92d61ad$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__G__as__deleteUser$3e$__ = __turbopack_context__.i("[project]/node_modules/@firebase/auth/dist/esm2017/index-c92d61ad.js [app-client] (ecmascript) <export G as deleteUser>");
-var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$firebase$2f$clientApp$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/firebase/clientApp.ts [app-client] (ecmascript)");
-var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$firebase$2f$notifications$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/firebase/notifications.ts [app-client] (ecmascript)");
-;
-;
-;
-;
-async function isUsernameTaken(username) {
-    try {
-        const usernameQuery = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["query"])((0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["collection"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$firebase$2f$clientApp$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["db"], 'users'), (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["where"])('username', '==', username.toLowerCase()));
-        const querySnapshot = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["getDocs"])(usernameQuery);
-        return !querySnapshot.empty;
-    } catch (error) {
-        console.error('Error checking username:', error);
-        throw error;
-    }
-}
-async function createUserProfile(uid, profile) {
-    try {
-        // First check if this user ID already has a profile
-        const existingUserProfile = await getUserProfile(uid);
-        if (existingUserProfile) {
-            console.log('User profile already exists, updating instead of creating');
-            // Update existing profile
-            const userRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["doc"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$firebase$2f$clientApp$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["db"], 'users', uid);
-            await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["updateDoc"])(userRef, {
-                firstName: profile.firstName,
-                lastName: profile.lastName,
-                username: profile.username.toLowerCase(),
-                email: profile.email.toLowerCase(),
-                bio: profile.bio || existingUserProfile.bio || ''
-            });
-            // Update the user's display name in Firebase Auth
-            if (__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$firebase$2f$clientApp$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["auth"].currentUser) {
-                await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$auth$2f$dist$2f$esm2017$2f$index$2d$c92d61ad$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__al__as__updateProfile$3e$__["updateProfile"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$firebase$2f$clientApp$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["auth"].currentUser, {
-                    displayName: profile.username
-                });
-            }
-            return;
-        }
-        // Check if email already exists in another profile
-        const emailQuery = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["query"])((0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["collection"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$firebase$2f$clientApp$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["db"], 'users'), (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["where"])('email', '==', profile.email.toLowerCase()));
-        const emailQuerySnapshot = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["getDocs"])(emailQuery);
-        if (!emailQuerySnapshot.empty) {
-            throw new Error('Email is already associated with another account');
-        }
-        // Check if the username is already taken
-        const usernameTaken = await isUsernameTaken(profile.username);
-        if (usernameTaken) {
-            throw new Error('Username is already taken');
-        }
-        const userRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["doc"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$firebase$2f$clientApp$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["db"], 'users', uid);
-        // Create the user profile
-        await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["setDoc"])(userRef, {
-            uid,
-            firstName: profile.firstName,
-            lastName: profile.lastName,
-            username: profile.username.toLowerCase(),
-            email: profile.email.toLowerCase(),
-            bio: profile.bio || '',
-            createdAt: (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["serverTimestamp"])()
-        });
-        // Update the user's display name in Firebase Auth
-        if (__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$firebase$2f$clientApp$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["auth"].currentUser) {
-            await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$auth$2f$dist$2f$esm2017$2f$index$2d$c92d61ad$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__al__as__updateProfile$3e$__["updateProfile"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$firebase$2f$clientApp$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["auth"].currentUser, {
-                displayName: profile.username
-            });
-        }
-    } catch (error) {
-        console.error('Error creating user profile:', error);
-        throw error;
-    }
-}
-async function getUserProfile(uid) {
-    try {
-        const userRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["doc"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$firebase$2f$clientApp$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["db"], 'users', uid);
-        const userDoc = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["getDoc"])(userRef);
-        if (userDoc.exists()) {
-            return userDoc.data();
-        }
-        return null;
-    } catch (error) {
-        console.error('Error fetching user profile:', error);
-        throw error;
-    }
-}
-async function getUserProfileByEmail(email) {
-    if (!email) return null;
-    try {
-        const emailQuery = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["query"])((0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["collection"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$firebase$2f$clientApp$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["db"], 'users'), (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["where"])('email', '==', email.toLowerCase()), (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["limit"])(1));
-        const querySnapshot = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["getDocs"])(emailQuery);
-        if (!querySnapshot.empty) {
-            // Should only be one user with a unique email
-            return querySnapshot.docs[0].data();
-        }
-        return null;
-    } catch (error) {
-        console.error('Error fetching user profile by email:', error);
-        throw error; // Re-throw to be handled by the caller
-    }
-}
-async function updateUserBio(uid, bio) {
-    try {
-        const userRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["doc"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$firebase$2f$clientApp$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["db"], 'users', uid);
-        await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["updateDoc"])(userRef, {
-            bio
-        });
-    } catch (error) {
-        console.error('Error updating user bio:', error);
-        throw error;
-    }
-}
-async function updateUserInterests(uid, interests) {
-    try {
-        const userRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["doc"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$firebase$2f$clientApp$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["db"], 'users', uid);
-        await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["updateDoc"])(userRef, {
-            interests
-        });
-        console.log(`Interests updated for user ${uid}:`, interests);
-    } catch (error) {
-        console.error('Error updating user interests:', error);
-        throw error;
-    }
-}
-async function searchUsers(searchTerm) {
-    try {
-        if (!searchTerm || searchTerm.trim().length < 2) {
-            return [];
-        }
-        const searchTermLower = searchTerm.toLowerCase().trim();
-        // Create a query to find users whose username contains the search term
-        const usersRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["collection"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$firebase$2f$clientApp$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["db"], 'users');
-        const usersSnapshot = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["getDocs"])(usersRef);
-        // Filter users locally since Firestore doesn't support contains or regexp queries directly
-        const matchingUsers = usersSnapshot.docs.map((doc)=>{
-            // Get all data from the document and ensure it has the correct UserProfile shape
-            const userData = doc.data();
-            return userData;
-        }).filter((user)=>{
-            const usernameLower = user.username.toLowerCase();
-            const firstNameLower = user.firstName.toLowerCase();
-            const lastNameLower = user.lastName.toLowerCase();
-            const fullNameLower = `${firstNameLower} ${lastNameLower}`;
-            return usernameLower.includes(searchTermLower) || firstNameLower.includes(searchTermLower) || lastNameLower.includes(searchTermLower) || fullNameLower.includes(searchTermLower);
-        });
-        return matchingUsers;
-    } catch (error) {
-        console.error('Error searching users:', error);
-        return [];
-    }
-}
-async function followUser(followerUid, followingUid) {
-    try {
-        // Don't allow users to follow themselves
-        if (followerUid === followingUid) {
-            throw new Error('You cannot follow yourself');
-        }
-        // Update the follower's following list
-        const followerRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["doc"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$firebase$2f$clientApp$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["db"], 'users', followerUid);
-        await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["updateDoc"])(followerRef, {
-            following: (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["arrayUnion"])(followingUid),
-            followingCount: (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["increment"])(1)
-        });
-        // Update the following's followers list
-        const followingRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["doc"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$firebase$2f$clientApp$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["db"], 'users', followingUid);
-        await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["updateDoc"])(followingRef, {
-            followers: (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["arrayUnion"])(followerUid),
-            followersCount: (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["increment"])(1)
-        });
-        // Get the follower's profile to use their name for the notification
-        const followerDoc = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["getDoc"])(followerRef);
-        if (followerDoc.exists()) {
-            const followerData = followerDoc.data();
-            // Create a notification for the user being followed
-            await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$firebase$2f$notifications$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["createFollowNotification"])(followingUid, `${followerData.firstName} ${followerData.lastName}`, followerUid, followerData.username);
-        }
-    } catch (error) {
-        console.error('Error following user:', error);
-        throw error;
-    }
-}
-async function unfollowUser(followerUid, followingUid) {
-    try {
-        // Update the follower's following list
-        const followerRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["doc"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$firebase$2f$clientApp$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["db"], 'users', followerUid);
-        await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["updateDoc"])(followerRef, {
-            following: (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["arrayRemove"])(followingUid),
-            followingCount: (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["increment"])(-1)
-        });
-        // Update the following's followers list
-        const followingRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["doc"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$firebase$2f$clientApp$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["db"], 'users', followingUid);
-        await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["updateDoc"])(followingRef, {
-            followers: (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["arrayRemove"])(followerUid),
-            followersCount: (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["increment"])(-1)
-        });
-    } catch (error) {
-        console.error('Error unfollowing user:', error);
-        throw error;
-    }
-}
-async function isFollowing(followerUid, followingUid) {
-    try {
-        const followerRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["doc"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$firebase$2f$clientApp$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["db"], 'users', followerUid);
-        const followerDoc = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["getDoc"])(followerRef);
-        if (!followerDoc.exists()) {
-            return false;
-        }
-        const userData = followerDoc.data();
-        return userData.following?.includes(followingUid) || false;
-    } catch (error) {
-        console.error('Error checking follow status:', error);
-        throw error;
-    }
-}
-async function getFollowing(uid, maxLimit = 50) {
-    try {
-        // First get the user to access their following list
-        const userRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["doc"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$firebase$2f$clientApp$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["db"], 'users', uid);
-        const userDoc = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["getDoc"])(userRef);
-        if (!userDoc.exists()) {
-            return [];
-        }
-        const userData = userDoc.data();
-        const followingList = userData.following || [];
-        if (followingList.length === 0) {
-            return [];
-        }
-        // Fetch each following user's profile
-        const followingUsers = [];
-        const batchLimit = Math.min(followingList.length, maxLimit);
-        for(let i = 0; i < batchLimit; i++){
-            const followingId = followingList[i];
-            const followingUserRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["doc"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$firebase$2f$clientApp$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["db"], 'users', followingId);
-            const followingUserDoc = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["getDoc"])(followingUserRef);
-            if (followingUserDoc.exists()) {
-                followingUsers.push(followingUserDoc.data());
-            }
-        }
-        return followingUsers;
-    } catch (error) {
-        console.error('Error getting following list:', error);
-        throw error;
-    }
-}
-async function getFollowers(uid, maxLimit = 50) {
-    try {
-        // First get the user to access their followers list
-        const userRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["doc"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$firebase$2f$clientApp$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["db"], 'users', uid);
-        const userDoc = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["getDoc"])(userRef);
-        if (!userDoc.exists()) {
-            return [];
-        }
-        const userData = userDoc.data();
-        const followersList = userData.followers || [];
-        if (followersList.length === 0) {
-            return [];
-        }
-        // Fetch each follower's profile
-        const followers = [];
-        const batchLimit = Math.min(followersList.length, maxLimit);
-        for(let i = 0; i < batchLimit; i++){
-            const followerId = followersList[i];
-            const followerUserRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["doc"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$firebase$2f$clientApp$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["db"], 'users', followerId);
-            const followerUserDoc = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["getDoc"])(followerUserRef);
-            if (followerUserDoc.exists()) {
-                followers.push(followerUserDoc.data());
-            }
-        }
-        return followers;
-    } catch (error) {
-        console.error('Error getting followers list:', error);
-        throw error;
-    }
-}
-async function deleteUserAccount(uid) {
-    try {
-        // 1. Delete user profile from Firestore
-        const userProfileRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["doc"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$firebase$2f$clientApp$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["db"], 'users', uid);
-        await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["deleteDoc"])(userProfileRef);
-        console.log(`User profile for UID ${uid} deleted from Firestore.`);
-        // 2. Delete user from Firebase Authentication
-        // This requires the current user to be the one being deleted.
-        // And the user must have signed in recently.
-        const currentUser = __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$firebase$2f$clientApp$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["auth"].currentUser;
-        if (currentUser && currentUser.uid === uid) {
-            await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$auth$2f$dist$2f$esm2017$2f$index$2d$c92d61ad$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__G__as__deleteUser$3e$__["deleteUser"])(currentUser);
-            console.log(`User account for UID ${uid} deleted from Firebase Authentication.`);
-        } else if (!currentUser) {
-            console.error('No current user authenticated. Cannot delete Firebase Auth user.');
-            throw new Error('Authentication required to delete account.');
-        } else {
-            // This case (currentUser.uid !== uid) should ideally not happen if the function
-            // is called correctly from the client for the logged-in user.
-            console.error('Current authenticated user does not match UID to be deleted.');
-            throw new Error('Mismatch between authenticated user and account to be deleted.');
-        }
-    } catch (error) {
-        console.error('Error deleting user account:', error);
-        // Specific check for re-authentication requirement
-        if (error.code === 'auth/requires-recent-login') {
-            throw new Error('This operation is sensitive and requires recent authentication. Please sign out and sign back in, then try again.');
-        }
-        throw new Error('Failed to delete user account. ' + error.message);
-    }
-}
-if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelpers !== null) {
-    __turbopack_context__.k.registerExports(module, globalThis.$RefreshHelpers$);
-}
-}}),
-"[project]/src/components/CenterSearchBar.tsx [app-client] (ecmascript)": ((__turbopack_context__) => {
-"use strict";
-
-var { g: global, __dirname, k: __turbopack_refresh__, m: module } = __turbopack_context__;
-{
-__turbopack_context__.s({
-    "default": (()=>__TURBOPACK__default__export__)
-});
-var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/jsx-dev-runtime.js [app-client] (ecmascript)");
-var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/client/app-dir/link.js [app-client] (ecmascript)");
-var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$services$2f$userService$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/services/userService.ts [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__ = __turbopack_context__.i("[project]/src/styles/home.module.css [app-client] (css module)");
-;
-var _s = __turbopack_context__.k.signature();
 'use client';
 ;
 ;
 ;
-;
-const CenterSearchBar = ()=>{
-    _s();
-    const [searchTerm, setSearchTerm] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])('');
-    const [searchResults, setSearchResults] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])([]);
-    const [isSearching, setIsSearching] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
-    const [showResults, setShowResults] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
-    const [isFocused, setIsFocused] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
-    const searchInputRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
-    const resultsRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
-    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
-        "CenterSearchBar.useEffect": ()=>{
-            // Add click outside listener to close results
-            const handleClickOutside = {
-                "CenterSearchBar.useEffect.handleClickOutside": (event)=>{
-                    if (resultsRef.current && !resultsRef.current.contains(event.target) && searchInputRef.current && !searchInputRef.current.contains(event.target)) {
-                        setShowResults(false);
-                        setIsFocused(false);
-                    }
-                }
-            }["CenterSearchBar.useEffect.handleClickOutside"];
-            document.addEventListener('mousedown', handleClickOutside);
-            return ({
-                "CenterSearchBar.useEffect": ()=>{
-                    document.removeEventListener('mousedown', handleClickOutside);
-                }
-            })["CenterSearchBar.useEffect"];
-        }
-    }["CenterSearchBar.useEffect"], []);
-    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
-        "CenterSearchBar.useEffect": ()=>{
-            const delayDebounceFn = setTimeout({
-                "CenterSearchBar.useEffect.delayDebounceFn": async ()=>{
-                    if (searchTerm.trim().length >= 2) {
-                        setIsSearching(true);
-                        try {
-                            const results = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$services$2f$userService$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["searchUsers"])(searchTerm);
-                            setSearchResults(results);
-                            setShowResults(true);
-                        } catch (error) {
-                            console.error('Error searching users:', error);
-                        } finally{
-                            setIsSearching(false);
-                        }
-                    } else {
-                        setSearchResults([]);
-                        setShowResults(false);
-                    }
-                }
-            }["CenterSearchBar.useEffect.delayDebounceFn"], 300);
-            return ({
-                "CenterSearchBar.useEffect": ()=>clearTimeout(delayDebounceFn)
-            })["CenterSearchBar.useEffect"];
-        }
-    }["CenterSearchBar.useEffect"], [
-        searchTerm
-    ]);
-    const handleSearchChange = (e)=>{
-        setSearchTerm(e.target.value);
-    };
-    const handleFocus = ()=>{
-        setIsFocused(true);
-        if (searchTerm.trim().length >= 2 && searchResults.length > 0) {
-            setShowResults(true);
-        }
-    };
-    const handleBlur = ()=>{
-        // Delay hiding focus state to allow for clicks on results
-        setTimeout(()=>{
-            if (!showResults) {
-                setIsFocused(false);
-            }
-        }, 150);
-    };
-    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-        className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].centerSearchContainer,
-        children: [
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: `${__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].centerSearchWrapper} ${isFocused ? __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].focused : ''}`,
-                children: [
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].searchIcon,
-                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
-                            xmlns: "http://www.w3.org/2000/svg",
-                            viewBox: "0 0 24 24",
-                            fill: "none",
-                            stroke: "currentColor",
-                            strokeWidth: "2",
-                            strokeLinecap: "round",
-                            strokeLinejoin: "round",
-                            children: [
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("circle", {
-                                    cx: "11",
-                                    cy: "11",
-                                    r: "8"
-                                }, void 0, false, {
-                                    fileName: "[project]/src/components/CenterSearchBar.tsx",
-                                    lineNumber: 84,
-                                    columnNumber: 13
-                                }, this),
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
-                                    d: "M21 21L16.65 16.65"
-                                }, void 0, false, {
-                                    fileName: "[project]/src/components/CenterSearchBar.tsx",
-                                    lineNumber: 85,
-                                    columnNumber: 13
-                                }, this)
-                            ]
-                        }, void 0, true, {
-                            fileName: "[project]/src/components/CenterSearchBar.tsx",
-                            lineNumber: 83,
-                            columnNumber: 11
-                        }, this)
-                    }, void 0, false, {
-                        fileName: "[project]/src/components/CenterSearchBar.tsx",
-                        lineNumber: 82,
-                        columnNumber: 9
-                    }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
-                        type: "text",
-                        ref: searchInputRef,
-                        className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].centerSearchInput,
-                        placeholder: "Search for writers, ideas, or topics...",
-                        value: searchTerm,
-                        onChange: handleSearchChange,
-                        onFocus: handleFocus,
-                        onBlur: handleBlur
-                    }, void 0, false, {
-                        fileName: "[project]/src/components/CenterSearchBar.tsx",
-                        lineNumber: 88,
-                        columnNumber: 9
-                    }, this),
-                    isSearching && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].searchLoadingIcon,
-                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].loadingSpinner
-                        }, void 0, false, {
-                            fileName: "[project]/src/components/CenterSearchBar.tsx",
-                            lineNumber: 100,
-                            columnNumber: 13
-                        }, this)
-                    }, void 0, false, {
-                        fileName: "[project]/src/components/CenterSearchBar.tsx",
-                        lineNumber: 99,
-                        columnNumber: 11
-                    }, this)
-                ]
-            }, void 0, true, {
-                fileName: "[project]/src/components/CenterSearchBar.tsx",
-                lineNumber: 81,
-                columnNumber: 7
-            }, this),
-            showResults && searchResults.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                ref: resultsRef,
-                className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].centerSearchResults,
-                children: searchResults.map((user)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
-                        href: `/user/${encodeURIComponent(user.username.toLowerCase())}`,
-                        className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].centerSearchResultItem,
-                        onClick: ()=>{
-                            setShowResults(false);
-                            setIsFocused(false);
-                        },
-                        children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].resultUserAvatar,
-                                children: [
-                                    user.firstName.charAt(0),
-                                    user.lastName.charAt(0)
-                                ]
-                            }, void 0, true, {
-                                fileName: "[project]/src/components/CenterSearchBar.tsx",
-                                lineNumber: 117,
-                                columnNumber: 15
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].resultUserInfo,
-                                children: [
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                        className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].resultUserName,
-                                        children: [
-                                            user.firstName,
-                                            " ",
-                                            user.lastName
-                                        ]
-                                    }, void 0, true, {
-                                        fileName: "[project]/src/components/CenterSearchBar.tsx",
-                                        lineNumber: 121,
-                                        columnNumber: 17
-                                    }, this),
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                        className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].resultUserUsername,
-                                        children: [
-                                            "@",
-                                            user.username
-                                        ]
-                                    }, void 0, true, {
-                                        fileName: "[project]/src/components/CenterSearchBar.tsx",
-                                        lineNumber: 122,
-                                        columnNumber: 17
-                                    }, this)
-                                ]
-                            }, void 0, true, {
-                                fileName: "[project]/src/components/CenterSearchBar.tsx",
-                                lineNumber: 120,
-                                columnNumber: 15
-                            }, this)
-                        ]
-                    }, user.uid, true, {
-                        fileName: "[project]/src/components/CenterSearchBar.tsx",
-                        lineNumber: 108,
-                        columnNumber: 13
-                    }, this))
-            }, void 0, false, {
-                fileName: "[project]/src/components/CenterSearchBar.tsx",
-                lineNumber: 106,
-                columnNumber: 9
-            }, this),
-            showResults && searchTerm.trim().length >= 2 && searchResults.length === 0 && !isSearching && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].centerSearchResults,
-                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                    className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].centerSearchNoResults,
-                    children: [
-                        'No users found matching "',
-                        searchTerm,
-                        '"'
-                    ]
-                }, void 0, true, {
-                    fileName: "[project]/src/components/CenterSearchBar.tsx",
-                    lineNumber: 131,
-                    columnNumber: 11
-                }, this)
-            }, void 0, false, {
-                fileName: "[project]/src/components/CenterSearchBar.tsx",
-                lineNumber: 130,
-                columnNumber: 9
-            }, this)
-        ]
-    }, void 0, true, {
-        fileName: "[project]/src/components/CenterSearchBar.tsx",
-        lineNumber: 80,
+const TopLeftLogo = ()=>{
+    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+        href: "/",
+        className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"]['top-left-logo'],
+        children: "Journalite"
+    }, void 0, false, {
+        fileName: "[project]/src/components/TopLeftLogo.tsx",
+        lineNumber: 9,
         columnNumber: 5
     }, this);
 };
-_s(CenterSearchBar, "y60e+5io0t4Q2kgWdvh8Y2/g0wo=");
-_c = CenterSearchBar;
-const __TURBOPACK__default__export__ = CenterSearchBar;
+_c = TopLeftLogo;
+const __TURBOPACK__default__export__ = TopLeftLogo;
 var _c;
-__turbopack_context__.k.register(_c, "CenterSearchBar");
+__turbopack_context__.k.register(_c, "TopLeftLogo");
 if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelpers !== null) {
     __turbopack_context__.k.registerExports(module, globalThis.$RefreshHelpers$);
 }
 }}),
-"[project]/src/app/page.tsx [app-client] (ecmascript)": ((__turbopack_context__) => {
+"[project]/src/app/my-thoughts/page.tsx [app-client] (ecmascript)": ((__turbopack_context__) => {
 "use strict";
 
 var { g: global, __dirname, k: __turbopack_refresh__, m: module } = __turbopack_context__;
 {
 __turbopack_context__.s({
-    "default": (()=>HomePage)
+    "default": (()=>MyThoughtsPage)
 });
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/jsx-dev-runtime.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/client/app-dir/link.js [app-client] (ecmascript)");
-// import Image from 'next/image' // Unused
-var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__ = __turbopack_context__.i("[project]/src/styles/home.module.css [app-client] (css module)");
-var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$firebase$2f$clientApp$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/firebase/clientApp.ts [app-client] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/navigation.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$firebase$2f$auth$2f$dist$2f$esm$2f$index$2e$esm$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$module__evaluation$3e$__ = __turbopack_context__.i("[project]/node_modules/firebase/auth/dist/esm/index.esm.js [app-client] (ecmascript) <module evaluation>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$auth$2f$dist$2f$esm2017$2f$index$2d$c92d61ad$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__z__as__onAuthStateChanged$3e$__ = __turbopack_context__.i("[project]/node_modules/@firebase/auth/dist/esm2017/index-c92d61ad.js [app-client] (ecmascript) <export z as onAuthStateChanged>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$auth$2f$dist$2f$esm2017$2f$index$2d$c92d61ad$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__D__as__signOut$3e$__ = __turbopack_context__.i("[project]/node_modules/@firebase/auth/dist/esm2017/index-c92d61ad.js [app-client] (ecmascript) <export D as signOut>");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$firebase$2f$firestore$2f$dist$2f$esm$2f$index$2e$esm$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$module__evaluation$3e$__ = __turbopack_context__.i("[project]/node_modules/firebase/firestore/dist/esm/index.esm.js [app-client] (ecmascript) <module evaluation>");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/@firebase/firestore/dist/index.esm2017.js [app-client] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$firebase$2f$clientApp$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/firebase/clientApp.ts [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$firebase$2f$articles$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/firebase/articles.ts [app-client] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__ = __turbopack_context__.i("[project]/src/styles/home.module.css [app-client] (css module)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$my$2d$thoughts$2f$my$2d$thoughts$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__ = __turbopack_context__.i("[project]/src/app/my-thoughts/my-thoughts.module.css [app-client] (css module)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$NotificationBell$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/NotificationBell.tsx [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$LeftSidebar$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/LeftSidebar.tsx [app-client] (ecmascript)");
-var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ShareModal$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/ShareModal.tsx [app-client] (ecmascript)");
-var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$CenterSearchBar$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/CenterSearchBar.tsx [app-client] (ecmascript)");
-var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$components$2f$noop$2d$head$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/client/components/noop-head.js [app-client] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$TopLeftLogo$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/TopLeftLogo.tsx [app-client] (ecmascript)");
 ;
 var _s = __turbopack_context__.k.signature();
-"use client";
+'use client';
 ;
 ;
 ;
@@ -4045,734 +3101,627 @@ var _s = __turbopack_context__.k.signature();
 ;
 ;
 ;
-// Author mapping for using authorId to display author name - legacy system
-const authorMapping = {
-    "84b2f82c-1e93-498a-983e-3b30a8379e63": "Samuel Green",
-    "user_002": "Alex Martinez",
-    "kristen-lee-id": "Kristen Lee",
-    "alex-wen-id": "Alex Wen",
-    "hannah-cole-id": "Hannah Cole"
-};
-// Adapter function to convert Firestore articles to match our UI format
-const adaptFirestoreArticle = (firestoreArticle)=>{
-    return {
-        _id: firestoreArticle.id || '',
-        title: firestoreArticle.title,
-        slug: firestoreArticle.slug || firestoreArticle.title.toLowerCase().replace(/[^\w\s]/gi, '').replace(/\s+/g, '-'),
-        authorId: firestoreArticle.authorId,
-        authorName: firestoreArticle.authorName,
-        coverImageUrl: firestoreArticle.coverImage || null,
-        tags: firestoreArticle.tags,
-        content: [
-            {
-                paragraphId: 'p1',
-                text: firestoreArticle.body,
-                likes: [],
-                comments: []
-            }
-        ],
-        likes: [],
-        reposts: [],
-        comments: [],
-        createdAt: firestoreArticle.createdAt.toDate().toISOString(),
-        updatedAt: firestoreArticle.createdAt.toDate().toISOString()
-    };
-};
-// Fallback mock data only used when API is unavailable
-const mockArticles = [
-    {
-        _id: "60e6cbb8f19a4b3d8c3a7f21",
-        authorId: "84b2f82c-1e93-498a-983e-3b30a8379e63",
-        title: "The Future of Artificial Intelligence: Transforming Our World",
-        slug: "updated-first-article",
-        coverImageUrl: "https://images.unsplash.com/photo-1677442136019-21780ecad995",
-        tags: [
-            "AI",
-            "Machine Learning"
-        ],
-        content: [
-            {
-                paragraphId: "p1",
-                text: "Artificial Intelligence (AI) stands at the forefront of technological innovation, promising to revolutionize every aspect of our lives. From healthcare to transportation, education to entertainment, AI's influence continues to grow exponentially."
-            }
-        ],
-        createdAt: "2025-04-09T12:00:00.000Z",
-        updatedAt: "2025-04-09T14:00:00.000Z"
-    },
-    {
-        _id: "60e6cbb8f19a4b3d8c3a7f99",
-        authorId: "user_002",
-        title: "The Rise of Gen Z Creators",
-        slug: "gen-z-rise",
-        coverImageUrl: "https://images.unsplash.com/photo-1601908804492-7f3d9d42e1b3",
-        tags: [
-            "Culture",
-            "Youth"
-        ],
-        content: [
-            {
-                paragraphId: "p1",
-                text: "Gen Z is redefining creativity in the age of social media, turning platforms like TikTok and YouTube into launching pads for innovative voices around the globe."
-            }
-        ],
-        createdAt: "2025-04-10T12:00:00.000Z",
-        updatedAt: "2025-04-10T13:00:00.000Z"
-    },
-    {
-        _id: "70f7d1e2a8b24d1fa2c1b8f3",
-        authorId: "kristen-lee-id",
-        title: "Unravelling the Ethics of AI",
-        slug: "unravelling-ethics-of-ai",
-        coverImageUrl: "https://images.unsplash.com/photo-1581091012184-7c07f32c2f32",
-        tags: [
-            "Ethics",
-            "AI"
-        ],
-        content: [
-            {
-                paragraphId: "p1",
-                text: "As artificial intelligence rapidly advances, we must confront moral questions around bias, privacy, and accountability. Who is responsible when an AI-powered system errs, and how do we ensure fair outcomes for all?"
-            }
-        ],
-        createdAt: "2025-04-12T09:00:00.000Z",
-        updatedAt: "2025-04-12T09:00:00.000Z"
-    },
-    {
-        _id: "81a8d2f3b9c35e2ab3d2c4e5",
-        authorId: "alex-wen-id",
-        title: "The Hidden Costs of Urbanization",
-        slug: "hidden-costs-of-urbanization",
-        coverImageUrl: "https://images.unsplash.com/photo-1541051646-784cfc8a2c21",
-        tags: [
-            "Urbanization",
-            "Society"
-        ],
-        content: [
-            {
-                paragraphId: "p1",
-                text: "Cities grow at breakneck speed, but beneath the skylines lie rising living costs, environmental strain, and widening inequality. How do we balance prosperity with sustainability in our ever‑expanding metropolises?"
-            }
-        ],
-        createdAt: "2025-04-12T09:15:00.000Z",
-        updatedAt: "2025-04-12T09:15:00.000Z"
-    },
-    {
-        _id: "92h9ffg3c41d7e6g1f6h0g54",
-        authorId: "hannah-cole-id",
-        title: "Justice and Equality in Modern Society",
-        slug: "justice-and-equality-in-modern-society",
-        coverImageUrl: "https://images.unsplash.com/photo-1529333166437-7750a6dd5a70",
-        tags: [
-            "Justice",
-            "Equality"
-        ],
-        content: [
-            {
-                paragraphId: "p1",
-                text: "In an age of rapid change, ensuring that every voice is heard and that rights are upheld remains the cornerstone of a just society. What steps can we take to close the gap between ideals and reality?"
-            }
-        ],
-        createdAt: "2025-04-12T09:30:00.000Z",
-        updatedAt: "2025-04-12T09:30:00.000Z"
-    }
-];
-function HomePage() {
+;
+function MyThoughtsPage() {
     _s();
-    // Initialize with empty arrays/null instead of stub objects
-    const [articles, setArticles] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])([]);
-    const [featuredArticle, setFeaturedArticle] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
-    const [isLoading, setIsLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(true);
-    const [isSidebarCollapsed, setIsSidebarCollapsed] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(true); // Default to collapsed on mobile
     const [isAuthenticated, setIsAuthenticated] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
-    const [windowWidth, setWindowWidth] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(("TURBOPACK compile-time truthy", 1) ? window.innerWidth : ("TURBOPACK unreachable", undefined));
-    // Trending tags (static list, no need for state)
-    const tags = [
-        'Journalism',
-        'Technology',
-        'Politics',
-        'Science',
-        'Culture'
-    ];
-    // State for ShareModal
-    const [isShareModalOpen, setIsShareModalOpen] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
-    const [sharingArticleDetails, setSharingArticleDetails] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
-    // Check authentication status on component mount
-    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
-        "HomePage.useEffect": ()=>{
-            const unsubscribe = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$auth$2f$dist$2f$esm2017$2f$index$2d$c92d61ad$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__z__as__onAuthStateChanged$3e$__["onAuthStateChanged"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$firebase$2f$clientApp$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["auth"], {
-                "HomePage.useEffect.unsubscribe": (user)=>{
-                    setIsAuthenticated(!!user);
-                }
-            }["HomePage.useEffect.unsubscribe"]);
-            return ({
-                "HomePage.useEffect": ()=>unsubscribe()
-            })["HomePage.useEffect"];
-        }
-    }["HomePage.useEffect"], []);
+    const [user, setUser] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
+    const [isLoading, setIsLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(true);
+    const [isSidebarCollapsed, setIsSidebarCollapsed] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
+    const [windowWidth, setWindowWidth] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(0);
+    const [view, setView] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])('published');
+    const [articles, setArticles] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])([]);
+    const [articleToDelete, setArticleToDelete] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
+    const [showDeleteModal, setShowDeleteModal] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
+    const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"])();
     // Set up window resize listener
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
-        "HomePage.useEffect": ()=>{
+        "MyThoughtsPage.useEffect": ()=>{
+            setWindowWidth(window.innerWidth);
             const handleResize = {
-                "HomePage.useEffect.handleResize": ()=>{
+                "MyThoughtsPage.useEffect.handleResize": ()=>{
                     setWindowWidth(window.innerWidth);
                 }
-            }["HomePage.useEffect.handleResize"];
+            }["MyThoughtsPage.useEffect.handleResize"];
             window.addEventListener('resize', handleResize);
             return ({
-                "HomePage.useEffect": ()=>window.removeEventListener('resize', handleResize)
-            })["HomePage.useEffect"];
+                "MyThoughtsPage.useEffect": ()=>window.removeEventListener('resize', handleResize)
+            })["MyThoughtsPage.useEffect"];
         }
-    }["HomePage.useEffect"], []);
+    }["MyThoughtsPage.useEffect"], []);
     // Use different default sidebar state based on screen size
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
-        "HomePage.useEffect": ()=>{
+        "MyThoughtsPage.useEffect": ()=>{
             setIsSidebarCollapsed(windowWidth < 768);
         }
-    }["HomePage.useEffect"], [
+    }["MyThoughtsPage.useEffect"], [
         windowWidth
     ]);
+    // Check authentication status
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
-        "HomePage.useEffect": ()=>{
-            // Fetch articles data
+        "MyThoughtsPage.useEffect": ()=>{
+            const unsubscribe = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$auth$2f$dist$2f$esm2017$2f$index$2d$c92d61ad$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__z__as__onAuthStateChanged$3e$__["onAuthStateChanged"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$firebase$2f$clientApp$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["auth"], {
+                "MyThoughtsPage.useEffect.unsubscribe": (currentUser)=>{
+                    const isAuth = !!currentUser;
+                    setIsAuthenticated(isAuth);
+                    setUser(currentUser);
+                    if (!isAuth) {
+                        // Redirect to login if not authenticated
+                        router.push('/login?redirect=/my-thoughts');
+                    } else {
+                        setIsLoading(false);
+                    }
+                }
+            }["MyThoughtsPage.useEffect.unsubscribe"]);
+            return ({
+                "MyThoughtsPage.useEffect": ()=>unsubscribe()
+            })["MyThoughtsPage.useEffect"];
+        }
+    }["MyThoughtsPage.useEffect"], [
+        router
+    ]);
+    // Fetch user's articles
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
+        "MyThoughtsPage.useEffect": ()=>{
             const fetchArticles = {
-                "HomePage.useEffect.fetchArticles": async ()=>{
+                "MyThoughtsPage.useEffect.fetchArticles": async ()=>{
+                    if (!user) return;
                     try {
                         setIsLoading(true);
-                        // Pass a higher limit parameter to ensure we get enough articles
-                        const firestoreArticles = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$firebase$2f$articles$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["getArticles"])({
-                            limit: 50
-                        });
-                        console.log('Articles fetched from Firestore:', firestoreArticles.length);
-                        if (firestoreArticles && firestoreArticles.length > 0) {
-                            const adaptedArticles = firestoreArticles.map(adaptFirestoreArticle);
-                            console.log('Adapted articles:', adaptedArticles.length);
-                            if (adaptedArticles.length > 0) {
-                                setFeaturedArticle(adaptedArticles[0]);
-                                setArticles(adaptedArticles.length > 1 ? adaptedArticles.slice(1) : []);
-                                console.log('Articles in grid:', adaptedArticles.length > 1 ? adaptedArticles.length - 1 : 0);
-                            } else {
-                                setFeaturedArticle(null);
-                                setArticles([]);
-                            }
+                        const articlesRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["collection"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$firebase$2f$clientApp$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["db"], 'articles');
+                        let q;
+                        if (view === 'published') {
+                            // For published view, get articles that either have status=published OR have no status (for backward compatibility)
+                            q = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["query"])(articlesRef, (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["where"])('authorId', '==', user.uid), (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["orderBy"])('createdAt', 'desc'));
                         } else {
-                            setFeaturedArticle(null);
-                            setArticles([]);
+                            // For drafts view, only get articles explicitly marked as drafts
+                            q = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["query"])(articlesRef, (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["where"])('authorId', '==', user.uid), (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["where"])('status', '==', 'drafts'), (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["orderBy"])('createdAt', 'desc'));
                         }
+                        const querySnapshot = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["getDocs"])(q);
+                        const fetchedArticles = [];
+                        querySnapshot.forEach({
+                            "MyThoughtsPage.useEffect.fetchArticles": (doc)=>{
+                                const articleData = doc.data();
+                                // For published view, only include articles that have status='published' or no status
+                                if (view === 'published') {
+                                    if (!articleData.status || articleData.status === 'published') {
+                                        fetchedArticles.push({
+                                            id: doc.id,
+                                            ...articleData,
+                                            status: articleData.status || 'published' // Set default status
+                                        });
+                                    }
+                                } else {
+                                    // For drafts view, we've already filtered by status in the query
+                                    fetchedArticles.push({
+                                        id: doc.id,
+                                        ...articleData
+                                    });
+                                }
+                            }
+                        }["MyThoughtsPage.useEffect.fetchArticles"]);
+                        setArticles(fetchedArticles);
                     } catch (error) {
                         console.error('Error fetching articles:', error);
-                        setFeaturedArticle(null);
-                        setArticles([]);
                     } finally{
                         setIsLoading(false);
                     }
                 }
-            }["HomePage.useEffect.fetchArticles"];
-            fetchArticles();
+            }["MyThoughtsPage.useEffect.fetchArticles"];
+            if (user && isAuthenticated) {
+                fetchArticles();
+            }
         }
-    }["HomePage.useEffect"], []);
-    // Get author name from authorId, preferring the API-provided authorName if available
-    const getAuthorName = (article)=>{
-        if (article.authorName) return article.authorName;
-        if (!article.authorId) return '';
-        return authorMapping[article.authorId] || '';
+    }["MyThoughtsPage.useEffect"], [
+        user,
+        isAuthenticated,
+        view
+    ]);
+    const toggleSidebar = ()=>{
+        setIsSidebarCollapsed(!isSidebarCollapsed);
     };
-    // Calculate estimated reading time based on content length
-    const getReadingTime = (content)=>{
-        if (!content || !Array.isArray(content)) {
-            return 1; // Default to 1 minute if content is missing or not an array
+    const handleLogout = async ()=>{
+        try {
+            await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$auth$2f$dist$2f$esm2017$2f$index$2d$c92d61ad$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__D__as__signOut$3e$__["signOut"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$firebase$2f$clientApp$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["auth"]);
+            router.push('/');
+        } catch (error) {
+            console.error('Error signing out:', error);
         }
-        const wordCount = content.reduce((count, para)=>{
-            return count + (para && para.text ? para.text.split(' ').length : 0);
-        }, 0);
-        // Average reading speed: 200 words per minute
-        const minutes = Math.ceil(wordCount / 200) || 1; // Ensure at least 1 minute
-        return minutes;
     };
-    // Use the API-provided excerpt if available, otherwise calculate from content
-    const getExcerpt = (article, maxLength = 150)=>{
-        // If the API provided an excerpt, use it
-        if (article.excerpt) return article.excerpt;
-        // Otherwise calculate from content as a fallback
-        const content = article.content;
-        if (!content || !Array.isArray(content) || content.length === 0) {
-            return '';
+    const confirmDelete = (articleId)=>{
+        setArticleToDelete(articleId);
+        setShowDeleteModal(true);
+    };
+    const handleDelete = async ()=>{
+        if (!articleToDelete) return;
+        try {
+            // Use the deleteArticle function from the articles service
+            await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$firebase$2f$articles$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["deleteArticle"])(articleToDelete);
+            // Update local state to remove the deleted article
+            setArticles(articles.filter((article)=>article.id !== articleToDelete));
+            setShowDeleteModal(false);
+            setArticleToDelete(null);
+        } catch (error) {
+            console.error('Error deleting article:', error);
         }
-        const text = content[0]?.text || '';
-        // Handle HTML content by stripping tags
+    };
+    const formatDate = (timestamp)=>{
+        if (!timestamp) return '';
+        let date;
+        if (timestamp && typeof timestamp.toDate === 'function') {
+            date = timestamp.toDate();
+        } else {
+            date = new Date(timestamp);
+        }
+        return date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
+    };
+    const getExcerpt = (text, maxLength = 120)=>{
+        if (!text) return '';
+        // Strip HTML tags if present
         const stripHtml = (html)=>{
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = html;
             return tempDiv.textContent || tempDiv.innerText || '';
         };
-        // Strip HTML tags if the content appears to be HTML
+        // Check if the text appears to be HTML
         const cleanText = text.includes('<') && text.includes('>') ? stripHtml(text) : text;
         if (cleanText.length <= maxLength) return cleanText;
         return cleanText.substring(0, maxLength).trim() + '...';
     };
-    const toggleSidebar = ()=>{
-        setIsSidebarCollapsed(!isSidebarCollapsed);
-    };
-    // Handle user logout
-    const handleLogout = async ()=>{
-        try {
-            await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$auth$2f$dist$2f$esm2017$2f$index$2d$c92d61ad$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__D__as__signOut$3e$__["signOut"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$firebase$2f$clientApp$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["auth"]);
-        } catch (error) {
-        // Error handling for logout failure
-        }
-    };
-    const handleOpenShareModal = (article)=>{
-        setSharingArticleDetails({
-            title: article.title,
-            slug: article.slug,
-            coverImageUrl: article.coverImageUrl,
-            excerpt: getExcerpt(article, 100) // Shorter excerpt for modal
-        });
-        setIsShareModalOpen(true);
-    };
-    const handleCloseShareModal = ()=>{
-        setIsShareModalOpen(false);
-        setSharingArticleDetails(null);
-    };
-    // Determine base URL for sharing
-    const [baseUrl, setBaseUrl] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])('');
-    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
-        "HomePage.useEffect": ()=>{
-            if ("TURBOPACK compile-time truthy", 1) {
-                setBaseUrl(window.location.origin);
-            }
-        }
-    }["HomePage.useEffect"], []);
-    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
-        children: [
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$components$2f$noop$2d$head$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
-                children: sharingArticleDetails && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
-                    children: [
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("meta", {
-                            property: "og:title",
-                            content: sharingArticleDetails.title
-                        }, void 0, false, {
-                            fileName: "[project]/src/app/page.tsx",
-                            lineNumber: 339,
-                            columnNumber: 13
-                        }, this),
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("meta", {
-                            property: "og:description",
-                            content: sharingArticleDetails.excerpt || 'Read this article on Journalite.'
-                        }, void 0, false, {
-                            fileName: "[project]/src/app/page.tsx",
-                            lineNumber: 340,
-                            columnNumber: 13
-                        }, this),
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("meta", {
-                            property: "og:image",
-                            content: sharingArticleDetails.coverImageUrl || '/default-image.jpg'
-                        }, void 0, false, {
-                            fileName: "[project]/src/app/page.tsx",
-                            lineNumber: 341,
-                            columnNumber: 13
-                        }, this),
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("meta", {
-                            property: "og:url",
-                            content: `https://mvp.journalite.app/articles?slug=${encodeURIComponent(sharingArticleDetails.slug)}`
-                        }, void 0, false, {
-                            fileName: "[project]/src/app/page.tsx",
-                            lineNumber: 342,
-                            columnNumber: 13
-                        }, this),
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("meta", {
-                            property: "og:type",
-                            content: "article"
-                        }, void 0, false, {
-                            fileName: "[project]/src/app/page.tsx",
-                            lineNumber: 343,
-                            columnNumber: 13
-                        }, this)
-                    ]
-                }, void 0, true)
+    if (isLoading) {
+        return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+            className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].container,
+            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].loading,
+                children: "Loading..."
             }, void 0, false, {
-                fileName: "[project]/src/app/page.tsx",
-                lineNumber: 336,
+                fileName: "[project]/src/app/my-thoughts/page.tsx",
+                lineNumber: 203,
+                columnNumber: 9
+            }, this)
+        }, void 0, false, {
+            fileName: "[project]/src/app/my-thoughts/page.tsx",
+            lineNumber: 202,
+            columnNumber: 7
+        }, this);
+    }
+    if (!isAuthenticated) {
+        return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+            className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].container,
+            children: [
+                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                    children: "Please log in to view your articles."
+                }, void 0, false, {
+                    fileName: "[project]/src/app/my-thoughts/page.tsx",
+                    lineNumber: 211,
+                    columnNumber: 9
+                }, this),
+                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                    href: "/login?redirect=/my-thoughts",
+                    className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].loginLink,
+                    children: "Login Now"
+                }, void 0, false, {
+                    fileName: "[project]/src/app/my-thoughts/page.tsx",
+                    lineNumber: 212,
+                    columnNumber: 9
+                }, this)
+            ]
+        }, void 0, true, {
+            fileName: "[project]/src/app/my-thoughts/page.tsx",
+            lineNumber: 210,
+            columnNumber: 7
+        }, this);
+    }
+    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+        className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"]['three-column-layout'],
+        children: [
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$TopLeftLogo$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
+                fileName: "[project]/src/app/my-thoughts/page.tsx",
+                lineNumber: 222,
                 columnNumber: 7
             }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"]['three-column-layout'],
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$LeftSidebar$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                isAuthenticated: isAuthenticated,
+                handleLogout: handleLogout,
+                toggleSidebar: toggleSidebar,
+                isSidebarCollapsed: isSidebarCollapsed
+            }, void 0, false, {
+                fileName: "[project]/src/app/my-thoughts/page.tsx",
+                lineNumber: 225,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("main", {
+                className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"]['center-column'],
                 children: [
-                    windowWidth < 768 && !isSidebarCollapsed && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: `${__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"]['menu-overlay']} ${__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"]['active']}`,
-                        onClick: toggleSidebar
-                    }, void 0, false, {
-                        fileName: "[project]/src/app/page.tsx",
-                        lineNumber: 350,
-                        columnNumber: 9
-                    }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$LeftSidebar$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
-                        isAuthenticated: isAuthenticated,
-                        handleLogout: handleLogout,
-                        toggleSidebar: toggleSidebar,
-                        isSidebarCollapsed: isSidebarCollapsed
-                    }, void 0, false, {
-                        fileName: "[project]/src/app/page.tsx",
-                        lineNumber: 354,
-                        columnNumber: 7
-                    }, this),
-                    windowWidth < 768 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                        className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"]['toggle-button'],
-                        onClick: toggleSidebar,
-                        "aria-label": isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar",
-                        children: isSidebarCollapsed ? "☰" : "✕"
-                    }, void 0, false, {
-                        fileName: "[project]/src/app/page.tsx",
-                        lineNumber: 363,
-                        columnNumber: 9
-                    }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("main", {
-                        className: `${__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"]['center-column']} ${isSidebarCollapsed && windowWidth >= 768 ? __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"]['expanded'] : ''}`,
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$my$2d$thoughts$2f$my$2d$thoughts$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].header,
                         children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$CenterSearchBar$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
-                                fileName: "[project]/src/app/page.tsx",
-                                lineNumber: 375,
-                                columnNumber: 9
-                            }, this),
-                            isLoading ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"]['loading'],
-                                children: "Loading articles..."
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
+                                className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$my$2d$thoughts$2f$my$2d$thoughts$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].title,
+                                children: "My Thoughts"
                             }, void 0, false, {
-                                fileName: "[project]/src/app/page.tsx",
-                                lineNumber: 378,
+                                fileName: "[project]/src/app/my-thoughts/page.tsx",
+                                lineNumber: 235,
                                 columnNumber: 11
-                            }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$my$2d$thoughts$2f$my$2d$thoughts$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].actions,
+                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                                    href: "/create-article",
+                                    className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$my$2d$thoughts$2f$my$2d$thoughts$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].createButton,
+                                    children: "New Article"
+                                }, void 0, false, {
+                                    fileName: "[project]/src/app/my-thoughts/page.tsx",
+                                    lineNumber: 237,
+                                    columnNumber: 13
+                                }, this)
+                            }, void 0, false, {
+                                fileName: "[project]/src/app/my-thoughts/page.tsx",
+                                lineNumber: 236,
+                                columnNumber: 11
+                            }, this)
+                        ]
+                    }, void 0, true, {
+                        fileName: "[project]/src/app/my-thoughts/page.tsx",
+                        lineNumber: 234,
+                        columnNumber: 9
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$my$2d$thoughts$2f$my$2d$thoughts$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].tabs,
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                className: `${__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$my$2d$thoughts$2f$my$2d$thoughts$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].tabButton} ${view === 'published' ? __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$my$2d$thoughts$2f$my$2d$thoughts$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].active : ''}`,
+                                onClick: ()=>setView('published'),
+                                children: "Published"
+                            }, void 0, false, {
+                                fileName: "[project]/src/app/my-thoughts/page.tsx",
+                                lineNumber: 244,
+                                columnNumber: 11
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                className: `${__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$my$2d$thoughts$2f$my$2d$thoughts$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].tabButton} ${view === 'drafts' ? __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$my$2d$thoughts$2f$my$2d$thoughts$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].active : ''}`,
+                                onClick: ()=>setView('drafts'),
+                                children: "Drafts"
+                            }, void 0, false, {
+                                fileName: "[project]/src/app/my-thoughts/page.tsx",
+                                lineNumber: 252,
+                                columnNumber: 11
+                            }, this)
+                        ]
+                    }, void 0, true, {
+                        fileName: "[project]/src/app/my-thoughts/page.tsx",
+                        lineNumber: 243,
+                        columnNumber: 9
+                    }, this),
+                    articles.length === 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$my$2d$thoughts$2f$my$2d$thoughts$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].emptyState,
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                 children: [
-                                    featuredArticle && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("article", {
-                                        className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"]['featured-card'],
+                                    "You don't have any ",
+                                    view,
+                                    " articles yet."
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/src/app/my-thoughts/page.tsx",
+                                lineNumber: 264,
+                                columnNumber: 13
+                            }, this),
+                            view === 'published' ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                children: "When you publish your articles, they will appear here."
+                            }, void 0, false, {
+                                fileName: "[project]/src/app/my-thoughts/page.tsx",
+                                lineNumber: 266,
+                                columnNumber: 15
+                            }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                children: "Save your work as drafts to continue later."
+                            }, void 0, false, {
+                                fileName: "[project]/src/app/my-thoughts/page.tsx",
+                                lineNumber: 268,
+                                columnNumber: 15
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                                href: "/create-article",
+                                className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$my$2d$thoughts$2f$my$2d$thoughts$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].emptyStateButton,
+                                children: "Create Your First Article"
+                            }, void 0, false, {
+                                fileName: "[project]/src/app/my-thoughts/page.tsx",
+                                lineNumber: 270,
+                                columnNumber: 13
+                            }, this)
+                        ]
+                    }, void 0, true, {
+                        fileName: "[project]/src/app/my-thoughts/page.tsx",
+                        lineNumber: 263,
+                        columnNumber: 11
+                    }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$my$2d$thoughts$2f$my$2d$thoughts$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].articlesList,
+                        children: articles.map((article)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$my$2d$thoughts$2f$my$2d$thoughts$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].articleCard,
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$my$2d$thoughts$2f$my$2d$thoughts$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].articleContent,
                                         children: [
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"]['featured-content'],
-                                                children: [
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                        className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"]['featured-label'],
-                                                        children: "FEATURED THOUGHT"
-                                                    }, void 0, false, {
-                                                        fileName: "[project]/src/app/page.tsx",
-                                                        lineNumber: 385,
-                                                        columnNumber: 19
-                                                    }, this),
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
-                                                        className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"]['featured-title'],
-                                                        children: featuredArticle.title
-                                                    }, void 0, false, {
-                                                        fileName: "[project]/src/app/page.tsx",
-                                                        lineNumber: 386,
-                                                        columnNumber: 19
-                                                    }, this),
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                        className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"]['featured-meta'],
-                                                        children: [
-                                                            "by ",
-                                                            getAuthorName(featuredArticle),
-                                                            " • ",
-                                                            getReadingTime(featuredArticle.content),
-                                                            " min read"
-                                                        ]
-                                                    }, void 0, true, {
-                                                        fileName: "[project]/src/app/page.tsx",
-                                                        lineNumber: 387,
-                                                        columnNumber: 19
-                                                    }, this),
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                                        className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"]['featured-excerpt'],
-                                                        children: getExcerpt(featuredArticle)
-                                                    }, void 0, false, {
-                                                        fileName: "[project]/src/app/page.tsx",
-                                                        lineNumber: 390,
-                                                        columnNumber: 19
-                                                    }, this),
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
-                                                        href: `/articles?slug=${encodeURIComponent(featuredArticle.slug)}`,
-                                                        className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"]['read-link'],
-                                                        children: "Read →"
-                                                    }, void 0, false, {
-                                                        fileName: "[project]/src/app/page.tsx",
-                                                        lineNumber: 393,
-                                                        columnNumber: 19
-                                                    }, this)
-                                                ]
-                                            }, void 0, true, {
-                                                fileName: "[project]/src/app/page.tsx",
-                                                lineNumber: 384,
-                                                columnNumber: 17
-                                            }, this),
-                                            featuredArticle.coverImageUrl && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"]['featured-image'],
-                                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("img", {
-                                                    src: featuredArticle.coverImageUrl,
-                                                    alt: featuredArticle.title,
-                                                    className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"]['cover-image']
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
+                                                className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$my$2d$thoughts$2f$my$2d$thoughts$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].articleTitle,
+                                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                                                    href: `/articles?slug=${article.slug}`,
+                                                    children: article.title
                                                 }, void 0, false, {
-                                                    fileName: "[project]/src/app/page.tsx",
-                                                    lineNumber: 399,
+                                                    fileName: "[project]/src/app/my-thoughts/page.tsx",
+                                                    lineNumber: 280,
                                                     columnNumber: 21
                                                 }, this)
                                             }, void 0, false, {
-                                                fileName: "[project]/src/app/page.tsx",
-                                                lineNumber: 398,
+                                                fileName: "[project]/src/app/my-thoughts/page.tsx",
+                                                lineNumber: 279,
+                                                columnNumber: 19
+                                            }, this),
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$my$2d$thoughts$2f$my$2d$thoughts$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].articleDate,
+                                                children: formatDate(article.createdAt)
+                                            }, void 0, false, {
+                                                fileName: "[project]/src/app/my-thoughts/page.tsx",
+                                                lineNumber: 284,
+                                                columnNumber: 19
+                                            }, this),
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$my$2d$thoughts$2f$my$2d$thoughts$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].articleExcerpt,
+                                                children: getExcerpt(article.body)
+                                            }, void 0, false, {
+                                                fileName: "[project]/src/app/my-thoughts/page.tsx",
+                                                lineNumber: 287,
+                                                columnNumber: 19
+                                            }, this),
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$my$2d$thoughts$2f$my$2d$thoughts$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].articleTags,
+                                                children: article.tags?.map((tag, index)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                        className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$my$2d$thoughts$2f$my$2d$thoughts$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].articleTag,
+                                                        children: tag
+                                                    }, index, false, {
+                                                        fileName: "[project]/src/app/my-thoughts/page.tsx",
+                                                        lineNumber: 292,
+                                                        columnNumber: 23
+                                                    }, this))
+                                            }, void 0, false, {
+                                                fileName: "[project]/src/app/my-thoughts/page.tsx",
+                                                lineNumber: 290,
                                                 columnNumber: 19
                                             }, this)
                                         ]
                                     }, void 0, true, {
-                                        fileName: "[project]/src/app/page.tsx",
-                                        lineNumber: 383,
-                                        columnNumber: 15
+                                        fileName: "[project]/src/app/my-thoughts/page.tsx",
+                                        lineNumber: 278,
+                                        columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                        className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"]['article-grid'],
-                                        children: articles.map((article, index)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("article", {
-                                                className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"]['article-card'],
-                                                children: [
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
-                                                        className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"]['article-title'],
-                                                        children: article.title
-                                                    }, void 0, false, {
-                                                        fileName: "[project]/src/app/page.tsx",
-                                                        lineNumber: 416,
-                                                        columnNumber: 19
-                                                    }, this),
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                        className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"]['article-meta'],
-                                                        children: [
-                                                            "by ",
-                                                            getAuthorName(article),
-                                                            " • ",
-                                                            getReadingTime(article.content),
-                                                            " min read"
-                                                        ]
-                                                    }, void 0, true, {
-                                                        fileName: "[project]/src/app/page.tsx",
-                                                        lineNumber: 417,
-                                                        columnNumber: 19
-                                                    }, this),
-                                                    (article.excerpt || article.content && article.content.length > 0) && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                                        className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"]['article-excerpt'],
-                                                        children: getExcerpt(article)
-                                                    }, void 0, false, {
-                                                        fileName: "[project]/src/app/page.tsx",
-                                                        lineNumber: 421,
-                                                        columnNumber: 21
-                                                    }, this),
-                                                    article.tags && article.tags.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                        className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"]['article-tags'],
-                                                        children: article.tags.map((tag, tagIndex)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
-                                                                href: `/tag/${tag.toLowerCase()}`,
-                                                                className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"]['tag'],
-                                                                children: [
-                                                                    "#",
-                                                                    tag
-                                                                ]
-                                                            }, `${article.slug}-tag-${tagIndex}`, true, {
-                                                                fileName: "[project]/src/app/page.tsx",
-                                                                lineNumber: 430,
-                                                                columnNumber: 25
-                                                            }, this))
-                                                    }, void 0, false, {
-                                                        fileName: "[project]/src/app/page.tsx",
-                                                        lineNumber: 428,
-                                                        columnNumber: 21
-                                                    }, this),
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                        className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"]['reaction-bar'],
-                                                        children: [
-                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                                                className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"]['reaction-button'],
-                                                                "aria-label": "Like article",
-                                                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
-                                                                    xmlns: "http://www.w3.org/2000/svg",
-                                                                    viewBox: "0 0 24 24",
-                                                                    fill: "currentColor",
-                                                                    className: "w-5 h-5",
-                                                                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
-                                                                        d: "M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
-                                                                    }, void 0, false, {
-                                                                        fileName: "[project]/src/app/page.tsx",
-                                                                        lineNumber: 445,
-                                                                        columnNumber: 27
-                                                                    }, this)
-                                                                }, void 0, false, {
-                                                                    fileName: "[project]/src/app/page.tsx",
-                                                                    lineNumber: 444,
-                                                                    columnNumber: 25
-                                                                }, this)
-                                                            }, void 0, false, {
-                                                                fileName: "[project]/src/app/page.tsx",
-                                                                lineNumber: 443,
-                                                                columnNumber: 23
-                                                            }, this),
-                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                                                className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"]['reaction-button'],
-                                                                "aria-label": "Share article",
-                                                                onClick: ()=>handleOpenShareModal(article),
-                                                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
-                                                                    xmlns: "http://www.w3.org/2000/svg",
-                                                                    viewBox: "0 0 24 24",
-                                                                    fill: "currentColor",
-                                                                    className: "w-5 h-5",
-                                                                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
-                                                                        d: "M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"
-                                                                    }, void 0, false, {
-                                                                        fileName: "[project]/src/app/page.tsx",
-                                                                        lineNumber: 454,
-                                                                        columnNumber: 27
-                                                                    }, this)
-                                                                }, void 0, false, {
-                                                                    fileName: "[project]/src/app/page.tsx",
-                                                                    lineNumber: 453,
-                                                                    columnNumber: 25
-                                                                }, this)
-                                                            }, void 0, false, {
-                                                                fileName: "[project]/src/app/page.tsx",
-                                                                lineNumber: 448,
-                                                                columnNumber: 23
-                                                            }, this),
-                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                                                className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"]['reaction-button'],
-                                                                "aria-label": "Comment on article",
-                                                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
-                                                                    xmlns: "http://www.w3.org/2000/svg",
-                                                                    fill: "none",
-                                                                    viewBox: "0 0 24 24",
-                                                                    strokeWidth: "1.5",
-                                                                    stroke: "currentColor",
-                                                                    className: "w-5 h-5",
-                                                                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
-                                                                        strokeLinecap: "round",
-                                                                        strokeLinejoin: "round",
-                                                                        d: "M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.076-4.076a1.526 1.526 0 011.037-.443 48.282 48.282 0 005.68-.494c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z"
-                                                                    }, void 0, false, {
-                                                                        fileName: "[project]/src/app/page.tsx",
-                                                                        lineNumber: 459,
-                                                                        columnNumber: 27
-                                                                    }, this)
-                                                                }, void 0, false, {
-                                                                    fileName: "[project]/src/app/page.tsx",
-                                                                    lineNumber: 458,
-                                                                    columnNumber: 25
-                                                                }, this)
-                                                            }, void 0, false, {
-                                                                fileName: "[project]/src/app/page.tsx",
-                                                                lineNumber: 457,
-                                                                columnNumber: 23
-                                                            }, this),
-                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
-                                                                href: `/articles?slug=${encodeURIComponent(article.slug)}`,
-                                                                className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"]['read-link'],
-                                                                children: "Read →"
-                                                            }, void 0, false, {
-                                                                fileName: "[project]/src/app/page.tsx",
-                                                                lineNumber: 462,
-                                                                columnNumber: 21
-                                                            }, this)
-                                                        ]
-                                                    }, void 0, true, {
-                                                        fileName: "[project]/src/app/page.tsx",
-                                                        lineNumber: 442,
-                                                        columnNumber: 19
-                                                    }, this)
-                                                ]
-                                            }, article._id || article.slug || `article-${index}`, true, {
-                                                fileName: "[project]/src/app/page.tsx",
-                                                lineNumber: 412,
-                                                columnNumber: 17
-                                            }, this))
-                                    }, void 0, false, {
-                                        fileName: "[project]/src/app/page.tsx",
-                                        lineNumber: 410,
-                                        columnNumber: 13
+                                        className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$my$2d$thoughts$2f$my$2d$thoughts$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].articleActions,
+                                        children: [
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                                                href: `/articles?slug=${article.slug}`,
+                                                className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$my$2d$thoughts$2f$my$2d$thoughts$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].viewButton,
+                                                children: "View"
+                                            }, void 0, false, {
+                                                fileName: "[project]/src/app/my-thoughts/page.tsx",
+                                                lineNumber: 299,
+                                                columnNumber: 19
+                                            }, this),
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                                                href: `/edit-article?id=${article.id}`,
+                                                className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$my$2d$thoughts$2f$my$2d$thoughts$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].editButton,
+                                                children: "Edit"
+                                            }, void 0, false, {
+                                                fileName: "[project]/src/app/my-thoughts/page.tsx",
+                                                lineNumber: 302,
+                                                columnNumber: 19
+                                            }, this),
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                                className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$my$2d$thoughts$2f$my$2d$thoughts$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].deleteButton,
+                                                onClick: ()=>confirmDelete(article.id || ''),
+                                                children: "Delete"
+                                            }, void 0, false, {
+                                                fileName: "[project]/src/app/my-thoughts/page.tsx",
+                                                lineNumber: 308,
+                                                columnNumber: 19
+                                            }, this)
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "[project]/src/app/my-thoughts/page.tsx",
+                                        lineNumber: 298,
+                                        columnNumber: 17
                                     }, this)
                                 ]
-                            }, void 0, true)
-                        ]
-                    }, void 0, true, {
-                        fileName: "[project]/src/app/page.tsx",
-                        lineNumber: 373,
-                        columnNumber: 7
-                    }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("aside", {
-                        className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"]['right-sidebar'],
-                        children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
-                                className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"]['sidebar-heading'],
-                                children: "Trending"
-                            }, void 0, false, {
-                                fileName: "[project]/src/app/page.tsx",
-                                lineNumber: 475,
-                                columnNumber: 9
-                            }, this),
-                            isAuthenticated && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$NotificationBell$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
-                                fileName: "[project]/src/app/page.tsx",
-                                lineNumber: 476,
-                                columnNumber: 29
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"]['tag-list'],
-                                children: tags.map((tag)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
-                                        href: `/tag/${tag.toLowerCase()}`,
-                                        className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"]['trending-tag'],
-                                        children: [
-                                            "# ",
-                                            tag
-                                        ]
-                                    }, tag, true, {
-                                        fileName: "[project]/src/app/page.tsx",
-                                        lineNumber: 479,
-                                        columnNumber: 13
-                                    }, this))
-                            }, void 0, false, {
-                                fileName: "[project]/src/app/page.tsx",
-                                lineNumber: 477,
-                                columnNumber: 9
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
-                                href: "/write",
-                                className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"]['write-button'],
-                                children: "Write"
-                            }, void 0, false, {
-                                fileName: "[project]/src/app/page.tsx",
-                                lineNumber: 484,
-                                columnNumber: 9
-                            }, this)
-                        ]
-                    }, void 0, true, {
-                        fileName: "[project]/src/app/page.tsx",
-                        lineNumber: 474,
-                        columnNumber: 7
-                    }, this),
-                    sharingArticleDetails && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ShareModal$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
-                        isOpen: isShareModalOpen,
-                        onClose: handleCloseShareModal,
-                        articleTitle: sharingArticleDetails.title,
-                        articleUrl: `${'https://mvp.journalite.app'}/articles?slug=${encodeURIComponent(sharingArticleDetails.slug)}`,
-                        coverImageUrl: sharingArticleDetails.coverImageUrl,
-                        excerpt: sharingArticleDetails.excerpt
+                            }, article.id, true, {
+                                fileName: "[project]/src/app/my-thoughts/page.tsx",
+                                lineNumber: 277,
+                                columnNumber: 15
+                            }, this))
                     }, void 0, false, {
-                        fileName: "[project]/src/app/page.tsx",
-                        lineNumber: 491,
+                        fileName: "[project]/src/app/my-thoughts/page.tsx",
+                        lineNumber: 275,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
-                fileName: "[project]/src/app/page.tsx",
-                lineNumber: 347,
-                columnNumber: 5
+                fileName: "[project]/src/app/my-thoughts/page.tsx",
+                lineNumber: 233,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("aside", {
+                className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"]['right-sidebar'],
+                children: [
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
+                        className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"]['sidebar-heading'],
+                        children: "Your Stats"
+                    }, void 0, false, {
+                        fileName: "[project]/src/app/my-thoughts/page.tsx",
+                        lineNumber: 323,
+                        columnNumber: 9
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$NotificationBell$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
+                        fileName: "[project]/src/app/my-thoughts/page.tsx",
+                        lineNumber: 324,
+                        columnNumber: 9
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$my$2d$thoughts$2f$my$2d$thoughts$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].statsContainer,
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$my$2d$thoughts$2f$my$2d$thoughts$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].statCard,
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                        className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$my$2d$thoughts$2f$my$2d$thoughts$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].statValue,
+                                        children: articles.filter((a)=>a.status === 'published').length
+                                    }, void 0, false, {
+                                        fileName: "[project]/src/app/my-thoughts/page.tsx",
+                                        lineNumber: 327,
+                                        columnNumber: 13
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                        className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$my$2d$thoughts$2f$my$2d$thoughts$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].statLabel,
+                                        children: "Published"
+                                    }, void 0, false, {
+                                        fileName: "[project]/src/app/my-thoughts/page.tsx",
+                                        lineNumber: 330,
+                                        columnNumber: 13
+                                    }, this)
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/src/app/my-thoughts/page.tsx",
+                                lineNumber: 326,
+                                columnNumber: 11
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$my$2d$thoughts$2f$my$2d$thoughts$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].statCard,
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                        className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$my$2d$thoughts$2f$my$2d$thoughts$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].statValue,
+                                        children: articles.filter((a)=>a.status === 'drafts').length
+                                    }, void 0, false, {
+                                        fileName: "[project]/src/app/my-thoughts/page.tsx",
+                                        lineNumber: 333,
+                                        columnNumber: 13
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                        className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$my$2d$thoughts$2f$my$2d$thoughts$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].statLabel,
+                                        children: "Drafts"
+                                    }, void 0, false, {
+                                        fileName: "[project]/src/app/my-thoughts/page.tsx",
+                                        lineNumber: 336,
+                                        columnNumber: 13
+                                    }, this)
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/src/app/my-thoughts/page.tsx",
+                                lineNumber: 332,
+                                columnNumber: 11
+                            }, this)
+                        ]
+                    }, void 0, true, {
+                        fileName: "[project]/src/app/my-thoughts/page.tsx",
+                        lineNumber: 325,
+                        columnNumber: 9
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                        href: "/create-article",
+                        className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"]['write-button'],
+                        children: "Write"
+                    }, void 0, false, {
+                        fileName: "[project]/src/app/my-thoughts/page.tsx",
+                        lineNumber: 339,
+                        columnNumber: 9
+                    }, this)
+                ]
+            }, void 0, true, {
+                fileName: "[project]/src/app/my-thoughts/page.tsx",
+                lineNumber: 322,
+                columnNumber: 7
+            }, this),
+            showDeleteModal && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$my$2d$thoughts$2f$my$2d$thoughts$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].modalOverlay,
+                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                    className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$my$2d$thoughts$2f$my$2d$thoughts$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].modal,
+                    children: [
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
+                            className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$my$2d$thoughts$2f$my$2d$thoughts$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].modalTitle,
+                            children: "Confirm Delete"
+                        }, void 0, false, {
+                            fileName: "[project]/src/app/my-thoughts/page.tsx",
+                            lineNumber: 348,
+                            columnNumber: 13
+                        }, this),
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                            className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$my$2d$thoughts$2f$my$2d$thoughts$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].modalText,
+                            children: "Are you sure you want to delete this article? This action cannot be undone."
+                        }, void 0, false, {
+                            fileName: "[project]/src/app/my-thoughts/page.tsx",
+                            lineNumber: 349,
+                            columnNumber: 13
+                        }, this),
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                            className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$my$2d$thoughts$2f$my$2d$thoughts$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].modalButtons,
+                            children: [
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                    className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$my$2d$thoughts$2f$my$2d$thoughts$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].cancelButton,
+                                    onClick: ()=>{
+                                        setShowDeleteModal(false);
+                                        setArticleToDelete(null);
+                                    },
+                                    children: "Cancel"
+                                }, void 0, false, {
+                                    fileName: "[project]/src/app/my-thoughts/page.tsx",
+                                    lineNumber: 353,
+                                    columnNumber: 15
+                                }, this),
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                    className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$my$2d$thoughts$2f$my$2d$thoughts$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].confirmButton,
+                                    onClick: handleDelete,
+                                    children: "Delete"
+                                }, void 0, false, {
+                                    fileName: "[project]/src/app/my-thoughts/page.tsx",
+                                    lineNumber: 362,
+                                    columnNumber: 15
+                                }, this)
+                            ]
+                        }, void 0, true, {
+                            fileName: "[project]/src/app/my-thoughts/page.tsx",
+                            lineNumber: 352,
+                            columnNumber: 13
+                        }, this)
+                    ]
+                }, void 0, true, {
+                    fileName: "[project]/src/app/my-thoughts/page.tsx",
+                    lineNumber: 347,
+                    columnNumber: 11
+                }, this)
+            }, void 0, false, {
+                fileName: "[project]/src/app/my-thoughts/page.tsx",
+                lineNumber: 346,
+                columnNumber: 9
             }, this)
         ]
-    }, void 0, true);
+    }, void 0, true, {
+        fileName: "[project]/src/app/my-thoughts/page.tsx",
+        lineNumber: 220,
+        columnNumber: 5
+    }, this);
 }
-_s(HomePage, "Qf3AUBXz/y6iNh1jmn/wolBk83k=");
-_c = HomePage;
+_s(MyThoughtsPage, "njmz2+CNqg1rmF7sJtu5gOIQOfk=", false, function() {
+    return [
+        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"]
+    ];
+});
+_c = MyThoughtsPage;
 var _c;
-__turbopack_context__.k.register(_c, "HomePage");
+__turbopack_context__.k.register(_c, "MyThoughtsPage");
 if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelpers !== null) {
     __turbopack_context__.k.registerExports(module, globalThis.$RefreshHelpers$);
 }
 }}),
 }]);
 
-//# sourceMappingURL=src_669d9e3c._.js.map
+//# sourceMappingURL=src_9ab8afa1._.js.map

@@ -71,37 +71,26 @@
   
   /* No collapsed state - always visible liquid navigation */
   
-    /* Vertical logo at top of liquid navigation */
-  .sidebar-header {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 1.5rem;
-    width: 100%;
-    text-align: center;
-  }
-
-  .logo {
-    font-size: 1.1rem;
+  /* Top-left logo styling */
+  .top-left-logo {
+    position: fixed;
+    top: 30px;
+    left: 30px;
+    z-index: 1001;
+    font-size: 1.5rem;
     font-weight: 700;
     font-family: 'Playfair Display', serif;
     color: #1f2937;
-    writing-mode: vertical-rl;
-    text-orientation: mixed;
-    letter-spacing: 2px;
+    letter-spacing: 1px;
     opacity: 0.8;
-    transition: opacity 0.3s ease;
-    text-align: center;
-    margin: 0 auto;
+    transition: all 0.3s ease;
+    text-decoration: none;
   }
 
-  .logo:hover {
+  .top-left-logo:hover {
     opacity: 1;
-  }
-  
-    /* Remove all old navigation elements */
-  .collapsed .logo {
-    display: none;
+    transform: translateY(-1px);
+    color: #2563eb;
   }
 
   .toggle-button {
@@ -125,12 +114,12 @@
   .vertical-nav {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.25rem;
     align-items: center;
     justify-content: center;
     width: 100%;
-    flex: 1;
-    padding: 0;
+    height: 100%;
+    padding: 1.5rem 0;
   }
   
     /* 5 Core Navigation Icons with SVG for Auth/Unauth Users */
@@ -138,73 +127,46 @@
   /* Home Icon - Same for all users */
   .nav-home .nav-icon {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%232563EB'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m3 12 2-2m0 0 7-7 7 7M5 10v10a1 1 0 0 0 1 1h3m10-11 2 2m-2-2v10a1 1 0 0 1-1 1h-3m-6 0a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1m-6 0h6'/%3E%3C/svg%3E");
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
   }
 
   /* Create Article Icon - For authenticated users */
   .nav-create .nav-icon {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2310B981'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125'/%3E%3C/svg%3E");
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
   }
 
   /* My Thoughts Icon - Brain icon for authenticated users */
   .nav-thoughts .nav-icon {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23F59E0B'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M9.75 3.104v5.714a2.25 2.25 0 0 1-.659 1.591L7 12.5l2.091 2.091a2.25 2.25 0 0 1 .659 1.591v5.714c0 .341.275.616.615.616h.616a.75.75 0 0 0 .75-.75v-1.505a6.007 6.007 0 0 1 1.238-3.703l.396-.396a2.121 2.121 0 0 1 1.492-.621h.623c.341 0 .619-.278.619-.619v-.422a2.25 2.25 0 0 0-2.25-2.25h-1.125a1.125 1.125 0 0 1-1.125-1.125v-.375c0-.621.504-1.125 1.125-1.125h1.5c.828 0 1.5-.672 1.5-1.5V9c0-.828-.672-1.5-1.5-1.5h-1.5c-.621 0-1.125-.504-1.125-1.125v-.375c0-.621.504-1.125 1.125-1.125h.375a2.25 2.25 0 0 0 2.25-2.25v-.422c0-.341-.278-.619-.619-.619h-.623c-.341 0-.615.275-.615.616z'/%3E%3C/svg%3E");
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
   }
 
   /* Trending Icon - For authenticated users */
   .nav-trending .nav-icon {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%237C3AED'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2.25 18 9 11.25l4.306 4.306a11.95 11.95 0 0 1 5.814-5.518l2.74-1.22m0 0-5.94-2.281m5.94 2.28-2.28 5.941'/%3E%3C/svg%3E");
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
   }
 
   /* News Icon - For authenticated users (5th item) */
   .nav-news .nav-icon {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23DC2626'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 0 1-2.25 2.25M16.5 7.5V18a2.25 2.25 0 0 0 2.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 0 0 2.25 2.25h13.5M6 7.5h3v3H6v-3Z'/%3E%3C/svg%3E");
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
   }
 
   /* Explore Icon - For unauthenticated users (replaces create) */
   .nav-explore .nav-icon {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2310B981'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z'/%3E%3C/svg%3E");
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
   }
 
   /* Learn More Icon - For unauthenticated users */
   .nav-learn .nav-icon {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23F59E0B'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25'/%3E%3C/svg%3E");
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
   }
 
   /* Sign In Icon - For unauthenticated users */
   .nav-signin .nav-icon {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%237C3AED'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75'/%3E%3C/svg%3E");
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
   }
 
   /* Login Icon - For unauthenticated users (replaces news) */
   .nav-login .nav-icon {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23DC2626'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z'/%3E%3C/svg%3E");
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
   }
   
   .nav-link {
@@ -216,23 +178,33 @@
     justify-content: center;
     width: 50px;
     height: 50px;
-    border-radius: 18px;
     opacity: 0.7;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
     position: relative;
-    overflow: hidden;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    /* Remove any default browser styling */
+    background: none !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
   }
 
-  /* Navigation icon styling - perfectly centered */
+  /* Navigation icon styling - slightly left of center */
   .nav-icon {
-    width: 24px;
-    height: 24px;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto;
+    width: 22px;
+    height: 22px;
+    transition: transform 0.3s ease;
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 37%;
+    transform: translate(-50%, -50%);
+    background-size: 22px 22px !important;
+    background-repeat: no-repeat !important;
+    background-position: center center !important;
+    margin: 0;
+    padding: 0;
   }
   
     .nav-text {
@@ -241,35 +213,21 @@
 
   .nav-link:hover {
     opacity: 1;
-    background: rgba(255, 255, 255, 0.15);
-    border-color: rgba(255, 255, 255, 0.25);
-    transform: translateY(-2px) scale(1.05);
-    box-shadow: 
-      0 8px 20px rgba(0, 0, 0, 0.12),
-      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
   }
 
   .nav-link:hover .nav-icon {
-    transform: scale(1.1);
-    filter: brightness(1.2);
-  }
-  
-  .nav-link:hover .nav-icon {
-    opacity: 1;
-  }
-  
-  .nav-link:hover .nav-text {
-    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.15);
   }
   
   /* Active state for current page - glowing effect */
   .nav-link.active {
     opacity: 1;
-    background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.3);
-    box-shadow: 
-      0 6px 16px rgba(59, 130, 246, 0.2),
-      inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
   }
 
   .nav-link.active .nav-icon {
@@ -1180,9 +1138,10 @@
       padding: 1rem 0;
     }
     
-    .logo {
-      font-size: 0.9rem;
-      letter-spacing: 1px;
+    .top-left-logo {
+      top: 20px;
+      left: 20px;
+      font-size: 1.25rem;
     }
     
     .nav-link {

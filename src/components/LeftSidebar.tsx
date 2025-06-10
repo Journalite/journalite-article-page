@@ -59,11 +59,6 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({
     <>
       {/* Main Navigation - 5 Items Liquid Glass */}
       <aside className={styles['left-sidebar']}>
-        {/* Vertical logo at top */}
-        <div className={styles['sidebar-header']}>
-          <div className={styles.logo}>Journalite</div>
-        </div>
-        
         {/* 5 Core Navigation Items */}
         <nav className={styles['vertical-nav']}>
           {isAuthenticated ? (

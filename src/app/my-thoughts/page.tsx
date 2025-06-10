@@ -11,6 +11,7 @@ import styles from '@/styles/home.module.css'
 import thoughtStyles from './my-thoughts.module.css'
 import NotificationBell from '@/components/NotificationBell'
 import LeftSidebar from '@/components/LeftSidebar'
+import TopLeftLogo from '@/components/TopLeftLogo'
 
 // Extended article interface with status property
 interface Article extends BaseArticle {
@@ -217,6 +218,9 @@ export default function MyThoughtsPage() {
 
   return (
     <div className={styles['three-column-layout']}>
+      {/* TOP LEFT LOGO */}
+      <TopLeftLogo />
+      
       {/* LEFT SIDEBAR */}
       <LeftSidebar 
         isAuthenticated={isAuthenticated}
