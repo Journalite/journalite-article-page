@@ -1,0 +1,681 @@
+/* [project]/src/styles/Editor.module.css [app-client] (css) */
+.Editor-module__x7ssIG__editorContainer .ProseMirror, .Editor-module__x7ssIG__editorContainer .ProseMirror *, .Editor-module__x7ssIG__editorContent, .Editor-module__x7ssIG__prosemirrorEditor, .Editor-module__x7ssIG__editor .ProseMirror, .Editor-module__x7ssIG__editor .ProseMirror * {
+  white-space: pre-wrap !important;
+  word-wrap: break-word !important;
+  word-break: normal !important;
+  float: none !important;
+  flex: none !important;
+  width: auto !important;
+  height: auto !important;
+  display: block !important;
+  position: static !important;
+  overflow: visible !important;
+  transform: none !important;
+}
+
+.Editor-module__x7ssIG__editorContainer .ProseMirror[contenteditable="true"] {
+  white-space: pre-wrap !important;
+  word-wrap: break-word !important;
+  cursor: text !important;
+  caret-color: #292929 !important;
+  display: block !important;
+  overflow: visible !important;
+}
+
+.Editor-module__x7ssIG__editor .ProseMirror * {
+  white-space: inherit !important;
+  direction: inherit !important;
+  unicode-bidi: inherit !important;
+}
+
+.Editor-module__x7ssIG__editor .ProseMirror {
+  white-space: pre-wrap !important;
+  word-wrap: break-word !important;
+  cursor: text !important;
+  text-align: start !important;
+  width: 100% !important;
+  height: auto !important;
+  font-family: inherit !important;
+  line-height: inherit !important;
+  caret-color: #292929 !important;
+  direction: ltr !important;
+  unicode-bidi: plaintext !important;
+  outline: none !important;
+  flex-flow: column wrap !important;
+  flex: none !important;
+  display: block !important;
+  position: relative !important;
+  overflow: visible !important;
+}
+
+.Editor-module__x7ssIG__editor {
+  color: #292929;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Open Sans, Helvetica Neue, sans-serif;
+  height: auto !important;
+  display: block !important;
+  overflow: visible !important;
+}
+
+.Editor-module__x7ssIG__loading {
+  color: #6b7280;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  min-height: 400px;
+  font-size: 15px;
+  display: flex;
+}
+
+.Editor-module__x7ssIG__loadingSpinner {
+  border: 2px solid #6366f133;
+  border-top-color: #6366f1;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  animation: 1s linear infinite Editor-module__x7ssIG__spin;
+}
+
+@keyframes Editor-module__x7ssIG__spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.Editor-module__x7ssIG__modernToolbar {
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: all .3s cubic-bezier(.4, 0, .2, 1);
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.Editor-module__x7ssIG__editor:focus-within .Editor-module__x7ssIG__modernToolbar, .Editor-module__x7ssIG__modernToolbar:hover {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: all;
+}
+
+.Editor-module__x7ssIG__toolbarContainer {
+  backdrop-filter: blur(20px);
+  -webkit-overflow-scrolling: touch;
+  background: #fffffff2;
+  border: 1px solid #00000014;
+  border-radius: 12px;
+  align-items: center;
+  gap: 4px;
+  max-width: 90vw;
+  padding: 8px 16px;
+  display: flex;
+  overflow-x: auto;
+  box-shadow: 0 4px 20px #0000001a, 0 1px 3px #0000000d;
+}
+
+.Editor-module__x7ssIG__formatGroup {
+  align-items: center;
+  gap: 2px;
+  display: flex;
+}
+
+.Editor-module__x7ssIG__divider {
+  background: #0000001a;
+  flex-shrink: 0;
+  width: 1px;
+  height: 24px;
+  margin: 0 6px;
+}
+
+.Editor-module__x7ssIG__toolBtn {
+  color: #374151;
+  cursor: pointer;
+  background: none;
+  border: none;
+  border-radius: 8px;
+  flex-shrink: 0;
+  justify-content: center;
+  align-items: center;
+  width: 36px;
+  height: 36px;
+  transition: all .2s cubic-bezier(.4, 0, .2, 1);
+  display: inline-flex;
+  position: relative;
+}
+
+.Editor-module__x7ssIG__toolBtn:hover {
+  color: #6366f1;
+  background: #6366f11a;
+  transform: scale(1.05);
+}
+
+.Editor-module__x7ssIG__toolBtn:active {
+  transform: scale(.95);
+}
+
+.Editor-module__x7ssIG__toolBtn.Editor-module__x7ssIG__active {
+  color: #fff;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  box-shadow: 0 2px 8px #6366f14d;
+}
+
+.Editor-module__x7ssIG__toolBtn.Editor-module__x7ssIG__active:hover {
+  background: linear-gradient(135deg, #5b5bd6, #7c3aed);
+  transform: scale(1.05);
+}
+
+.Editor-module__x7ssIG__headingIcon {
+  letter-spacing: -.02em;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.Editor-module__x7ssIG__toolBtn svg {
+  transition: transform .2s;
+}
+
+.Editor-module__x7ssIG__toolBtn:hover svg {
+  transform: scale(1.1);
+}
+
+.Editor-module__x7ssIG__toolBtn.Editor-module__x7ssIG__active svg {
+  filter: drop-shadow(0 1px 2px #0003);
+}
+
+.Editor-module__x7ssIG__editorContent {
+  color: #292929;
+  outline: none;
+  min-height: 400px;
+  padding: 12px 0;
+  font-size: 21px;
+  line-height: 1.6;
+}
+
+.Editor-module__x7ssIG__editorContent.Editor-module__x7ssIG__ProseMirror, .Editor-module__x7ssIG__editor .ProseMirror.Editor-module__x7ssIG__editorContent {
+  color: #292929;
+  min-height: 400px;
+  padding: 12px 0;
+  font-family: inherit;
+  font-size: 21px;
+  line-height: 1.6;
+  white-space: pre-wrap !important;
+  word-wrap: break-word !important;
+  -webkit-user-modify: read-write-plaintext-only !important;
+  cursor: text !important;
+  text-align: start !important;
+  caret-color: #292929 !important;
+  text-indent: 0 !important;
+  letter-spacing: normal !important;
+  word-break: normal !important;
+  overflow-wrap: break-word !important;
+  -webkit-hyphens: none !important;
+  hyphens: none !important;
+  -webkit-text-size-adjust: 100% !important;
+  -moz-text-size-adjust: 100% !important;
+  text-size-adjust: 100% !important;
+  direction: ltr !important;
+  unicode-bidi: plaintext !important;
+  outline: none !important;
+  flex-flow: column wrap !important;
+  flex: none !important;
+  width: 100% !important;
+  height: auto !important;
+  display: block !important;
+  position: relative !important;
+  overflow: visible !important;
+  transform: none !important;
+}
+
+.Editor-module__x7ssIG__prosemirrorEditor {
+  color: #292929;
+  font-size: 21px;
+  line-height: 1.6;
+  white-space: pre-wrap !important;
+  word-wrap: break-word !important;
+  cursor: text !important;
+  caret-color: #292929 !important;
+  direction: ltr !important;
+  unicode-bidi: plaintext !important;
+  outline: none !important;
+  flex-flow: column wrap !important;
+  flex: none !important;
+  width: 100% !important;
+  height: auto !important;
+  display: block !important;
+  position: relative !important;
+  overflow: visible !important;
+}
+
+.Editor-module__x7ssIG__prosemirrorEditor[data-placeholder]:empty:before {
+  content: attr(data-placeholder);
+  color: #999;
+  pointer-events: none;
+  font-style: italic;
+  position: absolute;
+}
+
+.Editor-module__x7ssIG__prosemirrorEditor h1 {
+  letter-spacing: -.02em;
+  color: #000;
+  margin: 32px 0 16px;
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.Editor-module__x7ssIG__prosemirrorEditor h2 {
+  letter-spacing: -.01em;
+  color: #000;
+  margin: 28px 0 16px;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.Editor-module__x7ssIG__prosemirrorEditor h3 {
+  color: #000;
+  margin: 24px 0 12px;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.Editor-module__x7ssIG__prosemirrorEditor h4 {
+  color: #000;
+  margin: 22px 0 12px;
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.Editor-module__x7ssIG__prosemirrorEditor h5 {
+  color: #000;
+  margin: 20px 0 12px;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.Editor-module__x7ssIG__prosemirrorEditor h6 {
+  color: #000;
+  margin: 18px 0 12px;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.Editor-module__x7ssIG__prosemirrorEditor p {
+  color: #292929;
+  margin: 0 0 24px;
+  font-size: 21px;
+  line-height: 1.6;
+  white-space: pre-wrap !important;
+  word-wrap: break-word !important;
+  width: 100% !important;
+  display: block !important;
+  overflow: visible !important;
+}
+
+.Editor-module__x7ssIG__prosemirrorEditor p:last-child {
+  margin-bottom: 0;
+}
+
+.Editor-module__x7ssIG__prosemirrorEditor a {
+  color: #1a8917;
+  text-decoration: underline #1a89174d;
+  transition: text-decoration-color .2s;
+}
+
+.Editor-module__x7ssIG__prosemirrorEditor a:hover {
+  text-decoration-color: #1a8917cc;
+}
+
+.Editor-module__x7ssIG__prosemirrorEditor strong {
+  color: #000;
+  font-weight: 700;
+}
+
+.Editor-module__x7ssIG__prosemirrorEditor em {
+  font-style: italic;
+}
+
+.Editor-module__x7ssIG__prosemirrorEditor code {
+  color: #d73a49;
+  background-color: #0000000d;
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace;
+  font-size: 16px;
+}
+
+.Editor-module__x7ssIG__prosemirrorEditor pre {
+  color: #d4d4d4;
+  background-color: #1e1e1e;
+  border: 1px solid #333;
+  border-radius: 8px;
+  margin: 24px 0;
+  padding: 16px;
+  font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace;
+  font-size: 14px;
+  line-height: 1.6;
+  overflow-x: auto;
+}
+
+.Editor-module__x7ssIG__prosemirrorEditor pre code {
+  color: inherit;
+  font-size: inherit;
+  background: none;
+  border-radius: 0;
+  padding: 0;
+}
+
+.Editor-module__x7ssIG__prosemirrorEditor pre .token.comment, .Editor-module__x7ssIG__prosemirrorEditor pre .token.prolog, .Editor-module__x7ssIG__prosemirrorEditor pre .token.doctype, .Editor-module__x7ssIG__prosemirrorEditor pre .token.cdata {
+  font-style: italic;
+  color: #6a9955 !important;
+}
+
+.Editor-module__x7ssIG__prosemirrorEditor pre .token.punctuation {
+  color: #d4d4d4 !important;
+}
+
+.Editor-module__x7ssIG__prosemirrorEditor pre .token.property, .Editor-module__x7ssIG__prosemirrorEditor pre .token.tag, .Editor-module__x7ssIG__prosemirrorEditor pre .token.boolean, .Editor-module__x7ssIG__prosemirrorEditor pre .token.number, .Editor-module__x7ssIG__prosemirrorEditor pre .token.constant, .Editor-module__x7ssIG__prosemirrorEditor pre .token.symbol, .Editor-module__x7ssIG__prosemirrorEditor pre .token.deleted {
+  color: #b5cea8 !important;
+}
+
+.Editor-module__x7ssIG__prosemirrorEditor pre .token.selector, .Editor-module__x7ssIG__prosemirrorEditor pre .token.attr-name, .Editor-module__x7ssIG__prosemirrorEditor pre .token.string, .Editor-module__x7ssIG__prosemirrorEditor pre .token.char, .Editor-module__x7ssIG__prosemirrorEditor pre .token.builtin, .Editor-module__x7ssIG__prosemirrorEditor pre .token.inserted {
+  color: #ce9178 !important;
+}
+
+.Editor-module__x7ssIG__prosemirrorEditor pre .token.operator, .Editor-module__x7ssIG__prosemirrorEditor pre .token.entity, .Editor-module__x7ssIG__prosemirrorEditor pre .token.url, .Editor-module__x7ssIG__prosemirrorEditor pre .token.variable {
+  color: #d4d4d4 !important;
+}
+
+.Editor-module__x7ssIG__prosemirrorEditor pre .token.atrule, .Editor-module__x7ssIG__prosemirrorEditor pre .token.attr-value, .Editor-module__x7ssIG__prosemirrorEditor pre .token.function, .Editor-module__x7ssIG__prosemirrorEditor pre .token.class-name {
+  color: #dcdcaa !important;
+}
+
+.Editor-module__x7ssIG__prosemirrorEditor pre .token.keyword {
+  font-weight: 500;
+  color: #569cd6 !important;
+}
+
+.Editor-module__x7ssIG__prosemirrorEditor pre .token.regex, .Editor-module__x7ssIG__prosemirrorEditor pre .token.important {
+  color: #f44747 !important;
+}
+
+.Editor-module__x7ssIG__prosemirrorEditor pre .token.important, .Editor-module__x7ssIG__prosemirrorEditor pre .token.bold {
+  font-weight: bold;
+}
+
+.Editor-module__x7ssIG__prosemirrorEditor pre .token.italic {
+  font-style: italic;
+}
+
+.Editor-module__x7ssIG__prosemirrorEditor pre .token.entity {
+  cursor: help;
+}
+
+.Editor-module__x7ssIG__prosemirrorEditor pre .token.namespace {
+  opacity: .7;
+}
+
+.Editor-module__x7ssIG__prosemirrorEditor pre .token.template-string {
+  color: #ce9178 !important;
+}
+
+.Editor-module__x7ssIG__prosemirrorEditor pre .token.template-punctuation {
+  color: #569cd6 !important;
+}
+
+.Editor-module__x7ssIG__prosemirrorEditor pre .token.json .token.property {
+  color: #9cdcfe !important;
+}
+
+.Editor-module__x7ssIG__prosemirrorEditor pre .token.selector {
+  color: #d7ba7d !important;
+}
+
+.Editor-module__x7ssIG__prosemirrorEditor pre .token.property {
+  color: #9cdcfe !important;
+}
+
+.Editor-module__x7ssIG__prosemirrorEditor pre .token.doctype .token.name {
+  color: #569cd6 !important;
+}
+
+.Editor-module__x7ssIG__prosemirrorEditor pre .token.tag .token.tag {
+  color: #569cd6 !important;
+}
+
+.Editor-module__x7ssIG__prosemirrorEditor pre .token.tag .token.punctuation {
+  color: gray !important;
+}
+
+.Editor-module__x7ssIG__prosemirrorEditor pre .token.attr-name {
+  color: #9cdcfe !important;
+}
+
+.Editor-module__x7ssIG__prosemirrorEditor pre .token.attr-value .token.punctuation {
+  color: #ce9178 !important;
+}
+
+.Editor-module__x7ssIG__prosemirrorEditor pre .token.attr-value .token.punctuation:first-child {
+  color: #ce9178 !important;
+}
+
+.Editor-module__x7ssIG__prosemirrorEditor pre[data-language]:before {
+  content: attr(data-language);
+  color: #a0a0a0;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  background: #ffffff1a;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 12px;
+  font-weight: 500;
+  position: absolute;
+  top: 8px;
+  right: 12px;
+}
+
+.Editor-module__x7ssIG__prosemirrorEditor pre {
+  position: relative;
+}
+
+.Editor-module__x7ssIG__prosemirrorEditor blockquote {
+  color: #555;
+  background-color: #1a891705;
+  border-left: 4px solid #1a8917;
+  border-radius: 0 4px 4px 0;
+  margin: 24px 0;
+  padding: 16px 20px;
+  font-size: 21px;
+  font-style: italic;
+}
+
+.Editor-module__x7ssIG__prosemirrorEditor img {
+  border-radius: 6px;
+  max-width: 100%;
+  height: auto;
+  margin: 24px auto;
+  display: block;
+  box-shadow: 0 2px 8px #0000001a;
+}
+
+.Editor-module__x7ssIG__editor .ProseMirror ul, .Editor-module__x7ssIG__editor .ProseMirror ol, .Editor-module__x7ssIG__prosemirrorEditor ul, .Editor-module__x7ssIG__prosemirrorEditor ol {
+  margin: 16px 0 24px !important;
+  padding-left: 28px !important;
+  list-style-position: outside !important;
+  display: block !important;
+}
+
+.Editor-module__x7ssIG__editor .ProseMirror ul, .Editor-module__x7ssIG__prosemirrorEditor ul {
+  list-style-type: disc !important;
+}
+
+.Editor-module__x7ssIG__editor .ProseMirror ul li, .Editor-module__x7ssIG__prosemirrorEditor ul li {
+  margin-bottom: 8px !important;
+  font-size: 21px !important;
+  line-height: 1.6 !important;
+  list-style-type: disc !important;
+  display: list-item !important;
+}
+
+.Editor-module__x7ssIG__editor .ProseMirror ol, .Editor-module__x7ssIG__prosemirrorEditor ol {
+  counter-reset: list-counter !important;
+  list-style-type: decimal !important;
+}
+
+.Editor-module__x7ssIG__editor .ProseMirror ol li, .Editor-module__x7ssIG__prosemirrorEditor ol li {
+  counter-increment: list-counter !important;
+  margin-bottom: 8px !important;
+  font-size: 21px !important;
+  line-height: 1.6 !important;
+  list-style-type: decimal !important;
+  display: list-item !important;
+}
+
+.Editor-module__x7ssIG__editor .ProseMirror li, .Editor-module__x7ssIG__prosemirrorEditor li {
+  margin-bottom: 8px !important;
+  font-size: 21px !important;
+  line-height: 1.6 !important;
+  display: list-item !important;
+}
+
+.Editor-module__x7ssIG__editor .ProseMirror li p, .Editor-module__x7ssIG__prosemirrorEditor li p {
+  margin: 0 0 8px !important;
+  display: inline !important;
+}
+
+.Editor-module__x7ssIG__editor .ProseMirror li p:last-child, .Editor-module__x7ssIG__prosemirrorEditor li p:last-child {
+  margin-bottom: 0 !important;
+}
+
+.Editor-module__x7ssIG__prosemirrorEditor ul ul, .Editor-module__x7ssIG__prosemirrorEditor ol ol, .Editor-module__x7ssIG__prosemirrorEditor ul ol, .Editor-module__x7ssIG__prosemirrorEditor ol ul {
+  margin: 4px 0;
+  padding-left: 24px;
+}
+
+.Editor-module__x7ssIG__prosemirrorEditor hr {
+  border: none;
+  border-top: 2px solid #e1e5e9;
+  margin: 32px 0;
+}
+
+.Editor-module__x7ssIG__prosemirrorEditor ::-moz-selection {
+  background-color: #b3d9ff;
+}
+
+.Editor-module__x7ssIG__prosemirrorEditor ::selection {
+  background-color: #b3d9ff;
+}
+
+.Editor-module__x7ssIG__prosemirrorEditor:focus {
+  outline: none;
+}
+
+.Editor-module__x7ssIG__prosemirrorEditor:empty {
+  min-height: 150px;
+}
+
+@media (width <= 768px) {
+  .Editor-module__x7ssIG__modernToolbar {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: all;
+    margin: 0 0 20px;
+    position: relative;
+    top: 0;
+    left: auto;
+    transform: none;
+  }
+
+  .Editor-module__x7ssIG__toolbarContainer {
+    border-radius: 10px;
+    gap: 2px;
+    max-width: 100%;
+    padding: 6px 12px;
+    overflow-x: auto;
+  }
+
+  .Editor-module__x7ssIG__formatGroup {
+    gap: 1px;
+  }
+
+  .Editor-module__x7ssIG__toolBtn {
+    border-radius: 6px;
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+  }
+
+  .Editor-module__x7ssIG__divider {
+    height: 20px;
+    margin: 0 4px;
+  }
+
+  .Editor-module__x7ssIG__headingIcon {
+    font-size: 11px;
+  }
+
+  .Editor-module__x7ssIG__prosemirrorEditor {
+    font-size: 18px;
+  }
+
+  .Editor-module__x7ssIG__prosemirrorEditor h1 {
+    font-size: 28px;
+  }
+
+  .Editor-module__x7ssIG__prosemirrorEditor h2 {
+    font-size: 24px;
+  }
+
+  .Editor-module__x7ssIG__prosemirrorEditor h3 {
+    font-size: 22px;
+  }
+
+  .Editor-module__x7ssIG__prosemirrorEditor p, .Editor-module__x7ssIG__prosemirrorEditor li {
+    font-size: 18px;
+  }
+}
+
+.Editor-module__x7ssIG__editor:focus-within .Editor-module__x7ssIG__modernToolbar {
+  animation: .3s cubic-bezier(.4, 0, .2, 1) Editor-module__x7ssIG__slideInFromTop;
+}
+
+@keyframes Editor-module__x7ssIG__slideInFromTop {
+  from {
+    opacity: 0;
+    transform: translateX(-50%)translateY(-20px)scale(.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(-50%)translateY(0)scale(1);
+  }
+}
+
+.Editor-module__x7ssIG__prosemirrorEditor::-webkit-scrollbar {
+  width: 8px;
+}
+
+.Editor-module__x7ssIG__prosemirrorEditor::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.Editor-module__x7ssIG__prosemirrorEditor::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.Editor-module__x7ssIG__prosemirrorEditor::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/*# sourceMappingURL=src_styles_Editor_module_css_f9ee138c._.single.css.map*/

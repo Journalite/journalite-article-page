@@ -10,6 +10,7 @@ import { Article as BaseArticle, deleteArticle } from '@/firebase/articles'
 import styles from '@/styles/home.module.css'
 import thoughtStyles from './my-thoughts.module.css'
 import NotificationBell from '@/components/NotificationBell'
+import LeftSidebar from '@/components/LeftSidebar'
 
 // Extended article interface with status property
 interface Article extends BaseArticle {
@@ -217,69 +218,12 @@ export default function MyThoughtsPage() {
   return (
     <div className={styles['three-column-layout']}>
       {/* LEFT SIDEBAR */}
-      <aside
-        className={`${styles['left-sidebar']} ${
-          isSidebarCollapsed ? styles['collapsed'] : ''
-        }`}
-      >
-        <div className={styles['sidebar-header']}>
-          <div className={styles.logo}>Journalite</div>
-          <button
-            className={styles['toggle-button']}
-            onClick={toggleSidebar}
-            aria-label={
-              isSidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'
-            }
-          >
-            {isSidebarCollapsed ? '→' : '←'}
-          </button>
-        </div>
-
-        <nav className={styles['vertical-nav']}>
-          <Link
-            href="/"
-            className={`${styles['nav-link']} ${styles['nav-home']}`}
-          >
-            <span className={styles['nav-icon']}>•</span>
-            <span className={styles['nav-text']}>Home</span>
-          </Link>
-          <Link
-            href="/my-thoughts"
-            className={`${styles['nav-link']} ${styles['nav-thoughts']} ${styles.active}`}
-          >
-            <span className={styles['nav-icon']}>•</span>
-            <span className={styles['nav-text']}>My Thoughts</span>
-          </Link>
-          <Link
-            href="/create-article"
-            className={`${styles['nav-link']} ${styles['nav-create']}`}
-          >
-            <span className={styles['nav-icon']}>•</span>
-            <span className={styles['nav-text']}>Create Article</span>
-          </Link>
-          <Link
-            href="/explore"
-            className={`${styles['nav-link']} ${styles['nav-explore']}`}
-          >
-            <span className={styles['nav-icon']}>•</span>
-            <span className={styles['nav-text']}>Explore</span>
-          </Link>
-          <Link
-            href="/my-profile"
-            className={`${styles['nav-link']} ${styles['nav-profile']}`}
-          >
-            <span className={styles['nav-icon']}>•</span>
-            <span className={styles['nav-text']}>My Profile</span>
-          </Link>
-          <button
-            onClick={handleLogout}
-            className={`${styles['nav-link']} ${styles['nav-logout']}`}
-          >
-            <span className={styles['nav-icon']}>•</span>
-            <span className={styles['nav-text']}>Log out</span>
-          </button>
-        </nav>
-      </aside>
+      <LeftSidebar 
+        isAuthenticated={isAuthenticated}
+        handleLogout={handleLogout}
+        toggleSidebar={toggleSidebar}
+        isSidebarCollapsed={isSidebarCollapsed}
+      />
 
       {/* MAIN CONTENT */}
       <main className={styles['center-column']}>

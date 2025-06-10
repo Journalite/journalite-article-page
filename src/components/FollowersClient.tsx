@@ -7,6 +7,7 @@ import { db } from '@/firebase/clientApp';
 import { UserProfile, getFollowers } from '@/services/userService';
 import styles from '@/styles/home.module.css';
 import FollowButton from '@/components/FollowButton';
+import LeftSidebar from '@/components/LeftSidebar';
 
 interface FollowersClientProps {
   username: string;
@@ -93,21 +94,12 @@ export default function FollowersClient({ username }: FollowersClientProps) {
   return (
     <div className={styles['three-column-layout']}>
       {/* LEFT SIDEBAR */}
-      <aside className={styles['left-sidebar']}>
-        <div className={styles['sidebar-header']}>
-          <div className={styles.logo}>Journalite</div>
-        </div>
-        <nav className={styles['vertical-nav']}>
-          <Link href="/" className={`${styles['nav-link']} ${styles['nav-home']}`}>
-            <span className={styles['nav-icon']}>•</span>
-            <span className={styles['nav-text']}>Home</span>
-          </Link>
-          <Link href="/explore" className={`${styles['nav-link']} ${styles['nav-explore']}`}>
-            <span className={styles['nav-icon']}>•</span>
-            <span className={styles['nav-text']}>Explore</span>
-          </Link>
-        </nav>
-      </aside>
+      <LeftSidebar 
+        isAuthenticated={false}
+        handleLogout={() => {}}
+        toggleSidebar={() => {}}
+        isSidebarCollapsed={false}
+      />
 
       {/* CENTER COLUMN */}
       <main className={styles['center-column']}>

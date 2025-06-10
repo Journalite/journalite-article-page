@@ -10,6 +10,7 @@ import { getArticles, Article as FirestoreArticle } from '../firebase/articles'
 import NotificationBell from '@/components/NotificationBell'
 import LeftSidebar from '@/components/LeftSidebar'
 import ShareModal from '@/components/ShareModal'
+import CenterSearchBar from '@/components/CenterSearchBar'
 import Head from 'next/head'
 
 // Types for our article data based on actual API structure
@@ -369,14 +370,8 @@ export default function HomePage() {
 
       {/* MAIN CONTENT */}
       <main className={`${styles['center-column']} ${isSidebarCollapsed && windowWidth >= 768 ? styles['expanded'] : ''}`}>
-        {/* Daily Prompt Banner */}
-        <div className={styles['prompt-banner']}>
-          <div className={styles['prompt-icon']}>💡</div>
-          <div className={styles['prompt-text']}>What's an idea that changed your life?</div>
-          <Link href="/write" className={styles['prompt-button']}>
-            Write now →
-          </Link>
-        </div>
+        {/* Center Search Bar */}
+        <CenterSearchBar />
 
         {isLoading ? (
           <div className={styles['loading']}>Loading articles...</div>

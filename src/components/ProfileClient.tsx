@@ -10,6 +10,7 @@ import Image from 'next/image';
 import FollowButton from '@/components/FollowButton';
 import FollowersList from '@/components/FollowersList';
 import FollowingList from '@/components/FollowingList';
+import LeftSidebar from '@/components/LeftSidebar';
 
 // Create an interface to represent articles from Firestore
 interface ArticleData {
@@ -162,22 +163,13 @@ export default function ProfileClient({ username }: ProfileClientProps) {
   
   return (
     <div className={styles['three-column-layout']}>
-      {/* LEFT SIDEBAR - Same as other pages */}
-      <aside className={styles['left-sidebar']}>
-        <div className={styles['sidebar-header']}>
-          <div className={styles.logo}>Journalite</div>
-        </div>
-        <nav className={styles['vertical-nav']}>
-          <Link href="/" className={`${styles['nav-link']} ${styles['nav-home']}`}>
-            <span className={styles['nav-icon']}>•</span>
-            <span className={styles['nav-text']}>Home</span>
-          </Link>
-          <Link href="/explore" className={`${styles['nav-link']} ${styles['nav-explore']}`}>
-            <span className={styles['nav-icon']}>•</span>
-            <span className={styles['nav-text']}>Explore</span>
-          </Link>
-        </nav>
-      </aside>
+      {/* LEFT SIDEBAR */}
+      <LeftSidebar 
+        isAuthenticated={false}
+        handleLogout={() => {}}
+        toggleSidebar={() => {}}
+        isSidebarCollapsed={false}
+      />
       
       {/* CENTER COLUMN - User profile and articles */}
       <main className={styles['center-column']}>

@@ -9,6 +9,7 @@ import { getUserNotifications, markNotificationAsRead, markAllNotificationsAsRea
 import { NotificationIcon } from '@/components/icons/CustomIcons'
 import styles from '@/styles/home.module.css'
 import notificationStyles from './notifications.module.css'
+import LeftSidebar from '@/components/LeftSidebar'
 
 export default function NotificationsPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -99,6 +100,15 @@ export default function NotificationsPage() {
     setIsSidebarCollapsed(!isSidebarCollapsed)
   }
 
+  const handleLogout = async () => {
+    try {
+      await import('firebase/auth').then(({ signOut }) => signOut(auth))
+      router.push('/')
+    } catch (error) {
+      console.error('Error signing out:', error)
+    }
+  }
+
   const formatTime = (timestamp: any) => {
     if (!timestamp) return ''
     
@@ -149,71 +159,13 @@ export default function NotificationsPage() {
 
   return (
     <div className={styles['three-column-layout']}>
-      {/* LEFT SIDEBAR - Same as homepage */}
-      <aside className={`${styles['left-sidebar']} ${isSidebarCollapsed ? styles['collapsed'] : ''}`}>
-        <div className={styles['sidebar-header']}>
-          <div className={styles.logo}>Journalite</div>
-          <button
-            className={styles['toggle-button']}
-            onClick={toggleSidebar}
-            aria-label={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-          >
-            {isSidebarCollapsed ? "→" : "←"}
-          </button>
-        </div>
-
-        <nav className={styles['vertical-nav']}>
-          {isAuthenticated ? (
-            // Navigation for authenticated users
-            <>
-              <Link href="/" className={`${styles['nav-link']} ${styles['nav-home']}`}>
-                <span className={styles['nav-icon']}>•</span>
-                <span className={styles['nav-text']}>Home</span>
-              </Link>
-              <Link href="/my-thoughts" className={`${styles['nav-link']} ${styles['nav-thoughts']}`}>
-                <span className={styles['nav-icon']}>•</span>
-                <span className={styles['nav-text']}>My Thoughts</span>
-              </Link>
-              <Link href="/create-article" className={`${styles['nav-link']} ${styles['nav-create']}`}>
-                <span className={styles['nav-icon']}>•</span>
-                <span className={styles['nav-text']}>Create Article</span>
-              </Link>
-              <Link href="/explore" className={`${styles['nav-link']} ${styles['nav-explore']}`}>
-                <span className={styles['nav-icon']}>•</span>
-                <span className={styles['nav-text']}>Explore</span>
-              </Link>
-              <Link href="/notifications" className={`${styles['nav-link']} ${styles.active}`}>
-                <span className={styles['nav-icon']}>•</span>
-                <span className={styles['nav-text']}>Notifications</span>
-              </Link>
-              <Link href="/my-profile" className={`${styles['nav-link']} ${styles['nav-profile']}`}>
-                <span className={styles['nav-icon']}>•</span>
-                <span className={styles['nav-text']}>My Profile</span>
-              </Link>
-              <Link href="/settings" className={`${styles['nav-link']} ${styles['nav-settings']}`}>
-                <span className={styles['nav-icon']}>•</span>
-                <span className={styles['nav-text']}>Settings</span>
-              </Link>
-            </>
-          ) : (
-            // Navigation for non-authenticated users
-            <>
-              <Link href="/" className={`${styles['nav-link']} ${styles['nav-home']}`}>
-                <span className={styles['nav-icon']}>•</span>
-                <span className={styles['nav-text']}>Home</span>
-              </Link>
-              <Link href="/login" className={`${styles['nav-link']} ${styles['nav-login']}`}>
-                <span className={styles['nav-icon']}>•</span>
-                <span className={styles['nav-text']}>Login</span>
-              </Link>
-              <Link href="/learn" className={`${styles['nav-link']} ${styles['nav-learn']}`}>
-                <span className={styles['nav-icon']}>•</span>
-                <span className={styles['nav-text']}>Learn More</span>
-              </Link>
-            </>
-          )}
-        </nav>
-      </aside>
+      {/* LEFT SIDEBAR */}
+      <LeftSidebar 
+        isAuthenticated={isAuthenticated}
+        handleLogout={handleLogout}
+        toggleSidebar={toggleSidebar}
+        isSidebarCollapsed={isSidebarCollapsed}
+      />
 
       {/* MAIN CONTENT */}
       <main className={styles['center-column']}>
