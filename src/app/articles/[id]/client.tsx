@@ -22,8 +22,9 @@ const ArticlePageClient: React.FC<ArticlePageClientProps> = ({ id }) => {
   const [error, setError] = useState('');
   const [articleHtml, setArticleHtml] = useState<string | null>(null);
   
-  // Debug re-renders
-  console.log('🔄 ArticlePageClient re-rendered at:', new Date().toLocaleTimeString());
+  if (process.env.NODE_ENV === 'development') {
+    console.log('🔄 ArticlePageClient re-rendered at:', new Date().toLocaleTimeString());
+  }
   const [article, setArticle] = useState<{
     title: string;
     authorName: string;
