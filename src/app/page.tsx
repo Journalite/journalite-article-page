@@ -223,10 +223,16 @@ export default function HomePage() {
           console.log('Adapted articles:', adaptedArticles.length);
         }
         
-        setArticles(adaptedArticles);
-        
-        if (process.env.NODE_ENV === 'development') {
-          console.log('Articles in grid:', adaptedArticles.length > 1 ? adaptedArticles.length - 1 : 0);
+        // Set featured article and remaining articles
+        if (adaptedArticles.length > 0) {
+          setFeaturedArticle(adaptedArticles[0]);
+          setArticles(adaptedArticles.length > 1 ? adaptedArticles.slice(1) : []);
+          if (process.env.NODE_ENV === 'development') {
+            console.log('Articles in grid:', adaptedArticles.length > 1 ? adaptedArticles.length - 1 : 0);
+          }
+        } else {
+          setFeaturedArticle(null);
+          setArticles([]);
         }
       } catch (error) {
         if (process.env.NODE_ENV === 'development') {

@@ -1,0 +1,199 @@
+/* [project]/src/components/NotificationBell.module.css [app-client] (css) */
+.NotificationBell-module__doceWq__notificationContainer {
+  z-index: 900;
+  text-align: center;
+  width: 100%;
+  margin-bottom: 1rem;
+  display: inline-block;
+  position: relative;
+}
+
+.NotificationBell-module__doceWq__bellButton {
+  cursor: pointer;
+  background: #f8f9fa;
+  border: 1px solid #e5e7eb;
+  border-radius: 50%;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  margin: 0 auto;
+  padding: 8px;
+  transition: all .2s;
+  display: flex;
+  position: relative;
+}
+
+.NotificationBell-module__doceWq__bellButton:hover {
+  background-color: #f1f5f9;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px #0000000d;
+}
+
+.NotificationBell-module__doceWq__bellIcon {
+  color: #4b5563;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.25rem;
+  display: flex;
+}
+
+.NotificationBell-module__doceWq__unreadBadge {
+  color: #fff;
+  background-color: #ef4444;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  justify-content: center;
+  align-items: center;
+  min-width: 16px;
+  min-height: 16px;
+  padding: 0;
+  font-size: .7rem;
+  font-weight: 600;
+  display: flex;
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  box-shadow: 0 1px 3px #0000001a;
+}
+
+.NotificationBell-module__doceWq__notificationDropdown {
+  z-index: 1000;
+  background-color: #fff;
+  border-radius: 8px;
+  width: 280px;
+  max-height: 480px;
+  margin-top: 12px;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  overflow-y: auto;
+  transform: translateX(-50%);
+  box-shadow: 0 4px 12px #00000026;
+}
+
+.NotificationBell-module__doceWq__notificationDropdown:before {
+  content: "";
+  background-color: #fff;
+  width: 12px;
+  height: 12px;
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%)rotate(45deg);
+  box-shadow: -2px -2px 5px #0000000a;
+}
+
+.NotificationBell-module__doceWq__notificationHeader {
+  border-bottom: 1px solid #eaeaea;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  display: flex;
+}
+
+.NotificationBell-module__doceWq__notificationHeader h3 {
+  color: #333;
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.NotificationBell-module__doceWq__viewAllLink {
+  color: #06c;
+  font-size: .8rem;
+  text-decoration: none;
+}
+
+.NotificationBell-module__doceWq__viewAllLink:hover {
+  text-decoration: underline;
+}
+
+.NotificationBell-module__doceWq__notificationList {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.NotificationBell-module__doceWq__notificationItem {
+  color: inherit;
+  border-bottom: 1px solid #f5f5f5;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  text-decoration: none;
+  transition: background-color .2s;
+  display: flex;
+}
+
+.NotificationBell-module__doceWq__notificationItem:hover {
+  background-color: #f9f9f9;
+}
+
+.NotificationBell-module__doceWq__notificationItem.NotificationBell-module__doceWq__unread {
+  background-color: #f0f8ff;
+}
+
+.NotificationBell-module__doceWq__notificationItem.NotificationBell-module__doceWq__unread:hover {
+  background-color: #e0f0ff;
+}
+
+.NotificationBell-module__doceWq__notificationContent {
+  flex: 1;
+}
+
+.NotificationBell-module__doceWq__notificationMessage {
+  color: #333;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  margin: 0 0 4px;
+  font-size: .85rem;
+  line-height: 1.4;
+}
+
+.NotificationBell-module__doceWq__notificationTime {
+  color: #666;
+  font-size: .75rem;
+  display: block;
+}
+
+.NotificationBell-module__doceWq__unreadDot {
+  background-color: #06c;
+  border-radius: 50%;
+  width: 8px;
+  height: 8px;
+  margin-left: 8px;
+}
+
+.NotificationBell-module__doceWq__notificationFooter {
+  text-align: center;
+  border-top: 1px solid #eaeaea;
+  padding: 10px 14px;
+}
+
+.NotificationBell-module__doceWq__seeMoreLink {
+  color: #06c;
+  font-size: .9rem;
+  text-decoration: none;
+}
+
+.NotificationBell-module__doceWq__seeMoreLink:hover {
+  text-decoration: underline;
+}
+
+.NotificationBell-module__doceWq__emptyState {
+  text-align: center;
+  color: #666;
+  padding: 24px 16px;
+  font-size: .9rem;
+}
+
+@media (width <= 768px) {
+  .NotificationBell-module__doceWq__notificationDropdown {
+    width: 280px;
+    max-width: calc(100vw - 32px);
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+/*# sourceMappingURL=src_components_NotificationBell_module_css_f9ee138c._.single.css.map*/
