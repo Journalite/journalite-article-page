@@ -62,18 +62,26 @@ const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId, onUpdateCo
   
   // Load article data if in edit mode
   useEffect(() => {
-    console.log('ArticleComposer useEffect - articleId:', articleId, 'user:', user?.uid);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('ArticleComposer useEffect - articleId:', articleId, 'user:', user ? '[USER_LOGGED_IN]' : 'undefined');
+    }
     if (articleId && user) {
       const fetchArticle = async () => {
         try {
-          console.log('Fetching article for editing, ID:', articleId);
+          if (process.env.NODE_ENV === 'development') {
+            console.log('Fetching article for editing, ID:', articleId);
+          }
           setIsLoading(true);
           const article = await getArticleById(articleId);
           
-          console.log('Fetched article:', article?.title, 'Body length:', article?.body?.length);
+          if (process.env.NODE_ENV === 'development' && article) {
+            console.log('Fetched article:', article.title, 'Body length:', article.body?.length);
+          }
           
           if (!article) {
-            console.log('Article not found');
+            if (process.env.NODE_ENV === 'development') {
+              console.log('Article not found');
+            }
             setError('Article not found');
             router.push('/');
             return;
@@ -81,25 +89,33 @@ const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId, onUpdateCo
           
           // Verify article ownership
           if (article.authorId !== user.uid) {
-            console.log('User not authorized to edit this article');
+            if (process.env.NODE_ENV === 'development') {
+              console.log('User not authorized to edit this article');
+            }
             setError('You can only edit your own articles');
             router.push('/');
             return;
           }
           
           // Set form data
-          console.log('Setting title:', article.title);
+          if (process.env.NODE_ENV === 'development') {
+            console.log('Setting title:', article.title);
+          }
           setTitle(article.title);
           
           // Process HTML to extract and clean the content
           const cleanContent = article.body.replace(/data-[\w-]+="[^"]*"/g, '');
-          console.log('Setting content, length:', cleanContent.length, 'Preview:', cleanContent.substring(0, 100) + '...');
+          if (process.env.NODE_ENV === 'development') {
+            console.log('Setting content, length:', cleanContent.length, 'Preview:', cleanContent.substring(0, 100) + '...');
+          }
           setContent(cleanContent);
           
           setTags(article.tags || []);
           setCoverImage(article.coverImage || '');
           
-          console.log('Article data loaded successfully for editing');
+          if (process.env.NODE_ENV === 'development') {
+            console.log('Article data loaded successfully for editing');
+          }
         } catch (error) {
           console.error('Error loading article:', error);
           setError('Failed to load article');
@@ -110,11 +126,15 @@ const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId, onUpdateCo
       
       fetchArticle();
     } else if (!articleId) {
-      console.log('No articleId, starting with empty content');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('No articleId, starting with empty content');
+      }
       // Editor will start with empty content - no need for document model
       setIsLoading(false);
     } else {
-      console.log('User not logged in, waiting...');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('User not logged in, waiting...');
+      }
     }
   }, [articleId, user, router]);
   
@@ -233,17 +253,25 @@ const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId, onUpdateCo
       if (articleId) {
         // Update existing article
         try {
-          console.log('Updating article with ID:', articleId);
+          if (process.env.NODE_ENV === 'development') {
+            console.log('Updating article with ID:', articleId);
+          }
           const updatedArticleData = await updateArticle(articleId, articleData);
-          console.log('Article updated successfully');
+          if (process.env.NODE_ENV === 'development') {
+            console.log('Article updated successfully');
+          }
           setIsSaved(true);
           
           if (onUpdateComplete) {
-            console.log('Calling onUpdateComplete callback instead of navigating');
+            if (process.env.NODE_ENV === 'development') {
+              console.log('Calling onUpdateComplete callback instead of navigating');
+            }
             onUpdateComplete(updatedArticleData);
           } else {
             // Only navigate if no callback is provided (standalone editor usage)
-            console.log('No callback provided, navigating to article page');
+            if (process.env.NODE_ENV === 'development') {
+              console.log('No callback provided, navigating to article page');
+            }
             setTimeout(() => {
               router.push(`/articles/?slug=${slug}`);
             }, 1000);

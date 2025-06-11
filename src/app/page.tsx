@@ -211,32 +211,27 @@ export default function HomePage() {
       try {
         setIsLoading(true);
         
-        // Pass a higher limit parameter to ensure we get enough articles
-        const firestoreArticles = await getArticles({ limit: 50 }); 
+        const firestoreArticles = await getArticles({ limit: 20 });
+        if (process.env.NODE_ENV === 'development') {
+          console.log('Articles fetched from Firestore:', firestoreArticles.length);
+        }
         
-        console.log('Articles fetched from Firestore:', firestoreArticles.length);
+        // Adapt Firestore articles to legacy format
+        const adaptedArticles = firestoreArticles.map(adaptFirestoreArticle);
         
-        if (firestoreArticles && firestoreArticles.length > 0) {
-          const adaptedArticles = firestoreArticles.map(adaptFirestoreArticle);
-          
+        if (process.env.NODE_ENV === 'development') {
           console.log('Adapted articles:', adaptedArticles.length);
-          
-          if (adaptedArticles.length > 0) {
-            setFeaturedArticle(adaptedArticles[0]);
-            setArticles(adaptedArticles.length > 1 ? adaptedArticles.slice(1) : []);
-            console.log('Articles in grid:', adaptedArticles.length > 1 ? adaptedArticles.length - 1 : 0);
-          } else {
-            setFeaturedArticle(null);
-            setArticles([]);
-          }
-        } else {
-          setFeaturedArticle(null);
-          setArticles([]);
+        }
+        
+        setArticles(adaptedArticles);
+        
+        if (process.env.NODE_ENV === 'development') {
+          console.log('Articles in grid:', adaptedArticles.length > 1 ? adaptedArticles.length - 1 : 0);
         }
       } catch (error) {
-        console.error('Error fetching articles:', error);
-        setFeaturedArticle(null);
-        setArticles([]);
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Error fetching articles:', error);
+        }
       } finally {
         setIsLoading(false);
       }

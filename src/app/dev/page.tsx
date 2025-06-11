@@ -2136,11 +2136,13 @@ const changeSelectedColor = (color: string) => {
 ### 📊 Usage Analytics
 
 \`\`\`tsx
-// Track user interactions for UX improvements
-const trackCustomization = (action: string, value: any) => {
-  console.log(\`Journa Color: \${action}\`, value);
-  // Can be extended with analytics service
-};
+  // Track user interactions for UX improvements
+  const trackCustomization = (action: string, value: any) => {
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Journa Color:', action, value);
+    }
+    // Can be extended with analytics service
+  };
 
 // Example usage
 trackCustomization('color_changed', { from: oldColor, to: newColor });

@@ -117,7 +117,9 @@ export default function MyThoughtsPage() {
         
         setArticles(fetchedArticles)
       } catch (error) {
-        console.error('Error fetching articles:', error)
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Error fetching articles:', error)
+        }
       } finally {
         setIsLoading(false)
       }
@@ -137,7 +139,9 @@ export default function MyThoughtsPage() {
       await signOut(auth)
       router.push('/')
     } catch (error) {
-      console.error('Error signing out:', error)
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Error signing out:', error)
+      }
     }
   }
 
@@ -158,7 +162,9 @@ export default function MyThoughtsPage() {
       setShowDeleteModal(false)
       setArticleToDelete(null)
     } catch (error) {
-      console.error('Error deleting article:', error)
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Error deleting article:', error)
+      }
     }
   }
 

@@ -2,10 +2,12 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { auth } from '../../firebase/clientApp';
 import { getUserProfile } from '../../services/userService';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../../firebase/clientApp';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -16,6 +18,7 @@ export default function Login() {
   const [customValidation, setCustomValidation] = useState<Record<string, string>>({});
   
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     const { name, value, validity } = e.target;
@@ -40,19 +43,25 @@ export default function Login() {
       setError('');
       
       const result = await signInWithPopup(auth, provider);
-      console.log('Google sign-in successful', result.user);
-      
-      // Check if user has a profile
-      const profile = await getUserProfile(result.user.uid);
-      
-      // If no profile exists, redirect to profile setup
-      if (!profile) {
-        router.push('/profile-setup');
-        return;
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Google sign-in successful', '[USER_LOGGED_IN]');
       }
       
-      // User has a profile, redirect to home
-      router.push('/');
+      // Check if user has a profile setup
+      if (result.user) {
+        const profileRef = doc(db, 'profiles', result.user.uid);
+        const profileSnap = await getDoc(profileRef);
+        
+        if (!profileSnap.exists()) {
+          // Redirect to profile setup
+          const redirectUrl = searchParams?.get('redirect') || '/';
+          router.push(`/profile-setup?redirect=${encodeURIComponent(redirectUrl)}`);
+        } else {
+          // Redirect to intended destination
+          const redirectUrl = searchParams?.get('redirect') || '/';
+          router.push(redirectUrl);
+        }
+      }
     } catch (err: any) {
       console.error('Google sign-in failed', err);
       
@@ -60,11 +69,11 @@ export default function Login() {
       if (err.code === 'auth/account-exists-with-different-credential') {
         setError('An account already exists with the same email address but different sign-in credentials. Please sign in using the original method.');
       } else if (err.code === 'auth/popup-closed-by-user') {
-        setError('Sign-in was cancelled. Please try again.');
+        setError('Sign-in was cancelled');
       } else if (err.code === 'auth/network-request-failed') {
         setError('Network error. Please check your internet connection and try again.');
       } else {
-        setError('Google sign-in failed. Please try again or use email sign-in.');
+        setError('Failed to sign in with Google. Please try again.');
       }
     } finally {
       setIsLoading(false);
@@ -240,7 +249,11 @@ export default function Login() {
             
             <button 
               className="w-full flex items-center justify-center px-4 py-3 border border-[#e8e1d1] bg-[#f8f5ec] rounded-md hover:bg-[#f0ece3] transition-colors"
-              onClick={() => console.log('Instagram login')}
+              onClick={() => {
+                if (process.env.NODE_ENV === 'development') {
+                  console.log('Instagram login');
+                }
+              }}
             >
               <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069z" fill="url(#paint0_radial)"/>

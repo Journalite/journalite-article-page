@@ -85,16 +85,22 @@ const Editor = React.forwardRef(({
             // Create document with initial content if provided
             let initialDoc;
             if (initialContent && initialContent.trim()) {
-                console.log('Editor: Loading initial content, length:', initialContent.length);
+                if (process.env.NODE_ENV === 'development') {
+                    console.log('Editor: Loading initial content, length:', initialContent.length);
+                }
                 try {
                     initialDoc = parseHTML(initialContent);
-                    console.log('Editor: Successfully parsed HTML content');
+                    if (process.env.NODE_ENV === 'development') {
+                        console.log('Editor: Successfully parsed HTML content');
+                    }
                 } catch (parseError) {
                     console.error('Editor: Failed to parse HTML content:', parseError);
                     initialDoc = createEmptyDocument();
                 }
             } else {
-                console.log('Editor: No initial content, creating empty document');
+                if (process.env.NODE_ENV === 'development') {
+                    console.log('Editor: No initial content, creating empty document');
+                }
                 initialDoc = createEmptyDocument();
             }
 
@@ -117,7 +123,9 @@ const Editor = React.forwardRef(({
                         'Space': (state, dispatch) => {
                             const { $from } = state.selection;
 
-                            console.log("🕵️‍♂️ Space handler triggered. beforeCursor:", $from.parent.textContent.slice(0, $from.parentOffset));
+                            if (process.env.NODE_ENV === 'development') {
+                                console.log("🕵️‍♂️ Space handler triggered. beforeCursor:", $from.parent.textContent.slice(0, $from.parentOffset));
+                            }
 
                             if ($from.parent.type === schema.nodes.paragraph) {
                                 const beforeCursor = $from.parent.textContent.slice(0, $from.parentOffset);
@@ -172,7 +180,9 @@ const Editor = React.forwardRef(({
                                 // Auto-bullet list: - + space or * + space = bullet list
                                 const bulletMatch = beforeCursor.match(/^[-*]$/);
                                 if (bulletMatch) {
-                                    console.log('Bullet list match:', bulletMatch[0]);
+                                    if (process.env.NODE_ENV === 'development') {
+                                        console.log('Bullet list match:', bulletMatch[0]);
+                                    }
                                     try {
                                         // Create a simple list item with empty paragraph
                                         const listItem = schema.nodes.list_item.create(null,
@@ -190,17 +200,23 @@ const Editor = React.forwardRef(({
                                         tr = tr.setSelection(TextSelection.create(tr.doc, dashPos + 2));
 
                                         dispatch(tr);
-                                        console.log('Auto bullet list creation: success');
+                                        if (process.env.NODE_ENV === 'development') {
+                                            console.log('Auto bullet list creation: success');
+                                        }
                                         return true;
                                     } catch (error) {
-                                        console.log('Auto bullet list creation failed:', error);
+                                        if (process.env.NODE_ENV === 'development') {
+                                            console.log('Auto bullet list creation failed:', error);
+                                        }
                                     }
                                 }
 
                                 // Auto-ordered list: 1. + space = ordered list
                                 const orderedMatch = beforeCursor.match(/^1\.$/);
                                 if (orderedMatch) {
-                                    console.log('Ordered list match:', orderedMatch[0]);
+                                    if (process.env.NODE_ENV === 'development') {
+                                        console.log('Ordered list match:', orderedMatch[0]);
+                                    }
                                     try {
                                         // Create a simple list item with empty paragraph
                                         const listItem = schema.nodes.list_item.create(null,
@@ -218,10 +234,14 @@ const Editor = React.forwardRef(({
                                         tr = tr.setSelection(TextSelection.create(tr.doc, numberedPos + 2));
 
                                         dispatch(tr);
-                                        console.log('Auto ordered list creation: success');
+                                        if (process.env.NODE_ENV === 'development') {
+                                            console.log('Auto ordered list creation: success');
+                                        }
                                         return true;
                                     } catch (error) {
-                                        console.log('Auto ordered list creation failed:', error);
+                                        if (process.env.NODE_ENV === 'development') {
+                                            console.log('Auto ordered list creation failed:', error);
+                                        }
                                     }
                                 }
                             }
@@ -286,7 +306,9 @@ const Editor = React.forwardRef(({
     useEffect(() => {
         if (!viewRef.current || !isReady || !initialContent) return;
 
-        console.log('Editor: Updating content without reinitializing, length:', initialContent.length);
+        if (process.env.NODE_ENV === 'development') {
+            console.log('Editor: Updating content without reinitializing, length:', initialContent.length);
+        }
 
         try {
             const newDoc = parseHTML(initialContent);
@@ -300,7 +322,9 @@ const Editor = React.forwardRef(({
                     newDoc.content
                 );
                 viewRef.current.dispatch(transaction);
-                console.log('Editor: Content updated successfully');
+                if (process.env.NODE_ENV === 'development') {
+                    console.log('Editor: Content updated successfully');
+                }
             }
         } catch (error) {
             console.error('Editor: Failed to update content:', error);
@@ -375,7 +399,9 @@ const Editor = React.forwardRef(({
 
     const toggleBulletList = useCallback(() => {
         if (!viewRef.current) return;
-        console.log('Bullet list button clicked');
+        if (process.env.NODE_ENV === 'development') {
+            console.log('Bullet list button clicked');
+        }
         const { state, dispatch } = viewRef.current;
         const { $from, $to } = state.selection;
 
@@ -388,21 +414,29 @@ const Editor = React.forwardRef(({
 
             const tr = state.tr.replaceWith($from.start(), $to.end(), bulletList);
             dispatch(tr);
-            console.log('Manual bullet list creation: success');
+            if (process.env.NODE_ENV === 'development') {
+                console.log('Manual bullet list creation: success');
+            }
             viewRef.current.focus();
         } catch (error) {
-            console.log('Manual bullet list creation failed:', error);
+            if (process.env.NODE_ENV === 'development') {
+                console.log('Manual bullet list creation failed:', error);
+            }
             // Fallback to wrapInList
             const command = wrapInList(schema.nodes.bullet_list);
             const result = command(state, dispatch);
-            console.log('wrapInList fallback result:', result);
+            if (process.env.NODE_ENV === 'development') {
+                console.log('wrapInList fallback result:', result);
+            }
             if (result) viewRef.current.focus();
         }
     }, []);
 
     const toggleOrderedList = useCallback(() => {
         if (!viewRef.current) return;
-        console.log('Ordered list button clicked');
+        if (process.env.NODE_ENV === 'development') {
+            console.log('Ordered list button clicked');
+        }
         const { state, dispatch } = viewRef.current;
         const { $from, $to } = state.selection;
 
@@ -415,14 +449,20 @@ const Editor = React.forwardRef(({
 
             const tr = state.tr.replaceWith($from.start(), $to.end(), orderedList);
             dispatch(tr);
-            console.log('Manual ordered list creation: success');
+            if (process.env.NODE_ENV === 'development') {
+                console.log('Manual ordered list creation: success');
+            }
             viewRef.current.focus();
         } catch (error) {
-            console.log('Manual ordered list creation failed:', error);
+            if (process.env.NODE_ENV === 'development') {
+                console.log('Manual ordered list creation failed:', error);
+            }
             // Fallback to wrapInList
             const command = wrapInList(schema.nodes.ordered_list);
             const result = command(state, dispatch);
-            console.log('wrapInList fallback result:', result);
+            if (process.env.NODE_ENV === 'development') {
+                console.log('wrapInList fallback result:', result);
+            }
             if (result) viewRef.current.focus();
         }
     }, []);

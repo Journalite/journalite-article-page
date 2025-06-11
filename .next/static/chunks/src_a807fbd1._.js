@@ -297,6 +297,7 @@ __turbopack_context__.s({
     "likeComment": (()=>likeComment),
     "updateArticle": (()=>updateArticle)
 });
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$polyfills$2f$process$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/build/polyfills/process.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$firebase$2f$firestore$2f$dist$2f$esm$2f$index$2e$esm$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$module__evaluation$3e$__ = __turbopack_context__.i("[project]/node_modules/firebase/firestore/dist/esm/index.esm.js [app-client] (ecmascript) <module evaluation>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/@firebase/firestore/dist/index.esm2017.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$firebase$2f$clientApp$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/firebase/clientApp.ts [app-client] (ecmascript)");
@@ -306,7 +307,9 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$firebase$2f$notificat
 ;
 async function getArticles(options = {}) {
     const { limit, includeDrafts = false } = options;
-    console.log('getArticles called with limit:', limit);
+    if (("TURBOPACK compile-time value", "development") === 'development' && limit) {
+        console.log('getArticles called with limit:', limit);
+    }
     try {
         const articlesRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["collection"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$firebase$2f$clientApp$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["db"], 'articles');
         const queryConstraints = [];
@@ -321,12 +324,16 @@ async function getArticles(options = {}) {
         // Always order by creation date
         queryConstraints.push((0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["orderBy"])('createdAt', 'desc'));
         if (limit && limit > 0) {
-            console.log('Adding limit constraint:', limit);
+            if ("TURBOPACK compile-time truthy", 1) {
+                console.log('Adding limit constraint:', limit);
+            }
             queryConstraints.push((0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["limit"])(limit));
         }
         const q = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["query"])(articlesRef, ...queryConstraints);
         const querySnapshot = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["getDocs"])(q);
-        console.log('Query returned document count:', querySnapshot.size);
+        if ("TURBOPACK compile-time truthy", 1) {
+            console.log('Query returned document count:', querySnapshot.size);
+        }
         const articles = [];
         querySnapshot.forEach((docSnapshot)=>{
             const articleData = docSnapshot.data();
@@ -344,10 +351,11 @@ async function getArticles(options = {}) {
     }
 }
 async function getArticleById(id) {
-    try {
-        // Super aggressive cache-busting
-        const timestamp = Date.now();
+    const timestamp = Date.now();
+    if ("TURBOPACK compile-time truthy", 1) {
         console.log(`🔄 DIRECT FETCH: Getting article with ID: ${id} (time: ${timestamp})`);
+    }
+    try {
         // Completely bypass any caching by making a direct Firestore call
         const docRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["doc"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$firebase$2f$clientApp$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["db"], 'articles', id);
         // Direct Firestore fetch with no caching
@@ -358,13 +366,17 @@ async function getArticleById(id) {
                 id: docSnap.id,
                 ...docSnap.data()
             };
-            console.log('✅ Article found:', articleData.title);
-            console.log('📄 Content length:', articleData.body?.length || 0);
-            console.log('🏷️ Tags:', articleData.tags?.join(', ') || 'none');
+            if ("TURBOPACK compile-time truthy", 1) {
+                console.log('✅ Article found:', articleData.title);
+                console.log('📄 Content length:', articleData.body?.length || 0);
+                console.log('🏷️ Tags:', articleData.tags?.join(', ') || 'none');
+            }
             // Return fresh data
             return articleData;
         } else {
-            console.log('❌ Article not found for ID:', id);
+            if ("TURBOPACK compile-time truthy", 1) {
+                console.log('❌ Article not found for ID:', id);
+            }
             return null;
         }
     } catch (error) {
@@ -373,40 +385,48 @@ async function getArticleById(id) {
     }
 }
 async function getArticleBySlug(slug) {
-    try {
+    if ("TURBOPACK compile-time truthy", 1) {
         console.log(`Getting article by slug: ${slug}, timestamp: ${Date.now()}`);
-        // Try multiple attempts to get fresh data
-        let attempts = 0;
-        const maxAttempts = 2;
-        while(attempts < maxAttempts){
-            attempts++;
+    }
+    // Implement retry logic for better reliability
+    const maxAttempts = 3;
+    let attempts = 0;
+    while(attempts < maxAttempts){
+        attempts++;
+        if ("TURBOPACK compile-time truthy", 1) {
             console.log(`Attempt ${attempts} to get article by slug`);
-            // Short delay between attempts
-            if (attempts > 1) {
-                await new Promise((resolve)=>setTimeout(resolve, 500));
-            }
+        }
+        try {
             const articlesRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["collection"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$firebase$2f$clientApp$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["db"], 'articles');
-            const q = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["query"])(articlesRef, (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["where"])('slug', '==', slug), (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["where"])('status', '==', 'published'));
+            const q = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["query"])(articlesRef, (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["where"])('slug', '==', slug), (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["where"])('status', '==', 'published'), (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["limit"])(1));
             const querySnapshot = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["getDocs"])(q);
             if (!querySnapshot.empty) {
-                const docSnap = querySnapshot.docs[0];
+                const doc = querySnapshot.docs[0];
                 const articleData = {
-                    id: docSnap.id,
-                    ...docSnap.data()
+                    id: doc.id,
+                    ...doc.data()
                 };
-                console.log('Article found by slug:', articleData.title, 'Content length:', articleData.body?.length || 0);
+                if ("TURBOPACK compile-time truthy", 1) {
+                    console.log('Article found by slug:', articleData.title, 'Content length:', articleData.body?.length || 0);
+                }
                 return articleData;
-            } else if (attempts >= maxAttempts) {
-                console.log('Article not found for slug after multiple attempts:', slug);
+            } else if (attempts === maxAttempts) {
+                if ("TURBOPACK compile-time truthy", 1) {
+                    console.log('Article not found for slug after multiple attempts:', slug);
+                }
                 return null;
+            } else {
+                if ("TURBOPACK compile-time truthy", 1) {
+                    console.log(`Article not found by slug on attempt ${attempts}, will retry...`);
+                }
+                await new Promise((resolve)=>setTimeout(resolve, 1000)); // Wait 1 second before retry
             }
-            console.log(`Article not found by slug on attempt ${attempts}, will retry...`);
+        } catch (error) {
+            console.error('Error getting article by slug:', error);
+            if (attempts === maxAttempts) throw error;
         }
-        return null;
-    } catch (error) {
-        console.error('Error getting article by slug:', error);
-        throw error;
     }
+    return null;
 }
 async function createArticle(articleInput) {
     try {
@@ -461,15 +481,28 @@ async function updateArticle(articleId, articleData) {
         // Always update slug when title changes to ensure published articles reflect changes
         if (articleData.title) {
             updateData.slug = articleData.title.toLowerCase().replace(/[\s\W-]+/g, '-').replace(/^-+|-+$/g, '');
-            console.log('Updated slug to:', updateData.slug);
+            if ("TURBOPACK compile-time truthy", 1) {
+                console.log('Updated slug to:', updateData.slug);
+            }
         }
         updateData.updatedAt = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Timestamp"].now();
         await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["updateDoc"])(articleRef, updateData);
         const updatedArticleSnap = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["getDoc"])(articleRef);
-        return {
-            id: updatedArticleSnap.id,
-            ...updatedArticleSnap.data()
-        };
+        if (updatedArticleSnap.exists()) {
+            const updatedData = updatedArticleSnap.data();
+            return {
+                id: updatedArticleSnap.id,
+                ...updatedData
+            };
+        } else {
+            // Fallback: return the expected data structure
+            return {
+                id: articleId,
+                ...updateData,
+                createdAt: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Timestamp"].now(),
+                updatedAt: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm2017$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Timestamp"].now()
+            };
+        }
     } catch (error) {
         console.error('Error updating article:', error);
         throw error;
@@ -550,7 +583,10 @@ async function addReply(articleId, commentId, content) {
         const commentData = commentSnap.data();
         if (commentData.userId !== user.uid) {
             const articleInfo = await getArticleById(articleId);
-            console.log(`User ${user.uid} replied to comment ${commentId} by ${commentData.userId} on article ${articleInfo?.title}`);
+            if ("TURBOPACK compile-time truthy", 1) {
+                console.log(`User ${user.uid} replied to comment ${commentId} by ${commentData.userId} on article ${articleInfo?.title}`);
+            }
+            await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$firebase$2f$notifications$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["createCommentNotification"])(commentData.userId, articleId, articleInfo?.slug || '', articleInfo?.title || 'Article', newReply.replyId, content);
         }
         return newReply;
     } catch (error) {
@@ -1532,6 +1568,7 @@ var { g: global, __dirname, k: __turbopack_refresh__, m: module } = __turbopack_
 __turbopack_context__.s({
     "default": (()=>__TURBOPACK__default__export__)
 });
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$polyfills$2f$process$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/build/polyfills/process.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/jsx-dev-runtime.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$prosemirror$2d$state$2f$dist$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/prosemirror-state/dist/index.js [app-client] (ecmascript)");
@@ -1623,16 +1660,22 @@ var _s = __turbopack_context__.k.signature();
                 // Create document with initial content if provided
                 let initialDoc;
                 if (initialContent && initialContent.trim()) {
-                    console.log('Editor: Loading initial content, length:', initialContent.length);
+                    if ("TURBOPACK compile-time truthy", 1) {
+                        console.log('Editor: Loading initial content, length:', initialContent.length);
+                    }
                     try {
                         initialDoc = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$editor$2f$schema$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["parseHTML"])(initialContent);
-                        console.log('Editor: Successfully parsed HTML content');
+                        if ("TURBOPACK compile-time truthy", 1) {
+                            console.log('Editor: Successfully parsed HTML content');
+                        }
                     } catch (parseError) {
                         console.error('Editor: Failed to parse HTML content:', parseError);
                         initialDoc = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$editor$2f$schema$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["createEmptyDocument"])();
                     }
                 } else {
-                    console.log('Editor: No initial content, creating empty document');
+                    if ("TURBOPACK compile-time truthy", 1) {
+                        console.log('Editor: No initial content, creating empty document');
+                    }
                     initialDoc = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$editor$2f$schema$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["createEmptyDocument"])();
                 }
                 // Debug: console.log('Created initial document:', initialDoc.toJSON());
@@ -1653,7 +1696,9 @@ var _s = __turbopack_context__.k.signature();
                             'Space': {
                                 "Editor.useEffect.state": (state, dispatch)=>{
                                     const { $from } = state.selection;
-                                    console.log("🕵️‍♂️ Space handler triggered. beforeCursor:", $from.parent.textContent.slice(0, $from.parentOffset));
+                                    if ("TURBOPACK compile-time truthy", 1) {
+                                        console.log("🕵️‍♂️ Space handler triggered. beforeCursor:", $from.parent.textContent.slice(0, $from.parentOffset));
+                                    }
                                     if ($from.parent.type === __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$editor$2f$schema$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["schema"].nodes.paragraph) {
                                         const beforeCursor = $from.parent.textContent.slice(0, $from.parentOffset);
                                         // Auto-heading: ## + space = H2, ### + space = H3
@@ -1693,7 +1738,9 @@ var _s = __turbopack_context__.k.signature();
                                         // Auto-bullet list: - + space or * + space = bullet list
                                         const bulletMatch = beforeCursor.match(/^[-*]$/);
                                         if (bulletMatch) {
-                                            console.log('Bullet list match:', bulletMatch[0]);
+                                            if ("TURBOPACK compile-time truthy", 1) {
+                                                console.log('Bullet list match:', bulletMatch[0]);
+                                            }
                                             try {
                                                 // Create a simple list item with empty paragraph
                                                 const listItem = __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$editor$2f$schema$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["schema"].nodes.list_item.create(null, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$editor$2f$schema$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["schema"].nodes.paragraph.create());
@@ -1705,16 +1752,22 @@ var _s = __turbopack_context__.k.signature();
                                                 // Position cursor inside list item (after the transaction is built)
                                                 tr = tr.setSelection(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$prosemirror$2d$state$2f$dist$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["TextSelection"].create(tr.doc, dashPos + 2));
                                                 dispatch(tr);
-                                                console.log('Auto bullet list creation: success');
+                                                if ("TURBOPACK compile-time truthy", 1) {
+                                                    console.log('Auto bullet list creation: success');
+                                                }
                                                 return true;
                                             } catch (error) {
-                                                console.log('Auto bullet list creation failed:', error);
+                                                if ("TURBOPACK compile-time truthy", 1) {
+                                                    console.log('Auto bullet list creation failed:', error);
+                                                }
                                             }
                                         }
                                         // Auto-ordered list: 1. + space = ordered list
                                         const orderedMatch = beforeCursor.match(/^1\.$/);
                                         if (orderedMatch) {
-                                            console.log('Ordered list match:', orderedMatch[0]);
+                                            if ("TURBOPACK compile-time truthy", 1) {
+                                                console.log('Ordered list match:', orderedMatch[0]);
+                                            }
                                             try {
                                                 // Create a simple list item with empty paragraph
                                                 const listItem = __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$editor$2f$schema$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["schema"].nodes.list_item.create(null, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$editor$2f$schema$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["schema"].nodes.paragraph.create());
@@ -1726,10 +1779,14 @@ var _s = __turbopack_context__.k.signature();
                                                 // Position cursor inside list item (after the transaction is built)
                                                 tr = tr.setSelection(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$prosemirror$2d$state$2f$dist$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["TextSelection"].create(tr.doc, numberedPos + 2));
                                                 dispatch(tr);
-                                                console.log('Auto ordered list creation: success');
+                                                if ("TURBOPACK compile-time truthy", 1) {
+                                                    console.log('Auto ordered list creation: success');
+                                                }
                                                 return true;
                                             } catch (error) {
-                                                console.log('Auto ordered list creation failed:', error);
+                                                if ("TURBOPACK compile-time truthy", 1) {
+                                                    console.log('Auto ordered list creation failed:', error);
+                                                }
                                             }
                                         }
                                     }
@@ -1796,7 +1853,9 @@ var _s = __turbopack_context__.k.signature();
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "Editor.useEffect": ()=>{
             if (!viewRef.current || !isReady || !initialContent) return;
-            console.log('Editor: Updating content without reinitializing, length:', initialContent.length);
+            if ("TURBOPACK compile-time truthy", 1) {
+                console.log('Editor: Updating content without reinitializing, length:', initialContent.length);
+            }
             try {
                 const newDoc = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$editor$2f$schema$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["parseHTML"])(initialContent);
                 const currentContent = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$editor$2f$schema$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["serializeToHTML"])(viewRef.current.state.doc);
@@ -1804,7 +1863,9 @@ var _s = __turbopack_context__.k.signature();
                 if (initialContent !== currentContent) {
                     const transaction = viewRef.current.state.tr.replaceWith(0, viewRef.current.state.doc.content.size, newDoc.content);
                     viewRef.current.dispatch(transaction);
-                    console.log('Editor: Content updated successfully');
+                    if ("TURBOPACK compile-time truthy", 1) {
+                        console.log('Editor: Content updated successfully');
+                    }
                 }
             } catch (error) {
                 console.error('Editor: Failed to update content:', error);
@@ -1887,7 +1948,9 @@ var _s = __turbopack_context__.k.signature();
     const toggleBulletList = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useCallback"])({
         "Editor.useCallback[toggleBulletList]": ()=>{
             if (!viewRef.current) return;
-            console.log('Bullet list button clicked');
+            if ("TURBOPACK compile-time truthy", 1) {
+                console.log('Bullet list button clicked');
+            }
             const { state, dispatch } = viewRef.current;
             const { $from, $to } = state.selection;
             try {
@@ -1896,14 +1959,20 @@ var _s = __turbopack_context__.k.signature();
                 const bulletList = __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$editor$2f$schema$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["schema"].nodes.bullet_list.create(null, listItem);
                 const tr = state.tr.replaceWith($from.start(), $to.end(), bulletList);
                 dispatch(tr);
-                console.log('Manual bullet list creation: success');
+                if ("TURBOPACK compile-time truthy", 1) {
+                    console.log('Manual bullet list creation: success');
+                }
                 viewRef.current.focus();
             } catch (error) {
-                console.log('Manual bullet list creation failed:', error);
+                if ("TURBOPACK compile-time truthy", 1) {
+                    console.log('Manual bullet list creation failed:', error);
+                }
                 // Fallback to wrapInList
                 const command = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$prosemirror$2d$schema$2d$list$2f$dist$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["wrapInList"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$editor$2f$schema$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["schema"].nodes.bullet_list);
                 const result = command(state, dispatch);
-                console.log('wrapInList fallback result:', result);
+                if ("TURBOPACK compile-time truthy", 1) {
+                    console.log('wrapInList fallback result:', result);
+                }
                 if (result) viewRef.current.focus();
             }
         }
@@ -1911,7 +1980,9 @@ var _s = __turbopack_context__.k.signature();
     const toggleOrderedList = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useCallback"])({
         "Editor.useCallback[toggleOrderedList]": ()=>{
             if (!viewRef.current) return;
-            console.log('Ordered list button clicked');
+            if ("TURBOPACK compile-time truthy", 1) {
+                console.log('Ordered list button clicked');
+            }
             const { state, dispatch } = viewRef.current;
             const { $from, $to } = state.selection;
             try {
@@ -1920,14 +1991,20 @@ var _s = __turbopack_context__.k.signature();
                 const orderedList = __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$editor$2f$schema$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["schema"].nodes.ordered_list.create(null, listItem);
                 const tr = state.tr.replaceWith($from.start(), $to.end(), orderedList);
                 dispatch(tr);
-                console.log('Manual ordered list creation: success');
+                if ("TURBOPACK compile-time truthy", 1) {
+                    console.log('Manual ordered list creation: success');
+                }
                 viewRef.current.focus();
             } catch (error) {
-                console.log('Manual ordered list creation failed:', error);
+                if ("TURBOPACK compile-time truthy", 1) {
+                    console.log('Manual ordered list creation failed:', error);
+                }
                 // Fallback to wrapInList
                 const command = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$prosemirror$2d$schema$2d$list$2f$dist$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["wrapInList"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$editor$2f$schema$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["schema"].nodes.ordered_list);
                 const result = command(state, dispatch);
-                console.log('wrapInList fallback result:', result);
+                if ("TURBOPACK compile-time truthy", 1) {
+                    console.log('wrapInList fallback result:', result);
+                }
                 if (result) viewRef.current.focus();
             }
         }
@@ -2047,17 +2124,17 @@ var _s = __turbopack_context__.k.signature();
                                             d: "M13.5 15.5H10v-3h3.5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5zM10 6.5h3c.55 0 1 .45 1 1s-.45 1-1 1h-3v-2zm5.6 4.5c.75-.9 1.2-2.05 1.2-3.3 0-2.76-2.24-5-5-5H6.5C5.67 2.7 5 3.37 5 4.2v15.6c0 .83.67 1.5 1.5 1.5h8.5c3.31 0 6-2.69 6-6 0-2.5-1.49-4.65-3.4-5.3z"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/Editor.jsx",
-                                            lineNumber: 509,
+                                            lineNumber: 549,
                                             columnNumber: 37
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/Editor.jsx",
-                                        lineNumber: 508,
+                                        lineNumber: 548,
                                         columnNumber: 33
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/Editor.jsx",
-                                    lineNumber: 502,
+                                    lineNumber: 542,
                                     columnNumber: 29
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -2074,30 +2151,30 @@ var _s = __turbopack_context__.k.signature();
                                             d: "M10 4v3h2.21l-3.42 8H6v3h8v-3h-2.21l3.42-8H18V4h-8z"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/Editor.jsx",
-                                            lineNumber: 519,
+                                            lineNumber: 559,
                                             columnNumber: 37
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/Editor.jsx",
-                                        lineNumber: 518,
+                                        lineNumber: 558,
                                         columnNumber: 33
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/Editor.jsx",
-                                    lineNumber: 512,
+                                    lineNumber: 552,
                                     columnNumber: 29
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/Editor.jsx",
-                            lineNumber: 501,
+                            lineNumber: 541,
                             columnNumber: 25
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                             className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$Editor$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].divider
                         }, void 0, false, {
                             fileName: "[project]/src/components/Editor.jsx",
-                            lineNumber: 524,
+                            lineNumber: 564,
                             columnNumber: 25
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2115,12 +2192,12 @@ var _s = __turbopack_context__.k.signature();
                                         children: "H1"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/Editor.jsx",
-                                        lineNumber: 534,
+                                        lineNumber: 574,
                                         columnNumber: 33
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/Editor.jsx",
-                                    lineNumber: 528,
+                                    lineNumber: 568,
                                     columnNumber: 29
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -2135,12 +2212,12 @@ var _s = __turbopack_context__.k.signature();
                                         children: "H2"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/Editor.jsx",
-                                        lineNumber: 542,
+                                        lineNumber: 582,
                                         columnNumber: 33
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/Editor.jsx",
-                                    lineNumber: 536,
+                                    lineNumber: 576,
                                     columnNumber: 29
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -2155,25 +2232,25 @@ var _s = __turbopack_context__.k.signature();
                                         children: "H3"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/Editor.jsx",
-                                        lineNumber: 550,
+                                        lineNumber: 590,
                                         columnNumber: 33
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/Editor.jsx",
-                                    lineNumber: 544,
+                                    lineNumber: 584,
                                     columnNumber: 29
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/Editor.jsx",
-                            lineNumber: 527,
+                            lineNumber: 567,
                             columnNumber: 25
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                             className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$Editor$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].divider
                         }, void 0, false, {
                             fileName: "[project]/src/components/Editor.jsx",
-                            lineNumber: 554,
+                            lineNumber: 594,
                             columnNumber: 25
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2193,17 +2270,17 @@ var _s = __turbopack_context__.k.signature();
                                             d: "M4 10.5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5-.67-1.5-1.5-1.5zm0-6c-.83 0-1.5.67-1.5 1.5S3.17 7.5 4 7.5 5.5 6.83 5.5 6 4.83 4.5 4 4.5zm0 12c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5-.67-1.5-1.5-1.5zM7 19h14v-2H7v2zm0-6h14v-2H7v2zm0-8v2h14V5H7z"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/Editor.jsx",
-                                            lineNumber: 565,
+                                            lineNumber: 605,
                                             columnNumber: 37
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/Editor.jsx",
-                                        lineNumber: 564,
+                                        lineNumber: 604,
                                         columnNumber: 33
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/Editor.jsx",
-                                    lineNumber: 558,
+                                    lineNumber: 598,
                                     columnNumber: 29
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -2220,17 +2297,17 @@ var _s = __turbopack_context__.k.signature();
                                             d: "M2 17h2v.5H3v1h1v.5H2v1h3v-4H2v1zm1-9h1V4H2v1h1v3zm-1 3h1.8L2 13.1v.9h3v-1H3.2L5 10.9V10H2v1zm5-6v2h14V5H7zm0 14h14v-2H7v2zm0-6h14v-2H7v2z"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/Editor.jsx",
-                                            lineNumber: 575,
+                                            lineNumber: 615,
                                             columnNumber: 37
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/Editor.jsx",
-                                        lineNumber: 574,
+                                        lineNumber: 614,
                                         columnNumber: 33
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/Editor.jsx",
-                                    lineNumber: 568,
+                                    lineNumber: 608,
                                     columnNumber: 29
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -2247,30 +2324,30 @@ var _s = __turbopack_context__.k.signature();
                                             d: "M6 17h3l2-4V7H5v6h3zm8 0h3l2-4V7h-6v6h3z"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/Editor.jsx",
-                                            lineNumber: 585,
+                                            lineNumber: 625,
                                             columnNumber: 37
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/Editor.jsx",
-                                        lineNumber: 584,
+                                        lineNumber: 624,
                                         columnNumber: 33
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/Editor.jsx",
-                                    lineNumber: 578,
+                                    lineNumber: 618,
                                     columnNumber: 29
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/Editor.jsx",
-                            lineNumber: 557,
+                            lineNumber: 597,
                             columnNumber: 25
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                             className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$Editor$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].divider
                         }, void 0, false, {
                             fileName: "[project]/src/components/Editor.jsx",
-                            lineNumber: 590,
+                            lineNumber: 630,
                             columnNumber: 25
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2290,17 +2367,17 @@ var _s = __turbopack_context__.k.signature();
                                             d: "M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/Editor.jsx",
-                                            lineNumber: 601,
+                                            lineNumber: 641,
                                             columnNumber: 37
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/Editor.jsx",
-                                        lineNumber: 600,
+                                        lineNumber: 640,
                                         columnNumber: 33
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/Editor.jsx",
-                                    lineNumber: 594,
+                                    lineNumber: 634,
                                     columnNumber: 29
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -2317,30 +2394,30 @@ var _s = __turbopack_context__.k.signature();
                                             d: "M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0L19.2 12l-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/Editor.jsx",
-                                            lineNumber: 611,
+                                            lineNumber: 651,
                                             columnNumber: 37
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/Editor.jsx",
-                                        lineNumber: 610,
+                                        lineNumber: 650,
                                         columnNumber: 33
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/Editor.jsx",
-                                    lineNumber: 604,
+                                    lineNumber: 644,
                                     columnNumber: 29
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/Editor.jsx",
-                            lineNumber: 593,
+                            lineNumber: 633,
                             columnNumber: 25
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                             className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$Editor$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].divider
                         }, void 0, false, {
                             fileName: "[project]/src/components/Editor.jsx",
-                            lineNumber: 616,
+                            lineNumber: 656,
                             columnNumber: 25
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2360,17 +2437,17 @@ var _s = __turbopack_context__.k.signature();
                                             d: "M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/Editor.jsx",
-                                            lineNumber: 627,
+                                            lineNumber: 667,
                                             columnNumber: 37
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/Editor.jsx",
-                                        lineNumber: 626,
+                                        lineNumber: 666,
                                         columnNumber: 33
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/Editor.jsx",
-                                    lineNumber: 620,
+                                    lineNumber: 660,
                                     columnNumber: 29
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -2387,34 +2464,34 @@ var _s = __turbopack_context__.k.signature();
                                             d: "M18.4 10.6C16.55 8.99 14.15 8 11.5 8c-4.65 0-8.58 3.03-9.96 7.22L3.9 16c1.05-3.19 4.05-5.5 7.6-5.5 1.95 0 3.73.72 5.12 1.88L13 16h9V7l-3.6 3.6z"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/Editor.jsx",
-                                            lineNumber: 637,
+                                            lineNumber: 677,
                                             columnNumber: 37
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/Editor.jsx",
-                                        lineNumber: 636,
+                                        lineNumber: 676,
                                         columnNumber: 33
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/Editor.jsx",
-                                    lineNumber: 630,
+                                    lineNumber: 670,
                                     columnNumber: 29
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/Editor.jsx",
-                            lineNumber: 619,
+                            lineNumber: 659,
                             columnNumber: 25
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/components/Editor.jsx",
-                    lineNumber: 499,
+                    lineNumber: 539,
                     columnNumber: 21
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/components/Editor.jsx",
-                lineNumber: 498,
+                lineNumber: 538,
                 columnNumber: 17
             }, this),
             !isReady && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2424,20 +2501,20 @@ var _s = __turbopack_context__.k.signature();
                         className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$Editor$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].loadingSpinner
                     }, void 0, false, {
                         fileName: "[project]/src/components/Editor.jsx",
-                        lineNumber: 648,
+                        lineNumber: 688,
                         columnNumber: 21
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                         children: "Loading editor..."
                     }, void 0, false, {
                         fileName: "[project]/src/components/Editor.jsx",
-                        lineNumber: 649,
+                        lineNumber: 689,
                         columnNumber: 21
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/Editor.jsx",
-                lineNumber: 647,
+                lineNumber: 687,
                 columnNumber: 17
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2460,13 +2537,13 @@ var _s = __turbopack_context__.k.signature();
                 }
             }, void 0, false, {
                 fileName: "[project]/src/components/Editor.jsx",
-                lineNumber: 654,
+                lineNumber: 694,
                 columnNumber: 13
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/Editor.jsx",
-        lineNumber: 495,
+        lineNumber: 535,
         columnNumber: 9
     }, this);
 }, "o6OudcFfh93t8NJ8xXT2f0xbgog=")), "o6OudcFfh93t8NJ8xXT2f0xbgog=");
@@ -5034,6 +5111,7 @@ var { g: global, __dirname, k: __turbopack_refresh__, m: module } = __turbopack_
 __turbopack_context__.s({
     "default": (()=>__TURBOPACK__default__export__)
 });
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$polyfills$2f$process$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/build/polyfills/process.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/jsx-dev-runtime.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/navigation.js [app-client] (ecmascript)");
@@ -5108,38 +5186,54 @@ const ArticleComposer = ({ articleId, onUpdateComplete, backToArticleAction, edi
     // Load article data if in edit mode
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "ArticleComposer.useEffect": ()=>{
-            console.log('ArticleComposer useEffect - articleId:', articleId, 'user:', user?.uid);
+            if ("TURBOPACK compile-time truthy", 1) {
+                console.log('ArticleComposer useEffect - articleId:', articleId, 'user:', user ? '[USER_LOGGED_IN]' : 'undefined');
+            }
             if (articleId && user) {
                 const fetchArticle = {
                     "ArticleComposer.useEffect.fetchArticle": async ()=>{
                         try {
-                            console.log('Fetching article for editing, ID:', articleId);
+                            if ("TURBOPACK compile-time truthy", 1) {
+                                console.log('Fetching article for editing, ID:', articleId);
+                            }
                             setIsLoading(true);
                             const article = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$firebase$2f$articles$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["getArticleById"])(articleId);
-                            console.log('Fetched article:', article?.title, 'Body length:', article?.body?.length);
+                            if (("TURBOPACK compile-time value", "development") === 'development' && article) {
+                                console.log('Fetched article:', article.title, 'Body length:', article.body?.length);
+                            }
                             if (!article) {
-                                console.log('Article not found');
+                                if ("TURBOPACK compile-time truthy", 1) {
+                                    console.log('Article not found');
+                                }
                                 setError('Article not found');
                                 router.push('/');
                                 return;
                             }
                             // Verify article ownership
                             if (article.authorId !== user.uid) {
-                                console.log('User not authorized to edit this article');
+                                if ("TURBOPACK compile-time truthy", 1) {
+                                    console.log('User not authorized to edit this article');
+                                }
                                 setError('You can only edit your own articles');
                                 router.push('/');
                                 return;
                             }
                             // Set form data
-                            console.log('Setting title:', article.title);
+                            if ("TURBOPACK compile-time truthy", 1) {
+                                console.log('Setting title:', article.title);
+                            }
                             setTitle(article.title);
                             // Process HTML to extract and clean the content
                             const cleanContent = article.body.replace(/data-[\w-]+="[^"]*"/g, '');
-                            console.log('Setting content, length:', cleanContent.length, 'Preview:', cleanContent.substring(0, 100) + '...');
+                            if ("TURBOPACK compile-time truthy", 1) {
+                                console.log('Setting content, length:', cleanContent.length, 'Preview:', cleanContent.substring(0, 100) + '...');
+                            }
                             setContent(cleanContent);
                             setTags(article.tags || []);
                             setCoverImage(article.coverImage || '');
-                            console.log('Article data loaded successfully for editing');
+                            if ("TURBOPACK compile-time truthy", 1) {
+                                console.log('Article data loaded successfully for editing');
+                            }
                         } catch (error) {
                             console.error('Error loading article:', error);
                             setError('Failed to load article');
@@ -5150,11 +5244,15 @@ const ArticleComposer = ({ articleId, onUpdateComplete, backToArticleAction, edi
                 }["ArticleComposer.useEffect.fetchArticle"];
                 fetchArticle();
             } else if (!articleId) {
-                console.log('No articleId, starting with empty content');
+                if ("TURBOPACK compile-time truthy", 1) {
+                    console.log('No articleId, starting with empty content');
+                }
                 // Editor will start with empty content - no need for document model
                 setIsLoading(false);
             } else {
-                console.log('User not logged in, waiting...');
+                if ("TURBOPACK compile-time truthy", 1) {
+                    console.log('User not logged in, waiting...');
+                }
             }
         }
     }["ArticleComposer.useEffect"], [
@@ -5286,16 +5384,24 @@ const ArticleComposer = ({ articleId, onUpdateComplete, backToArticleAction, edi
             if (articleId) {
                 // Update existing article
                 try {
-                    console.log('Updating article with ID:', articleId);
+                    if ("TURBOPACK compile-time truthy", 1) {
+                        console.log('Updating article with ID:', articleId);
+                    }
                     const updatedArticleData = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$firebase$2f$articles$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["updateArticle"])(articleId, articleData);
-                    console.log('Article updated successfully');
+                    if ("TURBOPACK compile-time truthy", 1) {
+                        console.log('Article updated successfully');
+                    }
                     setIsSaved(true);
                     if (onUpdateComplete) {
-                        console.log('Calling onUpdateComplete callback instead of navigating');
+                        if ("TURBOPACK compile-time truthy", 1) {
+                            console.log('Calling onUpdateComplete callback instead of navigating');
+                        }
                         onUpdateComplete(updatedArticleData);
                     } else {
                         // Only navigate if no callback is provided (standalone editor usage)
-                        console.log('No callback provided, navigating to article page');
+                        if ("TURBOPACK compile-time truthy", 1) {
+                            console.log('No callback provided, navigating to article page');
+                        }
                         setTimeout(()=>{
                             router.push(`/articles/?slug=${slug}`);
                         }, 1000);
@@ -5370,7 +5476,7 @@ const ArticleComposer = ({ articleId, onUpdateComplete, backToArticleAction, edi
                         className: "w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"
                     }, void 0, false, {
                         fileName: "[project]/src/components/ArticleComposer.tsx",
-                        lineNumber: 323,
+                        lineNumber: 351,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -5378,18 +5484,18 @@ const ArticleComposer = ({ articleId, onUpdateComplete, backToArticleAction, edi
                         children: "Loading your article..."
                     }, void 0, false, {
                         fileName: "[project]/src/components/ArticleComposer.tsx",
-                        lineNumber: 324,
+                        lineNumber: 352,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/ArticleComposer.tsx",
-                lineNumber: 322,
+                lineNumber: 350,
                 columnNumber: 9
             }, this)
         }, void 0, false, {
             fileName: "[project]/src/components/ArticleComposer.tsx",
-            lineNumber: 318,
+            lineNumber: 346,
             columnNumber: 7
         }, this);
     }
@@ -5407,7 +5513,7 @@ const ArticleComposer = ({ articleId, onUpdateComplete, backToArticleAction, edi
                 className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"]['glass-highlight']
             }, void 0, false, {
                 fileName: "[project]/src/components/ArticleComposer.tsx",
-                lineNumber: 339,
+                lineNumber: 367,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("header", {
@@ -5420,7 +5526,7 @@ const ArticleComposer = ({ articleId, onUpdateComplete, backToArticleAction, edi
                         className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$home$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"]['glass-highlight']
                     }, void 0, false, {
                         fileName: "[project]/src/components/ArticleComposer.tsx",
-                        lineNumber: 345,
+                        lineNumber: 373,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5442,26 +5548,26 @@ const ArticleComposer = ({ articleId, onUpdateComplete, backToArticleAction, edi
                                                     d: "M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.42-1.41L7.83 13H20v-2z"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/ArticleComposer.tsx",
-                                                    lineNumber: 355,
+                                                    lineNumber: 383,
                                                     columnNumber: 19
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/ArticleComposer.tsx",
-                                                lineNumber: 354,
+                                                lineNumber: 382,
                                                 columnNumber: 17
                                             }, this),
                                             "Back to Article"
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/ArticleComposer.tsx",
-                                        lineNumber: 350,
+                                        lineNumber: 378,
                                         columnNumber: 15
                                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                         className: "text-xl font-bold text-stone-800 font-serif",
                                         children: "Journalite"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/ArticleComposer.tsx",
-                                        lineNumber: 360,
+                                        lineNumber: 388,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5469,7 +5575,7 @@ const ArticleComposer = ({ articleId, onUpdateComplete, backToArticleAction, edi
                                         children: articleId ? editingTitle ? `Editing: ${editingTitle}` : 'Editing' : 'Writing'
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/ArticleComposer.tsx",
-                                        lineNumber: 363,
+                                        lineNumber: 391,
                                         columnNumber: 13
                                     }, this),
                                     isSaved && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5484,25 +5590,25 @@ const ArticleComposer = ({ articleId, onUpdateComplete, backToArticleAction, edi
                                                     d: "M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/ArticleComposer.tsx",
-                                                    lineNumber: 370,
+                                                    lineNumber: 398,
                                                     columnNumber: 19
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/ArticleComposer.tsx",
-                                                lineNumber: 369,
+                                                lineNumber: 397,
                                                 columnNumber: 17
                                             }, this),
                                             "Saved"
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/ArticleComposer.tsx",
-                                        lineNumber: 368,
+                                        lineNumber: 396,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/ArticleComposer.tsx",
-                                lineNumber: 348,
+                                lineNumber: 376,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5515,7 +5621,7 @@ const ArticleComposer = ({ articleId, onUpdateComplete, backToArticleAction, edi
                                         children: isSaving ? 'Saving...' : 'Save Draft'
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/ArticleComposer.tsx",
-                                        lineNumber: 378,
+                                        lineNumber: 406,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -5525,25 +5631,25 @@ const ArticleComposer = ({ articleId, onUpdateComplete, backToArticleAction, edi
                                         children: isPublishing ? 'Publishing...' : articleId ? 'Update' : 'Publish'
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/ArticleComposer.tsx",
-                                        lineNumber: 386,
+                                        lineNumber: 414,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/ArticleComposer.tsx",
-                                lineNumber: 377,
+                                lineNumber: 405,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/ArticleComposer.tsx",
-                        lineNumber: 347,
+                        lineNumber: 375,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/ArticleComposer.tsx",
-                lineNumber: 342,
+                lineNumber: 370,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5566,7 +5672,7 @@ const ArticleComposer = ({ articleId, onUpdateComplete, backToArticleAction, edi
                         }
                     }, void 0, false, {
                         fileName: "[project]/src/components/ArticleComposer.tsx",
-                        lineNumber: 400,
+                        lineNumber: 428,
                         columnNumber: 9
                     }, this),
                     (coverImage || title.length > 10) && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5580,7 +5686,7 @@ const ArticleComposer = ({ articleId, onUpdateComplete, backToArticleAction, edi
                                 className: "w-full bg-transparent border-none outline-none text-stone-600 placeholder-stone-400 py-2 border-b border-stone-200 focus:border-stone-400 transition-colors"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/ArticleComposer.tsx",
-                                lineNumber: 417,
+                                lineNumber: 445,
                                 columnNumber: 15
                             }, this),
                             coverImage && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5592,7 +5698,7 @@ const ArticleComposer = ({ articleId, onUpdateComplete, backToArticleAction, edi
                                         className: "w-full h-64 object-cover rounded-2xl mb-4"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/ArticleComposer.tsx",
-                                        lineNumber: 427,
+                                        lineNumber: 455,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -5603,19 +5709,19 @@ const ArticleComposer = ({ articleId, onUpdateComplete, backToArticleAction, edi
                                         className: "w-full bg-white/80 backdrop-blur border border-stone-200 outline-none text-stone-600 placeholder-stone-400 py-2 px-4 rounded-lg focus:border-stone-400 transition-colors"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/ArticleComposer.tsx",
-                                        lineNumber: 432,
+                                        lineNumber: 460,
                                         columnNumber: 17
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/ArticleComposer.tsx",
-                                lineNumber: 426,
+                                lineNumber: 454,
                                 columnNumber: 15
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/ArticleComposer.tsx",
-                        lineNumber: 415,
+                        lineNumber: 443,
                         columnNumber: 11
                     }, this),
                     (tags.length > 0 || title.length > 5) && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5632,13 +5738,13 @@ const ArticleComposer = ({ articleId, onUpdateComplete, backToArticleAction, edi
                                             children: "×"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/ArticleComposer.tsx",
-                                            lineNumber: 450,
+                                            lineNumber: 478,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, tag, true, {
                                     fileName: "[project]/src/components/ArticleComposer.tsx",
-                                    lineNumber: 448,
+                                    lineNumber: 476,
                                     columnNumber: 15
                                 }, this)),
                             tags.length < 5 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -5652,13 +5758,13 @@ const ArticleComposer = ({ articleId, onUpdateComplete, backToArticleAction, edi
                                 className: "bg-transparent border-none outline-none text-stone-600 placeholder-stone-400 min-w-24 py-1"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/ArticleComposer.tsx",
-                                lineNumber: 461,
+                                lineNumber: 489,
                                 columnNumber: 15
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/ArticleComposer.tsx",
-                        lineNumber: 446,
+                        lineNumber: 474,
                         columnNumber: 11
                     }, this),
                     error && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5666,7 +5772,7 @@ const ArticleComposer = ({ articleId, onUpdateComplete, backToArticleAction, edi
                         children: error
                     }, void 0, false, {
                         fileName: "[project]/src/components/ArticleComposer.tsx",
-                        lineNumber: 477,
+                        lineNumber: 505,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5685,31 +5791,31 @@ const ArticleComposer = ({ articleId, onUpdateComplete, backToArticleAction, edi
                             }
                         }, void 0, false, {
                             fileName: "[project]/src/components/ArticleComposer.tsx",
-                            lineNumber: 486,
+                            lineNumber: 514,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/components/ArticleComposer.tsx",
-                        lineNumber: 483,
+                        lineNumber: 511,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/ArticleComposer.tsx",
-                lineNumber: 398,
+                lineNumber: 426,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$InspirationWidget$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
                 onInsert: handleInsertInspiration
             }, void 0, false, {
                 fileName: "[project]/src/components/ArticleComposer.tsx",
-                lineNumber: 500,
+                lineNumber: 528,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/ArticleComposer.tsx",
-        lineNumber: 331,
+        lineNumber: 359,
         columnNumber: 5
     }, this);
 };

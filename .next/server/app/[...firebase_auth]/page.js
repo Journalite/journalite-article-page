@@ -2,7 +2,7 @@ const CHUNK_PUBLIC_PATH = "server/app/[...firebase_auth]/page.js";
 const runtime = require("../../chunks/ssr/[turbopack]_runtime.js");
 runtime.loadChunk("server/chunks/ssr/node_modules_next_dist_a17f26a9._.js");
 runtime.loadChunk("server/chunks/ssr/[root-of-the-server]__292a8cba._.js");
-runtime.loadChunk("server/chunks/ssr/[root-of-the-server]__6302eb5e._.js");
+runtime.loadChunk("server/chunks/ssr/[root-of-the-server]__57273bf0._.js");
 runtime.loadChunk("server/chunks/ssr/_cbf437f6._.js");
 runtime.loadChunk("server/chunks/ssr/node_modules_b04db032._.js");
 runtime.loadChunk("server/chunks/ssr/node_modules_next_dist_client_components_unauthorized-error_c8949b27.js");

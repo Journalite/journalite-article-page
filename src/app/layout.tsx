@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "../styles/global.css";
 import "../styles/highlight.css";
+import { ConsoleSuppressionScript } from "../components/ConsoleSuppressionScript";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,7 +37,10 @@ export default function RootLayout({
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" />
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap" />
       </head>
-      <body>{children}</body>
+      <body>
+        <ConsoleSuppressionScript />
+        {children}
+      </body>
     </html>
   );
 }

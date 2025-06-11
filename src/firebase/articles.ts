@@ -46,7 +46,9 @@ export interface CommentReply {
 // Get articles from Firestore, ordered by createdAt desc, with optional limit and draft inclusion
 export async function getArticles(options: { limit?: number; includeDrafts?: boolean } = {}) {
     const { limit, includeDrafts = false } = options;
-    console.log('getArticles called with limit:', limit);
+    if (process.env.NODE_ENV === 'development' && limit) {
+        console.log('getArticles called with limit:', limit);
+    }
     try {
         const articlesRef = collection(db, 'articles');
         const queryConstraints = [];
@@ -63,13 +65,17 @@ export async function getArticles(options: { limit?: number; includeDrafts?: boo
         queryConstraints.push(orderBy('createdAt', 'desc'));
 
         if (limit && limit > 0) {
-            console.log('Adding limit constraint:', limit);
+            if (process.env.NODE_ENV === 'development') {
+                console.log('Adding limit constraint:', limit);
+            }
             queryConstraints.push(firestoreLimit(limit));
         }
 
         const q = query(articlesRef, ...queryConstraints);
         const querySnapshot = await getDocs(q);
-        console.log('Query returned document count:', querySnapshot.size);
+        if (process.env.NODE_ENV === 'development') {
+            console.log('Query returned document count:', querySnapshot.size);
+        }
 
         const articles: Article[] = [];
         querySnapshot.forEach((docSnapshot) => {
@@ -92,11 +98,11 @@ export async function getArticles(options: { limit?: number; includeDrafts?: boo
 
 // Get a single article by ID - DIRECT NO-CACHE VERSION
 export async function getArticleById(id: string): Promise<Article | null> {
-    try {
-        // Super aggressive cache-busting
-        const timestamp = Date.now();
+    const timestamp = Date.now();
+    if (process.env.NODE_ENV === 'development') {
         console.log(`🔄 DIRECT FETCH: Getting article with ID: ${id} (time: ${timestamp})`);
-
+    }
+    try {
         // Completely bypass any caching by making a direct Firestore call
         const docRef = doc(db, 'articles', id);
 
@@ -111,14 +117,18 @@ export async function getArticleById(id: string): Promise<Article | null> {
                 ...docSnap.data()
             } as Article;
 
-            console.log('✅ Article found:', articleData.title);
-            console.log('📄 Content length:', articleData.body?.length || 0);
-            console.log('🏷️ Tags:', articleData.tags?.join(', ') || 'none');
+            if (process.env.NODE_ENV === 'development') {
+                console.log('✅ Article found:', articleData.title);
+                console.log('📄 Content length:', articleData.body?.length || 0);
+                console.log('🏷️ Tags:', articleData.tags?.join(', ') || 'none');
+            }
 
             // Return fresh data
             return articleData;
         } else {
-            console.log('❌ Article not found for ID:', id);
+            if (process.env.NODE_ENV === 'development') {
+                console.log('❌ Article not found for ID:', id);
+            }
             return null;
         }
     } catch (error) {
@@ -129,48 +139,61 @@ export async function getArticleById(id: string): Promise<Article | null> {
 
 // Get a single article by slug
 export async function getArticleBySlug(slug: string): Promise<Article | null> {
-    try {
+    if (process.env.NODE_ENV === 'development') {
         console.log(`Getting article by slug: ${slug}, timestamp: ${Date.now()}`);
+    }
 
-        // Try multiple attempts to get fresh data
-        let attempts = 0;
-        const maxAttempts = 2;
+    // Implement retry logic for better reliability
+    const maxAttempts = 3;
+    let attempts = 0;
 
-        while (attempts < maxAttempts) {
-            attempts++;
+    while (attempts < maxAttempts) {
+        attempts++;
+        if (process.env.NODE_ENV === 'development') {
             console.log(`Attempt ${attempts} to get article by slug`);
+        }
 
-            // Short delay between attempts
-            if (attempts > 1) {
-                await new Promise(resolve => setTimeout(resolve, 500));
-            }
-
+        try {
             const articlesRef = collection(db, 'articles');
-            const q = query(articlesRef, where('slug', '==', slug), where('status', '==', 'published'));
+            const q = query(
+                articlesRef,
+                where('slug', '==', slug),
+                where('status', '==', 'published'),
+                firestoreLimit(1)
+            );
+
             const querySnapshot = await getDocs(q);
 
             if (!querySnapshot.empty) {
-                const docSnap = querySnapshot.docs[0];
+                const doc = querySnapshot.docs[0];
                 const articleData = {
-                    id: docSnap.id,
-                    ...docSnap.data()
+                    id: doc.id,
+                    ...doc.data()
                 } as Article;
 
-                console.log('Article found by slug:', articleData.title, 'Content length:', articleData.body?.length || 0);
+                if (process.env.NODE_ENV === 'development') {
+                    console.log('Article found by slug:', articleData.title, 'Content length:', articleData.body?.length || 0);
+                }
+
                 return articleData;
-            } else if (attempts >= maxAttempts) {
-                console.log('Article not found for slug after multiple attempts:', slug);
+            } else if (attempts === maxAttempts) {
+                if (process.env.NODE_ENV === 'development') {
+                    console.log('Article not found for slug after multiple attempts:', slug);
+                }
                 return null;
+            } else {
+                if (process.env.NODE_ENV === 'development') {
+                    console.log(`Article not found by slug on attempt ${attempts}, will retry...`);
+                }
+                await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second before retry
             }
-
-            console.log(`Article not found by slug on attempt ${attempts}, will retry...`);
+        } catch (error) {
+            console.error('Error getting article by slug:', error);
+            if (attempts === maxAttempts) throw error;
         }
-
-        return null;
-    } catch (error) {
-        console.error('Error getting article by slug:', error);
-        throw error;
     }
+
+    return null;
 }
 
 // Create a new article
@@ -240,17 +263,30 @@ export async function updateArticle(articleId: string, articleData: Partial<Omit
                 .toLowerCase()
                 .replace(/[\s\W-]+/g, '-')
                 .replace(/^-+|-+$/g, '');
-            console.log('Updated slug to:', updateData.slug);
+            if (process.env.NODE_ENV === 'development') {
+                console.log('Updated slug to:', updateData.slug);
+            }
         }
         updateData.updatedAt = Timestamp.now();
 
         await updateDoc(articleRef, updateData);
 
         const updatedArticleSnap = await getDoc(articleRef);
-        return {
-            id: updatedArticleSnap.id,
-            ...updatedArticleSnap.data()
-        } as Article;
+        if (updatedArticleSnap.exists()) {
+            const updatedData = updatedArticleSnap.data() as Omit<Article, 'id'>;
+            return {
+                id: updatedArticleSnap.id,
+                ...updatedData
+            } as Article;
+        } else {
+            // Fallback: return the expected data structure
+            return {
+                id: articleId,
+                ...updateData,
+                createdAt: Timestamp.now(),
+                updatedAt: Timestamp.now()
+            } as Article;
+        }
     } catch (error) {
         console.error('Error updating article:', error);
         throw error;
@@ -353,7 +389,17 @@ export async function addReply(articleId: string, commentId: string, content: st
         const commentData = commentSnap.data() as ArticleComment;
         if (commentData.userId !== user.uid) {
             const articleInfo = await getArticleById(articleId);
-            console.log(`User ${user.uid} replied to comment ${commentId} by ${commentData.userId} on article ${articleInfo?.title}`);
+            if (process.env.NODE_ENV === 'development') {
+                console.log(`User ${user.uid} replied to comment ${commentId} by ${commentData.userId} on article ${articleInfo?.title}`);
+            }
+            await createCommentNotification(
+                commentData.userId,
+                articleId,
+                articleInfo?.slug || '',
+                articleInfo?.title || 'Article',
+                newReply.replyId,
+                content
+            );
         }
 
         return newReply;
