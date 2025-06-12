@@ -227,11 +227,12 @@
         right: 10px;
         left: 10px;
         top: auto;
-        bottom: 20px;
+        bottom: 100px; /* Higher bottom position to avoid mobile navigation */
         width: auto;
         max-width: none;
         transform: none;
         animation: slideInUp 0.4s ease-out;
+        z-index: 1001; /* Higher than mobile bottom nav (1000) */
     }
 
     @keyframes slideInUp {
@@ -248,7 +249,7 @@
     .reflectionPrompt,
     .reflectionForm {
         margin: 0 auto;
-        max-width: 350px;
+        max-width: 320px; /* Slightly smaller for better mobile fit */
     }
 }
 

@@ -127,7 +127,7 @@ const AppShell: React.FC<AppShellProps> = ({
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className={`min-h-full bg-white/20 dark:bg-zinc-900/30 backdrop-blur-xl m-4 rounded-2xl border border-white/10 shadow-2xl shadow-black/20 ${getAdaptiveTextClasses()}`}
+              className={`min-h-full bg-white/15 dark:bg-zinc-900/25 backdrop-blur-xl m-3 rounded-xl border border-white/8 shadow-xl shadow-black/15 ${getAdaptiveTextClasses()}`}
             >
               <div className="p-6">
                 {children}

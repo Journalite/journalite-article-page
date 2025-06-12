@@ -152,102 +152,221 @@ const ArticleWithHighlights: React.FC<ArticleWithHighlightsProps> = ({
     <HighlightProvider articleId={articleId}>
       <ClientSideHighlighter />
       <article className={styles.articleContainer}>
-        {/* Reflection Settings */}
+        {/* Reflection Settings - Responsive Design */}
         <div 
           data-toggle-bar="true"
           style={{ 
             display: 'flex', 
-            justifyContent: 'space-between', 
+            justifyContent: typeof window !== 'undefined' && window.innerWidth <= 768 
+              ? 'center' : 'space-between', 
             alignItems: 'center', 
-            gap: '1rem', 
-            margin: '1rem 0',
-            padding: '1rem',
+            gap: typeof window !== 'undefined' && window.innerWidth <= 768 ? '0.5rem' : '1rem', 
+            margin: typeof window !== 'undefined' && window.innerWidth <= 768 ? '0.5rem 0' : '1rem 0',
+            padding: typeof window !== 'undefined' && window.innerWidth <= 768 ? '0.5rem 0.75rem' : '1rem',
             backgroundImage: isAuthenticated 
               ? `linear-gradient(270deg, ${moodThemes[mood].gradientStart}, ${moodThemes[mood].gradientEnd})`
               : 'linear-gradient(270deg, #9CA3AF, #6B7280)',
             backgroundSize: '200% 200%',
             animation: 'slideGradient 8s ease infinite alternate',
-            borderRadius: '20px',
+            borderRadius: typeof window !== 'undefined' && window.innerWidth <= 768 ? '12px' : '20px',
             border: '1px solid rgba(255, 255, 255, 0.5)',
             boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-            fontSize: '0.875rem'
+            fontSize: typeof window !== 'undefined' && window.innerWidth <= 768 ? '0.75rem' : '0.875rem',
+            flexWrap: typeof window !== 'undefined' && window.innerWidth <= 768 ? 'wrap' : 'nowrap'
           }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <span style={{ 
-              color: '#F7FAFC',
-              fontWeight: '500',
-              fontSize: '0.875rem',
-              opacity: 0.9
-            }}>
-              {isAuthenticated ? (
-                <>
-                  <AtmosphereIcon size={16} color="#F7FAFC" />
-                  Atmosphere adapted
-                </>
-              ) : (
-                <>
-                  <LockClosedIcon size={16} color="#F7FAFC" />
-                  Sign in for enhanced features
-                </>
+          {/* Check screen size for different layouts */}
+          {typeof window !== 'undefined' && window.innerWidth <= 768 ? (
+            // Mobile Layout - Minimal and compact
+            <>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                <span style={{ color: '#F7FAFC', fontWeight: '500', fontSize: '0.65rem' }}>
+                  🎨 Mood
+                </span>
+                <MoodToggle
+                  style={{
+                    padding: '0.25rem 0.5rem',
+                    border: 'none',
+                    background: 'rgba(255, 255, 255, 0.2)',
+                    color: '#F7FAFC',
+                    borderRadius: '12px',
+                    fontSize: '0.6rem',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+                    backdropFilter: 'blur(10px)',
+                    minHeight: '24px',
+                    minWidth: '32px'
+                  }}
+                />
+              </div>
+              
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                <span style={{ color: '#F7FAFC', fontWeight: '500', fontSize: '0.65rem' }}>
+                  ✨ Reflect
+                </span>
+                <ReflectionModeToggle
+                  style={{
+                    padding: '0.25rem 0.5rem',
+                    border: 'none',
+                    borderRadius: '12px',
+                    fontSize: '0.6rem',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+                    backdropFilter: 'blur(10px)',
+                    minHeight: '24px',
+                    minWidth: '32px'
+                  }}
+                />
+              </div>
+              
+              {isAuthenticated && (
+                <span style={{ 
+                  color: '#F7FAFC', 
+                  fontWeight: '500', 
+                  fontSize: '0.6rem',
+                  opacity: 0.7,
+                  width: '100%',
+                  textAlign: 'center',
+                  marginTop: '0.25rem'
+                }}>
+                  Enhanced active
+                </span>
               )}
-            </span>
-            {isAuthenticated && (
-              <span style={{ 
-                color: '#F7FAFC',
-                fontWeight: '600',
-                fontSize: '0.875rem'
-              }}>
-                <EnhancedIcon size={16} color="#F7FAFC" />
-                Enhanced features active
-              </span>
-            )}
-          </div>
-          
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            {/* Mood Background Toggle */}
-            <span style={{ color: '#F7FAFC', fontWeight: '500', fontSize: '0.75rem' }}>
-              Mood Background
-            </span>
-            <MoodToggle
-              style={{
-                padding: '0.4rem 0.8rem',
-                border: 'none',
-                background: 'rgba(255, 255, 255, 0.2)',
-                color: '#F7FAFC',
-                borderRadius: '20px',
-                fontSize: '0.7rem',
-                fontWeight: '600',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease',
-                boxShadow: '0 1px 4px rgba(0, 0, 0, 0.1)',
-                backdropFilter: 'blur(10px)',
-              }}
-            />
-            
-            <span style={{ color: '#F7FAFC', fontWeight: '500', fontSize: '0.75rem' }}>
-              Interactive Reflections
-            </span>
-            <ReflectionModeToggle
-              style={{
-                padding: '0.4rem 0.8rem',
-                border: 'none',
-                borderRadius: '20px',
-                fontSize: '0.7rem',
-                fontWeight: '600',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease',
-                boxShadow: '0 1px 4px rgba(0, 0, 0, 0.1)',
-                backdropFilter: 'blur(10px)',
-              }}
-            />
-          </div>
+            </>
+          ) : typeof window !== 'undefined' && window.innerWidth <= 1024 ? (
+            // Tablet Layout - Medium
+            <>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <span style={{ 
+                  color: '#F7FAFC',
+                  fontWeight: '500',
+                  fontSize: '0.8rem',
+                  opacity: 0.9
+                }}>
+                  {isAuthenticated ? '🎨 Enhanced mode' : '🔒 Sign in for features'}
+                </span>
+              </div>
+              
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                <span style={{ color: '#F7FAFC', fontWeight: '500', fontSize: '0.7rem' }}>
+                  Mood
+                </span>
+                <MoodToggle
+                  style={{
+                    padding: '0.35rem 0.7rem',
+                    border: 'none',
+                    background: 'rgba(255, 255, 255, 0.2)',
+                    color: '#F7FAFC',
+                    borderRadius: '16px',
+                    fontSize: '0.65rem',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    boxShadow: '0 1px 4px rgba(0, 0, 0, 0.1)',
+                    backdropFilter: 'blur(10px)',
+                  }}
+                />
+                
+                <span style={{ color: '#F7FAFC', fontWeight: '500', fontSize: '0.7rem' }}>
+                  Reflect
+                </span>
+                <ReflectionModeToggle
+                  style={{
+                    padding: '0.35rem 0.7rem',
+                    border: 'none',
+                    borderRadius: '16px',
+                    fontSize: '0.65rem',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    boxShadow: '0 1px 4px rgba(0, 0, 0, 0.1)',
+                    backdropFilter: 'blur(10px)',
+                  }}
+                />
+              </div>
+            </>
+          ) : (
+            // Desktop Layout - Full
+            <>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <span style={{ 
+                  color: '#F7FAFC',
+                  fontWeight: '500',
+                  fontSize: '0.875rem',
+                  opacity: 0.9
+                }}>
+                  {isAuthenticated ? (
+                    <>
+                      <AtmosphereIcon size={16} color="#F7FAFC" />
+                      Atmosphere adapted
+                    </>
+                  ) : (
+                    <>
+                      <LockClosedIcon size={16} color="#F7FAFC" />
+                      Sign in for enhanced features
+                    </>
+                  )}
+                </span>
+                {isAuthenticated && (
+                  <span style={{ 
+                    color: '#F7FAFC',
+                    fontWeight: '600',
+                    fontSize: '0.875rem'
+                  }}>
+                    <EnhancedIcon size={16} color="#F7FAFC" />
+                    Enhanced features active
+                  </span>
+                )}
+              </div>
+              
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <span style={{ color: '#F7FAFC', fontWeight: '500', fontSize: '0.75rem' }}>
+                  Mood Background
+                </span>
+                <MoodToggle
+                  style={{
+                    padding: '0.4rem 0.8rem',
+                    border: 'none',
+                    background: 'rgba(255, 255, 255, 0.2)',
+                    color: '#F7FAFC',
+                    borderRadius: '20px',
+                    fontSize: '0.7rem',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    boxShadow: '0 1px 4px rgba(0, 0, 0, 0.1)',
+                    backdropFilter: 'blur(10px)',
+                  }}
+                />
+                
+                <span style={{ color: '#F7FAFC', fontWeight: '500', fontSize: '0.75rem' }}>
+                  Interactive Reflections
+                </span>
+                <ReflectionModeToggle
+                  style={{
+                    padding: '0.4rem 0.8rem',
+                    border: 'none',
+                    borderRadius: '20px',
+                    fontSize: '0.7rem',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    boxShadow: '0 1px 4px rgba(0, 0, 0, 0.1)',
+                    backdropFilter: 'blur(10px)',
+                  }}
+                />
+              </div>
+            </>
+          )}
         </div>
 
         <ArticleHighlights 
           articleId={articleId} 
           articleTitle={articleTitle}
           articleSlug={articleSlug}
-          onShare={handleShare}
         >
           <div className={styles.articleContent}>
             {/* Original article content with preserved formatting */}

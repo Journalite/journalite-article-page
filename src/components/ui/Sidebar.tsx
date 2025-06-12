@@ -101,7 +101,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
   }
 
   return (
-    <div className="h-full bg-zinc-900/30 backdrop-blur-xl border-r border-white/10 shadow-2xl shadow-black/60">
+          <div className="h-full bg-zinc-900/25 backdrop-blur-xl border-r border-white/8 shadow-xl shadow-black/40">
       <div className="flex flex-col h-full overflow-hidden">
         {/* Header */}
         <div className="flex-shrink-0 px-6 py-4 border-b border-white/20 dark:border-gray-700/30">

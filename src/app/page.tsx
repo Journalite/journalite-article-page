@@ -13,6 +13,8 @@ import ShareModal from '@/components/ShareModal'
 import CenterSearchBar from '@/components/CenterSearchBar'
 import Head from 'next/head'
 import TopLeftLogo from '@/components/TopLeftLogo'
+import MobileBottomNav from '@/components/MobileBottomNav'
+import MobileHeaderLogo from '@/components/MobileHeaderLogo'
 
 // Types for our article data based on actual API structure
 interface Article {
@@ -351,8 +353,13 @@ export default function HomePage() {
         <div className={`${styles['menu-overlay']} ${styles['active']}`} onClick={toggleSidebar}></div>
       )}
     
-      {/* TOP LEFT LOGO */}
+      {/* TOP LEFT LOGO - Desktop only */}
       <TopLeftLogo />
+      
+      {/* MOBILE HEADER LOGO - Mobile only */}
+      {windowWidth < 768 && (
+        <MobileHeaderLogo />
+      )}
     
       {/* LEFT SIDEBAR */}
       <LeftSidebar 
@@ -499,6 +506,11 @@ export default function HomePage() {
             articleTitle={sharingArticleDetails.title}
             shareUrl={`${'https://mvp.journalite.app'}/articles?slug=${encodeURIComponent(sharingArticleDetails.slug)}`}
           />
+        )}
+
+        {/* Mobile Bottom Navigation - only shown on mobile */}
+        {windowWidth < 768 && (
+          <MobileBottomNav isAuthenticated={isAuthenticated} />
         )}
     </div>
     </>

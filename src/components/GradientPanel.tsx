@@ -200,8 +200,8 @@ const GradientPanel: React.FC<GradientPanelProps> = ({
     localStorage.setItem('journaColorThemeConfig', JSON.stringify(config));
   };
 
-  // Handle color stop dragging
-  const handleColorStopMouseDown = (e: React.MouseEvent, stopId: string) => {
+  // Handle color stop dragging - Support both mouse and touch
+  const handleColorStopStart = (e: React.MouseEvent | React.TouchEvent, stopId: string) => {
     e.preventDefault();
     setIsDragging(stopId);
     
@@ -216,12 +216,23 @@ const GradientPanel: React.FC<GradientPanelProps> = ({
     setThemeConfig(newConfig);
   };
 
-  const handleMouseMove = (e: MouseEvent) => {
+  const handlePointerMove = (e: MouseEvent | TouchEvent) => {
     if (!isDragging || !canvasRef.current) return;
     
     const rect = canvasRef.current.getBoundingClientRect();
-    const x = Math.max(5, Math.min(95, ((e.clientX - rect.left) / rect.width) * 100));
-    const y = Math.max(5, Math.min(95, ((e.clientY - rect.top) / rect.height) * 100));
+    let clientX: number, clientY: number;
+    
+    if (e instanceof MouseEvent) {
+      clientX = e.clientX;
+      clientY = e.clientY;
+    } else {
+      // Touch event
+      clientX = e.touches[0].clientX;
+      clientY = e.touches[0].clientY;
+    }
+    
+    const x = Math.max(5, Math.min(95, ((clientX - rect.left) / rect.width) * 100));
+    const y = Math.max(5, Math.min(95, ((clientY - rect.top) / rect.height) * 100));
     
     const newConfig = {
       ...themeConfig,
@@ -234,45 +245,67 @@ const GradientPanel: React.FC<GradientPanelProps> = ({
     updateThemeRealTime(newConfig);
   };
 
-  const handleMouseUp = () => {
+  const handlePointerEnd = () => {
     setIsDragging(null);
   };
 
-  // Handle opacity slider (squiggly line)
-  const handleOpacityMouseDown = (e: React.MouseEvent) => {
+  // Handle opacity slider (squiggly line) - Support both mouse and touch
+  const handleOpacityStart = (e: React.MouseEvent | React.TouchEvent) => {
     e.preventDefault();
     setIsDragging('opacity');
-    handleOpacityMouseMove(e);
+    handleOpacityMove(e);
   };
 
-  const handleOpacityMouseMove = (e: React.MouseEvent | MouseEvent) => {
+  const handleOpacityMove = (e: React.MouseEvent | React.TouchEvent | MouseEvent | TouchEvent) => {
     if (!opacitySliderRef.current) return;
     
     const rect = opacitySliderRef.current.getBoundingClientRect();
-    const x = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100));
+    let clientX: number;
+    
+    if (e instanceof MouseEvent || (e as React.MouseEvent).clientX !== undefined) {
+      clientX = (e as MouseEvent | React.MouseEvent).clientX;
+    } else {
+      // Touch event
+      const touchEvent = e as TouchEvent | React.TouchEvent;
+      clientX = touchEvent.touches[0].clientX;
+    }
+    
+    const x = Math.max(0, Math.min(100, ((clientX - rect.left) / rect.width) * 100));
     
     const newConfig = { ...themeConfig, opacity: x };
     setThemeConfig(newConfig);
     updateThemeRealTime(newConfig);
   };
 
-  // Handle grain rotary knob with tactile detents (like real knob)
-  const handleGrainMouseDown = (e: React.MouseEvent) => {
+  // Handle grain rotary knob with tactile detents (like real knob) - Support both mouse and touch
+  const handleGrainStart = (e: React.MouseEvent | React.TouchEvent) => {
     e.preventDefault();
     setIsDragging('grain');
-    handleGrainMouseMove(e);
+    handleGrainMove(e);
   };
 
-  const handleGrainMouseMove = (e: React.MouseEvent | MouseEvent) => {
+  const handleGrainMove = (e: React.MouseEvent | React.TouchEvent | MouseEvent | TouchEvent) => {
     if (!grainSliderRef.current) return;
     
     const rect = grainSliderRef.current.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
     
+    let clientX: number, clientY: number;
+    
+    if (e instanceof MouseEvent || (e as React.MouseEvent).clientX !== undefined) {
+      clientX = (e as MouseEvent | React.MouseEvent).clientX;
+      clientY = (e as MouseEvent | React.MouseEvent).clientY;
+    } else {
+      // Touch event
+      const touchEvent = e as TouchEvent | React.TouchEvent;
+      clientX = touchEvent.touches[0].clientX;
+      clientY = touchEvent.touches[0].clientY;
+    }
+    
     // Calculate angle from center
-    const deltaX = e.clientX - centerX;
-    const deltaY = e.clientY - centerY;
+    const deltaX = clientX - centerX;
+    const deltaY = clientY - centerY;
     let angle = Math.atan2(deltaY, deltaX) * (180 / Math.PI);
     
     // Normalize to 0-360 degrees, starting from top (270 degrees offset)
@@ -350,25 +383,30 @@ const GradientPanel: React.FC<GradientPanelProps> = ({
     updateThemeRealTime(newConfig);
   };
 
-  // Mouse event listeners
+  // Mouse and touch event listeners
   useEffect(() => {
     if (isDragging) {
-      const handleMove = (e: MouseEvent) => {
+      const handleMove = (e: MouseEvent | TouchEvent) => {
         if (isDragging === 'opacity') {
-          handleOpacityMouseMove(e);
+          handleOpacityMove(e);
         } else if (isDragging === 'grain') {
-          handleGrainMouseMove(e);
+          handleGrainMove(e);
         } else {
-          handleMouseMove(e);
+          handlePointerMove(e);
         }
       };
       
-      document.addEventListener('mousemove', handleMove);
-      document.addEventListener('mouseup', handleMouseUp);
+      // Add both mouse and touch listeners
+      document.addEventListener('mousemove', handleMove as EventListener);
+      document.addEventListener('mouseup', handlePointerEnd);
+      document.addEventListener('touchmove', handleMove as EventListener, { passive: false });
+      document.addEventListener('touchend', handlePointerEnd);
       
       return () => {
-        document.removeEventListener('mousemove', handleMove);
-        document.removeEventListener('mouseup', handleMouseUp);
+        document.removeEventListener('mousemove', handleMove as EventListener);
+        document.removeEventListener('mouseup', handlePointerEnd);
+        document.removeEventListener('touchmove', handleMove as EventListener);
+        document.removeEventListener('touchend', handlePointerEnd);
       };
     }
   }, [isDragging, themeConfig]);
@@ -400,9 +438,9 @@ const GradientPanel: React.FC<GradientPanelProps> = ({
   return (
     <div style={{
       position: 'fixed',
-      bottom: window.innerWidth <= 768 ? '20px' : '40px',
+      bottom: window.innerWidth <= 768 ? '100px' : '40px', // Higher bottom position on mobile to avoid nav
       left: window.innerWidth <= 768 ? '20px' : '40px',
-      zIndex: 1000,
+      zIndex: 1001, // Higher than mobile bottom nav (1000)
       transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
     }}>
       {/* Floating toggle button */}
@@ -472,9 +510,9 @@ const GradientPanel: React.FC<GradientPanelProps> = ({
             `}
           </style>
                     <div style={{
-            position: 'fixed',
-            bottom: window.innerWidth <= 768 ? '80px' : '110px',
-            left: window.innerWidth <= 768 ? '20px' : '40px',
+                      position: 'fixed',
+          bottom: window.innerWidth <= 768 ? '160px' : '110px', // Even higher when expanded on mobile
+          left: window.innerWidth <= 768 ? '20px' : '40px',
             width: window.innerWidth <= 768 ? '340px' : '380px',
             maxHeight: window.innerWidth <= 768 ? '400px' : '500px',
             background: 'rgba(255, 255, 255, 0.95)',
@@ -550,14 +588,19 @@ const GradientPanel: React.FC<GradientPanelProps> = ({
             {themeConfig.colorStops.map((stop) => (
               <div
                 key={stop.id}
-                onMouseDown={(e) => handleColorStopMouseDown(e, stop.id)}
+                onMouseDown={(e) => handleColorStopStart(e, stop.id)}
+                onTouchStart={(e) => handleColorStopStart(e, stop.id)}
                 style={{
                   position: 'absolute',
                   top: `${stop.y}%`,
                   left: `${stop.x}%`,
                   transform: 'translate(-50%, -50%)',
-                  width: stop.isSelected ? '24px' : '20px',
-                  height: stop.isSelected ? '24px' : '20px',
+                  width: stop.isSelected 
+                    ? (window.innerWidth <= 768 ? '32px' : '24px') 
+                    : (window.innerWidth <= 768 ? '28px' : '20px'),
+                  height: stop.isSelected 
+                    ? (window.innerWidth <= 768 ? '32px' : '24px') 
+                    : (window.innerWidth <= 768 ? '28px' : '20px'),
                   borderRadius: '50%',
                   background: stop.color,
                   border: stop.isSelected ? '3px solid white' : '2px solid white',
@@ -582,12 +625,12 @@ const GradientPanel: React.FC<GradientPanelProps> = ({
               onClick={removeColorStop}
               disabled={themeConfig.colorStops.length <= 1}
               style={{
-                width: '36px',
-                height: '36px',
+                width: window.innerWidth <= 768 ? '44px' : '36px',
+                height: window.innerWidth <= 768 ? '44px' : '36px',
                 borderRadius: '8px',
                 border: '1px solid rgba(0,0,0,0.2)',
                 background: themeConfig.colorStops.length <= 1 ? 'rgba(0,0,0,0.05)' : 'white',
-                fontSize: '18px',
+                fontSize: window.innerWidth <= 768 ? '20px' : '18px',
                 cursor: themeConfig.colorStops.length <= 1 ? 'not-allowed' : 'pointer',
                 display: 'flex',
                 alignItems: 'center',
@@ -611,12 +654,12 @@ const GradientPanel: React.FC<GradientPanelProps> = ({
               onClick={addColorStop}
               disabled={themeConfig.colorStops.length >= 3}
               style={{
-                width: '36px',
-                height: '36px',
+                width: window.innerWidth <= 768 ? '44px' : '36px',
+                height: window.innerWidth <= 768 ? '44px' : '36px',
                 borderRadius: '8px',
                 border: '1px solid rgba(0,0,0,0.2)',
                 background: themeConfig.colorStops.length >= 3 ? 'rgba(0,0,0,0.05)' : 'white',
-                fontSize: '18px',
+                fontSize: window.innerWidth <= 768 ? '20px' : '18px',
                 cursor: themeConfig.colorStops.length >= 3 ? 'not-allowed' : 'pointer',
                 display: 'flex',
                 alignItems: 'center',
@@ -664,7 +707,8 @@ const GradientPanel: React.FC<GradientPanelProps> = ({
             {/* Squiggly line - Opacity control */}
             <div 
               ref={opacitySliderRef}
-              onMouseDown={handleOpacityMouseDown}
+              onMouseDown={handleOpacityStart}
+              onTouchStart={handleOpacityStart}
               style={{
                 flex: 1,
                 height: '40px',
@@ -705,7 +749,8 @@ const GradientPanel: React.FC<GradientPanelProps> = ({
                          {/* Rotary knob - Grain control */}
              <div 
                ref={grainSliderRef}
-               onMouseDown={handleGrainMouseDown}
+               onMouseDown={handleGrainStart}
+               onTouchStart={handleGrainStart}
                style={{
                  width: '60px',
                  height: '60px',

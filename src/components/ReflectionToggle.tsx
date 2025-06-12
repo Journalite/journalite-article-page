@@ -136,7 +136,7 @@ const ReflectionToggle: React.FC<ReflectionToggleProps> = ({
         className={className}
         style={{
           position: 'fixed',
-          bottom: window.innerWidth <= 768 ? '20px' : '40px',
+          bottom: window.innerWidth <= 768 ? '100px' : '40px', // Higher bottom position on mobile to avoid nav
           right: window.innerWidth <= 768 ? '20px' : '40px',
           width: window.innerWidth <= 768 ? '48px' : '56px',
           height: window.innerWidth <= 768 ? '48px' : '56px',
@@ -149,7 +149,7 @@ const ReflectionToggle: React.FC<ReflectionToggleProps> = ({
             ? '0 8px 25px rgba(59, 130, 246, 0.4), 0 0 0 2px rgba(59, 130, 246, 0.2)'
             : '0 6px 20px rgba(59, 130, 246, 0.3)',
           cursor: 'pointer',
-          zIndex: 1000,
+          zIndex: 1001, // Higher than mobile bottom nav (1000)
           transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
           display: 'flex',
           alignItems: 'center',
@@ -183,7 +183,7 @@ const ReflectionToggle: React.FC<ReflectionToggleProps> = ({
       {showReflectionPanel && (
         <div style={{
           position: 'fixed',
-          bottom: window.innerWidth <= 768 ? '80px' : '110px',
+          bottom: window.innerWidth <= 768 ? '160px' : '110px', // Even higher when expanded on mobile
           right: window.innerWidth <= 768 ? '20px' : '40px',
           left: window.innerWidth <= 768 ? '20px' : 'auto',
           width: window.innerWidth <= 768 ? 'auto' : '380px',

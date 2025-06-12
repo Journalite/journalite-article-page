@@ -19,7 +19,7 @@ const TopBar: React.FC<TopBarProps> = ({ onMenuClick, showMenuButton = true }) =
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.4 }}
-        className="flex-shrink-0 h-16 bg-white/20 dark:bg-zinc-900/30 backdrop-blur-xl border-b border-white/10"
+        className="flex-shrink-0 h-14 bg-white/15 dark:bg-zinc-900/25 backdrop-blur-xl border-b border-white/8"
       >
         <div className="flex items-center justify-between h-full px-4 lg:px-6">
           {/* Left side - Menu button + Title */}

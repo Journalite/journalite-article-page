@@ -6,6 +6,7 @@ var { g: global, __dirname } = __turbopack_context__;
 {
 __turbopack_context__.v({
   "articleActions": "ArticlePage-module__RPh7Qa__articleActions",
+  "articleContent": "ArticlePage-module__RPh7Qa__articleContent",
   "articleDetails": "ArticlePage-module__RPh7Qa__articleDetails",
   "articleHeader": "ArticlePage-module__RPh7Qa__articleHeader",
   "articleMeta": "ArticlePage-module__RPh7Qa__articleMeta",
@@ -17,6 +18,7 @@ __turbopack_context__.v({
   "authorInfo": "ArticlePage-module__RPh7Qa__authorInfo",
   "authorName": "ArticlePage-module__RPh7Qa__authorName",
   "authorNameLink": "ArticlePage-module__RPh7Qa__authorNameLink",
+  "backLink": "ArticlePage-module__RPh7Qa__backLink",
   "cancelButton": "ArticlePage-module__RPh7Qa__cancelButton",
   "commentsContainer": "ArticlePage-module__RPh7Qa__commentsContainer",
   "dropdownItem": "ArticlePage-module__RPh7Qa__dropdownItem",
@@ -34,6 +36,8 @@ __turbopack_context__.v({
   "loadingIndicator": "ArticlePage-module__RPh7Qa__loadingIndicator",
   "loginButton": "ArticlePage-module__RPh7Qa__loginButton",
   "logoLink": "ArticlePage-module__RPh7Qa__logoLink",
+  "moodControls": "ArticlePage-module__RPh7Qa__moodControls",
+  "moodToggleButton": "ArticlePage-module__RPh7Qa__moodToggleButton",
   "pageContainer": "ArticlePage-module__RPh7Qa__pageContainer",
   "pageHeader": "ArticlePage-module__RPh7Qa__pageHeader",
   "profileCircle": "ArticlePage-module__RPh7Qa__profileCircle",
@@ -43,6 +47,7 @@ __turbopack_context__.v({
   "relatedTagsHeading": "ArticlePage-module__RPh7Qa__relatedTagsHeading",
   "relatedTagsList": "ArticlePage-module__RPh7Qa__relatedTagsList",
   "relatedTagsSection": "ArticlePage-module__RPh7Qa__relatedTagsSection",
+  "shareButton": "ArticlePage-module__RPh7Qa__shareButton",
   "signupButton": "ArticlePage-module__RPh7Qa__signupButton",
   "spin": "ArticlePage-module__RPh7Qa__spin",
   "tag": "ArticlePage-module__RPh7Qa__tag",
@@ -3819,8 +3824,8 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
         // Save configuration
         localStorage.setItem('journaColorThemeConfig', JSON.stringify(config));
     };
-    // Handle color stop dragging
-    const handleColorStopMouseDown = (e, stopId)=>{
+    // Handle color stop dragging - Support both mouse and touch
+    const handleColorStopStart = (e, stopId)=>{
         e.preventDefault();
         setIsDragging(stopId);
         // Select this color stop
@@ -3833,11 +3838,20 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
         };
         setThemeConfig(newConfig);
     };
-    const handleMouseMove = (e)=>{
+    const handlePointerMove = (e)=>{
         if (!isDragging || !canvasRef.current) return;
         const rect = canvasRef.current.getBoundingClientRect();
-        const x = Math.max(5, Math.min(95, (e.clientX - rect.left) / rect.width * 100));
-        const y = Math.max(5, Math.min(95, (e.clientY - rect.top) / rect.height * 100));
+        let clientX, clientY;
+        if (e instanceof MouseEvent) {
+            clientX = e.clientX;
+            clientY = e.clientY;
+        } else {
+            // Touch event
+            clientX = e.touches[0].clientX;
+            clientY = e.touches[0].clientY;
+        }
+        const x = Math.max(5, Math.min(95, (clientX - rect.left) / rect.width * 100));
+        const y = Math.max(5, Math.min(95, (clientY - rect.top) / rect.height * 100));
         const newConfig = {
             ...themeConfig,
             colorStops: themeConfig.colorStops.map((stop)=>stop.id === isDragging ? {
@@ -3849,19 +3863,27 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
         setThemeConfig(newConfig);
         updateThemeRealTime(newConfig);
     };
-    const handleMouseUp = ()=>{
+    const handlePointerEnd = ()=>{
         setIsDragging(null);
     };
-    // Handle opacity slider (squiggly line)
-    const handleOpacityMouseDown = (e)=>{
+    // Handle opacity slider (squiggly line) - Support both mouse and touch
+    const handleOpacityStart = (e)=>{
         e.preventDefault();
         setIsDragging('opacity');
-        handleOpacityMouseMove(e);
+        handleOpacityMove(e);
     };
-    const handleOpacityMouseMove = (e)=>{
+    const handleOpacityMove = (e)=>{
         if (!opacitySliderRef.current) return;
         const rect = opacitySliderRef.current.getBoundingClientRect();
-        const x = Math.max(0, Math.min(100, (e.clientX - rect.left) / rect.width * 100));
+        let clientX;
+        if (e instanceof MouseEvent || e.clientX !== undefined) {
+            clientX = e.clientX;
+        } else {
+            // Touch event
+            const touchEvent = e;
+            clientX = touchEvent.touches[0].clientX;
+        }
+        const x = Math.max(0, Math.min(100, (clientX - rect.left) / rect.width * 100));
         const newConfig = {
             ...themeConfig,
             opacity: x
@@ -3869,20 +3891,30 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
         setThemeConfig(newConfig);
         updateThemeRealTime(newConfig);
     };
-    // Handle grain rotary knob with tactile detents (like real knob)
-    const handleGrainMouseDown = (e)=>{
+    // Handle grain rotary knob with tactile detents (like real knob) - Support both mouse and touch
+    const handleGrainStart = (e)=>{
         e.preventDefault();
         setIsDragging('grain');
-        handleGrainMouseMove(e);
+        handleGrainMove(e);
     };
-    const handleGrainMouseMove = (e)=>{
+    const handleGrainMove = (e)=>{
         if (!grainSliderRef.current) return;
         const rect = grainSliderRef.current.getBoundingClientRect();
         const centerX = rect.left + rect.width / 2;
         const centerY = rect.top + rect.height / 2;
+        let clientX, clientY;
+        if (e instanceof MouseEvent || e.clientX !== undefined) {
+            clientX = e.clientX;
+            clientY = e.clientY;
+        } else {
+            // Touch event
+            const touchEvent = e;
+            clientX = touchEvent.touches[0].clientX;
+            clientY = touchEvent.touches[0].clientY;
+        }
         // Calculate angle from center
-        const deltaX = e.clientX - centerX;
-        const deltaY = e.clientY - centerY;
+        const deltaX = clientX - centerX;
+        const deltaY = clientY - centerY;
         let angle = Math.atan2(deltaY, deltaX) * (180 / Math.PI);
         // Normalize to 0-360 degrees, starting from top (270 degrees offset)
         angle = (angle + 270) % 360;
@@ -3951,23 +3983,30 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
         setThemeConfig(newConfig);
         updateThemeRealTime(newConfig);
     };
-    // Mouse event listeners
+    // Mouse and touch event listeners
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         if (isDragging) {
             const handleMove = (e)=>{
                 if (isDragging === 'opacity') {
-                    handleOpacityMouseMove(e);
+                    handleOpacityMove(e);
                 } else if (isDragging === 'grain') {
-                    handleGrainMouseMove(e);
+                    handleGrainMove(e);
                 } else {
-                    handleMouseMove(e);
+                    handlePointerMove(e);
                 }
             };
+            // Add both mouse and touch listeners
             document.addEventListener('mousemove', handleMove);
-            document.addEventListener('mouseup', handleMouseUp);
+            document.addEventListener('mouseup', handlePointerEnd);
+            document.addEventListener('touchmove', handleMove, {
+                passive: false
+            });
+            document.addEventListener('touchend', handlePointerEnd);
             return ()=>{
                 document.removeEventListener('mousemove', handleMove);
-                document.removeEventListener('mouseup', handleMouseUp);
+                document.removeEventListener('mouseup', handlePointerEnd);
+                document.removeEventListener('touchmove', handleMove);
+                document.removeEventListener('touchend', handlePointerEnd);
             };
         }
     }, [
@@ -4051,7 +4090,7 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                                         stopOpacity: "0.9"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/GradientPanel.tsx",
-                                        lineNumber: 441,
+                                        lineNumber: 479,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("stop", {
@@ -4060,18 +4099,18 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                                         stopOpacity: "0.7"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/GradientPanel.tsx",
-                                        lineNumber: 442,
+                                        lineNumber: 480,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/GradientPanel.tsx",
-                                lineNumber: 440,
+                                lineNumber: 478,
                                 columnNumber: 13
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/src/components/GradientPanel.tsx",
-                            lineNumber: 439,
+                            lineNumber: 477,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("circle", {
@@ -4081,7 +4120,7 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                             fill: "url(#iconGradient)"
                         }, void 0, false, {
                             fileName: "[project]/src/components/GradientPanel.tsx",
-                            lineNumber: 445,
+                            lineNumber: 483,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("circle", {
@@ -4091,7 +4130,7 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                             fill: "url(#iconGradient)"
                         }, void 0, false, {
                             fileName: "[project]/src/components/GradientPanel.tsx",
-                            lineNumber: 446,
+                            lineNumber: 484,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("circle", {
@@ -4101,7 +4140,7 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                             fill: "url(#iconGradient)"
                         }, void 0, false, {
                             fileName: "[project]/src/components/GradientPanel.tsx",
-                            lineNumber: 447,
+                            lineNumber: 485,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
@@ -4111,18 +4150,18 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                             strokeLinecap: "round"
                         }, void 0, false, {
                             fileName: "[project]/src/components/GradientPanel.tsx",
-                            lineNumber: 448,
+                            lineNumber: 486,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/components/GradientPanel.tsx",
-                    lineNumber: 432,
+                    lineNumber: 470,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/components/GradientPanel.tsx",
-                lineNumber: 409,
+                lineNumber: 447,
                 columnNumber: 7
             }, this),
             isExpanded && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
@@ -4142,7 +4181,7 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
             `
                     }, void 0, false, {
                         fileName: "[project]/src/components/GradientPanel.tsx",
-                        lineNumber: 460,
+                        lineNumber: 498,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4214,17 +4253,17 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                                             color: themeConfig.mode === mode ? '#007AFF' : '#666'
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/GradientPanel.tsx",
-                                            lineNumber: 524,
+                                            lineNumber: 562,
                                             columnNumber: 36
                                         }, this) : icon
                                     }, mode, false, {
                                         fileName: "[project]/src/components/GradientPanel.tsx",
-                                        lineNumber: 502,
+                                        lineNumber: 540,
                                         columnNumber: 15
                                     }, this))
                             }, void 0, false, {
                                 fileName: "[project]/src/components/GradientPanel.tsx",
-                                lineNumber: 491,
+                                lineNumber: 529,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4246,7 +4285,8 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                                     overflow: 'hidden'
                                 },
                                 children: themeConfig.colorStops.map((stop)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                        onMouseDown: (e)=>handleColorStopMouseDown(e, stop.id),
+                                        onMouseDown: (e)=>handleColorStopStart(e, stop.id),
+                                        onTouchStart: (e)=>handleColorStopStart(e, stop.id),
                                         style: {
                                             position: 'absolute',
                                             top: `${stop.y}%`,
@@ -4264,12 +4304,12 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                                         }
                                     }, stop.id, false, {
                                         fileName: "[project]/src/components/GradientPanel.tsx",
-                                        lineNumber: 551,
+                                        lineNumber: 589,
                                         columnNumber: 15
                                     }, this))
                             }, void 0, false, {
                                 fileName: "[project]/src/components/GradientPanel.tsx",
-                                lineNumber: 530,
+                                lineNumber: 568,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4300,7 +4340,7 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                                         children: "−"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/GradientPanel.tsx",
-                                        lineNumber: 581,
+                                        lineNumber: 620,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -4316,7 +4356,7 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/GradientPanel.tsx",
-                                        lineNumber: 601,
+                                        lineNumber: 640,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -4338,13 +4378,13 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                                         children: "+"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/GradientPanel.tsx",
-                                        lineNumber: 610,
+                                        lineNumber: 649,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/GradientPanel.tsx",
-                                lineNumber: 574,
+                                lineNumber: 613,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4369,12 +4409,12 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                                         }
                                     }, index, false, {
                                         fileName: "[project]/src/components/GradientPanel.tsx",
-                                        lineNumber: 640,
+                                        lineNumber: 679,
                                         columnNumber: 15
                                     }, this))
                             }, void 0, false, {
                                 fileName: "[project]/src/components/GradientPanel.tsx",
-                                lineNumber: 632,
+                                lineNumber: 671,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4387,7 +4427,8 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                                 children: [
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                         ref: opacitySliderRef,
-                                        onMouseDown: handleOpacityMouseDown,
+                                        onMouseDown: handleOpacityStart,
+                                        onTouchStart: handleOpacityStart,
                                         style: {
                                             flex: 1,
                                             height: '40px',
@@ -4412,7 +4453,7 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                                                 }
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/GradientPanel.tsx",
-                                                lineNumber: 682,
+                                                lineNumber: 722,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4429,18 +4470,19 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                                                 }
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/GradientPanel.tsx",
-                                                lineNumber: 692,
+                                                lineNumber: 732,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/GradientPanel.tsx",
-                                        lineNumber: 665,
+                                        lineNumber: 704,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                         ref: grainSliderRef,
-                                        onMouseDown: handleGrainMouseDown,
+                                        onMouseDown: handleGrainStart,
+                                        onTouchStart: handleGrainStart,
                                         style: {
                                             width: '60px',
                                             height: '60px',
@@ -4476,7 +4518,7 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                                                     }
                                                 }, i, false, {
                                                     fileName: "[project]/src/components/GradientPanel.tsx",
-                                                    lineNumber: 723,
+                                                    lineNumber: 764,
                                                     columnNumber: 18
                                                 }, this)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4508,7 +4550,7 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                                                         }
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/GradientPanel.tsx",
-                                                        lineNumber: 753,
+                                                        lineNumber: 794,
                                                         columnNumber: 18
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4524,13 +4566,13 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                                                         }
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/GradientPanel.tsx",
-                                                        lineNumber: 767,
+                                                        lineNumber: 808,
                                                         columnNumber: 18
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/GradientPanel.tsx",
-                                                lineNumber: 740,
+                                                lineNumber: 781,
                                                 columnNumber: 16
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4549,25 +4591,25 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/GradientPanel.tsx",
-                                                lineNumber: 780,
+                                                lineNumber: 821,
                                                 columnNumber: 16
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/GradientPanel.tsx",
-                                        lineNumber: 706,
+                                        lineNumber: 746,
                                         columnNumber: 14
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/GradientPanel.tsx",
-                                lineNumber: 658,
+                                lineNumber: 697,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/GradientPanel.tsx",
-                        lineNumber: 474,
+                        lineNumber: 512,
                         columnNumber: 21
                     }, this)
                 ]
@@ -4575,7 +4617,7 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/GradientPanel.tsx",
-        lineNumber: 401,
+        lineNumber: 439,
         columnNumber: 5
     }, this);
 };
@@ -7049,22 +7091,22 @@ const CommentSection = ({ slug, articleId: propArticleId, isComplex, mood = 'ref
         className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$comment$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].commentSection,
         style: {
             background: moodFeatureEnabled ? `linear-gradient(160deg, 
-              rgba(255, 255, 255, 0.1) 0%, 
-              ${__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$moodThemes$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["moodThemes"][mood].gradientStart}08 30%, 
-              ${__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$moodThemes$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["moodThemes"][mood].gradientEnd}06 70%, 
-              rgba(255, 255, 255, 0.05) 100%)` : 'rgba(255, 255, 255, 0.08)',
-            borderRadius: '32px',
-            border: moodFeatureEnabled ? `1px solid ${__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$moodThemes$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["moodThemes"][mood].gradientStart}12` : '1.5px solid rgba(255, 255, 255, 0.15)',
-            boxShadow: moodFeatureEnabled ? `0 8px 32px -8px ${__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$moodThemes$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["moodThemes"][mood].gradientStart}08,
-             inset 0 1px 0 rgba(255, 255, 255, 0.1)` : `0 8px 32px rgba(0, 0, 0, 0.1),
+              rgba(255, 255, 255, 0.08) 0%, 
+              ${__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$moodThemes$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["moodThemes"][mood].gradientStart}06 30%, 
+              ${__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$moodThemes$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["moodThemes"][mood].gradientEnd}04 70%, 
+              rgba(255, 255, 255, 0.04) 100%)` : 'rgba(255, 255, 255, 0.06)',
+            borderRadius: '16px',
+            border: moodFeatureEnabled ? `1px solid ${__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$moodThemes$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["moodThemes"][mood].gradientStart}10` : '1px solid rgba(255, 255, 255, 0.1)',
+            boxShadow: moodFeatureEnabled ? `0 4px 20px -8px ${__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$moodThemes$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["moodThemes"][mood].gradientStart}06,
+             inset 0 1px 0 rgba(255, 255, 255, 0.1)` : `0 4px 20px rgba(0, 0, 0, 0.08),
              inset 0 1px 0 rgba(255, 255, 255, 0.2)`,
             backdropFilter: 'blur(16px) saturate(180%)',
             WebkitBackdropFilter: 'blur(16px) saturate(180%)',
-            transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
+            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
             position: 'relative',
             overflow: 'hidden',
-            padding: '2rem',
-            marginTop: '2rem'
+            padding: '1.5rem',
+            marginTop: '1.5rem'
         },
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -7073,14 +7115,14 @@ const CommentSection = ({ slug, articleId: propArticleId, isComplex, mood = 'ref
                     top: 0,
                     left: 0,
                     right: 0,
-                    height: '50%',
+                    height: '40%',
                     background: moodFeatureEnabled ? `linear-gradient(180deg, 
-                rgba(255, 255, 255, 0.2) 0%, 
-                ${__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$moodThemes$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["moodThemes"][mood].gradientStart}15 50%,
-                rgba(255, 255, 255, 0.05) 100%)` : 'linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.1) 100%)',
-                    borderRadius: '32px 32px 0 0',
+                rgba(255, 255, 255, 0.15) 0%, 
+                ${__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$moodThemes$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["moodThemes"][mood].gradientStart}12 50%,
+                rgba(255, 255, 255, 0.03) 100%)` : 'linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.05) 100%)',
+                    borderRadius: '16px 16px 0 0',
                     pointerEvents: 'none',
-                    opacity: 0.6,
+                    opacity: 0.8,
                     zIndex: 1
                 }
             }, void 0, false, {
@@ -7209,22 +7251,22 @@ const CommentSection = ({ slug, articleId: propArticleId, isComplex, mood = 'ref
                             className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$comment$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].commentInputContainer,
                             style: {
                                 background: moodFeatureEnabled ? `linear-gradient(135deg, 
-                  rgba(255, 255, 255, ${focusState ? '0.15' : '0.08'}), 
-                  ${__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$moodThemes$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["moodThemes"][mood].gradientStart}${focusState ? '12' : '06'}, 
-                  ${__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$moodThemes$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["moodThemes"][mood].gradientEnd}${focusState ? '08' : '04'})` : `rgba(255, 255, 255, ${focusState ? '0.12' : '0.06'})`,
-                                border: moodFeatureEnabled ? `1px solid ${__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$moodThemes$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["moodThemes"][mood].gradientStart}${focusState ? '25' : '15'}` : `1.5px solid rgba(255, 255, 255, ${focusState ? '0.25' : '0.15'})`,
-                                borderRadius: '24px',
-                                boxShadow: moodFeatureEnabled ? focusState ? `0 8px 32px -4px ${__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$moodThemes$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["moodThemes"][mood].gradientStart}20, 
-                     inset 0 1px 0 rgba(255, 255, 255, 0.2)` : `0 4px 16px -4px ${__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$moodThemes$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["moodThemes"][mood].gradientStart}10` : focusState ? `0 8px 32px rgba(0, 0, 0, 0.12),
-                     inset 0 1px 0 rgba(255, 255, 255, 0.25)` : `0 4px 16px rgba(0, 0, 0, 0.08),
-                     inset 0 1px 0 rgba(255, 255, 255, 0.15)`,
+                  rgba(255, 255, 255, ${focusState ? '0.12' : '0.06'}), 
+                  ${__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$moodThemes$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["moodThemes"][mood].gradientStart}${focusState ? '10' : '04'}, 
+                  ${__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$moodThemes$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["moodThemes"][mood].gradientEnd}${focusState ? '06' : '03'})` : `rgba(255, 255, 255, ${focusState ? '0.1' : '0.05'})`,
+                                border: moodFeatureEnabled ? `1px solid ${__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$moodThemes$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["moodThemes"][mood].gradientStart}${focusState ? '20' : '12'}` : `1px solid rgba(255, 255, 255, ${focusState ? '0.2' : '0.12'})`,
+                                borderRadius: '16px',
+                                boxShadow: moodFeatureEnabled ? focusState ? `0 4px 20px -4px ${__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$moodThemes$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["moodThemes"][mood].gradientStart}15, 
+                     inset 0 1px 0 rgba(255, 255, 255, 0.2)` : `0 2px 12px -4px ${__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$moodThemes$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["moodThemes"][mood].gradientStart}08` : focusState ? `0 4px 20px rgba(0, 0, 0, 0.1),
+                     inset 0 1px 0 rgba(255, 255, 255, 0.2)` : `0 2px 12px rgba(0, 0, 0, 0.06),
+                     inset 0 1px 0 rgba(255, 255, 255, 0.12)`,
                                 backdropFilter: 'blur(16px) saturate(180%)',
                                 WebkitBackdropFilter: 'blur(16px) saturate(180%)',
-                                transform: focusState ? 'translateY(-2px)' : 'translateY(0)',
-                                transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                                transform: focusState ? 'translateY(-1px)' : 'translateY(0)',
+                                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                                 position: 'relative',
                                 overflow: 'hidden',
-                                padding: '1.5rem'
+                                padding: '1rem'
                             },
                             children: isAuthenticated ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
                                 children: [
@@ -10127,6 +10169,10 @@ __turbopack_context__.v({
   "backButton": "home-module__i0QXTG__backButton",
   "backLink": "home-module__i0QXTG__backLink",
   "backToAllButton": "home-module__i0QXTG__backToAllButton",
+  "bottom-nav-icon": "home-module__i0QXTG__bottom-nav-icon",
+  "bottom-nav-item": "home-module__i0QXTG__bottom-nav-item",
+  "bottom-nav-text": "home-module__i0QXTG__bottom-nav-text",
+  "bottom-navigation": "home-module__i0QXTG__bottom-navigation",
   "cancelButton": "home-module__i0QXTG__cancelButton",
   "cancelReplyButton": "home-module__i0QXTG__cancelReplyButton",
   "center-column": "home-module__i0QXTG__center-column",
@@ -10254,6 +10300,7 @@ __turbopack_context__.v({
   "logo": "home-module__i0QXTG__logo",
   "main-grid": "home-module__i0QXTG__main-grid",
   "menu-overlay": "home-module__i0QXTG__menu-overlay",
+  "mobile-header-logo": "home-module__i0QXTG__mobile-header-logo",
   "nav-create": "home-module__i0QXTG__nav-create",
   "nav-explore": "home-module__i0QXTG__nav-explore",
   "nav-home": "home-module__i0QXTG__nav-home",
@@ -10333,7 +10380,6 @@ __turbopack_context__.v({
   "shimmer": "home-module__i0QXTG__shimmer",
   "sidebar-collapse-button": "home-module__i0QXTG__sidebar-collapse-button",
   "sidebar-footer": "home-module__i0QXTG__sidebar-footer",
-  "sidebar-header": "home-module__i0QXTG__sidebar-header",
   "sidebar-heading": "home-module__i0QXTG__sidebar-heading",
   "sidebarSection": "home-module__i0QXTG__sidebarSection",
   "slideDown": "home-module__i0QXTG__slideDown",
@@ -11446,7 +11492,7 @@ const ArticleComposer = ({ articleId, onUpdateComplete, backToArticleAction, edi
                                         value: coverImage,
                                         onChange: handleCoverImageChange,
                                         placeholder: "Cover image URL...",
-                                        className: "w-full bg-white/80 backdrop-blur border border-stone-200 outline-none text-stone-600 placeholder-stone-400 py-2 px-4 rounded-lg focus:border-stone-400 transition-colors"
+                                        className: "w-full bg-white/70 backdrop-blur border border-stone-200 outline-none text-stone-600 placeholder-stone-400 py-1.5 px-3 rounded-md focus:border-stone-400 transition-colors"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/ArticleComposer.tsx",
                                         lineNumber: 460,
@@ -11468,7 +11514,7 @@ const ArticleComposer = ({ articleId, onUpdateComplete, backToArticleAction, edi
                         className: "mb-8 flex flex-wrap gap-2 items-center",
                         children: [
                             tags.map((tag)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: "px-3 py-1 bg-blue-100/60 backdrop-blur text-blue-700 rounded-full text-sm font-medium flex items-center gap-2",
+                                    className: "px-2.5 py-0.5 bg-blue-100/50 backdrop-blur text-blue-700 rounded-full text-sm font-medium flex items-center gap-1.5",
                                     children: [
                                         tag,
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -11815,7 +11861,7 @@ const adaptFirestoreArticle = (firestoreArticle: any): any => { // Using 'any' f
     const [isAuthenticated, setIsAuthenticated] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     const [isSidebarCollapsed, setIsSidebarCollapsed] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(true);
     const [isProfileMenuOpen, setIsProfileMenuOpen] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
-    // const [windowWidth, setWindowWidth] = useState(0) // Unused
+    const [windowWidth, setWindowWidth] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(("TURBOPACK compile-time falsy", 0) ? ("TURBOPACK unreachable", undefined) : 1024);
     const [articleHtml, setArticleHtml] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(null);
     const [likes, setLikes] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([]);
     const [currentUser, setCurrentUser] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(null);
@@ -11823,17 +11869,14 @@ const adaptFirestoreArticle = (firestoreArticle: any): any => { // Using 'any' f
     // Mood detection state
     const [mood, setMood] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('reflective');
     const [moodFeatureEnabled, setMoodFeatureEnabled] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(true);
-    // Initialize window width on client side - currently unused
-    // useEffect(() => {
-    //   setWindowWidth(window.innerWidth)
-    //   
-    //   const handleResize = () => {
-    //     setWindowWidth(window.innerWidth)
-    //   }
-    //   
-    //   window.addEventListener('resize', handleResize)
-    //   return () => window.removeEventListener('resize', handleResize)
-    // }, [])
+    // Initialize window width on client side for mobile detection
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
+        const handleResize = ()=>{
+            setWindowWidth(window.innerWidth);
+        };
+        window.addEventListener('resize', handleResize);
+        return ()=>window.removeEventListener('resize', handleResize);
+    }, []);
     // Load mood feature preference from localStorage (only for authenticated users)
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         if (isAuthenticated) {
@@ -11971,20 +12014,20 @@ const adaptFirestoreArticle = (firestoreArticle: any): any => { // Using 'any' f
                     className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$ArticlePage$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].loadingIndicator
                 }, void 0, false, {
                     fileName: "[project]/src/app/articles/page.tsx",
-                    lineNumber: 262,
+                    lineNumber: 261,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                     children: "Loading article..."
                 }, void 0, false, {
                     fileName: "[project]/src/app/articles/page.tsx",
-                    lineNumber: 263,
+                    lineNumber: 262,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/src/app/articles/page.tsx",
-            lineNumber: 261,
+            lineNumber: 260,
             columnNumber: 7
         }, this);
     }
@@ -11996,12 +12039,12 @@ const adaptFirestoreArticle = (firestoreArticle: any): any => { // Using 'any' f
                 children: error
             }, void 0, false, {
                 fileName: "[project]/src/app/articles/page.tsx",
-                lineNumber: 271,
+                lineNumber: 270,
                 columnNumber: 9
             }, this)
         }, void 0, false, {
             fileName: "[project]/src/app/articles/page.tsx",
-            lineNumber: 270,
+            lineNumber: 269,
             columnNumber: 7
         }, this);
     }
@@ -12065,7 +12108,7 @@ const adaptFirestoreArticle = (firestoreArticle: any): any => { // Using 'any' f
             editingTitle: article.title
         }, void 0, false, {
             fileName: "[project]/src/app/articles/page.tsx",
-            lineNumber: 348,
+            lineNumber: 347,
             columnNumber: 7
         }, this);
     }
@@ -12102,7 +12145,7 @@ const adaptFirestoreArticle = (firestoreArticle: any): any => { // Using 'any' f
                         }
                     }, void 0, false, {
                         fileName: "[project]/src/app/articles/page.tsx",
-                        lineNumber: 366,
+                        lineNumber: 365,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -12129,7 +12172,7 @@ const adaptFirestoreArticle = (firestoreArticle: any): any => { // Using 'any' f
                         }
                     }, void 0, false, {
                         fileName: "[project]/src/app/articles/page.tsx",
-                        lineNumber: 391,
+                        lineNumber: 390,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -12156,7 +12199,7 @@ const adaptFirestoreArticle = (firestoreArticle: any): any => { // Using 'any' f
                         }
                     }, void 0, false, {
                         fileName: "[project]/src/app/articles/page.tsx",
-                        lineNumber: 416,
+                        lineNumber: 415,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -12184,7 +12227,7 @@ const adaptFirestoreArticle = (firestoreArticle: any): any => { // Using 'any' f
                         }
                     }, void 0, false, {
                         fileName: "[project]/src/app/articles/page.tsx",
-                        lineNumber: 441,
+                        lineNumber: 440,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -12210,7 +12253,7 @@ const adaptFirestoreArticle = (firestoreArticle: any): any => { // Using 'any' f
                         }
                     }, void 0, false, {
                         fileName: "[project]/src/app/articles/page.tsx",
-                        lineNumber: 467,
+                        lineNumber: 466,
                         columnNumber: 11
                     }, this)
                 ]
@@ -12261,12 +12304,12 @@ const adaptFirestoreArticle = (firestoreArticle: any): any => { // Using 'any' f
                                         children: "Journalite"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/articles/page.tsx",
-                                        lineNumber: 521,
+                                        lineNumber: 520,
                                         columnNumber: 17
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/articles/page.tsx",
-                                    lineNumber: 520,
+                                    lineNumber: 519,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -12274,7 +12317,7 @@ const adaptFirestoreArticle = (firestoreArticle: any): any => { // Using 'any' f
                                     children: [
                                         isAuthenticated && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$MinimalNotificationBell$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                                             fileName: "[project]/src/app/articles/page.tsx",
-                                            lineNumber: 537,
+                                            lineNumber: 536,
                                             columnNumber: 37
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -12289,7 +12332,7 @@ const adaptFirestoreArticle = (firestoreArticle: any): any => { // Using 'any' f
                                                         children: currentUser?.displayName?.charAt(0) || currentUser?.email?.charAt(0) || 'U'
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/articles/page.tsx",
-                                                        lineNumber: 542,
+                                                        lineNumber: 541,
                                                         columnNumber: 23
                                                     }, this),
                                                     isProfileMenuOpen && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -12301,7 +12344,7 @@ const adaptFirestoreArticle = (firestoreArticle: any): any => { // Using 'any' f
                                                                 children: "Home"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/articles/page.tsx",
-                                                                lineNumber: 552,
+                                                                lineNumber: 551,
                                                                 columnNumber: 27
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -12310,7 +12353,7 @@ const adaptFirestoreArticle = (firestoreArticle: any): any => { // Using 'any' f
                                                                 children: "My Thoughts"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/articles/page.tsx",
-                                                                lineNumber: 553,
+                                                                lineNumber: 552,
                                                                 columnNumber: 27
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -12319,7 +12362,7 @@ const adaptFirestoreArticle = (firestoreArticle: any): any => { // Using 'any' f
                                                                 children: "Dashboard"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/articles/page.tsx",
-                                                                lineNumber: 554,
+                                                                lineNumber: 553,
                                                                 columnNumber: 27
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -12328,7 +12371,7 @@ const adaptFirestoreArticle = (firestoreArticle: any): any => { // Using 'any' f
                                                                 children: "Write a story"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/articles/page.tsx",
-                                                                lineNumber: 555,
+                                                                lineNumber: 554,
                                                                 columnNumber: 27
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -12337,7 +12380,7 @@ const adaptFirestoreArticle = (firestoreArticle: any): any => { // Using 'any' f
                                                                 children: "Create Article"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/articles/page.tsx",
-                                                                lineNumber: 556,
+                                                                lineNumber: 555,
                                                                 columnNumber: 27
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -12346,7 +12389,7 @@ const adaptFirestoreArticle = (firestoreArticle: any): any => { // Using 'any' f
                                                                 children: "Explore"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/articles/page.tsx",
-                                                                lineNumber: 557,
+                                                                lineNumber: 556,
                                                                 columnNumber: 27
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -12355,7 +12398,7 @@ const adaptFirestoreArticle = (firestoreArticle: any): any => { // Using 'any' f
                                                                 children: "Profile"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/articles/page.tsx",
-                                                                lineNumber: 558,
+                                                                lineNumber: 557,
                                                                 columnNumber: 27
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -12364,7 +12407,7 @@ const adaptFirestoreArticle = (firestoreArticle: any): any => { // Using 'any' f
                                                                 children: "Settings"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/articles/page.tsx",
-                                                                lineNumber: 559,
+                                                                lineNumber: 558,
                                                                 columnNumber: 27
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -12373,13 +12416,13 @@ const adaptFirestoreArticle = (firestoreArticle: any): any => { // Using 'any' f
                                                                 children: "Sign out"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/articles/page.tsx",
-                                                                lineNumber: 560,
+                                                                lineNumber: 559,
                                                                 columnNumber: 27
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/articles/page.tsx",
-                                                        lineNumber: 551,
+                                                        lineNumber: 550,
                                                         columnNumber: 25
                                                     }, this)
                                                 ]
@@ -12392,7 +12435,7 @@ const adaptFirestoreArticle = (firestoreArticle: any): any => { // Using 'any' f
                                                         children: "Sign in"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/articles/page.tsx",
-                                                        lineNumber: 566,
+                                                        lineNumber: 565,
                                                         columnNumber: 23
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -12401,35 +12444,35 @@ const adaptFirestoreArticle = (firestoreArticle: any): any => { // Using 'any' f
                                                         children: "Get started"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/articles/page.tsx",
-                                                        lineNumber: 569,
+                                                        lineNumber: 568,
                                                         columnNumber: 23
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/articles/page.tsx",
-                                                lineNumber: 565,
+                                                lineNumber: 564,
                                                 columnNumber: 21
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/articles/page.tsx",
-                                            lineNumber: 539,
+                                            lineNumber: 538,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/articles/page.tsx",
-                                    lineNumber: 536,
+                                    lineNumber: 535,
                                     columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/articles/page.tsx",
-                            lineNumber: 519,
+                            lineNumber: 518,
                             columnNumber: 13
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/app/articles/page.tsx",
-                        lineNumber: 493,
+                        lineNumber: 492,
                         columnNumber: 13
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -12447,7 +12490,7 @@ const adaptFirestoreArticle = (firestoreArticle: any): any => { // Using 'any' f
                                         children: article.title
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/articles/page.tsx",
-                                        lineNumber: 582,
+                                        lineNumber: 581,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -12461,7 +12504,7 @@ const adaptFirestoreArticle = (firestoreArticle: any): any => { // Using 'any' f
                                                         children: article.authorName.charAt(0)
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/articles/page.tsx",
-                                                        lineNumber: 586,
+                                                        lineNumber: 585,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -12475,12 +12518,12 @@ const adaptFirestoreArticle = (firestoreArticle: any): any => { // Using 'any' f
                                                                     children: article.authorName
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/articles/page.tsx",
-                                                                    lineNumber: 592,
+                                                                    lineNumber: 591,
                                                                     columnNumber: 23
                                                                 }, this)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/articles/page.tsx",
-                                                                lineNumber: 588,
+                                                                lineNumber: 587,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -12493,19 +12536,19 @@ const adaptFirestoreArticle = (firestoreArticle: any): any => { // Using 'any' f
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/articles/page.tsx",
-                                                                lineNumber: 594,
+                                                                lineNumber: 593,
                                                                 columnNumber: 21
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/articles/page.tsx",
-                                                        lineNumber: 587,
+                                                        lineNumber: 586,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/articles/page.tsx",
-                                                lineNumber: 585,
+                                                lineNumber: 584,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -12518,7 +12561,7 @@ const adaptFirestoreArticle = (firestoreArticle: any): any => { // Using 'any' f
                                                         styles: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$ArticlePage$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"]
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/articles/page.tsx",
-                                                        lineNumber: 601,
+                                                        lineNumber: 600,
                                                         columnNumber: 19
                                                     }, this),
                                                     isAuthenticated && article.authorId === currentUser?.uid && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -12527,19 +12570,19 @@ const adaptFirestoreArticle = (firestoreArticle: any): any => { // Using 'any' f
                                                         children: "Edit"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/articles/page.tsx",
-                                                        lineNumber: 609,
+                                                        lineNumber: 608,
                                                         columnNumber: 21
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/articles/page.tsx",
-                                                lineNumber: 600,
+                                                lineNumber: 599,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/articles/page.tsx",
-                                        lineNumber: 584,
+                                        lineNumber: 583,
                                         columnNumber: 15
                                     }, this),
                                     article.tags && article.tags.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -12549,18 +12592,18 @@ const adaptFirestoreArticle = (firestoreArticle: any): any => { // Using 'any' f
                                                 children: tag
                                             }, index, false, {
                                                 fileName: "[project]/src/app/articles/page.tsx",
-                                                lineNumber: 622,
+                                                lineNumber: 621,
                                                 columnNumber: 21
                                             }, this))
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/articles/page.tsx",
-                                        lineNumber: 620,
+                                        lineNumber: 619,
                                         columnNumber: 17
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/articles/page.tsx",
-                                lineNumber: 581,
+                                lineNumber: 580,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ArticleWithHighlights$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -12571,7 +12614,7 @@ const adaptFirestoreArticle = (firestoreArticle: any): any => { // Using 'any' f
                                 articleSlug: article.slug
                             }, void 0, false, {
                                 fileName: "[project]/src/app/articles/page.tsx",
-                                lineNumber: 629,
+                                lineNumber: 628,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -12584,12 +12627,12 @@ const adaptFirestoreArticle = (firestoreArticle: any): any => { // Using 'any' f
                                     }
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/articles/page.tsx",
-                                    lineNumber: 639,
+                                    lineNumber: 638,
                                     columnNumber: 15
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/app/articles/page.tsx",
-                                lineNumber: 638,
+                                lineNumber: 637,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("aside", {
@@ -12600,7 +12643,7 @@ const adaptFirestoreArticle = (firestoreArticle: any): any => { // Using 'any' f
                                         children: "Related Tags"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/articles/page.tsx",
-                                        lineNumber: 650,
+                                        lineNumber: 649,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -12614,12 +12657,12 @@ const adaptFirestoreArticle = (firestoreArticle: any): any => { // Using 'any' f
                                                 ]
                                             }, tag, true, {
                                                 fileName: "[project]/src/app/articles/page.tsx",
-                                                lineNumber: 653,
+                                                lineNumber: 652,
                                                 columnNumber: 19
                                             }, this))
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/articles/page.tsx",
-                                        lineNumber: 651,
+                                        lineNumber: 650,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -12628,19 +12671,19 @@ const adaptFirestoreArticle = (firestoreArticle: any): any => { // Using 'any' f
                                         children: "Write"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/articles/page.tsx",
-                                        lineNumber: 663,
+                                        lineNumber: 662,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/articles/page.tsx",
-                                lineNumber: 649,
+                                lineNumber: 648,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/articles/page.tsx",
-                        lineNumber: 579,
+                        lineNumber: 578,
                         columnNumber: 23
                     }, this)
                 ]
@@ -12648,7 +12691,7 @@ const adaptFirestoreArticle = (firestoreArticle: any): any => { // Using 'any' f
         ]
     }, void 0, true, {
         fileName: "[project]/src/app/articles/page.tsx",
-        lineNumber: 358,
+        lineNumber: 357,
         columnNumber: 5
     }, this);
 }
@@ -12658,17 +12701,17 @@ function ArticlePage() {
             children: "Loading article..."
         }, void 0, false, {
             fileName: "[project]/src/app/articles/page.tsx",
-            lineNumber: 676,
+            lineNumber: 675,
             columnNumber: 25
         }, void 0),
         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Article, {}, void 0, false, {
             fileName: "[project]/src/app/articles/page.tsx",
-            lineNumber: 677,
+            lineNumber: 676,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/src/app/articles/page.tsx",
-        lineNumber: 676,
+        lineNumber: 675,
         columnNumber: 5
     }, this);
 }

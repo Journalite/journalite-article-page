@@ -11,6 +11,7 @@ import { getArticleById, Article } from '@/firebase/articles';
 import styles from '@/styles/ArticlePage.module.css';
 import { getMoodFromText } from '@/utils/getMoodFromText';
 import { moodThemes } from '@/utils/moodThemes';
+import MobileBottomNav from '@/components/MobileBottomNav';
 
 interface ArticlePageClientProps {
   id: string;
@@ -37,6 +38,7 @@ const ArticlePageClient: React.FC<ArticlePageClientProps> = ({ id }) => {
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1024);
   
   // Mood detection state
   const [mood, setMood] = useState<'joyful' | 'reflective' | 'sad' | 'angry' | 'peaceful' | 'energetic'>('reflective');
@@ -50,6 +52,16 @@ const ArticlePageClient: React.FC<ArticlePageClientProps> = ({ id }) => {
     });
     
     return () => unsubscribe();
+  }, []);
+
+  // Set up window resize listener for mobile detection
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   // 🚫 REMOVED: No more mood toggle events that cause React re-renders and lose highlights!
@@ -392,6 +404,11 @@ const ArticlePageClient: React.FC<ArticlePageClientProps> = ({ id }) => {
           })}
         />
       </div>
+
+      {/* Mobile Bottom Navigation - only shown on mobile */}
+      {windowWidth < 768 && (
+        <MobileBottomNav isAuthenticated={isAuthenticated} />
+      )}
     </div>
   );
 };

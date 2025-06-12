@@ -11,6 +11,7 @@ import { onAuthStateChanged, signOut } from 'firebase/auth'
 import MinimalNotificationBell from '@/components/MinimalNotificationBell'
 // import LeftSidebar from '@/components/LeftSidebar' // Unused
 import ArticleWithHighlights from '@/components/ArticleWithHighlights'
+import MobileBottomNav from '@/components/MobileBottomNav'
 import CommentSection from '@/components/CommentSection'
 import ArticleComposer from '@/components/ArticleComposer'
 import LikeButton from '@/components/LikeButton'
@@ -84,7 +85,7 @@ function Article() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true)
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false)
-  // const [windowWidth, setWindowWidth] = useState(0) // Unused
+  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1024)
   const [articleHtml, setArticleHtml] = useState<string | null>(null)
   const [likes, setLikes] = useState<string[]>([])
   const [currentUser, setCurrentUser] = useState<any>(null)
@@ -94,17 +95,15 @@ function Article() {
   const [mood, setMood] = useState<'joyful' | 'reflective' | 'sad' | 'angry' | 'peaceful' | 'energetic'>('reflective')
   const [moodFeatureEnabled, setMoodFeatureEnabled] = useState(true)
   
-  // Initialize window width on client side - currently unused
-  // useEffect(() => {
-  //   setWindowWidth(window.innerWidth)
-  //   
-  //   const handleResize = () => {
-  //     setWindowWidth(window.innerWidth)
-  //   }
-  //   
-  //   window.addEventListener('resize', handleResize)
-  //   return () => window.removeEventListener('resize', handleResize)
-  // }, [])
+  // Initialize window width on client side for mobile detection
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth)
+    }
+    
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
   
   // Load mood feature preference from localStorage (only for authenticated users)
   useEffect(() => {
@@ -666,6 +665,11 @@ function Article() {
             </aside>
           </div>
         </>
+      )}
+
+      {/* Mobile Bottom Navigation - only shown on mobile */}
+      {windowWidth < 768 && (
+        <MobileBottomNav isAuthenticated={isAuthenticated} />
       )}
     </div>
   )

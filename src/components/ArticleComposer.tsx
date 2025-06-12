@@ -462,7 +462,7 @@ const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId, onUpdateCo
                   value={coverImage}
                   onChange={handleCoverImageChange}
                   placeholder="Cover image URL..."
-                  className="w-full bg-white/80 backdrop-blur border border-stone-200 outline-none text-stone-600 placeholder-stone-400 py-2 px-4 rounded-lg focus:border-stone-400 transition-colors"
+                  className="w-full bg-white/70 backdrop-blur border border-stone-200 outline-none text-stone-600 placeholder-stone-400 py-1.5 px-3 rounded-md focus:border-stone-400 transition-colors"
                 />
               </div>
             )}
@@ -473,7 +473,7 @@ const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId, onUpdateCo
         {(tags.length > 0 || title.length > 5) && (
           <div className="mb-8 flex flex-wrap gap-2 items-center">
             {tags.map(tag => (
-              <div key={tag} className="px-3 py-1 bg-blue-100/60 backdrop-blur text-blue-700 rounded-full text-sm font-medium flex items-center gap-2">
+              <div key={tag} className="px-2.5 py-0.5 bg-blue-100/50 backdrop-blur text-blue-700 rounded-full text-sm font-medium flex items-center gap-1.5">
                 {tag}
                 <button 
                   className="text-blue-600 hover:text-blue-800 font-bold text-base leading-none"

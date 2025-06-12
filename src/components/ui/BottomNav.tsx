@@ -64,7 +64,7 @@ const BottomNav: React.FC = () => {
   }
 
   return (
-    <nav className="bg-white/20 dark:bg-zinc-900/30 backdrop-blur-xl border-t border-white/10">
+          <nav className="bg-white/15 dark:bg-zinc-900/25 backdrop-blur-xl border-t border-white/8">
       <div className="flex items-center justify-around px-2 py-2 pb-safe">
         {navigationItems.map((item, index) => (
           <motion.div
