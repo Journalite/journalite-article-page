@@ -1246,7 +1246,30 @@
 
 @media (width >= 769px) {
   .home-module__i0QXTG__bottom-navigation {
-    display: none;
+    border-radius: 30px;
+    max-width: 600px;
+    height: 80px;
+    bottom: 25px;
+  }
+
+  .home-module__i0QXTG__bottom-navigation:before {
+    border-radius: 30px;
+  }
+
+  .home-module__i0QXTG__bottom-nav-item {
+    border-radius: 20px;
+    min-width: 80px;
+    padding: .7rem;
+  }
+
+  .home-module__i0QXTG__bottom-nav-icon {
+    background-size: 28px 28px;
+    width: 28px;
+    height: 28px;
+  }
+
+  .home-module__i0QXTG__bottom-nav-text {
+    font-size: .8rem;
   }
 }
 

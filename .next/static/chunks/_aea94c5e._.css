@@ -3795,58 +3795,170 @@ img.ProseMirror-separator {
 }
 
 .home-module__i0QXTG__bottom-navigation {
-  -webkit-backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
   z-index: 1000;
-  background: #fffffff2;
-  border-top: 1px solid #0000001a;
+  background: #ffffff0f;
+  border: 1px solid #ffffff1a;
+  border-radius: 24px;
   justify-content: space-around;
   align-items: center;
-  height: 80px;
+  width: calc(100% - 40px);
+  max-width: 400px;
+  height: 70px;
   padding: 0 1rem;
+  transition: all .3s cubic-bezier(.4, 0, .2, 1);
   display: flex;
   position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  box-shadow: 0 -4px 20px #0000001a;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  box-shadow: 0 8px 32px #0000001a, inset 0 1px #fff3;
 }
 
 .home-module__i0QXTG__bottom-nav-item {
-  color: #6b7280;
-  border-radius: 12px;
+  color: tan;
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   min-width: 60px;
   padding: .5rem;
   text-decoration: none;
-  transition: all .2s;
+  transition: all .3s cubic-bezier(.4, 0, .2, 1);
   display: flex;
+  position: relative;
 }
 
-.home-module__i0QXTG__bottom-nav-item:hover, .home-module__i0QXTG__bottom-nav-item.home-module__i0QXTG__active {
-  color: #2563eb;
-  background: #2563eb1a;
+.home-module__i0QXTG__bottom-nav-item:hover {
+  color: #deb887;
+  background: #ffffff1f;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px #00000026;
+}
+
+.home-module__i0QXTG__bottom-nav-item.home-module__i0QXTG__active {
+  color: wheat;
+  background: #2563eb40;
+  border: 1px solid #2563eb4d;
+  box-shadow: 0 4px 16px #2563eb4d, inset 0 1px #fff3;
 }
 
 .home-module__i0QXTG__bottom-nav-icon {
+  filter: drop-shadow(0 2px 4px #0000001a);
   background-position: center;
   background-repeat: no-repeat;
   background-size: 24px 24px;
   width: 24px;
   height: 24px;
   margin-bottom: 4px;
+  transition: all .3s cubic-bezier(.4, 0, .2, 1);
 }
 
 .home-module__i0QXTG__bottom-nav-text {
-  font-size: .75rem;
-  font-weight: 500;
+  text-shadow: 0 1px 2px #0000001a;
+  font-size: .7rem;
+  font-weight: 600;
   line-height: 1;
+  transition: all .3s cubic-bezier(.4, 0, .2, 1);
+}
+
+.home-module__i0QXTG__bottom-navigation:before {
+  content: "";
+  opacity: .6;
+  pointer-events: none;
+  z-index: -1;
+  background: linear-gradient(135deg, #ffffff26 0%, #ffffff0d 50%, #ffffff26 100%);
+  border-radius: 24px;
+  position: absolute;
+  inset: 0;
+}
+
+@media (width <= 480px) {
+  .home-module__i0QXTG__bottom-navigation {
+    border-radius: 20px;
+    width: calc(100% - 20px);
+    max-width: 360px;
+    height: 65px;
+    padding: 0 .75rem;
+    bottom: 15px;
+  }
+
+  .home-module__i0QXTG__bottom-navigation:before {
+    border-radius: 20px;
+  }
+
+  .home-module__i0QXTG__bottom-nav-item {
+    min-width: 55px;
+    padding: .4rem;
+  }
+
+  .home-module__i0QXTG__bottom-nav-icon {
+    background-size: 22px 22px;
+    width: 22px;
+    height: 22px;
+  }
+
+  .home-module__i0QXTG__bottom-nav-text {
+    font-size: .65rem;
+  }
+}
+
+@media (width >= 481px) and (width <= 768px) {
+  .home-module__i0QXTG__bottom-navigation {
+    border-radius: 26px;
+    max-width: 450px;
+    height: 75px;
+  }
+
+  .home-module__i0QXTG__bottom-navigation:before {
+    border-radius: 26px;
+  }
+
+  .home-module__i0QXTG__bottom-nav-item {
+    border-radius: 18px;
+    min-width: 70px;
+    padding: .6rem;
+  }
+
+  .home-module__i0QXTG__bottom-nav-icon {
+    background-size: 26px 26px;
+    width: 26px;
+    height: 26px;
+  }
+
+  .home-module__i0QXTG__bottom-nav-text {
+    font-size: .75rem;
+  }
 }
 
 @media (width >= 769px) {
   .home-module__i0QXTG__bottom-navigation {
-    display: none;
+    border-radius: 30px;
+    max-width: 600px;
+    height: 80px;
+    bottom: 25px;
+  }
+
+  .home-module__i0QXTG__bottom-navigation:before {
+    border-radius: 30px;
+  }
+
+  .home-module__i0QXTG__bottom-nav-item {
+    border-radius: 20px;
+    min-width: 80px;
+    padding: .7rem;
+  }
+
+  .home-module__i0QXTG__bottom-nav-icon {
+    background-size: 28px 28px;
+    width: 28px;
+    height: 28px;
+    margin-bottom: 6px;
+  }
+
+  .home-module__i0QXTG__bottom-nav-text {
+    font-size: .8rem;
   }
 }
 

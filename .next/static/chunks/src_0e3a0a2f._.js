@@ -4470,9 +4470,9 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         style: {
             position: 'fixed',
-            bottom: window.innerWidth <= 768 ? '20px' : '40px',
+            bottom: window.innerWidth <= 768 ? '100px' : '40px',
             left: window.innerWidth <= 768 ? '20px' : '40px',
-            zIndex: 1000,
+            zIndex: 1001,
             transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
         },
         children: [
@@ -4614,7 +4614,7 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         style: {
                             position: 'fixed',
-                            bottom: window.innerWidth <= 768 ? '80px' : '110px',
+                            bottom: window.innerWidth <= 768 ? '160px' : '110px',
                             left: window.innerWidth <= 768 ? '20px' : '40px',
                             width: window.innerWidth <= 768 ? '340px' : '380px',
                             maxHeight: window.innerWidth <= 768 ? '400px' : '500px',
@@ -4719,8 +4719,8 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                                             top: `${stop.y}%`,
                                             left: `${stop.x}%`,
                                             transform: 'translate(-50%, -50%)',
-                                            width: stop.isSelected ? '24px' : '20px',
-                                            height: stop.isSelected ? '24px' : '20px',
+                                            width: stop.isSelected ? window.innerWidth <= 768 ? '32px' : '24px' : window.innerWidth <= 768 ? '28px' : '20px',
+                                            height: stop.isSelected ? window.innerWidth <= 768 ? '32px' : '24px' : window.innerWidth <= 768 ? '28px' : '20px',
                                             borderRadius: '50%',
                                             background: stop.color,
                                             border: stop.isSelected ? '3px solid white' : '2px solid white',
@@ -4752,12 +4752,12 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                                         onClick: removeColorStop,
                                         disabled: themeConfig.colorStops.length <= 1,
                                         style: {
-                                            width: '36px',
-                                            height: '36px',
+                                            width: window.innerWidth <= 768 ? '44px' : '36px',
+                                            height: window.innerWidth <= 768 ? '44px' : '36px',
                                             borderRadius: '8px',
                                             border: '1px solid rgba(0,0,0,0.2)',
                                             background: themeConfig.colorStops.length <= 1 ? 'rgba(0,0,0,0.05)' : 'white',
-                                            fontSize: '18px',
+                                            fontSize: window.innerWidth <= 768 ? '20px' : '18px',
                                             cursor: themeConfig.colorStops.length <= 1 ? 'not-allowed' : 'pointer',
                                             display: 'flex',
                                             alignItems: 'center',
@@ -4767,7 +4767,7 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                                         children: "−"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/GradientPanel.tsx",
-                                        lineNumber: 620,
+                                        lineNumber: 624,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -4783,19 +4783,19 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/GradientPanel.tsx",
-                                        lineNumber: 640,
+                                        lineNumber: 644,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                         onClick: addColorStop,
                                         disabled: themeConfig.colorStops.length >= 3,
                                         style: {
-                                            width: '36px',
-                                            height: '36px',
+                                            width: window.innerWidth <= 768 ? '44px' : '36px',
+                                            height: window.innerWidth <= 768 ? '44px' : '36px',
                                             borderRadius: '8px',
                                             border: '1px solid rgba(0,0,0,0.2)',
                                             background: themeConfig.colorStops.length >= 3 ? 'rgba(0,0,0,0.05)' : 'white',
-                                            fontSize: '18px',
+                                            fontSize: window.innerWidth <= 768 ? '20px' : '18px',
                                             cursor: themeConfig.colorStops.length >= 3 ? 'not-allowed' : 'pointer',
                                             display: 'flex',
                                             alignItems: 'center',
@@ -4805,13 +4805,13 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                                         children: "+"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/GradientPanel.tsx",
-                                        lineNumber: 649,
+                                        lineNumber: 653,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/GradientPanel.tsx",
-                                lineNumber: 613,
+                                lineNumber: 617,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4836,12 +4836,12 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                                         }
                                     }, index, false, {
                                         fileName: "[project]/src/components/GradientPanel.tsx",
-                                        lineNumber: 679,
+                                        lineNumber: 683,
                                         columnNumber: 15
                                     }, this))
                             }, void 0, false, {
                                 fileName: "[project]/src/components/GradientPanel.tsx",
-                                lineNumber: 671,
+                                lineNumber: 675,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4880,7 +4880,7 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                                                 }
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/GradientPanel.tsx",
-                                                lineNumber: 722,
+                                                lineNumber: 726,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4897,13 +4897,13 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                                                 }
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/GradientPanel.tsx",
-                                                lineNumber: 732,
+                                                lineNumber: 736,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/GradientPanel.tsx",
-                                        lineNumber: 704,
+                                        lineNumber: 708,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4945,7 +4945,7 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                                                     }
                                                 }, i, false, {
                                                     fileName: "[project]/src/components/GradientPanel.tsx",
-                                                    lineNumber: 764,
+                                                    lineNumber: 768,
                                                     columnNumber: 18
                                                 }, this)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4977,7 +4977,7 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                                                         }
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/GradientPanel.tsx",
-                                                        lineNumber: 794,
+                                                        lineNumber: 798,
                                                         columnNumber: 18
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4993,13 +4993,13 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                                                         }
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/GradientPanel.tsx",
-                                                        lineNumber: 808,
+                                                        lineNumber: 812,
                                                         columnNumber: 18
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/GradientPanel.tsx",
-                                                lineNumber: 781,
+                                                lineNumber: 785,
                                                 columnNumber: 16
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5018,19 +5018,19 @@ const GradientPanel = ({ currentMood, isVisible, moodFeatureEnabled })=>{
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/GradientPanel.tsx",
-                                                lineNumber: 821,
+                                                lineNumber: 825,
                                                 columnNumber: 16
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/GradientPanel.tsx",
-                                        lineNumber: 746,
+                                        lineNumber: 750,
                                         columnNumber: 14
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/GradientPanel.tsx",
-                                lineNumber: 697,
+                                lineNumber: 701,
                                 columnNumber: 11
                             }, this)
                         ]
@@ -5402,7 +5402,7 @@ const ReflectionToggle = ({ articleId, className = '', style = {} })=>{
                 className: className,
                 style: {
                     position: 'fixed',
-                    bottom: window.innerWidth <= 768 ? '20px' : '40px',
+                    bottom: window.innerWidth <= 768 ? '100px' : '40px',
                     right: window.innerWidth <= 768 ? '20px' : '40px',
                     width: window.innerWidth <= 768 ? '48px' : '56px',
                     height: window.innerWidth <= 768 ? '48px' : '56px',
@@ -5411,7 +5411,7 @@ const ReflectionToggle = ({ articleId, className = '', style = {} })=>{
                     border: 'none',
                     boxShadow: showReflectionPanel ? '0 8px 25px rgba(59, 130, 246, 0.4), 0 0 0 2px rgba(59, 130, 246, 0.2)' : '0 6px 20px rgba(59, 130, 246, 0.3)',
                     cursor: 'pointer',
-                    zIndex: 1000,
+                    zIndex: 1001,
                     transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                     display: 'flex',
                     alignItems: 'center',
@@ -5465,7 +5465,7 @@ const ReflectionToggle = ({ articleId, className = '', style = {} })=>{
             showReflectionPanel && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 style: {
                     position: 'fixed',
-                    bottom: window.innerWidth <= 768 ? '80px' : '110px',
+                    bottom: window.innerWidth <= 768 ? '160px' : '110px',
                     right: window.innerWidth <= 768 ? '20px' : '40px',
                     left: window.innerWidth <= 768 ? '20px' : 'auto',
                     width: window.innerWidth <= 768 ? 'auto' : '380px',
@@ -6718,167 +6718,382 @@ const ArticleWithHighlights = ({ articleId, initialHtml, isAuthenticated = false
                         "data-toggle-bar": "true",
                         style: {
                             display: 'flex',
-                            justifyContent: 'space-between',
+                            justifyContent: "object" !== 'undefined' && window.innerWidth <= 768 ? 'center' : 'space-between',
                             alignItems: 'center',
-                            gap: '1rem',
-                            margin: '1rem 0',
-                            padding: '1rem',
+                            gap: "object" !== 'undefined' && window.innerWidth <= 768 ? '0.5rem' : '1rem',
+                            margin: "object" !== 'undefined' && window.innerWidth <= 768 ? '0.5rem 0' : '1rem 0',
+                            padding: "object" !== 'undefined' && window.innerWidth <= 768 ? '0.5rem 0.75rem' : '1rem',
                             backgroundImage: isAuthenticated ? `linear-gradient(270deg, ${__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$moodThemes$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["moodThemes"][mood].gradientStart}, ${__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$moodThemes$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["moodThemes"][mood].gradientEnd})` : 'linear-gradient(270deg, #9CA3AF, #6B7280)',
                             backgroundSize: '200% 200%',
                             animation: 'slideGradient 8s ease infinite alternate',
-                            borderRadius: '20px',
+                            borderRadius: "object" !== 'undefined' && window.innerWidth <= 768 ? '12px' : '20px',
                             border: '1px solid rgba(255, 255, 255, 0.5)',
                             boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-                            fontSize: '0.875rem'
+                            fontSize: "object" !== 'undefined' && window.innerWidth <= 768 ? '0.75rem' : '0.875rem',
+                            flexWrap: "object" !== 'undefined' && window.innerWidth <= 768 ? 'wrap' : 'nowrap'
                         },
-                        children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                style: {
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '1rem'
-                                },
-                                children: [
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                        children: "object" !== 'undefined' && window.innerWidth <= 768 ? // Mobile Layout - Minimal and compact
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
+                            children: [
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    style: {
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '0.25rem'
+                                    },
+                                    children: [
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                            style: {
+                                                color: '#F7FAFC',
+                                                fontWeight: '500',
+                                                fontSize: '0.65rem'
+                                            },
+                                            children: "🎨 Mood"
+                                        }, void 0, false, {
+                                            fileName: "[project]/src/components/ArticleWithHighlights.tsx",
+                                            lineNumber: 182,
+                                            columnNumber: 17
+                                        }, this),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$MoodToggle$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                                            style: {
+                                                padding: '0.25rem 0.5rem',
+                                                border: 'none',
+                                                background: 'rgba(255, 255, 255, 0.2)',
+                                                color: '#F7FAFC',
+                                                borderRadius: '12px',
+                                                fontSize: '0.6rem',
+                                                fontWeight: '600',
+                                                cursor: 'pointer',
+                                                transition: 'all 0.3s ease',
+                                                boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+                                                backdropFilter: 'blur(10px)',
+                                                minHeight: '24px',
+                                                minWidth: '32px'
+                                            }
+                                        }, void 0, false, {
+                                            fileName: "[project]/src/components/ArticleWithHighlights.tsx",
+                                            lineNumber: 185,
+                                            columnNumber: 17
+                                        }, this)
+                                    ]
+                                }, void 0, true, {
+                                    fileName: "[project]/src/components/ArticleWithHighlights.tsx",
+                                    lineNumber: 181,
+                                    columnNumber: 15
+                                }, this),
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    style: {
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '0.25rem'
+                                    },
+                                    children: [
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                            style: {
+                                                color: '#F7FAFC',
+                                                fontWeight: '500',
+                                                fontSize: '0.65rem'
+                                            },
+                                            children: "✨ Reflect"
+                                        }, void 0, false, {
+                                            fileName: "[project]/src/components/ArticleWithHighlights.tsx",
+                                            lineNumber: 205,
+                                            columnNumber: 17
+                                        }, this),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ReflectionModeToggle$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                                            style: {
+                                                padding: '0.25rem 0.5rem',
+                                                border: 'none',
+                                                borderRadius: '12px',
+                                                fontSize: '0.6rem',
+                                                fontWeight: '600',
+                                                cursor: 'pointer',
+                                                transition: 'all 0.3s ease',
+                                                boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+                                                backdropFilter: 'blur(10px)',
+                                                minHeight: '24px',
+                                                minWidth: '32px'
+                                            }
+                                        }, void 0, false, {
+                                            fileName: "[project]/src/components/ArticleWithHighlights.tsx",
+                                            lineNumber: 208,
+                                            columnNumber: 17
+                                        }, this)
+                                    ]
+                                }, void 0, true, {
+                                    fileName: "[project]/src/components/ArticleWithHighlights.tsx",
+                                    lineNumber: 204,
+                                    columnNumber: 15
+                                }, this),
+                                isAuthenticated && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                    style: {
+                                        color: '#F7FAFC',
+                                        fontWeight: '500',
+                                        fontSize: '0.6rem',
+                                        opacity: 0.7,
+                                        width: '100%',
+                                        textAlign: 'center',
+                                        marginTop: '0.25rem'
+                                    },
+                                    children: "Enhanced active"
+                                }, void 0, false, {
+                                    fileName: "[project]/src/components/ArticleWithHighlights.tsx",
+                                    lineNumber: 226,
+                                    columnNumber: 17
+                                }, this)
+                            ]
+                        }, void 0, true) : "object" !== 'undefined' && window.innerWidth <= 1024 ? // Tablet Layout - Medium
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
+                            children: [
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    style: {
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '0.75rem'
+                                    },
+                                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                         style: {
                                             color: '#F7FAFC',
                                             fontWeight: '500',
-                                            fontSize: '0.875rem',
+                                            fontSize: '0.8rem',
                                             opacity: 0.9
                                         },
-                                        children: isAuthenticated ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
+                                        children: isAuthenticated ? '🎨 Enhanced mode' : '🔒 Sign in for features'
+                                    }, void 0, false, {
+                                        fileName: "[project]/src/components/ArticleWithHighlights.tsx",
+                                        lineNumber: 243,
+                                        columnNumber: 17
+                                    }, this)
+                                }, void 0, false, {
+                                    fileName: "[project]/src/components/ArticleWithHighlights.tsx",
+                                    lineNumber: 242,
+                                    columnNumber: 15
+                                }, this),
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    style: {
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '0.4rem'
+                                    },
+                                    children: [
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                            style: {
+                                                color: '#F7FAFC',
+                                                fontWeight: '500',
+                                                fontSize: '0.7rem'
+                                            },
+                                            children: "Mood"
+                                        }, void 0, false, {
+                                            fileName: "[project]/src/components/ArticleWithHighlights.tsx",
+                                            lineNumber: 254,
+                                            columnNumber: 17
+                                        }, this),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$MoodToggle$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                                            style: {
+                                                padding: '0.35rem 0.7rem',
+                                                border: 'none',
+                                                background: 'rgba(255, 255, 255, 0.2)',
+                                                color: '#F7FAFC',
+                                                borderRadius: '16px',
+                                                fontSize: '0.65rem',
+                                                fontWeight: '600',
+                                                cursor: 'pointer',
+                                                transition: 'all 0.3s ease',
+                                                boxShadow: '0 1px 4px rgba(0, 0, 0, 0.1)',
+                                                backdropFilter: 'blur(10px)'
+                                            }
+                                        }, void 0, false, {
+                                            fileName: "[project]/src/components/ArticleWithHighlights.tsx",
+                                            lineNumber: 257,
+                                            columnNumber: 17
+                                        }, this),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                            style: {
+                                                color: '#F7FAFC',
+                                                fontWeight: '500',
+                                                fontSize: '0.7rem'
+                                            },
+                                            children: "Reflect"
+                                        }, void 0, false, {
+                                            fileName: "[project]/src/components/ArticleWithHighlights.tsx",
+                                            lineNumber: 273,
+                                            columnNumber: 17
+                                        }, this),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ReflectionModeToggle$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                                            style: {
+                                                padding: '0.35rem 0.7rem',
+                                                border: 'none',
+                                                borderRadius: '16px',
+                                                fontSize: '0.65rem',
+                                                fontWeight: '600',
+                                                cursor: 'pointer',
+                                                transition: 'all 0.3s ease',
+                                                boxShadow: '0 1px 4px rgba(0, 0, 0, 0.1)',
+                                                backdropFilter: 'blur(10px)'
+                                            }
+                                        }, void 0, false, {
+                                            fileName: "[project]/src/components/ArticleWithHighlights.tsx",
+                                            lineNumber: 276,
+                                            columnNumber: 17
+                                        }, this)
+                                    ]
+                                }, void 0, true, {
+                                    fileName: "[project]/src/components/ArticleWithHighlights.tsx",
+                                    lineNumber: 253,
+                                    columnNumber: 15
+                                }, this)
+                            ]
+                        }, void 0, true) : // Desktop Layout - Full
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
+                            children: [
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    style: {
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '1rem'
+                                    },
+                                    children: [
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                            style: {
+                                                color: '#F7FAFC',
+                                                fontWeight: '500',
+                                                fontSize: '0.875rem',
+                                                opacity: 0.9
+                                            },
+                                            children: isAuthenticated ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
+                                                children: [
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$icons$2f$CustomIcons$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["AtmosphereIcon"], {
+                                                        size: 16,
+                                                        color: "#F7FAFC"
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/src/components/ArticleWithHighlights.tsx",
+                                                        lineNumber: 303,
+                                                        columnNumber: 23
+                                                    }, this),
+                                                    "Atmosphere adapted"
+                                                ]
+                                            }, void 0, true) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
+                                                children: [
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$icons$2f$CustomIcons$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["LockClosedIcon"], {
+                                                        size: 16,
+                                                        color: "#F7FAFC"
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/src/components/ArticleWithHighlights.tsx",
+                                                        lineNumber: 308,
+                                                        columnNumber: 23
+                                                    }, this),
+                                                    "Sign in for enhanced features"
+                                                ]
+                                            }, void 0, true)
+                                        }, void 0, false, {
+                                            fileName: "[project]/src/components/ArticleWithHighlights.tsx",
+                                            lineNumber: 295,
+                                            columnNumber: 17
+                                        }, this),
+                                        isAuthenticated && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                            style: {
+                                                color: '#F7FAFC',
+                                                fontWeight: '600',
+                                                fontSize: '0.875rem'
+                                            },
                                             children: [
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$icons$2f$CustomIcons$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["AtmosphereIcon"], {
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$icons$2f$CustomIcons$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["EnhancedIcon"], {
                                                     size: 16,
                                                     color: "#F7FAFC"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/ArticleWithHighlights.tsx",
-                                                    lineNumber: 184,
-                                                    columnNumber: 19
+                                                    lineNumber: 319,
+                                                    columnNumber: 21
                                                 }, this),
-                                                "Atmosphere adapted"
+                                                "Enhanced features active"
                                             ]
-                                        }, void 0, true) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
-                                            children: [
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$icons$2f$CustomIcons$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["LockClosedIcon"], {
-                                                    size: 16,
-                                                    color: "#F7FAFC"
-                                                }, void 0, false, {
-                                                    fileName: "[project]/src/components/ArticleWithHighlights.tsx",
-                                                    lineNumber: 189,
-                                                    columnNumber: 19
-                                                }, this),
-                                                "Sign in for enhanced features"
-                                            ]
-                                        }, void 0, true)
-                                    }, void 0, false, {
-                                        fileName: "[project]/src/components/ArticleWithHighlights.tsx",
-                                        lineNumber: 176,
-                                        columnNumber: 13
-                                    }, this),
-                                    isAuthenticated && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                        style: {
-                                            color: '#F7FAFC',
-                                            fontWeight: '600',
-                                            fontSize: '0.875rem'
-                                        },
-                                        children: [
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$icons$2f$CustomIcons$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["EnhancedIcon"], {
-                                                size: 16,
-                                                color: "#F7FAFC"
-                                            }, void 0, false, {
-                                                fileName: "[project]/src/components/ArticleWithHighlights.tsx",
-                                                lineNumber: 200,
-                                                columnNumber: 17
-                                            }, this),
-                                            "Enhanced features active"
-                                        ]
-                                    }, void 0, true, {
-                                        fileName: "[project]/src/components/ArticleWithHighlights.tsx",
-                                        lineNumber: 195,
-                                        columnNumber: 15
-                                    }, this)
-                                ]
-                            }, void 0, true, {
-                                fileName: "[project]/src/components/ArticleWithHighlights.tsx",
-                                lineNumber: 175,
-                                columnNumber: 11
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                style: {
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '0.5rem'
-                                },
-                                children: [
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                        style: {
-                                            color: '#F7FAFC',
-                                            fontWeight: '500',
-                                            fontSize: '0.75rem'
-                                        },
-                                        children: "Mood Background"
-                                    }, void 0, false, {
-                                        fileName: "[project]/src/components/ArticleWithHighlights.tsx",
-                                        lineNumber: 208,
-                                        columnNumber: 13
-                                    }, this),
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$MoodToggle$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
-                                        style: {
-                                            padding: '0.4rem 0.8rem',
-                                            border: 'none',
-                                            background: 'rgba(255, 255, 255, 0.2)',
-                                            color: '#F7FAFC',
-                                            borderRadius: '20px',
-                                            fontSize: '0.7rem',
-                                            fontWeight: '600',
-                                            cursor: 'pointer',
-                                            transition: 'all 0.3s ease',
-                                            boxShadow: '0 1px 4px rgba(0, 0, 0, 0.1)',
-                                            backdropFilter: 'blur(10px)'
-                                        }
-                                    }, void 0, false, {
-                                        fileName: "[project]/src/components/ArticleWithHighlights.tsx",
-                                        lineNumber: 211,
-                                        columnNumber: 13
-                                    }, this),
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                        style: {
-                                            color: '#F7FAFC',
-                                            fontWeight: '500',
-                                            fontSize: '0.75rem'
-                                        },
-                                        children: "Interactive Reflections"
-                                    }, void 0, false, {
-                                        fileName: "[project]/src/components/ArticleWithHighlights.tsx",
-                                        lineNumber: 227,
-                                        columnNumber: 13
-                                    }, this),
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ReflectionModeToggle$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
-                                        style: {
-                                            padding: '0.4rem 0.8rem',
-                                            border: 'none',
-                                            borderRadius: '20px',
-                                            fontSize: '0.7rem',
-                                            fontWeight: '600',
-                                            cursor: 'pointer',
-                                            transition: 'all 0.3s ease',
-                                            boxShadow: '0 1px 4px rgba(0, 0, 0, 0.1)',
-                                            backdropFilter: 'blur(10px)'
-                                        }
-                                    }, void 0, false, {
-                                        fileName: "[project]/src/components/ArticleWithHighlights.tsx",
-                                        lineNumber: 230,
-                                        columnNumber: 13
-                                    }, this)
-                                ]
-                            }, void 0, true, {
-                                fileName: "[project]/src/components/ArticleWithHighlights.tsx",
-                                lineNumber: 206,
-                                columnNumber: 11
-                            }, this)
-                        ]
-                    }, void 0, true, {
+                                        }, void 0, true, {
+                                            fileName: "[project]/src/components/ArticleWithHighlights.tsx",
+                                            lineNumber: 314,
+                                            columnNumber: 19
+                                        }, this)
+                                    ]
+                                }, void 0, true, {
+                                    fileName: "[project]/src/components/ArticleWithHighlights.tsx",
+                                    lineNumber: 294,
+                                    columnNumber: 15
+                                }, this),
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    style: {
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '0.5rem'
+                                    },
+                                    children: [
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                            style: {
+                                                color: '#F7FAFC',
+                                                fontWeight: '500',
+                                                fontSize: '0.75rem'
+                                            },
+                                            children: "Mood Background"
+                                        }, void 0, false, {
+                                            fileName: "[project]/src/components/ArticleWithHighlights.tsx",
+                                            lineNumber: 326,
+                                            columnNumber: 17
+                                        }, this),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$MoodToggle$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                                            style: {
+                                                padding: '0.4rem 0.8rem',
+                                                border: 'none',
+                                                background: 'rgba(255, 255, 255, 0.2)',
+                                                color: '#F7FAFC',
+                                                borderRadius: '20px',
+                                                fontSize: '0.7rem',
+                                                fontWeight: '600',
+                                                cursor: 'pointer',
+                                                transition: 'all 0.3s ease',
+                                                boxShadow: '0 1px 4px rgba(0, 0, 0, 0.1)',
+                                                backdropFilter: 'blur(10px)'
+                                            }
+                                        }, void 0, false, {
+                                            fileName: "[project]/src/components/ArticleWithHighlights.tsx",
+                                            lineNumber: 329,
+                                            columnNumber: 17
+                                        }, this),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                            style: {
+                                                color: '#F7FAFC',
+                                                fontWeight: '500',
+                                                fontSize: '0.75rem'
+                                            },
+                                            children: "Interactive Reflections"
+                                        }, void 0, false, {
+                                            fileName: "[project]/src/components/ArticleWithHighlights.tsx",
+                                            lineNumber: 345,
+                                            columnNumber: 17
+                                        }, this),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ReflectionModeToggle$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                                            style: {
+                                                padding: '0.4rem 0.8rem',
+                                                border: 'none',
+                                                borderRadius: '20px',
+                                                fontSize: '0.7rem',
+                                                fontWeight: '600',
+                                                cursor: 'pointer',
+                                                transition: 'all 0.3s ease',
+                                                boxShadow: '0 1px 4px rgba(0, 0, 0, 0.1)',
+                                                backdropFilter: 'blur(10px)'
+                                            }
+                                        }, void 0, false, {
+                                            fileName: "[project]/src/components/ArticleWithHighlights.tsx",
+                                            lineNumber: 348,
+                                            columnNumber: 17
+                                        }, this)
+                                    ]
+                                }, void 0, true, {
+                                    fileName: "[project]/src/components/ArticleWithHighlights.tsx",
+                                    lineNumber: 325,
+                                    columnNumber: 15
+                                }, this)
+                            ]
+                        }, void 0, true)
+                    }, void 0, false, {
                         fileName: "[project]/src/components/ArticleWithHighlights.tsx",
                         lineNumber: 156,
                         columnNumber: 9
@@ -6887,7 +7102,6 @@ const ArticleWithHighlights = ({ articleId, initialHtml, isAuthenticated = false
                         articleId: articleId,
                         articleTitle: articleTitle,
                         articleSlug: articleSlug,
-                        onShare: handleShare,
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$styles$2f$ArticleWithHighlights$2e$module$2e$css__$5b$app$2d$client$5d$__$28$css__module$29$__["default"].articleContent,
@@ -6898,25 +7112,25 @@ const ArticleWithHighlights = ({ articleId, initialHtml, isAuthenticated = false
                                     }
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/ArticleWithHighlights.tsx",
-                                    lineNumber: 254,
+                                    lineNumber: 373,
                                     columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/components/ArticleWithHighlights.tsx",
-                                lineNumber: 252,
+                                lineNumber: 371,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ReflectionToggle$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
                                 articleId: articleId
                             }, void 0, false, {
                                 fileName: "[project]/src/components/ArticleWithHighlights.tsx",
-                                lineNumber: 261,
+                                lineNumber: 380,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/ArticleWithHighlights.tsx",
-                        lineNumber: 246,
+                        lineNumber: 366,
                         columnNumber: 9
                     }, this)
                 ]

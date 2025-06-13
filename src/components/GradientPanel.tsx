@@ -510,9 +510,9 @@ const GradientPanel: React.FC<GradientPanelProps> = ({
             `}
           </style>
                     <div style={{
-                      position: 'fixed',
+            position: 'fixed',
           bottom: window.innerWidth <= 768 ? '160px' : '110px', // Even higher when expanded on mobile
-          left: window.innerWidth <= 768 ? '20px' : '40px',
+            left: window.innerWidth <= 768 ? '20px' : '40px',
             width: window.innerWidth <= 768 ? '340px' : '380px',
             maxHeight: window.innerWidth <= 768 ? '400px' : '500px',
             background: 'rgba(255, 255, 255, 0.95)',

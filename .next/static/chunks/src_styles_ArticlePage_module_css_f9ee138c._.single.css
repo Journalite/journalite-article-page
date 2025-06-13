@@ -409,6 +409,10 @@
   background-color: #0000000d;
 }
 
+.ArticlePage-module__RPh7Qa__pageContainer {
+  padding-bottom: 120px;
+}
+
 @media (width <= 768px) {
   .ArticlePage-module__RPh7Qa__pageHeader {
     height: 60px;

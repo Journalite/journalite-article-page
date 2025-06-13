@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { onAuthStateChanged } from 'firebase/auth'
 import { auth } from '@/firebase/clientApp'
 import ArticleComposer from '@/components/ArticleComposer'
+import MobileBottomNav from '@/components/MobileBottomNav'
 import styles from '@/styles/home.module.css'
 
 export default function CreateArticlePage() {
@@ -47,6 +48,10 @@ export default function CreateArticlePage() {
   }
 
   return (
-    <ArticleComposer />
+    <div>
+      <ArticleComposer />
+      {/* Bottom Navigation - shown on all screen sizes */}
+      <MobileBottomNav isAuthenticated={isAuthenticated} />
+    </div>
   )
 } 

@@ -85,7 +85,7 @@
     transform: translateY(-1px);
     color: #2563eb;
   }
-  
+
   /* Mobile header logo styling */
   .mobile-header-logo {
     position: fixed;
@@ -1447,10 +1447,33 @@
     }
   }
 
-  /* Hide bottom navigation on desktop */
+  /* Desktop adjustments for bottom navigation */
   @media (min-width: 769px) {
     .bottom-navigation {
-      display: none;
+      max-width: 600px;
+      height: 80px;
+      border-radius: 30px;
+      bottom: 25px;
+    }
+    
+    .bottom-navigation::before {
+      border-radius: 30px;
+    }
+    
+    .bottom-nav-item {
+      padding: 0.7rem;
+      min-width: 80px;
+      border-radius: 20px;
+    }
+    
+    .bottom-nav-icon {
+      width: 28px;
+      height: 28px;
+      background-size: 28px 28px;
+    }
+    
+    .bottom-nav-text {
+      font-size: 0.8rem;
     }
   }
   

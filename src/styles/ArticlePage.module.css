@@ -420,6 +420,11 @@
 }
 
 /* Enhanced mobile responsiveness for tablets and larger phones */
+/* Bottom padding for all screen sizes to accommodate bottom navigation */
+.pageContainer {
+  padding-bottom: 120px; /* Bottom padding for navigation */
+}
+
 @media (max-width: 768px) {
   .pageHeader {
     height: 60px; /* Increased height for better touch targets */

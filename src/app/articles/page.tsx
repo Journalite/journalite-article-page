@@ -667,10 +667,8 @@ function Article() {
         </>
       )}
 
-      {/* Mobile Bottom Navigation - only shown on mobile */}
-      {windowWidth < 768 && (
-        <MobileBottomNav isAuthenticated={isAuthenticated} />
-      )}
+      {/* Bottom Navigation - shown on all screen sizes */}
+      <MobileBottomNav isAuthenticated={isAuthenticated} />
     </div>
   )
 }
