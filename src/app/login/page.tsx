@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { auth } from '../../firebase/clientApp';
-import { getUserProfile } from '../../services/userService';
+import { getUserProfile, getUserProfileByEmail } from '../../services/userService';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../firebase/clientApp';
 
@@ -49,15 +49,28 @@ function LoginForm() {
       
       // Check if user has a profile setup
       if (result.user) {
-        const profileRef = doc(db, 'profiles', result.user.uid);
-        const profileSnap = await getDoc(profileRef);
+        // First check if profile exists by UID (primary check)
+        const profileByUid = await getUserProfile(result.user.uid);
         
-        if (!profileSnap.exists()) {
-          // Redirect to profile setup
+        // If no profile by UID, check if a profile exists with this email
+        // This handles cases where user previously signed up with email/password
+        let existingProfile = profileByUid;
+        if (!existingProfile && result.user.email) {
+          const profileByEmail = await getUserProfileByEmail(result.user.email);
+          if (profileByEmail) {
+            // Link this Google account to existing profile
+            existingProfile = profileByEmail;
+            console.log('Found existing profile by email, linking Google account');
+          }
+        }
+        
+        if (!existingProfile) {
+          // Truly new user - redirect to profile setup
           const redirectUrl = searchParams?.get('redirect') || '/';
           router.push(`/profile-setup?redirect=${encodeURIComponent(redirectUrl)}`);
         } else {
-          // Redirect to intended destination
+          // Existing user - log them in
+          console.log('Existing user signed in with Google');
           const redirectUrl = searchParams?.get('redirect') || '/';
           router.push(redirectUrl);
         }

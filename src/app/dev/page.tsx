@@ -2175,6 +2175,264 @@ This system provides users with professional-grade theme customization while mai
   `
 };
 
+const realTimePresenceDoc: DocSection = {
+  id: 'realtime-presence',
+  title: 'Real-Time Presence System',
+  content: `
+## Real-Time Presence Feature
+
+A Google Docs-style real-time presence system that shows overlapping user avatars of people currently reading the same article.
+
+### 🏗️ High-Level Architecture
+
+\`\`\`
+User Opens Article → Authentication Check → Start Presence Tracking → Real-time Updates → Cleanup
+\`\`\`
+
+### 🔧 Core Components
+
+#### 1. PresenceService (Backend Logic)
+- **Purpose**: Manages all Firebase operations and user tracking  
+- **Location**: \`src/services/presenceService.ts\`
+- **Responsibilities**:
+  - Start/stop presence tracking
+  - Manage heartbeat updates
+  - Handle real-time subscriptions
+  - Clean up stale data
+
+#### 2. ActiveReaders Component (Frontend Display)
+- **Purpose**: Renders the overlapping user avatars
+- **Location**: \`src/components/ActiveReaders.tsx\`
+- **Responsibilities**:
+  - Display user avatars and count
+  - Handle authentication checks
+  - Subscribe to presence updates
+
+#### 3. Firebase Database Structure
+\`\`\`
+articlePresence/
+├── {articleId}_{userId1}
+│   ├── uid: "user123"
+│   ├── username: "john_doe"
+│   ├── firstName: "John"
+│   ├── lastName: "Doe"
+│   ├── lastSeen: timestamp
+│   └── articleId: "article456"
+├── {articleId}_{userId2}
+└── ...
+\`\`\`
+
+## 🔄 Complete Data Flow
+
+### Phase 1: User Enters Article
+\`\`\`javascript
+1. ActiveReaders component mounts
+2. Checks if user is authenticated
+3. If authenticated → calls presenceService.startPresence(articleId)
+4. PresenceService creates document: articlePresence/{articleId}_{userId}
+5. Sets up heartbeat interval (every 15 seconds)
+6. Adds cleanup event listeners (beforeunload, pagehide, etc.)
+\`\`\`
+
+### Phase 2: Real-time Synchronization
+\`\`\`javascript
+1. Component subscribes to presenceService.subscribeToActiveUsers()
+2. Firebase query: "Get all users where lastSeen > 45 seconds ago"
+3. For each presence document:
+   - Fetch full user profile
+   - Add to active users list
+   - Exclude current user from display
+4. Update UI with new user list
+5. Heartbeat updates lastSeen timestamp every 15s
+\`\`\`
+
+### Phase 3: User Activity Monitoring
+\`\`\`javascript
+// Heartbeat Logic
+setInterval(() => {
+  if (auth.currentUser && !document.hidden) {
+    // Update presence timestamp
+    updatePresenceDocument()
+  }
+}, 15000)
+
+// Tab Visibility
+document.addEventListener('visibilitychange', () => {
+  if (hidden for > 30s) {
+    stopPresence()
+  }
+})
+\`\`\`
+
+### Phase 4: Cleanup Scenarios
+
+| **Scenario** | **Detection Method** | **Cleanup Time** |
+|--------------|---------------------|------------------|
+| User closes tab | \`beforeunload\` event | Immediate |
+| User switches tabs | \`visibilitychange\` + timeout | 30 seconds |
+| User logs out | \`auth.onAuthStateChanged\` | Immediate |
+| Browser crash | Background cleanup service | 60 seconds |
+| Network disconnect | Heartbeat failure | 45 seconds |
+
+## 🎯 Key Logic Patterns
+
+### 1. Optimistic Presence Tracking
+\`\`\`javascript
+// Assume user is active until proven otherwise
+startPresence() → immediate UI update
+heartbeat() → keep alive signal
+noHeartbeat(45s) → assume user left
+\`\`\`
+
+### 2. Multi-layer Cleanup
+\`\`\`javascript
+// Layer 1: Immediate cleanup
+window.addEventListener('beforeunload', cleanup)
+
+// Layer 2: Tab switching
+document.hidden + setTimeout(30s)
+
+// Layer 3: Background sweeper
+setInterval(cleanupStale, 30s) // Removes anything > 60s old
+\`\`\`
+
+### 3. Defensive Programming
+\`\`\`javascript
+// Always check authentication
+if (!auth.currentUser) return;
+
+// Always handle Firebase errors
+try { updatePresence() } 
+catch { stopHeartbeat() }
+
+// Always validate data
+if (!userProfile) return;
+\`\`\`
+
+## 🔄 Real-time Update Cycle
+
+\`\`\`
+User A opens article
+     ↓
+Document created: articlePresence/article123_userA
+     ↓
+User B opens same article  
+     ↓
+Document created: articlePresence/article123_userB
+     ↓
+Both users subscribe to: "WHERE articleId = 'article123' AND lastSeen > now-45s"
+     ↓
+Firebase sends real-time updates to both users
+     ↓
+Each user sees the other in their ActiveReaders component
+\`\`\`
+
+## 🎨 UI Rendering Logic
+
+\`\`\`javascript
+// Authentication Gate
+if (!isAuthenticated) return null;
+
+// Empty State
+if (activeUsers.length === 0) return null;
+
+// Render State
+return (
+  <Stack>
+    {users.slice(0,5).map((user, index) => (
+      <Avatar 
+        left={index * 20px}  // 20px overlap
+        zIndex={5 - index}   // First user on top
+        color={colors[index % 8]}
+      />
+    ))}
+    <GreenDot position="after-last-avatar" />
+    <Text>{users.length} people reading</Text>
+  </Stack>
+)
+\`\`\`
+
+## ⚡ Performance Optimizations
+
+### 1. Efficient Queries
+\`\`\`javascript
+// Only get recent users (45s window)
+where('lastSeen', '>', cutoffTime)
+// Limit results
+.limit(10)
+// Order by recency  
+.orderBy('lastSeen', 'desc')
+\`\`\`
+
+### 2. Smart Heartbeat
+\`\`\`javascript
+// Only update if conditions are met
+if (auth.currentUser && !document.hidden) {
+  updatePresence()
+}
+\`\`\`
+
+### 3. Automatic Cleanup
+\`\`\`javascript
+// Background service removes stale data
+setInterval(removeOldDocuments, 30000)
+\`\`\`
+
+## 🔐 Security & Privacy
+
+\`\`\`javascript
+// Authentication Required
+if (!user) return "Cannot start presence";
+
+// Profile Data Required  
+if (!userProfile) return "No profile found";
+
+// Firebase Security Rules (recommended)
+rules_version = '2';
+service cloud.firestore {
+  match /articlePresence/{document} {
+    allow read, write: if request.auth != null 
+      && request.auth.uid == resource.data.uid;
+  }
+}
+\`\`\`
+
+## 🎯 Why This Design?
+
+1. **Resilient**: Multiple cleanup mechanisms handle edge cases
+2. **Real-time**: Firebase listeners provide instant updates
+3. **Efficient**: Short heartbeat + aggressive cleanup = minimal database load
+4. **Scalable**: Works with 1 user or 1000 users per article
+5. **Private**: Only authenticated users with profiles participate
+6. **Accurate**: 45-second window ensures users are actually active
+
+## 🚀 Integration
+
+The feature is integrated into both article routes:
+- \`/articles/[id]\` - Individual article pages
+- \`/articles?slug=\` - Slug-based article pages
+
+### Example Usage
+\`\`\`tsx
+import ActiveReaders from '@/components/ActiveReaders';
+
+// In article header
+<div className={styles.articleHeaderWithReaders}>
+  <div className={styles.titleSection}>
+    <h1>{article.title}</h1>
+  </div>
+  <div className={styles.readersSection}>
+    <ActiveReaders articleId={article.id} />
+  </div>
+</div>
+\`\`\`
+
+This creates a Google Docs-like experience where you can see who's actively reading the same content as you in real-time! 🚀
+
+**Result**: Users will disappear from the "reading" indicator within **45 seconds** of actually leaving, with no ghost users showing as "active" when they've logged out or closed their browser.
+  `
+};
+
 // Collection of all documentation sections
 const docSections: DocSection[] = [
   projectStructureDoc,
@@ -2190,7 +2448,8 @@ const docSections: DocSection[] = [
   tagFeatureDoc,
   moodFeaturesDoc,
   journaColorDoc,
-  enhancedHighlightsDoc
+  enhancedHighlightsDoc,
+  realTimePresenceDoc
 ];
 
 // User Management Component

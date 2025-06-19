@@ -1,0 +1,202 @@
+.activeReadersContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.avatarStack {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 32px;
+  /* Calculate width based on number of overlapping avatars plus indicator space */
+  min-width: calc(32px + (4 * 20px) + 20px); /* Base avatar + 4 overlaps + indicator space */
+}
+
+.avatar {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  user-select: none;
+}
+
+.avatar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  z-index: 10 !important;
+}
+
+.readingIndicator {
+  position: absolute;
+  top: -2px;
+  width: 12px;
+  height: 12px;
+  background-color: #10B981;
+  border-radius: 50%;
+  border: 2px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20; /* Ensure it's above avatars */
+}
+
+.pulse {
+  width: 6px;
+  height: 6px;
+  background-color: white;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.8);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(0.8);
+    opacity: 1;
+  }
+}
+
+.tooltip {
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  color: #6B7280;
+  opacity: 1; /* Make immediately visible */
+  transform: translateX(0);
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-left: 8px;
+}
+
+@keyframes slideIn {
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.tooltip span {
+  white-space: nowrap;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .activeReadersContainer {
+    gap: 8px;
+  }
+  
+  .avatar {
+    width: 28px;
+    height: 28px;
+    font-size: 11px;
+  }
+  
+  .avatarStack {
+    height: 28px;
+    min-width: 28px;
+  }
+  
+  .readingIndicator {
+    width: 10px;
+    height: 10px;
+    right: -6px;
+  }
+  
+  .pulse {
+    width: 5px;
+    height: 5px;
+  }
+  
+  .tooltip {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .tooltip {
+    display: none; /* Hide tooltip on very small screens to save space */
+  }
+  
+  .avatar {
+    width: 24px;
+    height: 24px;
+    font-size: 10px;
+  }
+  
+  .avatarStack {
+    height: 24px;
+    min-width: 24px;
+  }
+  
+  .readingIndicator {
+    width: 8px;
+    height: 8px;
+    right: -4px;
+  }
+  
+  .pulse {
+    width: 4px;
+    height: 4px;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .avatar {
+    border-color: #1F2937;
+  }
+  
+  .readingIndicator {
+    border-color: #1F2937;
+  }
+  
+  .tooltip {
+    color: #9CA3AF;
+  }
+}
+
+/* Enhanced hover effects for better UX */
+.activeReadersContainer:hover .tooltip {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Stagger the avatars with slight delay for smooth appearance */
+.avatar:nth-child(1) { animation-delay: 0ms; }
+.avatar:nth-child(2) { animation-delay: 100ms; }
+.avatar:nth-child(3) { animation-delay: 200ms; }
+.avatar:nth-child(4) { animation-delay: 300ms; }
+.avatar:nth-child(5) { animation-delay: 400ms; }
+
+.avatar {
+  animation: avatarAppear 0.3s ease-out forwards;
+  opacity: 0;
+  transform: scale(0.8);
+}
+
+@keyframes avatarAppear {
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+} 

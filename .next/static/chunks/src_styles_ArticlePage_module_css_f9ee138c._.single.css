@@ -199,6 +199,24 @@
   margin-bottom: 60px;
 }
 
+.ArticlePage-module__RPh7Qa__articleHeaderWithReaders {
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  margin-bottom: 20px;
+  display: flex;
+}
+
+.ArticlePage-module__RPh7Qa__titleSection {
+  flex: 1;
+  min-width: 0;
+}
+
+.ArticlePage-module__RPh7Qa__readersSection {
+  flex-shrink: 0;
+  margin-top: 8px;
+}
+
 .ArticlePage-module__RPh7Qa__articleTitle {
   letter-spacing: -.03em;
   margin: 0 0 32px;
@@ -621,6 +639,17 @@
     align-items: flex-start;
     gap: 16px;
     margin-bottom: 20px;
+  }
+
+  .ArticlePage-module__RPh7Qa__articleHeaderWithReaders {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .ArticlePage-module__RPh7Qa__readersSection {
+    align-self: flex-start;
+    margin-top: 0;
   }
 
   .ArticlePage-module__RPh7Qa__authorInfo {

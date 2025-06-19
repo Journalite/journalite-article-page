@@ -3,6 +3,7 @@
 import React from 'react';
 import ArticleContent from './ArticleContent';
 import LikeButton from './LikeButton';
+import ActiveReaders from './ActiveReaders';
 import styles from '@/styles/ArticlePage.module.css';
 
 interface ArticleLayoutProps {
@@ -49,7 +50,14 @@ const ArticleLayout: React.FC<ArticleLayoutProps> = ({
       {/* Article header */}
       {article && (
         <header className={styles.articleHeader}>
-          <h1 className={styles.articleTitle}>{article.title}</h1>
+          <div className={styles.articleHeaderWithReaders}>
+            <div className={styles.titleSection}>
+              <h1 className={styles.articleTitle} style={{ margin: 0 }}>{article.title}</h1>
+            </div>
+            <div className={styles.readersSection}>
+              <ActiveReaders articleId={articleId} />
+            </div>
+          </div>
           
           <div className={styles.articleMeta}>
             <div className={styles.authorInfo}>
@@ -106,7 +114,7 @@ const ArticleLayout: React.FC<ArticleLayoutProps> = ({
 // Aggressive memoization - only re-render if core content changes
 export default React.memo(ArticleLayout, (prevProps, nextProps) => {
   const shouldNotRerender = (
-    // Core article data
+    // Core article data (including articleId for ActiveReaders)
     prevProps.articleId === nextProps.articleId &&
     prevProps.articleHtml === nextProps.articleHtml &&
     prevProps.article?.title === nextProps.article?.title &&

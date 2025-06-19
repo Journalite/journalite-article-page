@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { updateProfile } from 'firebase/auth';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../../firebase/clientApp';
-import { getUserProfile, isUsernameTaken, createUserProfile } from '../../services/userService';
+import { getUserProfile, isUsernameTaken, createUserProfile, getUserProfileByEmail } from '../../services/userService';
 
 export default function ProfileSetup() {
   const [firstName, setFirstName] = useState('');
@@ -101,12 +101,28 @@ export default function ProfileSetup() {
       setIsCheckingUsername(true);
       const taken = await isUsernameTaken(username);
       
-      // The username is available if:
-      // 1. It's not taken by anyone, or
-      // 2. It belongs to the current user
-      setUsernameAvailable(!taken);
+      if (taken) {
+        // If username is taken, check if it belongs to the current user
+        // (either by UID or by email)
+        if (currentUserUid && userEmail) {
+          const profileByUid = await getUserProfile(currentUserUid);
+          const profileByEmail = await getUserProfileByEmail(userEmail);
+          
+          // Check if the username belongs to either profile
+          const isOwnUsername = (profileByUid?.username === username.toLowerCase()) || 
+                               (profileByEmail?.username === username.toLowerCase());
+          
+          setUsernameAvailable(isOwnUsername);
+        } else {
+          setUsernameAvailable(false);
+        }
+      } else {
+        // Username is not taken, so it's available
+        setUsernameAvailable(true);
+      }
     } catch (error) {
       console.error('Error checking username:', error);
+      setUsernameAvailable(false);
     } finally {
       setIsCheckingUsername(false);
     }

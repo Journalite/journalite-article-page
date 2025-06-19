@@ -15,6 +15,7 @@ import MobileBottomNav from '@/components/MobileBottomNav'
 import CommentSection from '@/components/CommentSection'
 import ArticleComposer from '@/components/ArticleComposer'
 import LikeButton from '@/components/LikeButton'
+import ActiveReaders from '@/components/ActiveReaders'
 
 // Import Firestore article service
 import { getArticleBySlug } from '@/firebase/articles'
@@ -578,7 +579,14 @@ function Article() {
                       <div className={articleStyles.pageContainer} style={{ position: 'relative', zIndex: 1 }}>
             {/* Article header */}
             <header className={articleStyles.articleHeader}>
-              <h1 className={articleStyles.articleTitle}>{article.title}</h1>
+              <div className={articleStyles.articleHeaderWithReaders}>
+                <div className={articleStyles.titleSection}>
+                  <h1 className={articleStyles.articleTitle} style={{ margin: 0 }}>{article.title}</h1>
+                </div>
+                <div className={articleStyles.readersSection}>
+                  <ActiveReaders articleId={article.id} />
+                </div>
+              </div>
               
               <div className={articleStyles.articleMeta}>
                 <div className={articleStyles.authorInfo}>

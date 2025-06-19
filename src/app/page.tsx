@@ -15,6 +15,7 @@ import Head from 'next/head'
 import TopLeftLogo from '@/components/TopLeftLogo'
 import MobileBottomNav from '@/components/MobileBottomNav'
 import MobileHeaderLogo from '@/components/MobileHeaderLogo'
+import EventsBar from '@/components/EventsBar'
 
 // Types for our article data based on actual API structure
 interface Article {
@@ -368,6 +369,9 @@ export default function HomePage() {
         toggleSidebar={toggleSidebar} 
         isSidebarCollapsed={isSidebarCollapsed}
       />
+
+      {/* EVENTS BAR - Right side floating */}
+      <EventsBar />
 
       {/* Mobile sidebar toggle button - only shown on mobile */}
       {windowWidth < 768 && (

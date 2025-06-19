@@ -1,0 +1,246 @@
+/* Events Bar - Matching Navigation Bar Design */
+.eventsBar {
+  position: fixed !important;
+  top: 50% !important;
+  right: 30px !important;
+  transform: translateY(-50%) !important;
+  width: 60px !important;
+  height: 240px !important;
+  z-index: 1001 !important;
+  
+  /* Refined liquid glass morphism - matching left sidebar */
+  background: rgba(255, 255, 255, 0.06) !important;
+  backdrop-filter: blur(16px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 24px !important;
+  
+  /* Matching shadow system */
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  
+  /* Exact same transition as navigation */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 1rem 0;
+  
+  /* Initial opacity matching nav links */
+  opacity: 0.7;
+}
+
+/* Exact hover effects matching navigation bar */
+.eventsBar:hover {
+  /* Match nav-link hover: opacity 1, enhanced glass effect */
+  opacity: 1 !important;
+  background: rgba(255, 255, 255, 0.09) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  transform: translateY(-50%) translateY(-2px) !important;
+  
+  /* Enhanced shadow matching left sidebar hover */
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* Text styling matching navigation approach */
+.eventsText {
+  /* Clean typography matching navigation */
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif !important;
+  font-size: 1rem !important;
+  font-weight: 650 !important;
+  letter-spacing: 0.6px !important;
+  color: rgba(59, 130, 246, 0.95) !important;
+  
+  /* Vertical text layout */
+  writing-mode: vertical-rl !important;
+  text-orientation: mixed !important;
+  text-align: center !important;
+  line-height: 1.2 !important;
+  
+  /* Special "coming soon" glow effect */
+  text-shadow: 
+    0 0 15px rgba(59, 130, 246, 0.6),
+    0 0 30px rgba(59, 130, 246, 0.4),
+    0 0 45px rgba(59, 130, 246, 0.2),
+    0 1px 3px rgba(0, 0, 0, 0.2) !important;
+  
+  /* Exact same transition as nav icons */
+  transition: transform 0.3s ease !important;
+  position: relative;
+  z-index: 2;
+  
+  /* Subtle pulsing animation */
+  animation: eventsPulse 3s ease-in-out infinite;
+  
+  /* Add shimmer effect */
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(59, 130, 246, 0.1) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: eventsPulse 3s ease-in-out infinite, eventsShimmer 4s ease-in-out infinite;
+}
+
+/* Hover effect matching nav-icon scale transform */
+.eventsBar:hover .eventsText {
+  color: rgba(30, 64, 175, 1) !important;
+  font-weight: 700 !important;
+  
+  /* Scale transform matching nav-icon hover: scale(1.15) */
+  transform: scale(1.15) !important;
+  
+  /* Enhanced glow for special effect */
+  text-shadow: 
+    0 0 25px rgba(59, 130, 246, 0.9),
+    0 0 50px rgba(59, 130, 246, 0.7),
+    0 0 75px rgba(59, 130, 246, 0.5),
+    0 0 100px rgba(59, 130, 246, 0.3),
+    0 2px 4px rgba(0, 0, 0, 0.4) !important;
+  
+  /* Pause the pulse animation on hover */
+  animation-play-state: paused;
+}
+
+/* Pulsing animation keyframes */
+@keyframes eventsPulse {
+  0% {
+    text-shadow: 
+      0 0 15px rgba(59, 130, 246, 0.6),
+      0 0 30px rgba(59, 130, 246, 0.4),
+      0 0 45px rgba(59, 130, 246, 0.2),
+      0 1px 3px rgba(0, 0, 0, 0.2);
+  }
+  50% {
+    text-shadow: 
+      0 0 20px rgba(59, 130, 246, 0.8),
+      0 0 40px rgba(59, 130, 246, 0.6),
+      0 0 60px rgba(59, 130, 246, 0.4),
+      0 0 80px rgba(59, 130, 246, 0.2),
+      0 1px 3px rgba(0, 0, 0, 0.25);
+  }
+  100% {
+    text-shadow: 
+      0 0 15px rgba(59, 130, 246, 0.6),
+      0 0 30px rgba(59, 130, 246, 0.4),
+      0 0 45px rgba(59, 130, 246, 0.2),
+      0 1px 3px rgba(0, 0, 0, 0.2);
+  }
+}
+
+/* Shimmer animation keyframes */
+@keyframes eventsShimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  50% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Responsive scaling for different screen sizes */
+@media (max-width: 1024px) {
+  .eventsBar {
+    top: 50%;
+    right: 20px;
+    width: 60px;
+    height: 220px;
+    border-radius: 26px;
+  }
+  
+  .eventsBar::before {
+    border-radius: 26px 26px 0 0;
+  }
+  
+  .eventsText {
+    font-size: 0.75rem;
+    font-weight: 580;
+  }
+}
+
+/* Ultra-thin mobile variant */
+@media (max-width: 900px) {
+  .eventsBar {
+    top: 50%;
+    right: 20px;
+    width: 60px;
+    height: 200px;
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.02);
+  }
+  
+  .eventsBar::before {
+    border-radius: 24px 24px 0 0;
+  }
+  
+  .eventsText {
+    font-size: 0.7rem;
+    font-weight: 570;
+  }
+}
+
+/* Hide on mobile to maintain clean experience */
+@media (max-width: 768px) {
+  .eventsBar {
+    display: none;
+  }
+}
+
+/* Dark mode adaptation */
+@media (prefers-color-scheme: dark) {
+  .eventsBar {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+  
+  .eventsBar::before {
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.08) 0%,
+      rgba(255, 255, 255, 0.02) 50%,
+      transparent 100%
+    );
+  }
+  
+  .eventsText {
+    color: rgba(255, 255, 255, 0.9);
+    text-shadow: 
+      0 0 8px rgba(255, 255, 255, 0.2),
+      0 1px 2px rgba(0, 0, 0, 0.3);
+  }
+  
+  .eventsBar:hover .eventsText {
+    color: rgba(96, 165, 250, 0.95);
+    text-shadow: 
+      0 0 12px rgba(96, 165, 250, 0.5),
+      0 0 24px rgba(96, 165, 250, 0.3),
+      0 1px 3px rgba(0, 0, 0, 0.4);
+  }
+}
+
+/* Reduced motion accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .eventsBar,
+  .eventsText {
+    transition: none;
+  }
+  
+  .eventsBar:hover {
+    transform: translateY(-50%);
+  }
+  
+  .eventsBar:hover .eventsText {
+    transform: none;
+  }
+} 
