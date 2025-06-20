@@ -16,6 +16,7 @@ import CommentSection from '@/components/CommentSection'
 import ArticleComposer from '@/components/ArticleComposer'
 import LikeButton from '@/components/LikeButton'
 import ActiveReaders from '@/components/ActiveReaders'
+import { ReflectionRoom } from '@/components/ReflectionRoom'
 
 // Import Firestore article service
 import { getArticleBySlug } from '@/firebase/articles'
@@ -209,7 +210,8 @@ function Article() {
           readTime: readTimeMinutes,
           likes: articleData.likes || [],
           tags: articleData.tags || [],
-          slug: slug
+          slug: slug,
+          hasReflectionRoom: articleData.hasReflectionRoom || false
         })
         
         setTags(articleData.tags || [])
@@ -326,7 +328,8 @@ function Article() {
           readTime: readTimeMinutes,
           likes: articleData.likes || [],
           tags: articleData.tags || [],
-          slug: slug || ''
+          slug: slug || '',
+          hasReflectionRoom: articleData.hasReflectionRoom || false
         });
         
         setTags(articleData.tags || []);
@@ -639,6 +642,8 @@ function Article() {
               isAuthenticated={isAuthenticated}
               articleTitle={article.title}
               articleSlug={article.slug}
+              hasReflectionRoom={article.hasReflectionRoom || false}
+              authorId={article.authorId}
             />
             
             {/* Comments section */}

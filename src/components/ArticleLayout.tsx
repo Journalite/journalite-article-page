@@ -17,6 +17,7 @@ interface ArticleLayoutProps {
     readTime: number;
     tags?: string[];
     authorId?: string;
+    hasReflectionRoom?: boolean;
   } | null;
   initialLikes: string[];
   
@@ -106,6 +107,7 @@ const ArticleLayout: React.FC<ArticleLayoutProps> = ({
         isAuthenticated={isAuthenticated}
         articleTitle={articleTitle}
         articleSlug={articleSlug}
+        hasReflectionRoom={article?.hasReflectionRoom || false}
       />
     </div>
   );
@@ -122,6 +124,7 @@ export default React.memo(ArticleLayout, (prevProps, nextProps) => {
     prevProps.article?.createdAt === nextProps.article?.createdAt &&
     prevProps.article?.readTime === nextProps.article?.readTime &&
     prevProps.article?.authorId === nextProps.article?.authorId &&
+    prevProps.article?.hasReflectionRoom === nextProps.article?.hasReflectionRoom &&
     
     // User state
     prevProps.isAuthenticated === nextProps.isAuthenticated &&

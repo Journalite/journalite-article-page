@@ -1,34 +1,39 @@
 export const moodThemes = {
     joyful: {
-        gradientStart: '#FFD700',  // Golden yellow
-        gradientEnd: '#FF6B6B',    // Coral pink
-        accent: '#FF4757'          // Bright red
+        gradientStart: '#fde047',  // yellow-300
+        gradientEnd: '#fb923c',    // orange-400
+        accent: '#f59e0b',          // amber-500
     },
     angry: {
-        gradientStart: '#FF416C',  // Hot pink
-        gradientEnd: '#FF4B2B',    // Fiery red
-        accent: '#B71C1C'          // Dark red
+        gradientStart: '#f87171',  // red-400
+        gradientEnd: '#dc2626',    // red-600
+        accent: '#ef4444',          // red-500
     },
     energetic: {
-        gradientStart: '#00F260',  // Electric green
-        gradientEnd: '#0575E6',    // Electric blue
-        accent: '#1565C0'          // Deep blue
+        gradientStart: '#34d399',  // emerald-400
+        gradientEnd: '#059669',    // emerald-600
+        accent: '#10b981',          // emerald-500
     },
     peaceful: {
-        gradientStart: '#A8E6CF',  // Soft mint
-        gradientEnd: '#88D8C0',    // Sage green
-        accent: '#4CAF50'          // Forest green
+        gradientStart: '#60a5fa',  // blue-400
+        gradientEnd: '#2563eb',    // blue-600
+        accent: '#3b82f6',          // blue-500
     },
     reflective: {
-        gradientStart: '#667eea',  // Soft purple
-        gradientEnd: '#764ba2',    // Deep purple
-        accent: '#5E35B1'          // Royal purple
+        gradientStart: '#a78bfa',  // violet-400
+        gradientEnd: '#7c3aed',    // violet-600
+        accent: '#8b5cf6',          // violet-500
     },
     sad: {
-        gradientStart: '#4facfe',  // Sky blue
-        gradientEnd: '#00f2fe',    // Cyan
-        accent: '#0288D1'          // Ocean blue
+        gradientStart: '#94a3b8',  // slate-400
+        gradientEnd: '#475569',    // slate-600
+        accent: '#64748b',          // slate-500
     },
+    calm: {
+        gradientStart: '#67e8f9',  // cyan-300
+        gradientEnd: '#0891b2',    // cyan-600
+        accent: '#06b6d4',          // cyan-500
+    }
 };
 
 export const gradientTypes = {

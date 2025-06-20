@@ -59,33 +59,86 @@
   }
 }
 
-/* Mobile-specific global improvements */
+/* Reset and base styles */
+html {
+  color-scheme: light;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: #ffffff;
+  color: #1a1a1a;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+code {
+  font-family: 'JetBrains Mono', source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* Hide scrollbars */
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+/* Responsive text selection */
+::selection {
+  background-color: rgba(26, 137, 23, 0.25);
+  color: inherit;
+}
+
+::-moz-selection {
+  background-color: rgba(26, 137, 23, 0.25);
+  color: inherit;
+}
+
+/* Performance optimizations */
+* {
+  box-sizing: border-box;
+}
+
+/* Fix for iOS zoom on input focus */
 @media (max-width: 768px) {
   /* Prevent zoom on form inputs */
   input, textarea, select {
     font-size: 16px !important;
+    transform: translateZ(0); /* Force hardware acceleration */
   }
   
   /* Improve touch scrolling */
   body {
     -webkit-overflow-scrolling: touch;
     overflow-scrolling: touch;
+    /* Add safe area padding for modern devices */
+    padding-bottom: env(safe-area-inset-bottom);
   }
   
   /* Better touch targets for interactive elements */
   button, a, input, textarea {
     touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    transform: translateZ(0); /* Force hardware acceleration */
   }
   
   /* Allow text selection on content areas */
   .article-highlight-container,
   .article-highlight-container * {
     touch-action: auto;
-  }
-  
-  /* Smooth scroll behavior */
-  html {
-    scroll-behavior: smooth;
   }
   
   /* Better text selection on mobile */
@@ -106,6 +159,45 @@
   }
 }
 
+/* Bottom Navigation Safe Area Support */
+.mobile-safe-area {
+  padding-bottom: max(100px, env(safe-area-inset-bottom));
+}
+
+/* Universal bottom padding for mobile devices to prevent overlap */
+@media (max-width: 768px) {
+  /* Main content containers need bottom padding */
+  main, .main-content, .page-content, .article-content, 
+  .create-article-container, .compose-container {
+    padding-bottom: max(120px, calc(100px + env(safe-area-inset-bottom))) !important;
+  }
+  
+  /* Form containers need extra bottom spacing */
+  form, .form-container, .comment-form, .reflection-form,
+  .message-form, .input-container {
+    margin-bottom: max(40px, calc(20px + env(safe-area-inset-bottom)));
+  }
+  
+  /* Floating elements (reflection panels, modals) need proper positioning */
+  .floating-panel, .reflection-panel, .side-reflection,
+  .inline-reflection, .comment-section {
+    bottom: max(120px, calc(100px + env(safe-area-inset-bottom))) !important;
+  }
+  
+  /* Reflection room components need proper spacing */
+  .reflection-room-container, .reflection-search-bar {
+    margin-bottom: max(20px, calc(10px + env(safe-area-inset-bottom)));
+  }
+  
+  /* Text areas and inputs in forms */
+  .comment-input, .reflection-input, .message-input,
+  textarea[data-mobile="true"], input[data-mobile="true"] {
+    margin-bottom: 20px;
+    /* Ensure the input is visible when focused */
+    scroll-margin-bottom: max(140px, calc(120px + env(safe-area-inset-bottom)));
+  }
+}
+
 /* iPhone specific optimizations */
 @media (max-width: 480px) {
   /* Better typography for small screens */
@@ -120,6 +212,7 @@
   button {
     min-height: 44px;
     min-width: 44px;
+    transform: translateZ(0); /* Hardware acceleration */
   }
   
   /* Better focus states for keyboard users */
@@ -129,13 +222,51 @@
   textarea:focus {
     outline: 2px solid #1a8917;
     outline-offset: 2px;
+    /* Ensure focused elements are visible above bottom nav */
+    z-index: 1002;
+  }
+  
+  /* Extra bottom padding for forms on very small screens */
+  form {
+    margin-bottom: max(60px, calc(40px + env(safe-area-inset-bottom)));
   }
 }
 
-/* Dark mode support */
+/* iPad and tablet optimizations */
+@media (min-width: 481px) and (max-width: 1024px) {
+  /* Optimized for iPad 11-inch and similar */
+  body {
+    font-size: 17px;
+    line-height: 1.6;
+  }
+  
+  /* Better touch targets for tablets */
+  button, input, textarea {
+    min-height: 48px;
+    transform: translateZ(0);
+  }
+  
+  /* Tablet-specific bottom padding */
+  main, .main-content, .page-content {
+    padding-bottom: max(100px, calc(80px + env(safe-area-inset-bottom))) !important;
+  }
+}
+
+/* iPad 11-inch specific optimizations */
+@media (min-width: 820px) and (max-width: 1024px) and (orientation: landscape) {
+  /* Landscape mode optimizations for iPad */
+  .floating-panel, .reflection-panel {
+    max-height: 60vh;
+    bottom: max(100px, calc(80px + env(safe-area-inset-bottom))) !important;
+  }
+}
+
+/* Dark mode support - keeping light theme for readability */
 @media (prefers-color-scheme: dark) {
-  /* Keep light theme for article content readability */
-  /* But add dark mode support for UI elements if needed */
+  /* Minimal dark mode adjustments while keeping light article content */
+  body {
+    background: #fafafa;
+  }
 }
 
 /* High contrast mode support */
@@ -147,4 +278,82 @@
   button, a {
     border: 1px solid currentColor;
   }
+}
+
+/* Performance: GPU acceleration for smooth animations */
+.hw-accelerated {
+  transform: translateZ(0);
+  will-change: transform, opacity;
+}
+
+/* Optimize reflection components for performance */
+.reflection-component {
+  contain: layout style paint;
+  transform: translateZ(0);
+}
+
+/* Optimize form inputs for better mobile experience */
+.mobile-optimized-input {
+  font-size: 16px !important; /* Prevent zoom on iOS */
+  border-radius: 12px;
+  padding: 12px 16px;
+  border: 2px solid transparent;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  transition: all 0.2s ease;
+  transform: translateZ(0);
+}
+
+.mobile-optimized-input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  outline: none;
+  /* Ensure focused input scrolls into view properly */
+  scroll-margin-bottom: max(140px, calc(120px + env(safe-area-inset-bottom)));
+}
+
+/* Optimize modal and overlay positioning */
+.modal-overlay {
+  z-index: 10000;
+}
+
+.reflection-modal {
+  z-index: 10001;
+}
+
+.bottom-nav {
+  z-index: 1000;
+}
+
+/* Smooth transitions for better UX */
+.smooth-transition {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Landscape mode adjustments for phones */
+@media (max-height: 500px) and (orientation: landscape) {
+  .floating-panel, .reflection-panel {
+    max-height: 70vh;
+    bottom: 80px !important;
+  }
+  
+  form {
+    margin-bottom: 60px;
+  }
+}
+
+/* Ensure proper stacking context */
+.main-app-container {
+  position: relative;
+  z-index: 1;
+}
+
+.bottom-navigation-container {
+  position: relative;
+  z-index: 1000;
+}
+
+.floating-elements {
+  position: relative;
+  z-index: 999;
 }

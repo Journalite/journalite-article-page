@@ -20,6 +20,7 @@ export interface Article {
     viewCount?: number;
     reposts?: string[];
     comments?: any[];
+    hasReflectionRoom?: boolean;
 }
 
 // Comment interfaces for Firestore
@@ -221,7 +222,8 @@ export async function createArticle(articleInput: Partial<Omit<Article, 'id' | '
             excerpt: articleInput.excerpt || '',
             viewCount: 0,
             reposts: [],
-            comments: []
+            comments: [],
+            hasReflectionRoom: articleInput.hasReflectionRoom || false
         };
 
         const docRef = await addDoc(collection(db, 'articles'), newArticleData);

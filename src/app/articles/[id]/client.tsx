@@ -33,6 +33,7 @@ const ArticlePageClient: React.FC<ArticlePageClientProps> = ({ id }) => {
     readTime: number;
     tags?: string[];
     authorId?: string;
+    hasReflectionRoom?: boolean;
   } | null>(null);
   const [initialLikes, setInitialLikes] = useState<string[]>([]);
   const [currentUser, setCurrentUser] = useState<any>(null);
@@ -129,7 +130,8 @@ const ArticlePageClient: React.FC<ArticlePageClientProps> = ({ id }) => {
         createdAt: date,
         readTime: readTimeMinutes,
         tags: articleData.tags || [],
-        authorId: articleData.authorId
+        authorId: articleData.authorId,
+        hasReflectionRoom: articleData.hasReflectionRoom || false
       });
       
     } catch (error) {

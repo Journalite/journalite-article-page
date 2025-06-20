@@ -9,6 +9,7 @@ interface ArticleContentProps {
   isAuthenticated: boolean;
   articleTitle: string;
   articleSlug: string;
+  hasReflectionRoom?: boolean;
   moodFeatureEnabled?: boolean;
   onToggleMoodFeature?: (enabled: boolean) => void;
 }
@@ -19,6 +20,7 @@ const ArticleContent: React.FC<ArticleContentProps> = ({
   isAuthenticated,
   articleTitle,
   articleSlug,
+  hasReflectionRoom = false,
   moodFeatureEnabled,
   onToggleMoodFeature
 }) => {
@@ -32,6 +34,7 @@ const ArticleContent: React.FC<ArticleContentProps> = ({
       isAuthenticated={isAuthenticated}
       articleTitle={articleTitle}
       articleSlug={articleSlug}
+      hasReflectionRoom={hasReflectionRoom}
       {...(isAuthenticated && {
         moodFeatureEnabled: moodFeatureEnabled,
         onToggleMoodFeature: onToggleMoodFeature
@@ -48,6 +51,7 @@ export default React.memo(ArticleContent, (prevProps, nextProps) => {
     prevProps.isAuthenticated === nextProps.isAuthenticated &&
     prevProps.articleTitle === nextProps.articleTitle &&
     prevProps.articleSlug === nextProps.articleSlug &&
+    prevProps.hasReflectionRoom === nextProps.hasReflectionRoom &&
     prevProps.moodFeatureEnabled === nextProps.moodFeatureEnabled &&
     prevProps.onToggleMoodFeature === nextProps.onToggleMoodFeature
   );
@@ -59,6 +63,7 @@ export default React.memo(ArticleContent, (prevProps, nextProps) => {
       isAuthenticated: prevProps.isAuthenticated !== nextProps.isAuthenticated,
       articleTitle: prevProps.articleTitle !== nextProps.articleTitle,
       articleSlug: prevProps.articleSlug !== nextProps.articleSlug,
+      hasReflectionRoom: prevProps.hasReflectionRoom !== nextProps.hasReflectionRoom,
       moodFeatureEnabled: prevProps.moodFeatureEnabled !== nextProps.moodFeatureEnabled,
       onToggleMoodFeature: prevProps.onToggleMoodFeature !== nextProps.onToggleMoodFeature
     });

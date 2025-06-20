@@ -13,6 +13,7 @@ import { highlightCodeBlocks } from '@/utils/syntaxHighlighter';
 import ClientSideHighlighter from './ClientSideHighlighter';
 import { getMoodFromText } from '@/utils/getMoodFromText';
 import { moodThemes } from '@/utils/moodThemes';
+import { ReflectionRoom } from './ReflectionRoom';
 
 interface ArticleWithHighlightsProps {
   articleId: string;
@@ -20,6 +21,8 @@ interface ArticleWithHighlightsProps {
   isAuthenticated?: boolean;
   articleTitle?: string;
   articleSlug?: string;
+  hasReflectionRoom?: boolean;
+  authorId?: string;
 }
 
 const ArticleWithHighlights: React.FC<ArticleWithHighlightsProps> = ({
@@ -27,7 +30,9 @@ const ArticleWithHighlights: React.FC<ArticleWithHighlightsProps> = ({
   initialHtml,
   isAuthenticated = false,
   articleTitle = 'Article',
-  articleSlug = ''
+  articleSlug = '',
+  hasReflectionRoom = false,
+  authorId
 }) => {
   // const [moodFeatureEnabled, setMoodFeatureEnabled] = useState(true); // Unused
   const [article, setArticle] = useState<{ title: string; body: string } | null>(null);
@@ -152,6 +157,15 @@ const ArticleWithHighlights: React.FC<ArticleWithHighlightsProps> = ({
     <HighlightProvider articleId={articleId}>
       <ClientSideHighlighter />
       <article className={styles.articleContainer}>
+        {/* Reflection Room - Above the toggle bar */}
+        {hasReflectionRoom && isAuthenticated && (
+          <ReflectionRoom
+            articleId={articleId}
+            hasReflectionRoom={hasReflectionRoom}
+            authorId={authorId}
+          />
+        )}
+
         {/* Reflection Settings - Responsive Design */}
         <div 
           data-toggle-bar="true"

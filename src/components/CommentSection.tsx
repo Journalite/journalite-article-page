@@ -1,398 +1,465 @@
 'use client'
 
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { auth } from '@/firebase/clientApp';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { doc, collection, addDoc, query, orderBy, onSnapshot, updateDoc, deleteDoc, where, getDocs } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
-import { 
-  getArticleComments, 
-  addComment, 
-  addReply,
-  likeComment,
-  deleteComment,
-  getArticleBySlug,
-  ArticleComment as FirestoreComment,
-  CommentReply as FirestoreReply
-} from '@/firebase/articles';
-import { moodThemes } from '@/utils/moodThemes';
-import { CommentIcon, SparkleIcon, SendIcon } from './icons/CustomIcons';
+import { auth, db as firestore } from '@/firebase/clientApp';
 import styles from '@/styles/comment.module.css';
+import { HeartIcon, ReplyIcon, DotsVerticalIcon, TrashIcon, EditIcon } from './icons/CustomIcons';
+import { getUserAvatar } from '@/utils/avatarUtils';
+import { getMoodFromText } from '@/utils/getMoodFromText';
+import { moodThemes } from '@/utils/moodThemes';
+
+interface Comment {
+  id: string;
+  text: string;
+  authorId: string;
+  authorName: string;
+  authorEmail: string;
+  createdAt: any;
+  likes: string[];
+  mood?: string;
+  replies?: Comment[];
+  parentId?: string;
+}
 
 interface CommentSectionProps {
   articleId: string;
-  slug?: string; // Keep slug as optional for backward compatibility
-  isComplex?: boolean; // New prop for article type
-  mood?: 'joyful' | 'reflective' | 'sad' | 'angry' | 'peaceful' | 'energetic';
-  moodFeatureEnabled?: boolean;
+  className?: string;
 }
 
-const CommentSection: React.FC<CommentSectionProps> = ({ 
-  slug, 
-  articleId: propArticleId, 
-  isComplex, 
-  mood = 'reflective', 
-  moodFeatureEnabled = false 
-}) => {
-  const [comments, setComments] = useState<FirestoreComment[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+const CommentSection: React.FC<CommentSectionProps> = ({ articleId, className = '' }) => {
+  // State management
+  const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState('');
-  const [submitting, setSubmitting] = useState(false);
-  const [focusState, setFocusState] = useState(false);
-  const [replyingTo, setReplyingTo] = useState<string | null>(null);
-  const [replyContent, setReplyContent] = useState('');
-  const [submittingReply, setSubmittingReply] = useState(false);
-  const [expandedReplies, setExpandedReplies] = useState<Record<string, boolean>>({});
+  const [currentUser, setCurrentUser] = useState<any>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
-  const [articleId, setArticleId] = useState<string | null>(propArticleId || null);
-  
-  // This user object will be updated when authenticated
-  const [currentUser, setCurrentUser] = useState({ id: '', name: 'Reader' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [replyingTo, setReplyingTo] = useState<string | null>(null);
+  const [replyText, setReplyText] = useState('');
+  const [editingComment, setEditingComment] = useState<string | null>(null);
+  const [editText, setEditText] = useState('');
+  const [expandedMenus, setExpandedMenus] = useState<Set<string>>(new Set());
+  const [focusState, setFocusState] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(0);
 
+  // Mood feature toggle
+  const moodFeatureEnabled = process.env.NODE_ENV === 'development';
+
+  // Device detection and responsive state
+  const deviceInfo = useMemo(() => {
+    return {
+      isMobile: windowWidth <= 768,
+      isTablet: windowWidth > 768 && windowWidth <= 1024,
+      isSmallPhone: windowWidth <= 480,
+      bottomSafeArea: windowWidth <= 768 ? 120 : 40
+    };
+  }, [windowWidth]);
+
+  // Optimized window resize handler
   useEffect(() => {
-    // Check authentication status
+    const updateWidth = () => setWindowWidth(window.innerWidth);
+    updateWidth();
+
+    let timeoutId: NodeJS.Timeout;
+    const debouncedResize = () => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(updateWidth, 100);
+    };
+
+    window.addEventListener('resize', debouncedResize);
+    return () => {
+      window.removeEventListener('resize', debouncedResize);
+      clearTimeout(timeoutId);
+    };
+  }, []);
+
+  // Authentication state management
+  useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      const isAuth = !!user;
-      setIsAuthenticated(isAuth);
-      
-      if (isAuth && user) {
-        setCurrentUser({
-          id: user.uid,
-          name: user.displayName || user.email?.split('@')[0] || 'User'
-        });
-      } else {
-        setCurrentUser({ id: '', name: 'Reader' });
-      }
+      setCurrentUser(user);
+      setIsAuthenticated(!!user);
     });
-    
     return () => unsubscribe();
   }, []);
 
-  // First, get the article ID from the slug if not provided directly
-  useEffect(() => {
-    if (propArticleId) {
-      setArticleId(propArticleId);
-      return;
-    }
-    
-    if (!slug) return;
-
-    const fetchArticleId = async () => {
-      try {
-        const article = await getArticleBySlug(slug);
-        if (article && article.id) {
-          setArticleId(article.id);
-        }
-      } catch (err) {
-        console.error('Error fetching article:', err);
-        setError('Unable to load article details.');
-      }
-    };
-
-    fetchArticleId();
-  }, [slug, propArticleId]);
-
-  // Then, fetch comments when we have the articleId
+  // Real-time comments subscription
   useEffect(() => {
     if (!articleId) return;
-    
-    setLoading(true);
-    const fetchComments = async () => {
-      try {
-        const commentsData = await getArticleComments(articleId);
-        
-        // Add a small delay to show loading animation
-        setTimeout(() => {
-          setComments(commentsData);
-          setLoading(false);
-        }, 800);
-      } catch (err) {
-        console.error('Error fetching comments:', err);
-        setError('Unable to load discussions. Please refresh the page to try again.');
-        setLoading(false);
-      }
-    };
 
-    fetchComments();
+    const commentsRef = collection(firestore, 'articles', articleId, 'comments');
+    const q = query(commentsRef, orderBy('createdAt', 'desc'));
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const fetchedComments: Comment[] = [];
+      snapshot.forEach((doc) => {
+        const data = doc.data();
+        fetchedComments.push({
+          id: doc.id,
+          ...data,
+        } as Comment);
+      });
+      
+      // Organize comments with replies
+      const organizedComments = organizeCommentsWithReplies(fetchedComments);
+      setComments(organizedComments);
+    });
+
+    return () => unsubscribe();
   }, [articleId]);
 
-  const handleCommentSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newComment.trim() || submitting || !articleId) return;
-    
-    if (!isAuthenticated) {
-      setShowLoginPrompt(true);
-      return;
-    }
-    
-    try {
-      setSubmitting(true);
-      const comment = await addComment(articleId, newComment);
-      setComments(prev => [comment, ...prev]);
-      setNewComment('');
-      setSubmitting(false);
-      setFocusState(false); // Reset focus state after submission
-    } catch (err) {
-      console.error('Error adding comment:', err);
-      setError('Your response could not be posted. Please try again.');
-      setSubmitting(false);
-    }
-  };
+  // Organize comments into threads
+  const organizeCommentsWithReplies = useCallback((allComments: Comment[]): Comment[] => {
+    const topLevelComments = allComments.filter(comment => !comment.parentId);
+    const replies = allComments.filter(comment => comment.parentId);
 
-  const handleReplySubmit = async (commentId: string) => {
-    if (!replyContent.trim() || submittingReply || !articleId) return;
-    
-    if (!isAuthenticated) {
-      setShowLoginPrompt(true);
-      return;
-    }
-    
-    try {
-      setSubmittingReply(true);
-      const reply = await addReply(articleId, commentId, replyContent);
-      
-      // Update the local state with the new reply
-      setComments(prev => 
-        prev.map(comment => 
-          comment.commentId === commentId || comment.id === commentId
-            ? { 
-                ...comment, 
-                replies: [...(comment.replies || []), reply]
-              }
-            : comment
-        )
-      );
-      
-      // Reset reply state
-      setReplyContent('');
-      setReplyingTo(null);
-      setSubmittingReply(false);
-      
-      // Ensure replies for this comment are expanded
-      setExpandedReplies(prev => ({
-        ...prev,
-        [commentId]: true
-      }));
-    } catch (err) {
-      console.error('Error adding reply:', err);
-      setSubmittingReply(false);
-    }
-  };
-
-  const handleLikeComment = async (commentId: string) => {
-    if (!isAuthenticated || !articleId) {
-      setShowLoginPrompt(true);
-      return;
-    }
-    
-    try {
-      const result = await likeComment(articleId, commentId);
-      
-      // Update local state
-      setComments(prev => 
-        prev.map(comment => 
-          comment.commentId === commentId || comment.id === commentId
-            ? { ...comment, likes: result.likes } 
-            : comment
-        )
-      );
-    } catch (err) {
-      console.error('Error liking comment:', err);
-    }
-  };
-
-  const handleDeleteComment = async (commentId: string) => {
-    if (!isAuthenticated || !articleId) {
-      return;
-    }
-    
-    try {
-      await deleteComment(articleId, commentId);
-      
-      // Remove comment from local state
-      setComments(prev => 
-        prev.filter(comment => 
-          comment.commentId !== commentId && comment.id !== commentId
-        )
-      );
-    } catch (err) {
-      console.error('Error deleting comment:', err);
-    }
-  };
-
-  const toggleReplies = (commentId: string) => {
-    setExpandedReplies(prev => ({
-      ...prev,
-      [commentId]: !prev[commentId]
+    return topLevelComments.map(comment => ({
+      ...comment,
+      replies: replies.filter(reply => reply.parentId === comment.id)
+        .sort((a, b) => a.createdAt?.toDate() - b.createdAt?.toDate())
     }));
-  };
+  }, []);
 
-  // Helper to format dates
-  const formatDate = (timestamp: any) => {
-    if (!timestamp) return 'Unknown date';
+  // Get mood for styling
+  const mood = useMemo(() => {
+    if (!moodFeatureEnabled) return 'calm';
+    return getMoodFromText(newComment || replyText || editText);
+  }, [moodFeatureEnabled, newComment, replyText, editText]);
+
+  // Optimized comment submission
+  const handleCommentSubmit = useCallback(async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!newComment.trim() || !currentUser || isSubmitting) return;
+
+    setIsSubmitting(true);
+    try {
+      const commentsRef = collection(firestore, 'articles', articleId, 'comments');
+      await addDoc(commentsRef, {
+        text: newComment.trim(),
+        authorId: currentUser.uid,
+        authorName: currentUser.displayName || 'Anonymous',
+        authorEmail: currentUser.email || '',
+        createdAt: new Date(),
+        likes: [],
+        mood: moodFeatureEnabled ? mood : undefined,
+      });
+
+      setNewComment('');
+      setFocusState(false);
+    } catch (error) {
+      console.error('Error adding comment:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, [newComment, currentUser, isSubmitting, articleId, mood, moodFeatureEnabled]);
+
+  // Reply submission
+  const handleReplySubmit = useCallback(async (parentId: string) => {
+    if (!replyText.trim() || !currentUser || isSubmitting) return;
+
+    setIsSubmitting(true);
+    try {
+      const commentsRef = collection(firestore, 'articles', articleId, 'comments');
+      await addDoc(commentsRef, {
+        text: replyText.trim(),
+        authorId: currentUser.uid,
+        authorName: currentUser.displayName || 'Anonymous',
+        authorEmail: currentUser.email || '',
+        createdAt: new Date(),
+        likes: [],
+        parentId,
+        mood: moodFeatureEnabled ? getMoodFromText(replyText) : undefined,
+      });
+
+      setReplyText('');
+      setReplyingTo(null);
+    } catch (error) {
+      console.error('Error adding reply:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, [replyText, currentUser, isSubmitting, articleId, moodFeatureEnabled]);
+
+  // Like/unlike functionality
+  const handleLike = useCallback(async (commentId: string, currentLikes: string[]) => {
+    if (!currentUser) return;
+
+    try {
+      const commentRef = doc(firestore, 'articles', articleId, 'comments', commentId);
+      const userLiked = currentLikes.includes(currentUser.uid);
+      
+      const updatedLikes = userLiked
+        ? currentLikes.filter(uid => uid !== currentUser.uid)
+        : [...currentLikes, currentUser.uid];
+
+      await updateDoc(commentRef, { likes: updatedLikes });
+    } catch (error) {
+      console.error('Error updating like:', error);
+    }
+  }, [currentUser, articleId]);
+
+  // Comment editing
+  const handleEditSubmit = useCallback(async (commentId: string) => {
+    if (!editText.trim() || !currentUser || isSubmitting) return;
+
+    setIsSubmitting(true);
+    try {
+      const commentRef = doc(firestore, 'articles', articleId, 'comments', commentId);
+      await updateDoc(commentRef, {
+        text: editText.trim(),
+        mood: moodFeatureEnabled ? getMoodFromText(editText) : undefined,
+        editedAt: new Date()
+      });
+
+      setEditingComment(null);
+      setEditText('');
+    } catch (error) {
+      console.error('Error editing comment:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, [editText, currentUser, isSubmitting, articleId, moodFeatureEnabled]);
+
+  // Comment deletion
+  const handleDelete = useCallback(async (commentId: string) => {
+    if (!currentUser || isSubmitting) return;
+
+    if (!confirm('Are you sure you want to delete this comment?')) return;
+
+    setIsSubmitting(true);
+    try {
+      // Delete the comment
+      const commentRef = doc(firestore, 'articles', articleId, 'comments', commentId);
+      await deleteDoc(commentRef);
+
+      // Delete all replies to this comment
+      const repliesQuery = query(
+        collection(firestore, 'articles', articleId, 'comments'),
+        where('parentId', '==', commentId)
+      );
+      const repliesSnapshot = await getDocs(repliesQuery);
+      
+      const deletePromises = repliesSnapshot.docs.map(replyDoc => 
+        deleteDoc(doc(firestore, 'articles', articleId, 'comments', replyDoc.id))
+      );
+      
+      await Promise.all(deletePromises);
+      
+      setExpandedMenus(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(commentId);
+        return newSet;
+      });
+    } catch (error) {
+      console.error('Error deleting comment:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, [currentUser, isSubmitting, articleId]);
+
+  // Format timestamp
+  const formatTimestamp = useCallback((timestamp: any) => {
+    if (!timestamp) return 'Just now';
     
     const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
     const now = new Date();
-    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+    const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
     
-    // For recent dates, use relative time (which is less prone to hydration issues)
-    if (diffInSeconds < 60) {
-      return 'Just now';
-    } else if (diffInSeconds < 3600) {
-      const minutes = Math.floor(diffInSeconds / 60);
-      return `${minutes} ${minutes === 1 ? 'minute' : 'minutes'} ago`;
-    } else if (diffInSeconds < 86400) {
-      const hours = Math.floor(diffInSeconds / 3600);
-      return `${hours} ${hours === 1 ? 'hour' : 'hours'} ago`;
-    } else if (diffInSeconds < 604800) {
-      const days = Math.floor(diffInSeconds / 86400);
-      return `${days} ${days === 1 ? 'day' : 'days'} ago`;
-    } else {
-      // Use consistent UTC timezone and locale for older dates
-      try {
-        const options: Intl.DateTimeFormatOptions = { 
-          year: 'numeric', 
-          month: 'short', 
-          day: 'numeric',
-          timeZone: 'UTC'
-        };
-        
-        return date.toLocaleDateString('en-US', options);
-      } catch (error) {
-        console.error('Error formatting date:', error);
-        return 'Unknown date';
-      }
-    }
-  };
+    if (diffInMinutes < 1) return 'Just now';
+    if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
+    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h ago`;
+    return `${Math.floor(diffInMinutes / 1440)}d ago`;
+  }, []);
 
-  // Generate a user avatar with initial
-  const getUserAvatar = (name: string, userId: string, isReply = false) => {
-    const initial = name?.charAt(0).toUpperCase() || 'A';
-    const colors = ['#4f46e5', '#0ea5e9', '#10b981', '#f59e0b', '#ef4444'];
-    const colorIndex = userId ? Math.abs(userId.charCodeAt(0) % colors.length) : 0;
-    const bgColor = colors[colorIndex];
-    
-    return (
-      <div 
-        className={isReply ? styles.replyAvatar : styles.commentAvatar} 
-        style={{ 
-          backgroundColor: bgColor, 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'center',
-          color: 'white',
-          fontWeight: 'bold',
-          fontSize: isReply ? '0.9rem' : '1.2rem'
-        }}
-      >
-        {initial}
+  // Memoized container styles
+  const containerStyles = useMemo(() => ({
+    marginBottom: deviceInfo.isMobile ? 
+      `max(${deviceInfo.bottomSafeArea + 40}px, calc(${deviceInfo.bottomSafeArea}px + env(safe-area-inset-bottom)))` :
+      '2rem',
+    paddingBottom: deviceInfo.isMobile ? '20px' : '0'
+  }), [deviceInfo]);
+
+  // Render individual comment
+  const renderComment = useCallback((comment: Comment, isReply = false) => (
+    <div key={comment.id} className={`${styles.comment} ${isReply ? styles.reply : ''}`}>
+      <div className={styles.commentContent}>
+        <div className={styles.commentHeader}>
+          <div className={styles.commentAvatar}>
+            {getUserAvatar(comment.authorName, comment.authorId)}
+          </div>
+          <div className={styles.commentMeta}>
+            <span className={styles.commentAuthor}>{comment.authorName}</span>
+            <span className={styles.commentTime}>{formatTimestamp(comment.createdAt)}</span>
+          </div>
+          {currentUser?.uid === comment.authorId && (
+            <div className={styles.commentActions}>
+              <button
+                onClick={() => {
+                  const newExpanded = new Set(expandedMenus);
+                  if (expandedMenus.has(comment.id)) {
+                    newExpanded.delete(comment.id);
+                  } else {
+                    newExpanded.add(comment.id);
+                  }
+                  setExpandedMenus(newExpanded);
+                }}
+                className={styles.menuButton}
+                aria-label="Comment options"
+              >
+                <DotsVerticalIcon size={16} color="#64748b" />
+              </button>
+              {expandedMenus.has(comment.id) && (
+                <div className={styles.dropdownMenu}>
+                  <button
+                    onClick={() => {
+                      setEditingComment(comment.id);
+                      setEditText(comment.text);
+                      setExpandedMenus(new Set());
+                    }}
+                    className={styles.menuItem}
+                  >
+                    <EditIcon size={14} color="#3b82f6" />
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(comment.id)}
+                    className={styles.menuItem}
+                    disabled={isSubmitting}
+                  >
+                    <TrashIcon size={14} color="#ef4444" />
+                    Delete
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        {editingComment === comment.id ? (
+          <div className={styles.editForm}>
+            <textarea
+              value={editText}
+              onChange={(e) => setEditText(e.target.value)}
+              className={`${styles.editInput} mobile-optimized-input`}
+              data-mobile="true"
+              rows={3}
+              autoFocus
+            />
+            <div className={styles.editActions}>
+              <button
+                onClick={() => {
+                  setEditingComment(null);
+                  setEditText('');
+                }}
+                className={styles.cancelButton}
+                disabled={isSubmitting}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleEditSubmit(comment.id)}
+                className={styles.saveButton}
+                disabled={!editText.trim() || isSubmitting}
+              >
+                {isSubmitting ? 'Saving...' : 'Save'}
+              </button>
+            </div>
+          </div>
+        ) : (
+          <>
+            <p className={styles.commentText}>{comment.text}</p>
+            <div className={styles.commentFooter}>
+              <button
+                onClick={() => handleLike(comment.id, comment.likes || [])}
+                className={`${styles.likeButton} ${
+                  comment.likes?.includes(currentUser?.uid) ? styles.liked : ''
+                }`}
+                disabled={!isAuthenticated}
+              >
+                <HeartIcon
+                  size={14}
+                  color={comment.likes?.includes(currentUser?.uid) ? '#ef4444' : '#64748b'}
+                />
+                {comment.likes?.length ? comment.likes.length : ''}
+              </button>
+              {!isReply && (
+                <button
+                  onClick={() => setReplyingTo(comment.id)}
+                  className={styles.replyButton}
+                  disabled={!isAuthenticated}
+                >
+                  <ReplyIcon size={14} color="#64748b" />
+                  Reply
+                </button>
+              )}
+            </div>
+          </>
+        )}
       </div>
-    );
-  };
 
-  return (
-    <section 
-      className={styles.commentSection}
-      style={{
-        background: moodFeatureEnabled 
-          ? `linear-gradient(160deg, 
-              rgba(255, 255, 255, 0.08) 0%, 
-              ${moodThemes[mood].gradientStart}06 30%, 
-              ${moodThemes[mood].gradientEnd}04 70%, 
-              rgba(255, 255, 255, 0.04) 100%)`
-          : 'rgba(255, 255, 255, 0.06)',
-        borderRadius: '16px',
-        border: moodFeatureEnabled 
-          ? `1px solid ${moodThemes[mood].gradientStart}10`
-          : '1px solid rgba(255, 255, 255, 0.1)',
-        boxShadow: moodFeatureEnabled
-          ? `0 4px 20px -8px ${moodThemes[mood].gradientStart}06,
-             inset 0 1px 0 rgba(255, 255, 255, 0.1)`
-          : `0 4px 20px rgba(0, 0, 0, 0.08),
-             inset 0 1px 0 rgba(255, 255, 255, 0.2)`,
-        backdropFilter: 'blur(16px) saturate(180%)',
-        WebkitBackdropFilter: 'blur(16px) saturate(180%)',
-        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-        position: 'relative',
-        overflow: 'hidden',
-        padding: '1.5rem',
-        marginTop: '1.5rem'
-      }}
-    >
-      {/* Liquid Glass Highlight Effect */}
-      <div
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          height: '40%',
-          background: moodFeatureEnabled
-            ? `linear-gradient(180deg, 
-                rgba(255, 255, 255, 0.15) 0%, 
-                ${moodThemes[mood].gradientStart}12 50%,
-                rgba(255, 255, 255, 0.03) 100%)`
-            : 'linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.05) 100%)',
-          borderRadius: '16px 16px 0 0',
-          pointerEvents: 'none',
-          opacity: 0.8,
-          zIndex: 1
-        }}
-      />
-
-      {moodFeatureEnabled && (
-        <>
-          {/* Subtle animated background */}
-          <div
-            style={{
-              position: 'absolute',
-              top: '-50%',
-              left: '-50%',
-              right: '-50%',
-              bottom: '-50%',
-              background: `
-                radial-gradient(circle at 30% 20%, ${moodThemes[mood].gradientStart}04, transparent 40%), 
-                radial-gradient(circle at 70% 80%, ${moodThemes[mood].gradientEnd}03, transparent 40%),
-                radial-gradient(circle at 20% 70%, ${moodThemes[mood].gradientStart}02, transparent 30%)
-              `,
-              animation: 'moodFloat 20s ease-in-out infinite',
-              pointerEvents: 'none',
-              zIndex: 0
-            }}
-          />
-        </>
-      )}
-      <div style={{ position: 'relative', zIndex: 2 }}>
-        <h2 
-          className={styles.commentSectionTitle}
-          style={moodFeatureEnabled ? {
-            color: moodThemes[mood].accent,
-            fontWeight: '600',
-            marginBottom: '1.5rem',
-            textShadow: `0 0 20px ${moodThemes[mood].gradientStart}30, 0 0 40px ${moodThemes[mood].gradientStart}15`,
-            transition: 'all 0.3s ease'
-          } : {
-            fontWeight: '600',
-            marginBottom: '1.5rem',
-            color: '#333'
-          }}
-        >
-          <CommentIcon size={20} color={moodFeatureEnabled ? moodThemes[mood].accent : '#333'} />
-          Join the Discussion
-        </h2>
-      
-      {error && (
-        <div className={styles.commentError}>
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="10"></circle>
-            <line x1="12" y1="8" x2="12" y2="12"></line>
-            <line x1="12" y1="16" x2="12.01" y2="16"></line>
-          </svg>
-          {error}
+      {/* Reply form */}
+      {replyingTo === comment.id && (
+        <div className={styles.replyForm}>
+          <div className={styles.replyInputContainer}>
+            <div className={styles.commentAvatar}>
+              {getUserAvatar(currentUser?.displayName || 'User', currentUser?.uid)}
+            </div>
+            <textarea
+              value={replyText}
+              onChange={(e) => setReplyText(e.target.value)}
+              placeholder="Write a reply..."
+              className={`${styles.replyInput} mobile-optimized-input`}
+              data-mobile="true"
+              rows={2}
+              autoFocus
+            />
+          </div>
+          <div className={styles.replyActions}>
+            <button
+              onClick={() => {
+                setReplyingTo(null);
+                setReplyText('');
+              }}
+              className={styles.cancelButton}
+              disabled={isSubmitting}
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => handleReplySubmit(comment.id)}
+              className={styles.submitButton}
+              disabled={!replyText.trim() || isSubmitting}
+            >
+              {isSubmitting ? 'Replying...' : 'Reply'}
+            </button>
+          </div>
         </div>
       )}
-      
+
+      {/* Render replies */}
+      {comment.replies && comment.replies.length > 0 && (
+        <div className={styles.repliesContainer}>
+          {comment.replies.map(reply => renderComment(reply, true))}
+        </div>
+      )}
+    </div>
+  ), [
+    currentUser, expandedMenus, editingComment, editText, replyingTo, replyText,
+    isSubmitting, isAuthenticated, formatTimestamp, handleLike, handleDelete,
+    handleEditSubmit, handleReplySubmit
+  ]);
+
+  return (
+    <div 
+      className={`${styles.commentsSection} ${className} comment-section`} 
+      style={containerStyles}
+    >
+      <h3 className={styles.commentsTitle}>
+        Comments ({comments.length})
+      </h3>
+
+      {/* Comment Form */}
       <form className={styles.commentForm} onSubmit={handleCommentSubmit}>
         <div
           className={styles.commentInputContainer}
@@ -423,463 +490,101 @@ const CommentSection: React.FC<CommentSectionProps> = ({
             transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
             position: 'relative',
             overflow: 'hidden',
-            padding: '1rem'
+            padding: deviceInfo.isMobile ? '0.875rem' : '1rem',
+            marginBottom: deviceInfo.isMobile ? '20px' : '0'
           }}
         >
           {isAuthenticated ? (
             <>
               <div className={styles.commentAvatar}>
-                {getUserAvatar(currentUser.name, currentUser.id)}
+                {getUserAvatar(currentUser.displayName || currentUser.name, currentUser.uid || currentUser.id)}
               </div>
               <textarea
-                className={styles.commentInput}
+                className={`${styles.commentInput} mobile-optimized-input comment-input`}
                 placeholder="Share your thoughts..."
                 value={newComment}
                 onChange={e => setNewComment(e.target.value)}
-                onFocus={() => setFocusState(true)}
+                onFocus={(e) => {
+                  setFocusState(true);
+                  // Ensure mobile input is visible
+                  if (deviceInfo.isMobile) {
+                    setTimeout(() => {
+                      const element = e.target as HTMLTextAreaElement;
+                      element.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'center' 
+                      });
+                    }, 100);
+                  }
+                }}
                 onBlur={() => {
                   if (!newComment.trim()) {
                     setFocusState(false);
                   }
                 }}
-                style={moodFeatureEnabled ? {
+                data-mobile="true"
+                rows={deviceInfo.isSmallPhone ? 3 : 4}
+                style={{
                   background: 'rgba(255, 255, 255, 0.1)',
                   border: 'none',
                   borderRadius: '20px',
                   color: '#2d3748',
-                  fontSize: '1rem',
-                  padding: '1rem',
+                  fontSize: deviceInfo.isMobile ? '16px' : '1rem', // Prevent zoom on mobile
+                  padding: deviceInfo.isMobile ? '0.875rem' : '1rem',
                   resize: 'vertical',
-                  minHeight: '120px',
+                  minHeight: deviceInfo.isMobile ? '80px' : '120px',
                   backdropFilter: 'blur(8px)',
-                  transition: 'all 0.3s ease'
-                } : {}}
+                  transition: 'all 0.3s ease',
+                  ...(moodFeatureEnabled ? {} : {})
+                }}
               />
-              <button 
-                className={styles.commentSubmit}
-                type="submit" 
-                disabled={!newComment.trim() || submitting}
-                style={moodFeatureEnabled ? {
-                  background: `linear-gradient(135deg, 
-                    ${moodThemes[mood].accent}, 
-                    ${moodThemes[mood].gradientEnd})`,
-                  border: 'none',
-                  color: 'white',
-                  borderRadius: '20px',
-                  fontWeight: '600',
-                  padding: '0.75rem 1.5rem',
-                  boxShadow: `0 4px 16px -4px ${moodThemes[mood].accent}40`,
-                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                  transform: 'translateY(0)',
-                  cursor: 'pointer'
-                } : {}}
-                onMouseEnter={moodFeatureEnabled ? (e) => {
-                  if (!e.currentTarget.disabled) {
-                    e.currentTarget.style.transform = 'translateY(-2px)';
-                    e.currentTarget.style.boxShadow = `0 8px 24px -4px ${moodThemes[mood].accent}60`;
-                  }
-                } : undefined}
-                onMouseLeave={moodFeatureEnabled ? (e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = `0 4px 16px -4px ${moodThemes[mood].accent}40`;
-                } : undefined}
-              >
-                {submitting ? (
-                  <>
-                    <SparkleIcon size={16} color="white" />
-                    Posting...
-                  </>
-                ) : (
-                  <>
-                    <SendIcon size={16} color="white" />
-                    Post
-                  </>
-                )}
-              </button>
+              
+              {(focusState || newComment.trim()) && (
+                <div className={styles.commentActions}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setNewComment('');
+                      setFocusState(false);
+                    }}
+                    className={styles.cancelButton}
+                    disabled={isSubmitting}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className={styles.submitButton}
+                    disabled={!newComment.trim() || isSubmitting}
+                    style={{
+                      minHeight: deviceInfo.isMobile ? '44px' : '36px'
+                    }}
+                  >
+                    {isSubmitting ? 'Posting...' : 'Post Comment'}
+                  </button>
+                </div>
+              )}
             </>
           ) : (
-            <div className={styles.loginPromptContainer} onClick={() => setShowLoginPrompt(true)}>
-              <textarea
-                className={styles.commentInput}
-                placeholder="Login to join the discussion..."
-                disabled
-              />
-              <button
-                className={`${styles.commentSubmit} ${styles.loginButton}`}
-                type="button"
-                onClick={() => setShowLoginPrompt(true)}
-              >
-                Login to comment
-              </button>
+            <div className={styles.authPrompt}>
+              <p>Please log in to join the conversation.</p>
             </div>
           )}
         </div>
       </form>
 
-      {/* Login Prompt Modal */}
-      {showLoginPrompt && (
-        <div className={styles.loginModalOverlay} onClick={() => setShowLoginPrompt(false)}>
-          <div className={styles.loginModal} onClick={e => e.stopPropagation()}>
-            <button className={styles.loginModalClose} onClick={() => setShowLoginPrompt(false)}>×</button>
-            <h3 className={styles.loginModalTitle}>Join the conversation</h3>
-            <p className={styles.loginModalText}>
-              Sign in to Journalite to share your thoughts and join the discussion.
-            </p>
-            <div className={styles.loginModalButtons}>
-              <Link href="/login" className={`${styles.loginModalButton} ${styles.primary}`}>
-                Log In
-              </Link>
-              <Link href="/register" className={`${styles.loginModalButton} ${styles.secondary}`}>
-                Create Account
-              </Link>
-            </div>
+      {/* Comments List */}
+      <div className={styles.commentsList}>
+        {comments.length === 0 ? (
+          <div className={styles.emptyState}>
+            <p>No comments yet. Be the first to share your thoughts!</p>
           </div>
-        </div>
-      )}
-
-      {loading ? (
-                <div 
-          className={styles.commentLoading}
-          style={{
-            background: moodFeatureEnabled 
-              ? `linear-gradient(135deg, 
-                  rgba(255, 255, 255, 0.1), 
-                  ${moodThemes[mood].gradientStart}06)`
-              : 'rgba(255, 255, 255, 0.06)',
-            borderRadius: '24px',
-            padding: '2rem',
-            backdropFilter: 'blur(12px) saturate(150%)',
-            WebkitBackdropFilter: 'blur(12px) saturate(150%)',
-            border: moodFeatureEnabled 
-              ? `1px solid ${moodThemes[mood].gradientStart}10`
-              : '1px solid rgba(255, 255, 255, 0.1)',
-            boxShadow: moodFeatureEnabled
-              ? `0 4px 16px rgba(0, 0, 0, 0.06),
-                 inset 0 1px 0 rgba(255, 255, 255, 0.1)`
-              : `0 4px 16px rgba(0, 0, 0, 0.08),
-                 inset 0 1px 0 rgba(255, 255, 255, 0.15)`,
-            textAlign: 'center'
-          }}
-        >
-          <p style={moodFeatureEnabled ? {
-            color: moodThemes[mood].accent,
-            fontWeight: '500',
-            marginBottom: '1rem'
-          } : {}}>
-            <SparkleIcon size={16} color={moodFeatureEnabled ? moodThemes[mood].accent : '#6b7280'} />
-            Loading comments...
-          </p>
-          <div className={styles.loadingDots}>
-            <div 
-              className={styles.loadingDot}
-              style={moodFeatureEnabled ? {
-                background: moodThemes[mood].gradientStart
-              } : {}}
-            ></div>
-            <div 
-              className={styles.loadingDot}
-              style={moodFeatureEnabled ? {
-                background: moodThemes[mood].accent
-              } : {}}
-            ></div>
-            <div 
-              className={styles.loadingDot}
-              style={moodFeatureEnabled ? {
-                background: moodThemes[mood].gradientEnd
-              } : {}}
-            ></div>
-          </div>
-        </div>
-      ) : comments.length === 0 ? (
-        <div 
-          className={styles.noComments}
-          style={{
-            background: moodFeatureEnabled 
-              ? `linear-gradient(135deg, 
-                  rgba(255, 255, 255, 0.15) 0%, 
-                  ${moodThemes[mood].gradientStart}08 50%, 
-                  ${moodThemes[mood].gradientEnd}06 100%)`
-              : 'rgba(255, 255, 255, 0.08)',
-            border: moodFeatureEnabled 
-              ? `1px solid ${moodThemes[mood].gradientStart}12`
-              : '1px solid rgba(255, 255, 255, 0.12)',
-            borderRadius: '24px',
-            boxShadow: moodFeatureEnabled
-              ? `0 6px 24px -8px ${moodThemes[mood].gradientStart}10,
-                 inset 0 1px 0 rgba(255, 255, 255, 0.12)`
-              : `0 6px 24px rgba(0, 0, 0, 0.06),
-                 inset 0 1px 0 rgba(255, 255, 255, 0.18)`,
-            backdropFilter: 'blur(12px) saturate(150%)',
-            WebkitBackdropFilter: 'blur(12px) saturate(150%)',
-            color: moodFeatureEnabled ? moodThemes[mood].accent : '#6b7280',
-            fontWeight: '500',
-            padding: '2rem',
-            textAlign: 'center',
-            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
-          }}
-        >
-          Be the first to share your thoughts on this article.
-        </div>
-      ) : (
-        <div className={styles.commentsList}>
-          {comments.map(comment => {
-            const commentId = comment.commentId || comment.id || '';
-            return (
-              <div 
-                key={commentId} 
-                className={styles.commentItem}
-                style={{
-                  background: moodFeatureEnabled 
-                    ? `linear-gradient(135deg, 
-                        rgba(255, 255, 255, 0.12) 0%, 
-                        ${moodThemes[mood].gradientStart}06 50%, 
-                        ${moodThemes[mood].gradientEnd}04 100%)`
-                    : 'rgba(255, 255, 255, 0.06)',
-                  border: moodFeatureEnabled 
-                    ? `1px solid ${moodThemes[mood].gradientStart}10`
-                    : '1px solid rgba(255, 255, 255, 0.1)',
-                  borderRadius: '24px',
-                  boxShadow: moodFeatureEnabled
-                    ? `0 4px 20px -6px ${moodThemes[mood].gradientStart}08,
-                       inset 0 1px 0 rgba(255, 255, 255, 0.1)`
-                    : `0 6px 24px rgba(0, 0, 0, 0.08),
-                       inset 0 1px 0 rgba(255, 255, 255, 0.15)`,
-                  backdropFilter: 'blur(12px) saturate(150%)',
-                  WebkitBackdropFilter: 'blur(12px) saturate(150%)',
-                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                  position: 'relative',
-                  overflow: 'hidden',
-                  marginBottom: '1.5rem'
-                }}
-                onMouseEnter={moodFeatureEnabled ? (e) => {
-                  e.currentTarget.style.transform = 'translateY(-1px)';
-                  e.currentTarget.style.boxShadow = `
-                    0 8px 28px -6px ${moodThemes[mood].gradientStart}12,
-                    inset 0 1px 0 rgba(255, 255, 255, 0.15)
-                  `;
-                } : undefined}
-                onMouseLeave={moodFeatureEnabled ? (e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = `
-                    0 4px 20px -6px ${moodThemes[mood].gradientStart}08,
-                    inset 0 1px 0 rgba(255, 255, 255, 0.1)
-                  `;
-                } : undefined}
-              >
-                <div className={styles.commentHeader}>
-                  {getUserAvatar(comment.userName, comment.userId)}
-                  <span className={styles.commentUser}>{comment.userName}</span>
-                  <span className={styles.commentDate}>{formatDate(comment.createdAt)}</span>
-                </div>
-                <div className={styles.commentContent}>
-                  {comment.content}
-                </div>
-                <div className={styles.commentActions}>
-                  <button 
-                    className={`${styles.commentLikeBtn} ${comment.likes.includes(currentUser.id) ? styles.liked : ''}`}
-                    onClick={() => handleLikeComment(commentId)}
-                    aria-pressed={comment.likes.includes(currentUser.id)}
-                    aria-label={comment.likes.includes(currentUser.id) ? "Unlike comment" : "Like comment"}
-                  >
-                    {comment.likes.includes(currentUser.id) ? (
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
-                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                      </svg>
-                    ) : (
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-4 h-4">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-                      </svg>
-                    )}
-                    <span>{comment.likes.length > 0 ? comment.likes.length : ''}</span>
-                  </button>
-                  
-                  <button 
-                    className={styles.replyToggle}
-                    onClick={() => {
-                      if (isAuthenticated) {
-                        setReplyingTo(replyingTo === commentId ? null : commentId);
-                      } else {
-                        setShowLoginPrompt(true);
-                      }
-                    }}
-                    aria-label="Reply to comment"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-4 h-4">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
-                    </svg>
-                    <span>Reply</span>
-                  </button>
-                  
-                  {/* Only show delete button for the user's own comments */}
-                  {comment.userId === currentUser.id && (
-                    <button 
-                      className={styles.commentDeleteBtn}
-                      onClick={() => handleDeleteComment(commentId)}
-                      aria-label="Delete comment"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-4 h-4">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12.56 0c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09.996-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                      </svg>
-                      <span>Delete</span>
-                    </button>
-                  )}
-                </div>
-                
-                {/* Replies */}
-                {comment.replies && comment.replies.length > 0 && (
-                  <>
-                    <button
-                      className={styles.repliesToggle}
-                      onClick={() => toggleReplies(commentId)}
-                    >
-                      <span className={`${styles.repliesToggleIcon} ${expandedReplies[commentId] ? styles.open : ''}`}>
-                        ▷
-                      </span>
-                      {`${comment.replies.length} ${comment.replies.length === 1 ? 'reply' : 'replies'}`}
-                    </button>
-                    
-                    {expandedReplies[commentId] && (
-                      <div className={styles.replySection}>
-                        {comment.replies.map(reply => (
-                          <div 
-                            key={reply.replyId} 
-                            className={styles.replyItem}
-                            style={moodFeatureEnabled ? {
-                              background: `linear-gradient(135deg, 
-                                rgba(255, 255, 255, 0.08) 0%, 
-                                ${moodThemes[mood].gradientStart}04 50%, 
-                                ${moodThemes[mood].gradientEnd}03 100%)`,
-                              border: `1px solid ${moodThemes[mood].gradientStart}08`,
-                              borderRadius: '20px',
-                              boxShadow: `
-                                0 2px 12px -4px ${moodThemes[mood].gradientStart}06,
-                                inset 0 1px 0 rgba(255, 255, 255, 0.08)
-                              `,
-                              backdropFilter: 'blur(8px)',
-                              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                              margin: '0.75rem 0',
-                              padding: '1rem'
-                            } : {}}
-                            onMouseEnter={moodFeatureEnabled ? (e) => {
-                              e.currentTarget.style.transform = 'translateX(4px)';
-                              e.currentTarget.style.boxShadow = `
-                                0 4px 16px -4px ${moodThemes[mood].gradientStart}10,
-                                inset 0 1px 0 rgba(255, 255, 255, 0.12)
-                              `;
-                            } : undefined}
-                            onMouseLeave={moodFeatureEnabled ? (e) => {
-                              e.currentTarget.style.transform = 'translateX(0)';
-                              e.currentTarget.style.boxShadow = `
-                                0 2px 12px -4px ${moodThemes[mood].gradientStart}06,
-                                inset 0 1px 0 rgba(255, 255, 255, 0.08)
-                              `;
-                            } : undefined}
-                          >
-                            <div className={styles.replyHeader}>
-                              {getUserAvatar(reply.userName, reply.userId, true)}
-                              <span className={styles.replyUser}>{reply.userName}</span>
-                              <span className={styles.replyDate}>{formatDate(reply.createdAt)}</span>
-                            </div>
-                            <div className={styles.replyContent}>
-                              {reply.content}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </>
-                )}
-                
-                {/* Reply form */}
-                {replyingTo === commentId && (
-                  <div 
-                    className={`${styles.replyForm} ${comment.replies && comment.replies.length > 0 ? styles.inThread : ''}`}
-                    style={moodFeatureEnabled ? {
-                      background: `linear-gradient(135deg, 
-                        rgba(255, 255, 255, 0.1) 0%, 
-                        ${moodThemes[mood].gradientStart}06 50%, 
-                        ${moodThemes[mood].gradientEnd}04 100%)`,
-                      border: `1px solid ${moodThemes[mood].gradientStart}12`,
-                      borderRadius: '20px',
-                      boxShadow: `0 3px 16px -4px ${moodThemes[mood].gradientStart}08`,
-                      backdropFilter: 'blur(10px)',
-                      padding: '1.5rem',
-                      margin: '1rem 0'
-                    } : {}}
-                  >
-                    <textarea
-                      className={styles.replyInput}
-                      placeholder="Write a reply..."
-                      value={replyContent}
-                      onChange={e => setReplyContent(e.target.value)}
-                      style={moodFeatureEnabled ? {
-                        background: 'rgba(255, 255, 255, 0.08)',
-                        border: `1px solid ${moodThemes[mood].gradientStart}10`,
-                        borderRadius: '16px',
-                        backdropFilter: 'blur(6px)',
-                        color: '#2d3748',
-                        padding: '1rem',
-                        fontSize: '0.95rem'
-                      } : {}}
-                    />
-                    <div className={styles.replyButtons}>
-                      <button 
-                        className={styles.replyCancel}
-                        onClick={() => {
-                          setReplyingTo(null);
-                          setReplyContent('');
-                        }}
-                        style={moodFeatureEnabled ? {
-                          background: 'rgba(255, 255, 255, 0.1)',
-                          border: `1px solid ${moodThemes[mood].gradientStart}15`,
-                          borderRadius: '12px',
-                          color: moodThemes[mood].accent,
-                          padding: '0.5rem 1rem',
-                          transition: 'all 0.3s ease'
-                        } : {}}
-                      >
-                        Cancel
-                      </button>
-                      <button 
-                        className={styles.replySubmit}
-                        disabled={!replyContent.trim() || submittingReply}
-                        onClick={() => handleReplySubmit(commentId)}
-                        style={moodFeatureEnabled ? {
-                          background: `linear-gradient(135deg, 
-                            ${moodThemes[mood].accent}, 
-                            ${moodThemes[mood].gradientEnd})`,
-                          border: 'none',
-                          borderRadius: '12px',
-                          color: 'white',
-                          fontWeight: '600',
-                          padding: '0.5rem 1rem',
-                          boxShadow: `0 2px 8px -2px ${moodThemes[mood].accent}40`,
-                          transition: 'all 0.3s ease'
-                        } : {}}
-                      >
-                        {submittingReply ? (
-                          <>
-                            <SparkleIcon size={14} color="white" />
-                            Posting...
-                          </>
-                        ) : (
-                          <>
-                            <SendIcon size={14} color="white" />
-                            Post Reply
-                          </>
-                        )}
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      )}
+        ) : (
+          comments.map(comment => renderComment(comment))
+        )}
       </div>
-    </section>
+    </div>
   );
 };
 
-export default CommentSection; 
+export default React.memo(CommentSection); 

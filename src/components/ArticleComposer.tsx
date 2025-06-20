@@ -5,6 +5,9 @@ import { useRouter } from 'next/navigation';
 import { v4 as uuidv4 } from 'uuid';
 import { createArticle, updateArticle, getArticleById, Article } from '@/firebase/articles';
 import { auth } from '@/firebase/clientApp';
+import { enableReflectionRoom } from '@/services/reflectionRoomService';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '@/firebase/clientApp';
 import Editor from './Editor';
 import InspirationWidget from './InspirationWidget';
 import styles from '@/styles/home.module.css';
@@ -30,6 +33,8 @@ const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId, onUpdateCo
   const [isLoading, setIsLoading] = useState(!!articleId);
   const [user, setUser] = useState<User | null>(null);
   const [currentTag, setCurrentTag] = useState('');
+  const [hasReflectionRoom, setHasReflectionRoom] = useState(false);
+  const [reflectionTopic, setReflectionTopic] = useState('');
   
   const titleRef = useRef<HTMLTextAreaElement>(null);
   const tagInputRef = useRef<HTMLInputElement>(null);
@@ -112,6 +117,21 @@ const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId, onUpdateCo
           
           setTags(article.tags || []);
           setCoverImage(article.coverImage || '');
+          setHasReflectionRoom(article.hasReflectionRoom || false);
+          
+          // Load reflection room topic if enabled
+          if (article.hasReflectionRoom) {
+            try {
+              const metadataRef = doc(db, 'reflections', articleId, 'metadata', 'main');
+              const metadataSnap = await getDoc(metadataRef);
+              if (metadataSnap.exists()) {
+                const metadata = metadataSnap.data();
+                setReflectionTopic(metadata.topic || '');
+              }
+            } catch (error) {
+              console.error('Error loading reflection room topic:', error);
+            }
+          }
           
           if (process.env.NODE_ENV === 'development') {
             console.log('Article data loaded successfully for editing');
@@ -248,6 +268,7 @@ const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId, onUpdateCo
         authorId: user.uid,
         authorName: user.displayName || user.email || 'Anonymous',
         slug,
+        hasReflectionRoom,
       };
 
       if (articleId) {
@@ -260,6 +281,20 @@ const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId, onUpdateCo
           if (process.env.NODE_ENV === 'development') {
             console.log('Article updated successfully');
           }
+          
+          // Handle reflection room setup if enabled
+          if (hasReflectionRoom && reflectionTopic.trim()) {
+            try {
+              await enableReflectionRoom(articleId, reflectionTopic.trim());
+              if (process.env.NODE_ENV === 'development') {
+                console.log('Reflection room enabled successfully');
+              }
+            } catch (error) {
+              console.error('Error setting up reflection room:', error);
+              // Don't fail the whole save for this
+            }
+          }
+          
           setIsSaved(true);
           
           if (onUpdateComplete) {
@@ -284,6 +319,20 @@ const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId, onUpdateCo
       } else {
         // Create new article
         const newArticle = await createArticle(articleData);
+        
+        // Handle reflection room setup if enabled
+        if (hasReflectionRoom && reflectionTopic.trim() && newArticle?.id) {
+          try {
+            await enableReflectionRoom(newArticle.id, reflectionTopic.trim());
+            if (process.env.NODE_ENV === 'development') {
+              console.log('Reflection room enabled for new article');
+            }
+          } catch (error) {
+            console.error('Error setting up reflection room for new article:', error);
+            // Don't fail the whole save for this
+          }
+        }
+        
         if (status === 'published') {
           // Redirect to the new article page using slug
           router.push(`/articles/?slug=${slug}`);
@@ -497,6 +546,57 @@ const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId, onUpdateCo
                 className="bg-transparent border-none outline-none text-stone-600 placeholder-stone-400 min-w-24 py-1"
               />
             )}
+          </div>
+        )}
+
+        {/* Reflection Room Settings - appears when title has some content */}
+        {title.length > 5 && (
+          <div className="mb-8 p-4 bg-white/50 backdrop-blur border border-stone-200/50 rounded-xl">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="hasReflectionRoom"
+                  checked={hasReflectionRoom}
+                  onChange={(e) => {
+                    setHasReflectionRoom(e.target.checked);
+                    if (!e.target.checked) {
+                      setReflectionTopic('');
+                    }
+                  }}
+                  className="w-4 h-4 text-blue-600 bg-white border-stone-300 rounded focus:ring-blue-500 focus:ring-2"
+                />
+                <label htmlFor="hasReflectionRoom" className="text-sm font-medium text-stone-700 cursor-pointer">
+                  Enable Reflection Room
+                </label>
+              </div>
+              <span className="text-xs text-stone-500 bg-stone-100 px-2 py-1 rounded-full">
+                💭 Let readers discuss
+              </span>
+            </div>
+            
+            {hasReflectionRoom && (
+              <div className="mt-3">
+                <label className="block text-xs font-medium text-stone-600 mb-2">
+                  Discussion Topic
+                </label>
+                <input
+                  type="text"
+                  value={reflectionTopic}
+                  onChange={(e) => setReflectionTopic(e.target.value)}
+                  placeholder="What should readers discuss? (e.g., 'Share your thoughts on the main theme')"
+                  maxLength={200}
+                  className="w-full bg-white/70 backdrop-blur border border-stone-200 outline-none text-stone-700 placeholder-stone-400 py-2 px-3 rounded-lg focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all text-sm"
+                />
+                <div className="text-xs text-stone-500 mt-1">
+                  {reflectionTopic.length}/200 characters
+                </div>
+              </div>
+            )}
+            
+            <p className="text-xs text-stone-500 mt-2">
+              Reflection rooms create a real-time chat sidebar where authenticated readers can discuss your article.
+            </p>
           </div>
         )}
 
