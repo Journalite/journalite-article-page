@@ -29,3 +29,84 @@ Thumbs.db
 # Misc
 *.pem
 
+# Memory optimization files (local development only)
+optimize-memory.sh
+MEMORY_OPTIMIZATION_RESULTS.md
+memory-optimization.md
+paths-to-clean.txt
+sensitive-patterns.txt
+SECURITY.md
+PROSEMIRROR_MIGRATION.md
+
+# Backup files from optimization work
+*.bak
+next.config.ts.bak
+tawilwind.config.js
+
+# Any other memory optimization scripts
+*memory*.sh
+*optimization*.md
+
+# Theme loader (if it's custom/temporary)
+theme-loader.js
+
+# Temporary config files
+next.config.js.backup
+
+# Security & Sensitive Files
+# Firebase config and keys
+firebase-config.json
+serviceAccountKey.json
+firebase-adminsdk-*.json
+google-services.json
+GoogleService-Info.plist
+
+# API keys and secrets
+.env.production
+.env.staging
+secrets.json
+config/secrets.js
+config/keys.js
+
+# Authentication tokens
+.auth
+auth-tokens.json
+jwt-secret.txt
+
+# Database dumps and backups
+*.sql
+*.dump
+database.json
+firestore-export/
+firestore-backup/
+
+# User data exports
+user-data/
+exports/
+backups/
+
+# SSL certificates and private keys
+*.key
+*.crt
+*.p12
+*.pfx
+ssl/
+certs/
+
+# IDE and editor files with potentially sensitive data
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+*~
+
+# Test files that might contain sensitive data
+test-data/
+mock-data/
+fixtures/sensitive-*
+
+# Temporary files
+tmp/
+temp/
+.tmp
+

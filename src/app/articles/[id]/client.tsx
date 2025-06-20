@@ -1,9 +1,10 @@
 'use client'
 
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { auth } from '@/firebase/clientApp';
+import { signOut } from 'firebase/auth';
 import ArticleLayout from '@/components/ArticleLayout';
 import CommentSection from '@/components/CommentSection';
 import ArticleComposer from '@/components/ArticleComposer';
@@ -12,6 +13,8 @@ import styles from '@/styles/ArticlePage.module.css';
 import { getMoodFromText } from '@/utils/getMoodFromText';
 import { moodThemes } from '@/utils/moodThemes';
 import MobileBottomNav from '@/components/MobileBottomNav';
+import MinimalNotificationBell from '@/components/MinimalNotificationBell';
+import MessageNotificationBell from '@/components/MessageNotificationBell';
 
 interface ArticlePageClientProps {
   id: string;
@@ -40,6 +43,10 @@ const ArticlePageClient: React.FC<ArticlePageClientProps> = ({ id }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1024);
+  
+  // Profile menu state
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const profileMenuRef = useRef<HTMLDivElement>(null);
   
   // Mood detection state
   const [mood, setMood] = useState<'joyful' | 'reflective' | 'sad' | 'angry' | 'peaceful' | 'energetic'>('reflective');
@@ -81,6 +88,38 @@ const ArticlePageClient: React.FC<ArticlePageClientProps> = ({ id }) => {
       setMoodFeatureEnabled(false);
     }
   }, [isAuthenticated]);
+
+  // Profile menu functions
+  const toggleProfileMenu = () => {
+    setIsProfileMenuOpen(!isProfileMenuOpen);
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+      setIsProfileMenuOpen(false);
+      router.push('/');
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
+
+  // Close profile menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target as Node)) {
+        setIsProfileMenuOpen(false);
+      }
+    };
+
+    if (isProfileMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isProfileMenuOpen]);
   
   // Create a function to fetch article data that can be called multiple times
   const fetchArticle = async () => {
@@ -356,29 +395,65 @@ const ArticlePageClient: React.FC<ArticlePageClientProps> = ({ id }) => {
           borderTop: 'none'
         } : { 
           position: 'relative', 
-          zIndex: 10000,
-          background: 'rgba(255, 255, 255, 0.95)'
+          zIndex: 10000 
         }}
       >
         <div className={styles.headerContainer}>
-          <Link href="/" className={styles.backLink}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            Home
+          <Link href="/" className={styles.logoLink}>
+            <div 
+              className={styles.headerLogo}
+              style={moodFeatureEnabled && isAuthenticated ? {
+                color: moodThemes[mood].accent,
+                fontWeight: '700',
+                textShadow: `0 0 20px ${moodThemes[mood].gradientStart}30, 0 0 40px ${moodThemes[mood].gradientStart}15`,
+                transition: 'all 0.3s ease'
+              } : {
+                fontWeight: '700'
+              }}
+            >
+              Journalite
+            </div>
           </Link>
-          <div 
-            className={styles.headerLogo}
-            style={moodFeatureEnabled && isAuthenticated ? {
-              color: moodThemes[mood].accent,
-              fontWeight: '700',
-              textShadow: `0 0 20px ${moodThemes[mood].gradientStart}30, 0 0 40px ${moodThemes[mood].gradientStart}15`,
-              transition: 'all 0.3s ease'
-            } : {
-              fontWeight: '700'
-            }}
-          >
-            Journalite
+          
+          <div className={styles.headerActions}>
+            {isAuthenticated && <MinimalNotificationBell />}
+            {isAuthenticated && <MessageNotificationBell />}
+            
+            <div className={styles.profileMenu} id="profile-menu" ref={profileMenuRef}>
+              {isAuthenticated ? (
+                <>
+                  <div 
+                    className={styles.profileCircle} 
+                    onClick={toggleProfileMenu}
+                    id="profile-button"
+                  >
+                    {currentUser?.displayName?.charAt(0) || currentUser?.email?.charAt(0) || 'U'}
+                  </div>
+                  
+                  {isProfileMenuOpen && (
+                    <div className={styles.profileDropdown}>
+                      <Link href="/" className={styles.dropdownItem}>Home</Link>
+                      <Link href="/my-thoughts" className={styles.dropdownItem}>My Thoughts</Link>
+                      <Link href="/messages" className={styles.dropdownItem}>Messages</Link>
+                      <Link href="/create-article" className={styles.dropdownItem}>Create Article</Link>
+                      <Link href="/explore" className={styles.dropdownItem}>Explore</Link>
+                      <Link href="/my-profile" className={styles.dropdownItem}>Profile</Link>
+                      <Link href="/settings" className={styles.dropdownItem}>Settings</Link>
+                      <button onClick={handleSignOut} className={styles.dropdownItem}>Sign out</button>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className={styles.authButtons}>
+                  <Link href="/login" className={styles.loginButton}>
+                    Sign in
+                  </Link>
+                  <Link href="/register" className={styles.signupButton}>
+                    Get started
+                  </Link>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </header>

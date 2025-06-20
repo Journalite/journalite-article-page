@@ -62,6 +62,11 @@ const userItems = [
     icon: UserIcon 
   },
   { 
+    label: 'Messages', 
+    href: '/messages', 
+    icon: '💬' 
+  },
+  { 
     label: 'My Articles', 
     href: '/my-thoughts', 
     icon: '📝' 

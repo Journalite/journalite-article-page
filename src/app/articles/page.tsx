@@ -9,6 +9,7 @@ import articleStyles from '@/styles/ArticlePage.module.css'
 import { auth } from '@/firebase/clientApp'
 import { onAuthStateChanged, signOut } from 'firebase/auth'
 import MinimalNotificationBell from '@/components/MinimalNotificationBell'
+import MessageNotificationBell from '@/components/MessageNotificationBell'
 // import LeftSidebar from '@/components/LeftSidebar' // Unused
 import ArticleWithHighlights from '@/components/ArticleWithHighlights'
 import MobileBottomNav from '@/components/MobileBottomNav'
@@ -24,13 +25,7 @@ import { getMoodFromText } from '@/utils/getMoodFromText'
 import { moodThemes } from '@/utils/moodThemes'
 
 // Author mapping from homepage for consistency - currently unused
-// const authorMapping: { [key: string]: string } = {
-//   '84b2f82c-1e93-498a-983e-3b30a8379e63': 'Samuel Green',
-//   user_002: 'Alex Martinez',
-//   'kristen-lee-id': 'Kristen Lee',
-//   'alex-wen-id': 'Alex Wen',
-//   'hannah-cole-id': 'Hannah Cole'
-// }
+  // Author mapping removed for security - use Firebase user profiles in production
 
 /* Convert Firestore article to UI format for RenderArticle - currently unused
 // This adapter should ensure the object passed to RenderArticle has the fields RenderArticle expects.
@@ -538,6 +533,7 @@ function Article() {
               
               <div className={articleStyles.headerActions}>
                 {isAuthenticated && <MinimalNotificationBell />}
+                {isAuthenticated && <MessageNotificationBell />}
                 
                 <div className={articleStyles.profileMenu} id="profile-menu">
                   {isAuthenticated ? (
@@ -554,11 +550,10 @@ function Article() {
                         <div className={articleStyles.profileDropdown}>
                           <Link href="/" className={articleStyles.dropdownItem}>Home</Link>
                           <Link href="/my-thoughts" className={articleStyles.dropdownItem}>My Thoughts</Link>
-                          <Link href="/dashboard" className={articleStyles.dropdownItem}>Dashboard</Link>
-                          <Link href="/write" className={articleStyles.dropdownItem}>Write a story</Link>
+                          <Link href="/messages" className={articleStyles.dropdownItem}>Messages</Link>
                           <Link href="/create-article" className={articleStyles.dropdownItem}>Create Article</Link>
                           <Link href="/explore" className={articleStyles.dropdownItem}>Explore</Link>
-                          <Link href="/profile" className={articleStyles.dropdownItem}>Profile</Link>
+                          <Link href="/my-profile" className={articleStyles.dropdownItem}>Profile</Link>
                           <Link href="/settings" className={articleStyles.dropdownItem}>Settings</Link>
                           <button onClick={handleSignOut} className={articleStyles.dropdownItem}>Sign out</button>
                         </div>
@@ -569,7 +564,7 @@ function Article() {
                       <Link href="/login" className={articleStyles.loginButton}>
                         Sign in
                       </Link>
-                      <Link href="/signup" className={articleStyles.signupButton}>
+                      <Link href="/register" className={articleStyles.signupButton}>
                         Get started
                       </Link>
                     </div>

@@ -21,4 +21,13 @@ export const getUserAvatar = (name: string, userId?: string, isSmall: boolean = 
             flexShrink: 0
         }
     }, initial);
+};
+
+/**
+ * Get initials from first and last name
+ */
+export const getInitials = (firstName: string, lastName: string): string => {
+    const firstInitial = firstName?.charAt(0)?.toUpperCase() || '';
+    const lastInitial = lastName?.charAt(0)?.toUpperCase() || '';
+    return firstInitial + lastInitial || 'U';
 }; 

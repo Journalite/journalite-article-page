@@ -2,7 +2,6 @@
   "version": 1,
   "config": {
     "env": {},
-    "webpack": null,
     "eslint": {
       "ignoreDuringBuilds": true
     },
@@ -200,6 +199,9 @@
       "inlineCss": false,
       "useCache": false,
       "optimizePackageImports": [
+        "react",
+        "react-dom",
+        "firebase",
         "lucide-react",
         "date-fns",
         "lodash-es",

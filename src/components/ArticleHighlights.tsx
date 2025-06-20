@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import HighlightToolbar from './HighlightToolbar';
 import { useHighlights } from '@/context/HighlightContext';
 import { HighlightTag, generateHighlightShareUrl } from '@/services/highlightService';
@@ -325,39 +325,36 @@ const ArticleHighlights: React.FC<ArticleHighlightsProps> = ({ articleId, childr
     }, 150); // Match this with CSS transition duration
   }, []);
   
-  // Handle text selection with mobile-specific improvements
+  // Handle text selection with simple debouncing
   const handleSelection = useCallback(() => {
     // If unhighlight toolbar is active, don't process regular selections
     if (showUnhighlightToolbar) return;
     
-    // Add a small delay to ensure selection is stable on mobile
-    setTimeout(() => {
     const currentSelection = window.getSelection();
-      if (currentSelection && !currentSelection.isCollapsed) {
-        const selectedText = currentSelection.toString();
-        const trimmedText = selectedText.trim();
+    if (currentSelection && !currentSelection.isCollapsed) {
+      const selectedText = currentSelection.toString();
+      const trimmedText = selectedText.trim();
+      
+      // Filter out selections that are too long (likely accidental)
+      if (trimmedText && trimmedText.length > 0 && selectedText.length < 1000) {
+        // Check if selection is within our article content
+        const range = currentSelection.getRangeAt(0);
+        const container = range.commonAncestorContainer;
+        const articleContainer = container.nodeType === Node.TEXT_NODE 
+          ? container.parentElement?.closest('.article-highlight-container')
+          : (container as Element)?.closest('.article-highlight-container');
         
-        // Filter out selections that are too long (likely accidental)
-        if (trimmedText && trimmedText.length > 0 && selectedText.length < 1000) {
-          // Check if selection is within our article content
-          const range = currentSelection.getRangeAt(0);
-          const container = range.commonAncestorContainer;
-          const articleContainer = container.nodeType === Node.TEXT_NODE 
-            ? container.parentElement?.closest('.article-highlight-container')
-            : (container as Element)?.closest('.article-highlight-container');
-          
-          if (articleContainer) {
-      setSelection(currentSelection);
-    } else {
-      setSelection(null);
-    }
+        if (articleContainer) {
+          setSelection(currentSelection);
         } else {
           setSelection(null);
         }
       } else {
         setSelection(null);
       }
-    }, 100); // Short delay for mobile stability
+    } else {
+      setSelection(null);
+    }
   }, [showUnhighlightToolbar]);
   
   // Handle highlight button click
@@ -466,7 +463,7 @@ const ArticleHighlights: React.FC<ArticleHighlightsProps> = ({ articleId, childr
     setShowAiModal(true);
   }, []);
   
-  // Set up selection event listener with mobile improvements
+  // Set up selection event listener
   useEffect(() => {
     document.addEventListener('selectionchange', handleSelection);
     

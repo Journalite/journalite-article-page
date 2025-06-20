@@ -152,6 +152,12 @@
       "namedRegex": "^/login(?:/)?$"
     },
     {
+      "page": "/messages",
+      "regex": "^/messages(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/messages(?:/)?$"
+    },
+    {
       "page": "/my-profile",
       "regex": "^/my\\-profile(?:/)?$",
       "routeKeys": {},

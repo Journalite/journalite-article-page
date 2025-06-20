@@ -1,9 +1,31 @@
+# Firebase API Keys
 NEXT_PUBLIC_FIREBASE_API_KEY=.*
 FIREBASE_API_KEY=.*
+AIza[0-9A-Za-z\\-_]{35}
+
+# General API Keys and Secrets
 API_KEY=.*
-SECRET=.*
-PASSWORD=.*
-TOKEN=.*
-AUTH=.*
-CREDENTIAL=.*
-AIza[0-9A-Za-z\\-_]{35} 
+SECRET.*=.*
+PASSWORD.*=.*
+TOKEN.*=.*
+AUTH.*=.*
+CREDENTIAL.*=.*
+
+# User IDs and Personal Data
+uid['"]\s*:\s*['"][0-9a-f-]{20,}['"]
+userId['"]\s*:\s*['"][0-9a-f-]{20,}['"]
+authorId['"]\s*:\s*['"][0-9a-f-]{20,}['"]
+
+# GitHub tokens
+ghp_[0-9A-Za-z]{36}
+gho_[0-9A-Za-z]{36}
+ghu_[0-9A-Za-z]{36}
+ghs_[0-9A-Za-z]{36}
+ghr_[0-9A-Za-z]{36}
+
+# Other common secrets
+xoxb-[0-9]+-[0-9]+-[0-9A-Za-z]+
+sk-[0-9A-Za-z]{32,}
+Bearer [A-Za-z0-9._~+/-]+=*
+private_key.*BEGIN.*PRIVATE.*KEY
+service_account.*json 

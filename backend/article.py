@@ -7,15 +7,10 @@ app = Flask(__name__)
 # Enable CORS for all routes. In production, restrict origins appropriately.
 CORS(app, origins="*")
 
-# Authors mapping - maps authorId to display name
+# Authors mapping removed for security
+# TODO: Implement proper user authentication and fetch user data from Firebase
 authors = {
-    "84b2f82c-1e93-498a-983e-3b30a8379e63": "Samuel Green",
-    "user_002": "Alex Martinez",
-    "kristen-lee-id": "Kristen Lee",
-    "alex-wen-id": "Alex Wen",
-    "hannah-cole-id": "Hannah Cole",
-    "urban-planner-id": "Jordan Urban",
-    "quote-author-id": "John Shedd"
+    # Demo data removed - implement Firebase Auth integration
 }
 
 # 1) In‑memory "database" of articles

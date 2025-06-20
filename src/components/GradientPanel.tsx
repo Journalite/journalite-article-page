@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { moodThemes } from '@/utils/moodThemes';
 import { AutoIcon } from './icons/CustomIcons';
 
@@ -44,31 +44,25 @@ const GradientPanel: React.FC<GradientPanelProps> = ({
   const canvasRef = useRef<HTMLDivElement>(null);
   const opacitySliderRef = useRef<HTMLDivElement>(null);
   const grainSliderRef = useRef<HTMLDivElement>(null);
+  const saveTimeout = useRef<NodeJS.Timeout>();
 
   // Generate Journa Color-style gradient from color stops with grain effect
   const generateJournaColorGradient = (config: ThemeConfig) => {
     const { colorStops, opacity, grain } = config;
     const alpha = opacity / 100;
     
-    // Generate smooth film grain overlay based on grain value (much smoother)
+    // Generate smooth film grain overlay based on grain value
     const grainIntensity = grain / 100;
     let grainPattern = '';
     
     if (grainIntensity > 0.1) {
-      // Much lower opacity and larger, softer patterns for smooth grain
-      const grainOpacity = grainIntensity * 0.08; // Much more subtle
-      const grainBlur = Math.max(15, 25 - (grainIntensity * 8)); // Larger, softer spots
+      const grainOpacity = grainIntensity * 0.08;
+      const grainBlur = Math.max(15, 25 - (grainIntensity * 8));
       
-      // Create smooth film grain with larger, softer patterns
       grainPattern = `
         radial-gradient(ellipse at 12% 18%, rgba(255,255,255,${grainOpacity}) 3px, transparent ${grainBlur}px),
         radial-gradient(ellipse at 87% 23%, rgba(0,0,0,${grainOpacity * 0.7}) 2px, transparent ${grainBlur * 1.2}px),
         radial-gradient(ellipse at 43% 82%, rgba(255,255,255,${grainOpacity * 0.5}) 4px, transparent ${grainBlur * 0.9}px),
-        radial-gradient(ellipse at 71% 64%, rgba(0,0,0,${grainOpacity * 0.6}) 2.5px, transparent ${grainBlur * 1.1}px),
-        radial-gradient(ellipse at 29% 57%, rgba(255,255,255,${grainOpacity * 0.4}) 3.5px, transparent ${grainBlur * 1.3}px),
-        radial-gradient(ellipse at 93% 11%, rgba(0,0,0,${grainOpacity * 0.3}) 2px, transparent ${grainBlur * 0.8}px),
-        radial-gradient(ellipse at 6% 89%, rgba(255,255,255,${grainOpacity * 0.6}) 3px, transparent ${grainBlur * 1.4}px),
-        radial-gradient(ellipse at 78% 91%, rgba(0,0,0,${grainOpacity * 0.4}) 2.5px, transparent ${grainBlur * 1.1}px),
       `;
     }
     
@@ -95,117 +89,41 @@ const GradientPanel: React.FC<GradientPanelProps> = ({
     return grainPattern ? `${grainPattern}${baseGradient}` : baseGradient || 'transparent';
   };
 
-  // Generate clearer gradient for bars and UI elements (more visible)
-  const generateClearerGradient = (config: ThemeConfig) => {
-    const { colorStops, opacity, grain } = config;
-    const alpha = Math.max(0.7, opacity / 100); // Higher minimum opacity for bars
-    
-    // Very light, smooth grain for UI elements so it doesn't interfere with readability
-    const grainIntensity = grain / 100;
-    let lightGrainPattern = '';
-    
-    if (grainIntensity > 0.3) {
-      const grainOpacity = grainIntensity * 0.04; // Even lighter grain for UI elements
-      lightGrainPattern = `
-        radial-gradient(ellipse at 25% 25%, rgba(255,255,255,${grainOpacity}) 4px, transparent 20px),
-        radial-gradient(ellipse at 75% 75%, rgba(0,0,0,${grainOpacity * 0.5}) 3px, transparent 25px),
-        radial-gradient(ellipse at 50% 15%, rgba(255,255,255,${grainOpacity * 0.7}) 3.5px, transparent 22px),
-      `;
-    }
-    
-    let clearBaseGradient = '';
-    
-    if (colorStops.length === 1) {
-      const stop = colorStops[0];
-      clearBaseGradient = `linear-gradient(135deg, ${stop.color}${Math.round(alpha * 255).toString(16)}, ${stop.color}${Math.round(alpha * 0.8 * 255).toString(16)})`;
-    } else if (colorStops.length === 2) {
-      const [stop1, stop2] = colorStops;
-      clearBaseGradient = `linear-gradient(135deg, ${stop1.color}${Math.round(alpha * 255).toString(16)}, ${stop2.color}${Math.round(alpha * 255).toString(16)})`;
-    } else if (colorStops.length === 3) {
-      const [stop1, stop2, stop3] = colorStops;
-      clearBaseGradient = `linear-gradient(135deg, ${stop1.color}${Math.round(alpha * 255).toString(16)}, ${stop2.color}${Math.round(alpha * 0.9 * 255).toString(16)}, ${stop3.color}${Math.round(alpha * 255).toString(16)})`;
-    }
-    
-    return lightGrainPattern ? `${lightGrainPattern}${clearBaseGradient}` : clearBaseGradient || 'transparent';
-  };
-
-  // Real-time update function (fixed)
-  const updateThemeRealTime = (config: ThemeConfig) => {
-    if (!moodFeatureEnabled) return;
-    
-    const gradientCSS = generateJournaColorGradient(config);
-    
-    // Create a more visible/clearer version for bars and UI elements
-    const clearerGradientCSS = generateClearerGradient(config);
-    
-    // Update all mood elements immediately
-    const moodElements = document.querySelectorAll('[data-mood-element]') as NodeListOf<HTMLElement>;
-    moodElements.forEach(element => {
-      element.style.backgroundImage = gradientCSS;
-      element.style.transition = 'background-image 0.2s ease';
-    });
-
-    // Update mood headers
-    const moodHeaders = document.querySelectorAll('[data-mood-header]') as NodeListOf<HTMLElement>;
-    moodHeaders.forEach(element => {
-      element.style.backgroundImage = gradientCSS;
-      element.style.transition = 'background-image 0.2s ease';
-    });
-
-    // Update the specific toggle/feature bar using data attribute
-    console.log('🎨 Looking for toggle bar to update...');
-    
-    const toggleBar = document.querySelector('[data-toggle-bar="true"]') as HTMLElement;
-    if (toggleBar) {
-      console.log('🎨 Found toggle bar with data attribute:', toggleBar);
-      toggleBar.style.backgroundImage = clearerGradientCSS;
-      toggleBar.style.transition = 'background-image 0.2s ease';
-      toggleBar.style.backgroundSize = 'cover';
-      toggleBar.style.backgroundPosition = 'center';
-    } else {
-      console.log('🎨 Toggle bar with data attribute not found, trying fallback...');
+  // Throttled real-time update function
+  const updateThemeRealTime = useMemo(() => {
+    let lastUpdate = 0;
+    return (config: ThemeConfig) => {
+      const now = Date.now();
+      if (now - lastUpdate < 100) return;
+      lastUpdate = now;
       
-      // Fallback: Look for elements with specific content
-      const allElements = document.querySelectorAll('div') as NodeListOf<HTMLElement>;
-      allElements.forEach(element => {
-        const text = element.textContent || '';
-        if (text.includes('Atmosphere') && text.includes('Enhanced features') && 
-            text.includes('Mood Background') && text.includes('Interactive Reflections')) {
-          console.log('🎨 Found toggle bar via text content:', element);
-          element.style.backgroundImage = clearerGradientCSS;
-          element.style.transition = 'background-image 0.2s ease';
-          element.style.backgroundSize = 'cover';
-          element.style.backgroundPosition = 'center';
-        }
+      if (!moodFeatureEnabled) return;
+      
+      const gradientCSS = generateJournaColorGradient(config);
+      
+      requestAnimationFrame(() => {
+        const moodElements = document.querySelectorAll('[data-mood-element]') as NodeListOf<HTMLElement>;
+        
+        moodElements.forEach(element => {
+          if (element) {
+            element.style.backgroundImage = gradientCSS;
+            element.style.transition = 'background-image 0.2s ease';
+          }
+        });
+
+        clearTimeout(saveTimeout.current);
+        saveTimeout.current = setTimeout(() => {
+          localStorage.setItem('journaColorThemeConfig', JSON.stringify(config));
+        }, 500);
       });
-    }
+    };
+  }, [moodFeatureEnabled, generateJournaColorGradient]);
 
-    // Update reflection/mood bars with clearer gradient
-    const reflectionBars = document.querySelectorAll('[data-reflection-bar], [data-mood-bar]') as NodeListOf<HTMLElement>;
-    reflectionBars.forEach(element => {
-      element.style.backgroundImage = clearerGradientCSS;
-      element.style.transition = 'background-image 0.2s ease';
-      element.style.backgroundSize = 'cover';
-      element.style.backgroundPosition = 'center';
-    });
-
-    // Update any progress bars or status indicators
-    const progressBars = document.querySelectorAll('.progress-bar, .status-bar, .mood-indicator') as NodeListOf<HTMLElement>;
-    progressBars.forEach(element => {
-      element.style.backgroundImage = clearerGradientCSS;
-      element.style.transition = 'background-image 0.2s ease';
-    });
-
-    // Save configuration
-    localStorage.setItem('journaColorThemeConfig', JSON.stringify(config));
-  };
-
-  // Handle color stop dragging - Support both mouse and touch
+  // Handle color stop dragging
   const handleColorStopStart = (e: React.MouseEvent | React.TouchEvent, stopId: string) => {
     e.preventDefault();
     setIsDragging(stopId);
     
-    // Select this color stop
     const newConfig = {
       ...themeConfig,
       colorStops: themeConfig.colorStops.map(stop => ({
@@ -226,17 +144,16 @@ const GradientPanel: React.FC<GradientPanelProps> = ({
       clientX = e.clientX;
       clientY = e.clientY;
     } else {
-      // Touch event
       clientX = e.touches[0].clientX;
       clientY = e.touches[0].clientY;
     }
     
-    const x = Math.max(5, Math.min(95, ((clientX - rect.left) / rect.width) * 100));
-    const y = Math.max(5, Math.min(95, ((clientY - rect.top) / rect.height) * 100));
+    const x = Math.max(0, Math.min(100, ((clientX - rect.left) / rect.width) * 100));
+    const y = Math.max(0, Math.min(100, ((clientY - rect.top) / rect.height) * 100));
     
     const newConfig = {
       ...themeConfig,
-      colorStops: themeConfig.colorStops.map(stop => 
+      colorStops: themeConfig.colorStops.map(stop =>
         stop.id === isDragging ? { ...stop, x, y } : stop
       )
     };
@@ -247,90 +164,6 @@ const GradientPanel: React.FC<GradientPanelProps> = ({
 
   const handlePointerEnd = () => {
     setIsDragging(null);
-  };
-
-  // Handle opacity slider (squiggly line) - Support both mouse and touch
-  const handleOpacityStart = (e: React.MouseEvent | React.TouchEvent) => {
-    e.preventDefault();
-    setIsDragging('opacity');
-    handleOpacityMove(e);
-  };
-
-  const handleOpacityMove = (e: React.MouseEvent | React.TouchEvent | MouseEvent | TouchEvent) => {
-    if (!opacitySliderRef.current) return;
-    
-    const rect = opacitySliderRef.current.getBoundingClientRect();
-    let clientX: number;
-    
-    if (e instanceof MouseEvent || (e as React.MouseEvent).clientX !== undefined) {
-      clientX = (e as MouseEvent | React.MouseEvent).clientX;
-    } else {
-      // Touch event
-      const touchEvent = e as TouchEvent | React.TouchEvent;
-      clientX = touchEvent.touches[0].clientX;
-    }
-    
-    const x = Math.max(0, Math.min(100, ((clientX - rect.left) / rect.width) * 100));
-    
-    const newConfig = { ...themeConfig, opacity: x };
-    setThemeConfig(newConfig);
-    updateThemeRealTime(newConfig);
-  };
-
-  // Handle grain rotary knob with tactile detents (like real knob) - Support both mouse and touch
-  const handleGrainStart = (e: React.MouseEvent | React.TouchEvent) => {
-    e.preventDefault();
-    setIsDragging('grain');
-    handleGrainMove(e);
-  };
-
-  const handleGrainMove = (e: React.MouseEvent | React.TouchEvent | MouseEvent | TouchEvent) => {
-    if (!grainSliderRef.current) return;
-    
-    const rect = grainSliderRef.current.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    
-    let clientX: number, clientY: number;
-    
-    if (e instanceof MouseEvent || (e as React.MouseEvent).clientX !== undefined) {
-      clientX = (e as MouseEvent | React.MouseEvent).clientX;
-      clientY = (e as MouseEvent | React.MouseEvent).clientY;
-    } else {
-      // Touch event
-      const touchEvent = e as TouchEvent | React.TouchEvent;
-      clientX = touchEvent.touches[0].clientX;
-      clientY = touchEvent.touches[0].clientY;
-    }
-    
-    // Calculate angle from center
-    const deltaX = clientX - centerX;
-    const deltaY = clientY - centerY;
-    let angle = Math.atan2(deltaY, deltaX) * (180 / Math.PI);
-    
-    // Normalize to 0-360 degrees, starting from top (270 degrees offset)
-    angle = (angle + 270) % 360;
-    if (angle < 0) angle += 360;
-    
-    // Create detents every 15 degrees (24 steps total) for tactile feel
-    const detentSize = 15; // degrees per detent
-    const rawGrain = (angle / 360) * 100;
-    const detentIndex = Math.round(rawGrain / (100 / (360 / detentSize)));
-    const snappedGrain = Math.max(0, Math.min(100, (detentIndex * (100 / (360 / detentSize)))));
-    
-    // Add haptic feedback simulation by slightly varying the snapped value
-    const finalGrain = Math.round(snappedGrain);
-    
-    if (Math.abs(finalGrain - themeConfig.grain) > 0.5) {
-      // Simulate tactile feedback with a tiny vibration-like effect
-      if (navigator.vibrate) {
-        navigator.vibrate(10); // Very short vibration on mobile
-      }
-      
-      const newConfig = { ...themeConfig, grain: finalGrain };
-      setThemeConfig(newConfig);
-      updateThemeRealTime(newConfig);
-    }
   };
 
   // Add color stop
@@ -383,29 +216,18 @@ const GradientPanel: React.FC<GradientPanelProps> = ({
     updateThemeRealTime(newConfig);
   };
 
-  // Mouse and touch event listeners
+  // Event listeners
   useEffect(() => {
     if (isDragging) {
-      const handleMove = (e: MouseEvent | TouchEvent) => {
-        if (isDragging === 'opacity') {
-          handleOpacityMove(e);
-        } else if (isDragging === 'grain') {
-          handleGrainMove(e);
-        } else {
-          handlePointerMove(e);
-        }
-      };
-      
-      // Add both mouse and touch listeners
-      document.addEventListener('mousemove', handleMove as EventListener);
+      document.addEventListener('mousemove', handlePointerMove as EventListener);
       document.addEventListener('mouseup', handlePointerEnd);
-      document.addEventListener('touchmove', handleMove as EventListener, { passive: false });
+      document.addEventListener('touchmove', handlePointerMove as EventListener, { passive: false });
       document.addEventListener('touchend', handlePointerEnd);
       
       return () => {
-        document.removeEventListener('mousemove', handleMove as EventListener);
+        document.removeEventListener('mousemove', handlePointerMove as EventListener);
         document.removeEventListener('mouseup', handlePointerEnd);
-        document.removeEventListener('touchmove', handleMove as EventListener);
+        document.removeEventListener('touchmove', handlePointerMove as EventListener);
         document.removeEventListener('touchend', handlePointerEnd);
       };
     }
@@ -425,6 +247,15 @@ const GradientPanel: React.FC<GradientPanelProps> = ({
     }
   }, []);
 
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (saveTimeout.current) {
+        clearTimeout(saveTimeout.current);
+      }
+    };
+  }, []);
+
   if (!isVisible || !moodFeatureEnabled) return null;
 
   const currentGradient = generateJournaColorGradient(themeConfig);
@@ -438,17 +269,17 @@ const GradientPanel: React.FC<GradientPanelProps> = ({
   return (
     <div style={{
       position: 'fixed',
-      bottom: window.innerWidth <= 768 ? '100px' : '40px', // Higher bottom position on mobile to avoid nav
-      left: window.innerWidth <= 768 ? '20px' : '40px',
-      zIndex: 1001, // Higher than mobile bottom nav (1000)
+      bottom: '40px',
+      left: '40px',
+      zIndex: 1001,
       transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
     }}>
       {/* Floating toggle button */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
         style={{
-          width: window.innerWidth <= 768 ? '48px' : '56px',
-          height: window.innerWidth <= 768 ? '48px' : '56px',
+          width: '56px',
+          height: '56px',
           borderRadius: '50%',
           border: 'none',
           background: currentGradient || '#007AFF',
@@ -474,57 +305,29 @@ const GradientPanel: React.FC<GradientPanelProps> = ({
           fill="none" 
           xmlns="http://www.w3.org/2000/svg"
         >
-          <defs>
-            <linearGradient id="iconGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#ffffff" stopOpacity="0.9"/>
-              <stop offset="100%" stopColor="#ffffff" stopOpacity="0.7"/>
-            </linearGradient>
-          </defs>
-          <circle cx="8" cy="8" r="3" fill="url(#iconGradient)"/>
-          <circle cx="16" cy="12" r="2.5" fill="url(#iconGradient)"/>
-          <circle cx="12" cy="18" r="2" fill="url(#iconGradient)"/>
-          <path 
-            d="M8 8L16 12M16 12L12 18" 
-            stroke="url(#iconGradient)" 
-            strokeWidth="1.5" 
-            strokeLinecap="round"
-          />
+          <circle cx="8" cy="8" r="3" fill="white"/>
+          <circle cx="16" cy="12" r="2.5" fill="white"/>
+          <circle cx="12" cy="18" r="2" fill="white"/>
         </svg>
       </button>
 
-      {/* Expanded Journa Color-style panel */}
+      {/* Expanded panel */}
       {isExpanded && (
-        <>
-          <style>
-            {`
-              @keyframes gentleSlideUp {
-                from {
-                  opacity: 0;
-                  transform: translateY(20px) scale(0.98);
-                }
-                to {
-                  opacity: 1;
-                  transform: translateY(0) scale(1);
-                }
-              }
-            `}
-          </style>
-                    <div style={{
-            position: 'fixed',
-          bottom: window.innerWidth <= 768 ? '160px' : '110px', // Even higher when expanded on mobile
-            left: window.innerWidth <= 768 ? '20px' : '40px',
-            width: window.innerWidth <= 768 ? '340px' : '380px',
-            maxHeight: window.innerWidth <= 768 ? '400px' : '500px',
-            background: 'rgba(255, 255, 255, 0.95)',
-            backdropFilter: 'blur(20px)',
-            borderRadius: window.innerWidth <= 768 ? '16px' : '24px',
-            padding: window.innerWidth <= 768 ? '16px' : '24px',
-            border: '1px solid rgba(255, 255, 255, 0.3)',
-            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.2)',
-            zIndex: 999,
-            animation: 'gentleSlideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-            overflow: 'hidden'
-          }}>
+        <div style={{
+          position: 'fixed',
+          bottom: '110px',
+          left: '40px',
+          width: '380px',
+          maxHeight: '500px',
+          background: 'rgba(255, 255, 255, 0.95)',
+          backdropFilter: 'blur(20px)',
+          borderRadius: '24px',
+          padding: '24px',
+          border: '1px solid rgba(255, 255, 255, 0.3)',
+          boxShadow: '0 20px 60px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.2)',
+          zIndex: 999,
+          overflow: 'hidden'
+        }}>
           {/* Theme mode toggles */}
           <div style={{
             display: 'flex',
@@ -564,19 +367,14 @@ const GradientPanel: React.FC<GradientPanelProps> = ({
             ))}
           </div>
 
-          {/* Large interactive color area - Journa Color's main canvas */}
+          {/* Interactive color canvas */}
           <div 
             ref={canvasRef}
             style={{
               width: '100%',
               height: '180px',
               borderRadius: '16px',
-              background: `
-                radial-gradient(circle at 50% 50%, rgba(100, 100, 100, 0.1) 0%, transparent 70%),
-                repeating-linear-gradient(0deg, rgba(255,255,255,0.03), rgba(255,255,255,0.03) 1px, transparent 1px, transparent 8px),
-                repeating-linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.03) 1px, transparent 1px, transparent 8px),
-                linear-gradient(135deg, #f0f0f0, #e8e8e8)
-              `,
+              background: 'linear-gradient(135deg, #f0f0f0, #e8e8e8)',
               position: 'relative',
               cursor: 'grab',
               marginBottom: '1.5rem',
@@ -595,12 +393,8 @@ const GradientPanel: React.FC<GradientPanelProps> = ({
                   top: `${stop.y}%`,
                   left: `${stop.x}%`,
                   transform: 'translate(-50%, -50%)',
-                  width: stop.isSelected 
-                    ? (window.innerWidth <= 768 ? '32px' : '24px') 
-                    : (window.innerWidth <= 768 ? '28px' : '20px'),
-                  height: stop.isSelected 
-                    ? (window.innerWidth <= 768 ? '32px' : '24px') 
-                    : (window.innerWidth <= 768 ? '28px' : '20px'),
+                  width: stop.isSelected ? '24px' : '20px',
+                  height: stop.isSelected ? '24px' : '20px',
                   borderRadius: '50%',
                   background: stop.color,
                   border: stop.isSelected ? '3px solid white' : '2px solid white',
@@ -613,7 +407,7 @@ const GradientPanel: React.FC<GradientPanelProps> = ({
             ))}
           </div>
 
-          {/* Add/Remove color stops */}
+          {/* Add/Remove controls */}
           <div style={{
             display: 'flex',
             justifyContent: 'center',
@@ -625,12 +419,12 @@ const GradientPanel: React.FC<GradientPanelProps> = ({
               onClick={removeColorStop}
               disabled={themeConfig.colorStops.length <= 1}
               style={{
-                width: window.innerWidth <= 768 ? '44px' : '36px',
-                height: window.innerWidth <= 768 ? '44px' : '36px',
+                width: '36px',
+                height: '36px',
                 borderRadius: '8px',
                 border: '1px solid rgba(0,0,0,0.2)',
                 background: themeConfig.colorStops.length <= 1 ? 'rgba(0,0,0,0.05)' : 'white',
-                fontSize: window.innerWidth <= 768 ? '20px' : '18px',
+                fontSize: '18px',
                 cursor: themeConfig.colorStops.length <= 1 ? 'not-allowed' : 'pointer',
                 display: 'flex',
                 alignItems: 'center',
@@ -638,10 +432,10 @@ const GradientPanel: React.FC<GradientPanelProps> = ({
                 opacity: themeConfig.colorStops.length <= 1 ? 0.5 : 1
               }}
             >
-              −
+              -
             </button>
             
-            <span style={{ 
+            <span style={{
               fontSize: '14px', 
               color: '#666',
               minWidth: '80px',
@@ -654,12 +448,12 @@ const GradientPanel: React.FC<GradientPanelProps> = ({
               onClick={addColorStop}
               disabled={themeConfig.colorStops.length >= 3}
               style={{
-                width: window.innerWidth <= 768 ? '44px' : '36px',
-                height: window.innerWidth <= 768 ? '44px' : '36px',
+                width: '36px',
+                height: '36px',
                 borderRadius: '8px',
                 border: '1px solid rgba(0,0,0,0.2)',
                 background: themeConfig.colorStops.length >= 3 ? 'rgba(0,0,0,0.05)' : 'white',
-                fontSize: window.innerWidth <= 768 ? '20px' : '18px',
+                fontSize: '18px',
                 cursor: themeConfig.colorStops.length >= 3 ? 'not-allowed' : 'pointer',
                 display: 'flex',
                 alignItems: 'center',
@@ -696,147 +490,7 @@ const GradientPanel: React.FC<GradientPanelProps> = ({
               />
             ))}
           </div>
-
-          {/* Bottom controls - Squiggly line (opacity) and Dotted circle (grain) */}
-          <div style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            gap: '1rem'
-          }}>
-            {/* Squiggly line - Opacity control */}
-            <div 
-              ref={opacitySliderRef}
-              onMouseDown={handleOpacityStart}
-              onTouchStart={handleOpacityStart}
-              style={{
-                flex: 1,
-                height: '40px',
-                background: 'rgba(0,0,0,0.05)',
-                borderRadius: '20px',
-                position: 'relative',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                paddingLeft: '12px',
-                paddingRight: '12px'
-              }}
-            >
-              {/* Squiggly pattern background */}
-              <div style={{
-                position: 'absolute',
-                left: '12px',
-                right: '12px',
-                height: '4px',
-                background: `repeating-linear-gradient(to right, #ccc 0px, #ccc 3px, transparent 3px, transparent 6px)`,
-                borderRadius: '2px'
-              }} />
-              
-              {/* Opacity slider handle */}
-              <div style={{
-                position: 'absolute',
-                left: `${12 + (themeConfig.opacity / 100) * (100 - 24)}%`,
-                width: '16px',
-                height: '16px',
-                background: 'white',
-                borderRadius: '50%',
-                border: '2px solid #007AFF',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
-                transform: 'translateX(-50%)'
-              }} />
-            </div>
-
-                         {/* Rotary knob - Grain control */}
-             <div 
-               ref={grainSliderRef}
-               onMouseDown={handleGrainStart}
-               onTouchStart={handleGrainStart}
-               style={{
-                 width: '60px',
-                 height: '60px',
-                 borderRadius: '50%',
-                 background: 'linear-gradient(145deg, #f0f0f0, #d9d9d9)',
-                 position: 'relative',
-                 cursor: isDragging === 'grain' ? 'grabbing' : 'grab',
-                 border: '1px solid rgba(0,0,0,0.1)',
-                 boxShadow: isDragging === 'grain' ? 'inset 0 2px 4px rgba(0,0,0,0.2)' : '0 2px 4px rgba(0,0,0,0.1)',
-                 transition: isDragging === 'grain' ? 'none' : 'all 0.2s ease'
-               }}
-             >
-               {/* Knob track marks */}
-               {[0, 45, 90, 135, 180, 225, 270, 315].map((angle, i) => (
-                 <div
-                   key={i}
-                   style={{
-                     position: 'absolute',
-                     top: '50%',
-                     left: '50%',
-                     width: '2px',
-                     height: '6px',
-                     background: 'rgba(0,0,0,0.3)',
-                     borderRadius: '1px',
-                     transform: `translate(-50%, -50%) rotate(${angle}deg) translateY(-22px)`,
-                     transformOrigin: 'center'
-                   }}
-                 />
-               ))}
-               
-               {/* Knob center */}
-               <div style={{
-                 position: 'absolute',
-                 top: '50%',
-                 left: '50%',
-                 width: '40px',
-                 height: '40px',
-                 borderRadius: '50%',
-                 background: 'linear-gradient(145deg, #ffffff, #e8e8e8)',
-                 transform: 'translate(-50%, -50%)',
-                 border: '1px solid rgba(0,0,0,0.1)',
-                 boxShadow: isDragging === 'grain' ? 'inset 0 1px 3px rgba(0,0,0,0.2)' : '0 1px 3px rgba(0,0,0,0.1)'
-               }}>
-                 {/* Knob indicator pointer */}
-                 <div style={{
-                   position: 'absolute',
-                   top: '6px',
-                   left: '50%',
-                   width: '3px',
-                   height: '12px',
-                   background: '#007AFF',
-                   borderRadius: '1.5px',
-                   transform: `translateX(-50%) rotate(${(themeConfig.grain / 100) * 360}deg)`,
-                   transformOrigin: '50% 14px',
-                   transition: isDragging === 'grain' ? 'none' : 'transform 0.2s ease'
-                 }} />
-                 
-                 {/* Center dot */}
-                 <div style={{
-                   position: 'absolute',
-                   top: '50%',
-                   left: '50%',
-                   width: '4px',
-                   height: '4px',
-                   background: '#007AFF',
-                   borderRadius: '50%',
-                   transform: 'translate(-50%, -50%)'
-                 }} />
-               </div>
-               
-               {/* Grain value indicator */}
-               <div style={{
-                 position: 'absolute',
-                 bottom: '-20px',
-                 left: '50%',
-                 transform: 'translateX(-50%)',
-                 fontSize: '10px',
-                 color: '#666',
-                 fontWeight: '500'
-               }}>
-                 {Math.round(themeConfig.grain)}%
-               </div>
-             </div>
-          </div>
         </div>
-        </>
       )}
     </div>
   );

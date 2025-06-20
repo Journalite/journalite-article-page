@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import styles from '@/styles/home.module.css';
+import MessageNotificationBell from './MessageNotificationBell';
 
 interface LeftSidebarProps {
   isAuthenticated: boolean;
@@ -153,9 +154,81 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({
         </nav>
       </aside>
 
-      {/* Profile Button - Only for authenticated users */}
+      {/* Top Right Header Area - Notifications and Profile */}
       {isAuthenticated && (
         <>
+          {/* Notification Bells Container */}
+          <div style={{
+            position: 'fixed',
+            top: '30px',
+            right: '90px',
+            zIndex: 9999,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px'
+          }}>
+            <div 
+              style={{
+                width: '48px',
+                height: '48px',
+                borderRadius: '50%',
+                background: 'rgba(255, 255, 255, 0.06)',
+                backdropFilter: 'blur(16px) saturate(180%)',
+                WebkitBackdropFilter: 'blur(16px) saturate(180%)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                boxShadow: '0 4px 16px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+              }}
+              className="message-bell-container"
+              onMouseEnter={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.transform = 'translateY(-1px)';
+                target.style.background = 'rgba(255, 255, 255, 0.09)';
+                target.style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.3)';
+              }}
+              onMouseLeave={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.transform = 'translateY(0)';
+                target.style.background = 'rgba(255, 255, 255, 0.06)';
+                target.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.2)';
+              }}
+            >
+              <style jsx>{`
+                .message-bell-container :global(button),
+                .message-bell-container :global(a) {
+                  padding: 0 !important;
+                  background: transparent !important;
+                  border-radius: 0 !important;
+                  position: relative !important;
+                }
+                .message-bell-container :global(button:hover),
+                .message-bell-container :global(a:hover) {
+                  background: transparent !important;
+                }
+                .message-bell-container :global(span) {
+                  position: absolute !important;
+                  top: -6px !important;
+                  right: -6px !important;
+                  z-index: 20 !important;
+                  transform: translate(50%, -50%) !important;
+                }
+              `}</style>
+              <div style={{ 
+                transform: 'scale(1.2)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                <MessageNotificationBell />
+              </div>
+            </div>
+          </div>
+
+          {/* Profile Button */}
           <button
             ref={buttonRef}
             className={styles['profile-button']}
@@ -187,6 +260,17 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({
                 <path d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" fill="currentColor"/>
               </svg>
               My Profile
+            </Link>
+
+            <Link 
+              href="/messages" 
+              className={styles['profile-dropdown-item']}
+              onClick={handleDropdownItemClick}
+            >
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              Messages
             </Link>
 
             <Link 

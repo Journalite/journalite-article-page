@@ -32,18 +32,23 @@ class PresenceService {
     private presenceRefs: Map<string, () => void> = new Map();
     private heartbeatIntervals: Map<string, NodeJS.Timeout> = new Map();
     private cleanupInterval: NodeJS.Timeout | null = null;
+    private isDestroyed = false;
 
     constructor() {
-        // Run cleanup every 30 seconds to remove stale presence data
+        // Run cleanup every 60 seconds instead of 30 (reduce memory pressure)
         this.cleanupInterval = setInterval(() => {
-            this.cleanupStalePresence();
-        }, 30000);
+            if (!this.isDestroyed) {
+                this.cleanupStalePresence();
+            }
+        }, 60000); // Increased from 30s to 60s
     }
 
     /**
      * Start tracking user presence for an article
      */
     async startPresence(articleId: string): Promise<void> {
+        if (this.isDestroyed) return;
+
         const user = auth.currentUser;
         if (!user) {
             // User not authenticated - silently return
@@ -67,10 +72,10 @@ class PresenceService {
                 articleId: articleId
             });
 
-            // Set up heartbeat to update presence every 15 seconds (more frequent)
+            // Set up heartbeat to update presence every 30 seconds instead of 15 (reduce database calls)
             const heartbeatInterval = setInterval(async () => {
                 // Only update if user is still authenticated and page is visible
-                if (auth.currentUser && !document.hidden) {
+                if (auth.currentUser && !document.hidden && !this.isDestroyed) {
                     try {
                         await setDoc(presenceRef, {
                             uid: user.uid,
@@ -86,7 +91,7 @@ class PresenceService {
                         this.heartbeatIntervals.delete(articleId);
                     }
                 }
-            }, 15000); // 15 seconds (more frequent updates)
+            }, 30000); // Increased from 15s to 30s
 
             this.heartbeatIntervals.set(articleId, heartbeatInterval);
 
@@ -96,28 +101,34 @@ class PresenceService {
             };
 
             // Clean up on various events
-            window.addEventListener('beforeunload', cleanup);
-            window.addEventListener('pagehide', cleanup);
-            document.addEventListener('visibilitychange', () => {
-                // If page becomes hidden for more than 30 seconds, clean up
+            const beforeUnloadHandler = cleanup;
+            const pageHideHandler = cleanup;
+            const visibilityChangeHandler = () => {
+                // If page becomes hidden for more than 60 seconds, clean up
                 if (document.hidden) {
                     setTimeout(() => {
-                        if (document.hidden) {
+                        if (document.hidden && !this.isDestroyed) {
                             this.stopPresence(articleId);
                         }
-                    }, 30000);
+                    }, 60000); // Increased from 30s to 60s
                 }
-            });
+            };
+
+            window.addEventListener('beforeunload', beforeUnloadHandler);
+            window.addEventListener('pagehide', pageHideHandler);
+            document.addEventListener('visibilitychange', visibilityChangeHandler);
 
             // Clean up when user logs out
             const authCleanup = auth.onAuthStateChanged((user) => {
-                if (!user) {
+                if (!user && !this.isDestroyed) {
                     this.stopPresence(articleId);
                 }
             });
 
             this.presenceRefs.set(articleId, () => {
-                cleanup();
+                window.removeEventListener('beforeunload', beforeUnloadHandler);
+                window.removeEventListener('pagehide', pageHideHandler);
+                document.removeEventListener('visibilitychange', visibilityChangeHandler);
                 authCleanup();
             });
 
@@ -266,6 +277,8 @@ class PresenceService {
             cleanup();
         });
         this.presenceRefs.clear();
+
+        this.isDestroyed = true;
     }
 }
 

@@ -18,6 +18,28 @@ const nextConfig = {
     eslint: {
         ignoreDuringBuilds: true,
     },
+    // Memory optimization for development - simplified
+    experimental: {
+        optimizePackageImports: ['react', 'react-dom', 'firebase'],
+    },
+    // Basic webpack optimization for memory
+    webpack: (config, { dev }) => {
+        if (dev) {
+            // Reduce file watching overhead
+            config.watchOptions = {
+                ...config.watchOptions,
+                aggregateTimeout: 300,
+                ignored: [
+                    'node_modules/**',
+                    '.next/**',
+                    '.git/**',
+                    '.storybook/**',
+                    'out/**'
+                ]
+            };
+        }
+        return config;
+    },
 };
 
 module.exports = nextConfig;

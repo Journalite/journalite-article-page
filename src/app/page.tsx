@@ -8,6 +8,7 @@ import { auth } from '../firebase/clientApp'
 import { onAuthStateChanged, signOut } from 'firebase/auth'
 import { getArticles, Article as FirestoreArticle } from '../firebase/articles'
 import NotificationBell from '@/components/NotificationBell'
+import MessageNotificationBell from '@/components/MessageNotificationBell'
 import LeftSidebar from '@/components/LeftSidebar'
 import ShareModal from '@/components/ShareModal'
 import CenterSearchBar from '@/components/CenterSearchBar'
@@ -49,13 +50,10 @@ interface SharingArticleDetails {
   excerpt?: string;
 }
 
-// Author mapping for using authorId to display author name - legacy system
+// Authors mapping - for demo articles only
+// TODO: Remove this in production and fetch author data from Firebase
 const authorMapping: {[key: string]: string} = {
-  "84b2f82c-1e93-498a-983e-3b30a8379e63": "Samuel Green",
-  "user_002": "Alex Martinez",
-  "kristen-lee-id": "Kristen Lee",
-  "alex-wen-id": "Alex Wen",
-  "hannah-cole-id": "Hannah Cole"
+  // Demo data removed for security - use Firebase user profiles in production
 };
 
 // Adapter function to convert Firestore articles to match our UI format
@@ -88,7 +86,7 @@ const adaptFirestoreArticle = (firestoreArticle: FirestoreArticle): Article => {
 const mockArticles: Article[] = [
   {
     _id: "60e6cbb8f19a4b3d8c3a7f21",
-    authorId: "84b2f82c-1e93-498a-983e-3b30a8379e63",
+    authorId: "", // Removed hardcoded ID for security
     title: "The Future of Artificial Intelligence: Transforming Our World",
     slug: "updated-first-article",
     coverImageUrl: "https://images.unsplash.com/photo-1677442136019-21780ecad995",
@@ -104,7 +102,7 @@ const mockArticles: Article[] = [
   },
   {
     _id: "60e6cbb8f19a4b3d8c3a7f99",
-    authorId: "user_002",
+    authorId: "", // Removed hardcoded ID for security
     title: "The Rise of Gen Z Creators",
     slug: "gen-z-rise",
     coverImageUrl: "https://images.unsplash.com/photo-1601908804492-7f3d9d42e1b3",
@@ -120,7 +118,7 @@ const mockArticles: Article[] = [
   },
   {
     _id: "70f7d1e2a8b24d1fa2c1b8f3",
-    authorId: "kristen-lee-id",
+    authorId: "", // Removed hardcoded ID for security
     title: "Unravelling the Ethics of AI",
     slug: "unravelling-ethics-of-ai",
     coverImageUrl: "https://images.unsplash.com/photo-1581091012184-7c07f32c2f32",
@@ -136,7 +134,7 @@ const mockArticles: Article[] = [
   },
   {
     _id: "81a8d2f3b9c35e2ab3d2c4e5",
-    authorId: "alex-wen-id",
+    authorId: "", // Removed hardcoded ID for security
     title: "The Hidden Costs of Urbanization",
     slug: "hidden-costs-of-urbanization",
     coverImageUrl: "https://images.unsplash.com/photo-1541051646-784cfc8a2c21",
@@ -152,7 +150,7 @@ const mockArticles: Article[] = [
   },
   {
     _id: "92h9ffg3c41d7e6g1f6h0g54",
-    authorId: "hannah-cole-id",
+    authorId: "", // Removed hardcoded ID for security
     title: "Justice and Equality in Modern Society",
     slug: "justice-and-equality-in-modern-society",
     coverImageUrl: "https://images.unsplash.com/photo-1529333166437-7750a6dd5a70",
@@ -167,6 +165,9 @@ const mockArticles: Article[] = [
     updatedAt: "2025-04-12T09:30:00.000Z"
   }
 ];
+
+// Static demo articles with security cleanup
+// TODO: Replace with Firebase data in production
 
 export default function HomePage() {
   // Initialize with empty arrays/null instead of stub objects
@@ -488,7 +489,12 @@ export default function HomePage() {
       {/* RIGHT SIDEBAR */}
       <aside className={styles['right-sidebar']}>
         <h2 className={styles['sidebar-heading']}>Trending</h2>
-        {isAuthenticated && <NotificationBell />}
+        {isAuthenticated && (
+          <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: '1rem' }}>
+            <NotificationBell />
+            <MessageNotificationBell />
+          </div>
+        )}
         <div className={styles['tag-list']}>
           {tags.map(tag => (
             <Link key={tag} href={`/tag/${tag.toLowerCase()}`} className={styles['trending-tag']}>
