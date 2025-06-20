@@ -203,6 +203,58 @@ export const useReflectionRoom = (articleId: string) => {
         }
     }, [currentUser, articleId]);
 
+    // Clear all messages in the reflection room (for topic changes)
+    const clearAllMessages = useCallback(async () => {
+        if (!currentUser) return;
+
+        try {
+            const messagesRef = collection(db, 'reflections', articleId, 'messages');
+            const snapshot = await getDocs(messagesRef);
+
+            // Delete all messages
+            const deletePromises = snapshot.docs.map(doc => deleteDoc(doc.ref));
+            await Promise.all(deletePromises);
+        } catch (error) {
+            console.error('Error clearing messages:', error);
+            throw error;
+        }
+    }, [currentUser, articleId]);
+
+    // Update reflection room topic and clear chat
+    const updateReflectionTopic = useCallback(async (newTopic: string) => {
+        if (!currentUser) return;
+
+        try {
+            // First verify the user is the author of the reflection room
+            const metadataRef = doc(db, 'reflections', articleId, 'metadata', 'main');
+            const metadataSnap = await getDoc(metadataRef);
+
+            if (!metadataSnap.exists()) {
+                throw new Error('Reflection room not found');
+            }
+
+            const metadata = metadataSnap.data();
+            if (metadata.authorId !== currentUser.uid) {
+                throw new Error('Only the author can update the topic');
+            }
+
+            // Clear all messages first
+            await clearAllMessages();
+
+            // Update the topic
+            await setDoc(metadataRef, {
+                ...metadata,
+                topic: newTopic,
+                updatedAt: serverTimestamp()
+            });
+
+            setTopic(newTopic);
+        } catch (error) {
+            console.error('Error updating reflection topic:', error);
+            throw error;
+        }
+    }, [currentUser, articleId, clearAllMessages]);
+
     return {
         messages,
         topic,
@@ -211,6 +263,8 @@ export const useReflectionRoom = (articleId: string) => {
         unreadCount,
         sendMessage,
         deleteMessage,
+        clearAllMessages,
+        updateReflectionTopic,
         markAllAsRead,
         createReflectionRoom
     };

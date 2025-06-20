@@ -1,0 +1,214 @@
+/* [project]/src/components/ActiveReaders.module.css [app-client] (css) */
+.ActiveReaders-module__b0ZgyG__activeReadersContainer {
+  align-items: center;
+  gap: 12px;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Open Sans, Helvetica Neue, sans-serif;
+  display: flex;
+  position: relative;
+}
+
+.ActiveReaders-module__b0ZgyG__avatarStack {
+  align-items: center;
+  min-width: 132px;
+  height: 32px;
+  display: flex;
+  position: relative;
+}
+
+.ActiveReaders-module__b0ZgyG__avatar {
+  color: #fff;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  justify-content: center;
+  align-items: center;
+  width: 32px;
+  height: 32px;
+  font-size: 12px;
+  font-weight: 600;
+  transition: transform .2s, box-shadow .2s;
+  display: flex;
+  position: absolute;
+  box-shadow: 0 2px 4px #0000001a;
+}
+
+.ActiveReaders-module__b0ZgyG__avatar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px #00000026;
+  z-index: 10 !important;
+}
+
+.ActiveReaders-module__b0ZgyG__readingIndicator {
+  z-index: 20;
+  background-color: #10b981;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  justify-content: center;
+  align-items: center;
+  width: 12px;
+  height: 12px;
+  display: flex;
+  position: absolute;
+  top: -2px;
+}
+
+.ActiveReaders-module__b0ZgyG__pulse {
+  background-color: #fff;
+  border-radius: 50%;
+  width: 6px;
+  height: 6px;
+  animation: 2s infinite ActiveReaders-module__b0ZgyG__pulse;
+}
+
+@keyframes ActiveReaders-module__b0ZgyG__pulse {
+  0% {
+    opacity: 1;
+    transform: scale(.8);
+  }
+
+  50% {
+    opacity: .7;
+    transform: scale(1.2);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(.8);
+  }
+}
+
+.ActiveReaders-module__b0ZgyG__tooltip {
+  color: #6b7280;
+  opacity: 1;
+  white-space: nowrap;
+  flex-shrink: 0;
+  align-items: center;
+  margin-left: 8px;
+  font-size: 13px;
+  display: flex;
+  transform: translateX(0);
+}
+
+@keyframes ActiveReaders-module__b0ZgyG__slideIn {
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.ActiveReaders-module__b0ZgyG__tooltip span {
+  white-space: nowrap;
+}
+
+@media (width <= 768px) {
+  .ActiveReaders-module__b0ZgyG__activeReadersContainer {
+    gap: 8px;
+  }
+
+  .ActiveReaders-module__b0ZgyG__avatar {
+    width: 28px;
+    height: 28px;
+    font-size: 11px;
+  }
+
+  .ActiveReaders-module__b0ZgyG__avatarStack {
+    min-width: 28px;
+    height: 28px;
+  }
+
+  .ActiveReaders-module__b0ZgyG__readingIndicator {
+    width: 10px;
+    height: 10px;
+    right: -6px;
+  }
+
+  .ActiveReaders-module__b0ZgyG__pulse {
+    width: 5px;
+    height: 5px;
+  }
+
+  .ActiveReaders-module__b0ZgyG__tooltip {
+    font-size: 12px;
+  }
+}
+
+@media (width <= 480px) {
+  .ActiveReaders-module__b0ZgyG__tooltip {
+    display: none;
+  }
+
+  .ActiveReaders-module__b0ZgyG__avatar {
+    width: 24px;
+    height: 24px;
+    font-size: 10px;
+  }
+
+  .ActiveReaders-module__b0ZgyG__avatarStack {
+    min-width: 24px;
+    height: 24px;
+  }
+
+  .ActiveReaders-module__b0ZgyG__readingIndicator {
+    width: 8px;
+    height: 8px;
+    right: -4px;
+  }
+
+  .ActiveReaders-module__b0ZgyG__pulse {
+    width: 4px;
+    height: 4px;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .ActiveReaders-module__b0ZgyG__avatar, .ActiveReaders-module__b0ZgyG__readingIndicator {
+    border-color: #1f2937;
+  }
+
+  .ActiveReaders-module__b0ZgyG__tooltip {
+    color: #9ca3af;
+  }
+}
+
+.ActiveReaders-module__b0ZgyG__activeReadersContainer:hover .ActiveReaders-module__b0ZgyG__tooltip {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.ActiveReaders-module__b0ZgyG__avatar:first-child {
+  animation-delay: 0s;
+}
+
+.ActiveReaders-module__b0ZgyG__avatar:nth-child(2) {
+  animation-delay: .1s;
+}
+
+.ActiveReaders-module__b0ZgyG__avatar:nth-child(3) {
+  animation-delay: .2s;
+}
+
+.ActiveReaders-module__b0ZgyG__avatar:nth-child(4) {
+  animation-delay: .3s;
+}
+
+.ActiveReaders-module__b0ZgyG__avatar:nth-child(5) {
+  animation-delay: .4s;
+}
+
+.ActiveReaders-module__b0ZgyG__avatar {
+  opacity: 0;
+  animation: .3s ease-out forwards ActiveReaders-module__b0ZgyG__avatarAppear;
+  transform: scale(.8);
+}
+
+@keyframes ActiveReaders-module__b0ZgyG__avatarAppear {
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/*# sourceMappingURL=src_components_ActiveReaders_module_css_f9ee138c._.single.css.map*/

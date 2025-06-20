@@ -1,0 +1,168 @@
+/* [project]/src/components/EventsBar.module.css [app-client] (css) */
+.EventsBar-module__PVHmdq__eventsBar {
+  cursor: pointer;
+  opacity: .7;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem 0;
+  display: flex;
+  box-shadow: 0 8px 32px #0000001a, inset 0 1px #fff3;
+  z-index: 1001 !important;
+  -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
+  background: #ffffff0f !important;
+  border: 1px solid #ffffff1a !important;
+  border-radius: 24px !important;
+  width: 60px !important;
+  height: 240px !important;
+  transition: all .3s cubic-bezier(.4, 0, .2, 1) !important;
+  position: fixed !important;
+  top: 50% !important;
+  right: 30px !important;
+  transform: translateY(-50%) !important;
+}
+
+.EventsBar-module__PVHmdq__eventsBar:hover {
+  box-shadow: 0 12px 40px #00000026, inset 0 1px #ffffff4d;
+  opacity: 1 !important;
+  background: #ffffff17 !important;
+  border-color: #ffffff26 !important;
+  transform: translateY(-50%)translateY(-2px) !important;
+}
+
+.EventsBar-module__PVHmdq__eventsText {
+  z-index: 2;
+  background: linear-gradient(90deg, #0000 0%, #3b82f61a 50%, #0000 100%) 0 0 / 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: 3s ease-in-out infinite EventsBar-module__PVHmdq__eventsPulse, 4s ease-in-out infinite EventsBar-module__PVHmdq__eventsShimmer;
+  position: relative;
+  letter-spacing: .6px !important;
+  color: #3b82f6f2 !important;
+  writing-mode: vertical-rl !important;
+  text-orientation: mixed !important;
+  text-align: center !important;
+  text-shadow: 0 0 15px #3b82f699, 0 0 30px #3b82f666, 0 0 45px #3b82f633, 0 1px 3px #0003 !important;
+  font-family: -apple-system, BlinkMacSystemFont, SF Pro Display, Segoe UI, Roboto, sans-serif !important;
+  font-size: 1rem !important;
+  font-weight: 650 !important;
+  line-height: 1.2 !important;
+  transition: transform .3s !important;
+}
+
+.EventsBar-module__PVHmdq__eventsBar:hover .EventsBar-module__PVHmdq__eventsText {
+  animation-play-state: paused;
+  color: #1e40af !important;
+  text-shadow: 0 0 25px #3b82f6e6, 0 0 50px #3b82f6b3, 0 0 75px #3b82f680, 0 0 100px #3b82f64d, 0 2px 4px #0006 !important;
+  font-weight: 700 !important;
+  transform: scale(1.15) !important;
+}
+
+@keyframes EventsBar-module__PVHmdq__eventsPulse {
+  0% {
+    text-shadow: 0 0 15px #3b82f699, 0 0 30px #3b82f666, 0 0 45px #3b82f633, 0 1px 3px #0003;
+  }
+
+  50% {
+    text-shadow: 0 0 20px #3b82f6cc, 0 0 40px #3b82f699, 0 0 60px #3b82f666, 0 0 80px #3b82f633, 0 1px 3px #00000040;
+  }
+
+  100% {
+    text-shadow: 0 0 15px #3b82f699, 0 0 30px #3b82f666, 0 0 45px #3b82f633, 0 1px 3px #0003;
+  }
+}
+
+@keyframes EventsBar-module__PVHmdq__eventsShimmer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  50% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@media (width <= 1024px) {
+  .EventsBar-module__PVHmdq__eventsBar {
+    border-radius: 26px;
+    width: 60px;
+    height: 220px;
+    top: 50%;
+    right: 20px;
+  }
+
+  .EventsBar-module__PVHmdq__eventsBar:before {
+    border-radius: 26px 26px 0 0;
+  }
+
+  .EventsBar-module__PVHmdq__eventsText {
+    font-size: .75rem;
+    font-weight: 580;
+  }
+}
+
+@media (width <= 900px) {
+  .EventsBar-module__PVHmdq__eventsBar {
+    background: #ffffff05;
+    border-radius: 24px;
+    width: 60px;
+    height: 200px;
+    top: 50%;
+    right: 20px;
+  }
+
+  .EventsBar-module__PVHmdq__eventsBar:before {
+    border-radius: 24px 24px 0 0;
+  }
+
+  .EventsBar-module__PVHmdq__eventsText {
+    font-size: .7rem;
+    font-weight: 570;
+  }
+}
+
+@media (width <= 768px) {
+  .EventsBar-module__PVHmdq__eventsBar {
+    display: none;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .EventsBar-module__PVHmdq__eventsBar {
+    background: #ffffff0a;
+    border-color: #ffffff1f;
+  }
+
+  .EventsBar-module__PVHmdq__eventsBar:before {
+    background: linear-gradient(#ffffff14 0%, #ffffff05 50%, #0000 100%);
+  }
+
+  .EventsBar-module__PVHmdq__eventsText {
+    color: #ffffffe6;
+    text-shadow: 0 0 8px #fff3, 0 1px 2px #0000004d;
+  }
+
+  .EventsBar-module__PVHmdq__eventsBar:hover .EventsBar-module__PVHmdq__eventsText {
+    color: #60a5faf2;
+    text-shadow: 0 0 12px #60a5fa80, 0 0 24px #60a5fa4d, 0 1px 3px #0006;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .EventsBar-module__PVHmdq__eventsBar, .EventsBar-module__PVHmdq__eventsText {
+    transition: none;
+  }
+
+  .EventsBar-module__PVHmdq__eventsBar:hover {
+    transform: translateY(-50%);
+  }
+
+  .EventsBar-module__PVHmdq__eventsBar:hover .EventsBar-module__PVHmdq__eventsText {
+    transform: none;
+  }
+}
+
+/*# sourceMappingURL=src_components_EventsBar_module_css_f9ee138c._.single.css.map*/

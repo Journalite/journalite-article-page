@@ -1,4 +1,4 @@
-import { doc, setDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, setDoc, updateDoc, serverTimestamp, collection, getDocs, deleteDoc } from 'firebase/firestore';
 import { db, auth } from '@/firebase/clientApp';
 
 /**
@@ -56,7 +56,7 @@ export async function disableReflectionRoom(articleId: string): Promise<void> {
 }
 
 /**
- * Update reflection room topic (author only)
+ * Update reflection room topic (author only) and clear all messages
  */
 export async function updateReflectionTopic(articleId: string, newTopic: string): Promise<void> {
     const currentUser = auth.currentUser;
@@ -65,6 +65,14 @@ export async function updateReflectionTopic(articleId: string, newTopic: string)
     }
 
     try {
+        // Clear all messages first when topic changes
+        const messagesRef = collection(db, 'reflections', articleId, 'messages');
+        const snapshot = await getDocs(messagesRef);
+
+        const deletePromises = snapshot.docs.map(doc => deleteDoc(doc.ref));
+        await Promise.all(deletePromises);
+
+        // Update the topic
         const metadataRef = doc(db, 'reflections', articleId, 'metadata', 'main');
         await updateDoc(metadataRef, {
             topic: newTopic,

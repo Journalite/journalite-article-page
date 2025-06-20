@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { v4 as uuidv4 } from 'uuid';
 import { createArticle, updateArticle, getArticleById, Article } from '@/firebase/articles';
 import { auth } from '@/firebase/clientApp';
-import { enableReflectionRoom } from '@/services/reflectionRoomService';
+import { enableReflectionRoom, updateReflectionTopic } from '@/services/reflectionRoomService';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/firebase/clientApp';
 import Editor from './Editor';
@@ -35,6 +35,7 @@ const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId, onUpdateCo
   const [currentTag, setCurrentTag] = useState('');
   const [hasReflectionRoom, setHasReflectionRoom] = useState(false);
   const [reflectionTopic, setReflectionTopic] = useState('');
+  const [originalReflectionTopic, setOriginalReflectionTopic] = useState<string>('');
   
   const titleRef = useRef<HTMLTextAreaElement>(null);
   const tagInputRef = useRef<HTMLInputElement>(null);
@@ -65,6 +66,34 @@ const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId, onUpdateCo
     return () => unsubscribe();
   }, [router]);
   
+  // Track topic changes and update reflection room when needed
+  useEffect(() => {
+    const handleTopicChange = async () => {
+      // Only handle topic changes for existing articles with reflection rooms
+      if (!articleId || !hasReflectionRoom || !user || !reflectionTopic.trim()) return;
+      
+      // Skip if it's the initial load (original topic is being set)
+      if (!originalReflectionTopic) return;
+      
+      // Only update if the topic actually changed
+      if (reflectionTopic.trim() !== originalReflectionTopic.trim()) {
+        try {
+          await updateReflectionTopic(articleId, reflectionTopic.trim());
+          setOriginalReflectionTopic(reflectionTopic.trim());
+          console.log('Reflection room topic updated and chat cleared');
+        } catch (error) {
+          console.error('Error updating reflection topic:', error);
+          // Revert to original topic on error
+          setReflectionTopic(originalReflectionTopic);
+        }
+      }
+    };
+
+    // Debounce the topic change handler to avoid too many calls
+    const timeoutId = setTimeout(handleTopicChange, 1000);
+    return () => clearTimeout(timeoutId);
+  }, [reflectionTopic, articleId, hasReflectionRoom, user, originalReflectionTopic]);
+  
   // Load article data if in edit mode
   useEffect(() => {
     if (process.env.NODE_ENV === 'development') {
@@ -77,44 +106,24 @@ const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId, onUpdateCo
             console.log('Fetching article for editing, ID:', articleId);
           }
           setIsLoading(true);
-          const article = await getArticleById(articleId);
+          const articleDoc = await getDoc(doc(db, 'articles', articleId));
           
-          if (process.env.NODE_ENV === 'development' && article) {
-            console.log('Fetched article:', article.title, 'Body length:', article.body?.length);
-          }
-          
-          if (!article) {
-            if (process.env.NODE_ENV === 'development') {
-              console.log('Article not found');
-            }
+          if (!articleDoc.exists()) {
             setError('Article not found');
-            router.push('/');
             return;
           }
           
-          // Verify article ownership
+          const article = { id: articleDoc.id, ...articleDoc.data() } as Article;
+          
+          // Check if user is the author
           if (article.authorId !== user.uid) {
-            if (process.env.NODE_ENV === 'development') {
-              console.log('User not authorized to edit this article');
-            }
             setError('You can only edit your own articles');
-            router.push('/');
             return;
           }
           
-          // Set form data
-          if (process.env.NODE_ENV === 'development') {
-            console.log('Setting title:', article.title);
-          }
+          // Set article data
           setTitle(article.title);
-          
-          // Process HTML to extract and clean the content
-          const cleanContent = article.body.replace(/data-[\w-]+="[^"]*"/g, '');
-          if (process.env.NODE_ENV === 'development') {
-            console.log('Setting content, length:', cleanContent.length, 'Preview:', cleanContent.substring(0, 100) + '...');
-          }
-          setContent(cleanContent);
-          
+          setContent(article.body || '');
           setTags(article.tags || []);
           setCoverImage(article.coverImage || '');
           setHasReflectionRoom(article.hasReflectionRoom || false);
@@ -126,7 +135,9 @@ const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId, onUpdateCo
               const metadataSnap = await getDoc(metadataRef);
               if (metadataSnap.exists()) {
                 const metadata = metadataSnap.data();
-                setReflectionTopic(metadata.topic || '');
+                const topic = metadata.topic || '';
+                setReflectionTopic(topic);
+                setOriginalReflectionTopic(topic); // Track original topic
               }
             } catch (error) {
               console.error('Error loading reflection room topic:', error);
@@ -579,6 +590,11 @@ const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId, onUpdateCo
               <div className="mt-3">
                 <label className="block text-xs font-medium text-stone-600 mb-2">
                   Discussion Topic
+                  {articleId && originalReflectionTopic && (
+                    <span className="ml-2 text-orange-600 font-normal">
+                      (⚠️ Changing this will clear all chat messages)
+                    </span>
+                  )}
                 </label>
                 <input
                   type="text"
