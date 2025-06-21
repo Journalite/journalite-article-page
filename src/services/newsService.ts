@@ -1,27 +1,4 @@
-// NewsData.io interfaces (primary source)
-export interface NewsDataArticle {
-    title: string;
-    link: string;
-    description: string;
-    content: string;
-    pubDate: string;
-    image_url: string;
-    source_id: string;
-    source_name: string;
-    creator: string[];
-    category: string[];
-    country: string[];
-    language: string;
-}
-
-export interface NewsDataResponse {
-    status: string;
-    totalResults: number;
-    results: NewsDataArticle[];
-    nextPage?: string;
-}
-
-// Original NewsAPI.org interfaces (for fallback compatibility)
+// Standard news article interface (compatible with Guardian API)
 export interface NewsArticle {
     title: string;
     description: string;
@@ -41,198 +18,105 @@ export interface NewsResponse {
     articles: NewsArticle[];
 }
 
+// Import Guardian service for news functionality
+import { guardianService, GuardianArticle } from './guardianService';
+
 class NewsService {
-    private newsDataApiKey: string;
-    private newsApiKey: string;
-    private newsDataBaseUrl = 'https://newsdata.io/api/1/news';
-    private newsApiBaseUrl = 'https://newsapi.org/v2';
-
     constructor() {
-        // Primary: NewsData.io
-        this.newsDataApiKey = process.env.NEXT_PUBLIC_NEWSDATA_API_KEY || '';
-        // Fallback: NewsAPI.org  
-        this.newsApiKey = process.env.NEXT_PUBLIC_NEWS_API_KEY || '';
-
-        if (!this.newsDataApiKey || this.newsDataApiKey === 'YOUR_API_KEY_HERE') {
-            console.warn('NewsData.io API key not configured. Please set NEXT_PUBLIC_NEWSDATA_API_KEY in your environment variables.');
-        }
-
-        if (!this.newsApiKey || this.newsApiKey === 'YOUR_API_KEY_HERE') {
-            console.warn('NewsAPI.org key not configured. NewsData.io will be used exclusively.');
-        }
+        // Using Guardian API exclusively for news
+        console.log('📰 News service initialized with Guardian API');
     }
 
-    // Helper method to convert NewsData.io articles to standard format
-    private convertNewsDataToStandard(newsDataArticle: NewsDataArticle): NewsArticle {
+    // Convert Guardian article to NewsArticle format for compatibility
+    private convertGuardianToNewsArticle(guardianArticle: GuardianArticle): NewsArticle {
         return {
-            title: newsDataArticle.title,
-            description: newsDataArticle.description || '',
-            content: newsDataArticle.content || newsDataArticle.description || '',
-            url: newsDataArticle.link,
-            urlToImage: newsDataArticle.image_url || '',
-            publishedAt: newsDataArticle.pubDate,
+            title: guardianArticle.webTitle,
+            description: guardianArticle.fields?.standfirst || guardianArticle.fields?.trailText || '',
+            content: guardianArticle.fields?.bodyText || guardianArticle.fields?.standfirst || '',
+            url: guardianArticle.webUrl,
+            urlToImage: guardianArticle.fields?.thumbnail || '',
+            publishedAt: guardianArticle.webPublicationDate,
             source: {
-                name: newsDataArticle.source_name || newsDataArticle.source_id
+                name: 'The Guardian'
             },
-            author: newsDataArticle.creator?.[0] || newsDataArticle.source_name || 'Unknown'
+            author: guardianArticle.fields?.byline || 'The Guardian'
         };
     }
 
     async getTopHeadlines(category: string = 'general', country: string = 'us'): Promise<NewsResponse> {
-        // Try NewsData.io first (primary source)
-        if (this.newsDataApiKey && this.newsDataApiKey !== 'YOUR_API_KEY_HERE') {
-            try {
-                console.log('📰 Fetching from NewsData.io (primary)');
-                return await this.getNewsDataHeadlines(category, country);
-            } catch (error) {
-                console.warn('⚠️ NewsData.io failed, falling back to NewsAPI.org:', error);
-            }
+        if (!guardianService.isConfigured()) {
+            throw new Error('Guardian API not configured. Please set NEXT_PUBLIC_GUARDIAN_API_KEY in your environment variables.');
         }
 
-        // Fallback to NewsAPI.org
-        if (this.newsApiKey && this.newsApiKey !== 'YOUR_API_KEY_HERE') {
-            console.log('📰 Using NewsAPI.org (fallback)');
-            return await this.getNewsApiHeadlines(category, country);
-        }
+        try {
+            // Map categories to Guardian sections
+            const categoryToSectionMap: { [key: string]: string } = {
+                'general': '',
+                'business': 'business',
+                'technology': 'technology',
+                'science': 'science',
+                'health': 'society',
+                'sports': 'sport',
+                'entertainment': 'culture'
+            };
 
-        throw new Error('No news API keys configured. Please set NEXT_PUBLIC_NEWSDATA_API_KEY or NEXT_PUBLIC_NEWS_API_KEY');
+            const section = categoryToSectionMap[category] || '';
+            console.log(`📰 Fetching Guardian headlines for section: ${section || 'all'}`);
+
+            const guardianResponse = await guardianService.searchArticles('', section, 1, 10);
+
+            const articles = guardianResponse.results.map(article =>
+                this.convertGuardianToNewsArticle(article)
+            );
+
+            return {
+                status: 'ok',
+                totalResults: guardianResponse.total || articles.length,
+                articles: articles
+            };
+
+        } catch (error) {
+            console.error('Error fetching Guardian headlines:', error);
+            throw new Error('Failed to fetch news headlines from The Guardian');
+        }
     }
 
-    async searchArticles(query: string, sortBy: string = 'publishedAt'): Promise<NewsResponse> {
-        // Try NewsData.io first (primary source)
-        if (this.newsDataApiKey && this.newsDataApiKey !== 'YOUR_API_KEY_HERE') {
-            try {
-                console.log('🔍 Searching with NewsData.io (primary)');
-                return await this.searchNewsDataArticles(query);
-            } catch (error) {
-                console.warn('⚠️ NewsData.io search failed, falling back to NewsAPI.org:', error);
-            }
+    async searchArticles(query: string, sortBy: string = 'newest'): Promise<NewsResponse> {
+        if (!guardianService.isConfigured()) {
+            throw new Error('Guardian API not configured. Please set NEXT_PUBLIC_GUARDIAN_API_KEY in your environment variables.');
         }
 
-        // Fallback to NewsAPI.org
-        if (this.newsApiKey && this.newsApiKey !== 'YOUR_API_KEY_HERE') {
-            console.log('🔍 Searching with NewsAPI.org (fallback)');
-            return await this.searchNewsApiArticles(query, sortBy);
+        try {
+            console.log(`🔍 Searching Guardian for: "${query}"`);
+
+            const guardianResponse = await guardianService.searchArticles(query, undefined, 1, 10);
+
+            const articles = guardianResponse.results.map(article =>
+                this.convertGuardianToNewsArticle(article)
+            );
+
+            return {
+                status: 'ok',
+                totalResults: guardianResponse.total || articles.length,
+                articles: articles
+            };
+
+        } catch (error) {
+            console.error('Error searching Guardian articles:', error);
+            throw new Error('Failed to search Guardian articles');
         }
-
-        throw new Error('No news API keys configured. Please set NEXT_PUBLIC_NEWSDATA_API_KEY or NEXT_PUBLIC_NEWS_API_KEY');
-    }
-
-    // NewsData.io implementation
-    private async getNewsDataHeadlines(category: string = 'general', country: string = 'us'): Promise<NewsResponse> {
-        const params = new URLSearchParams({
-            apikey: this.newsDataApiKey,
-            country: country,
-            language: 'en',
-            size: '10'
-        });
-
-        // Map categories to NewsData.io categories
-        const categoryMap: { [key: string]: string } = {
-            'general': 'top',
-            'business': 'business',
-            'technology': 'technology',
-            'science': 'science',
-            'health': 'health',
-            'sports': 'sports',
-            'entertainment': 'entertainment'
-        };
-
-        if (categoryMap[category]) {
-            params.append('category', categoryMap[category]);
-        }
-
-        const url = `${this.newsDataBaseUrl}?${params.toString()}`;
-        const response = await fetch(url);
-
-        if (!response.ok) {
-            throw new Error(`NewsData.io HTTP error! status: ${response.status}`);
-        }
-
-        const data: NewsDataResponse = await response.json();
-
-        // Convert to standard format
-        return {
-            status: data.status,
-            totalResults: data.totalResults,
-            articles: data.results.map(article => this.convertNewsDataToStandard(article))
-        };
-    }
-
-    private async searchNewsDataArticles(query: string): Promise<NewsResponse> {
-        const params = new URLSearchParams({
-            apikey: this.newsDataApiKey,
-            q: query,
-            language: 'en',
-            size: '10'
-        });
-
-        const url = `${this.newsDataBaseUrl}?${params.toString()}`;
-        const response = await fetch(url);
-
-        if (!response.ok) {
-            throw new Error(`NewsData.io search HTTP error! status: ${response.status}`);
-        }
-
-        const data: NewsDataResponse = await response.json();
-
-        // Convert to standard format
-        return {
-            status: data.status,
-            totalResults: data.totalResults,
-            articles: data.results.map(article => this.convertNewsDataToStandard(article))
-        };
-    }
-
-    // NewsAPI.org fallback implementation
-    private async getNewsApiHeadlines(category: string = 'general', country: string = 'us'): Promise<NewsResponse> {
-        const url = `${this.newsApiBaseUrl}/top-headlines?category=${category}&country=${country}&apiKey=${this.newsApiKey}`;
-        const response = await fetch(url);
-
-        if (!response.ok) {
-            throw new Error(`NewsAPI.org HTTP error! status: ${response.status}`);
-        }
-
-        return response.json();
-    }
-
-    private async searchNewsApiArticles(query: string, sortBy: string = 'publishedAt'): Promise<NewsResponse> {
-        const url = `${this.newsApiBaseUrl}/everything?q=${encodeURIComponent(query)}&sortBy=${sortBy}&apiKey=${this.newsApiKey}`;
-        const response = await fetch(url);
-
-        if (!response.ok) {
-            throw new Error(`NewsAPI.org search HTTP error! status: ${response.status}`);
-        }
-
-        return response.json();
     }
 
     isConfigured(): boolean {
-        return !!(
-            (this.newsDataApiKey && this.newsDataApiKey !== 'YOUR_API_KEY_HERE') ||
-            (this.newsApiKey && this.newsApiKey !== 'YOUR_API_KEY_HERE')
-        );
-    }
-
-    getConfiguredServices(): string[] {
-        const services = [];
-        if (this.newsDataApiKey && this.newsDataApiKey !== 'YOUR_API_KEY_HERE') {
-            services.push('NewsData.io (Primary)');
-        }
-        if (this.newsApiKey && this.newsApiKey !== 'YOUR_API_KEY_HERE') {
-            services.push('NewsAPI.org (Fallback)');
-        }
-        return services;
+        return guardianService.isConfigured();
     }
 
     getCurrentProvider(): string {
-        if (this.newsDataApiKey && this.newsDataApiKey !== 'YOUR_API_KEY_HERE') {
-            return 'NewsData.io';
-        }
-        if (this.newsApiKey && this.newsApiKey !== 'YOUR_API_KEY_HERE') {
-            return 'NewsAPI.org';
-        }
-        return 'None configured';
+        return guardianService.isConfigured() ? 'The Guardian' : 'Not configured';
+    }
+
+    getConfiguredServices(): string[] {
+        return guardianService.isConfigured() ? ['The Guardian'] : [];
     }
 }
 
