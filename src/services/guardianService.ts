@@ -56,6 +56,8 @@ export interface GuardianResponse {
 class GuardianService {
     private apiKey: string;
     private baseUrl = 'https://content.guardianapis.com';
+    private cache: Map<string, { data: any; timestamp: number }> = new Map();
+    private cacheExpiry = 5 * 60 * 1000; // 5 minutes cache
 
     constructor() {
         this.apiKey = process.env.NEXT_PUBLIC_GUARDIAN_API_KEY || '';
@@ -64,11 +66,36 @@ class GuardianService {
         }
     }
 
+    private getCacheKey(endpoint: string, params: URLSearchParams): string {
+        return `${endpoint}?${params.toString()}`;
+    }
+
+    private getFromCache(cacheKey: string): any | null {
+        const cached = this.cache.get(cacheKey);
+        if (cached && Date.now() - cached.timestamp < this.cacheExpiry) {
+            console.log('📋 Using cached Guardian data');
+            return cached.data;
+        }
+        return null;
+    }
+
+    private setCache(cacheKey: string, data: any): void {
+        this.cache.set(cacheKey, { data, timestamp: Date.now() });
+
+        // Clean old cache entries (keep max 100 entries)
+        if (this.cache.size > 100) {
+            const oldestKey = this.cache.keys().next().value;
+            if (oldestKey) {
+                this.cache.delete(oldestKey);
+            }
+        }
+    }
+
     async searchArticles(
         query: string = '',
         section?: string,
         page: number = 1,
-        pageSize: number = 10
+        pageSize: number = 50
     ): Promise<GuardianResponse> {
         if (!this.apiKey || this.apiKey === 'YOUR_API_KEY_HERE') {
             throw new Error('Guardian API key not configured');
@@ -92,6 +119,13 @@ class GuardianService {
             params.append('section', section);
         }
 
+        // Check cache first
+        const cacheKey = this.getCacheKey('/search', params);
+        const cachedData = this.getFromCache(cacheKey);
+        if (cachedData) {
+            return cachedData;
+        }
+
         const url = `${this.baseUrl}/search?${params.toString()}`;
 
         const response = await fetch(url);
@@ -101,7 +135,13 @@ class GuardianService {
         }
 
         const data = await response.json();
-        return data.response;
+        const result = data.response;
+
+        // Cache the result
+        this.setCache(cacheKey, result);
+        console.log('🌐 Guardian API request made (cached for 5min)');
+
+        return result;
     }
 
     async getArticleById(articleId: string): Promise<GuardianArticle> {

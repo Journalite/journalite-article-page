@@ -202,13 +202,11 @@ export default function HomePage() {
         setIsLoading(true);
         
         // Fetch content from different sources in parallel
-        const [journaliteArticles, guardianArticles, newsArticles] = await Promise.all([
+        const [journaliteArticles, guardianArticles] = await Promise.all([
           // Get 2 Journalite articles
           getArticles({ limit: 2 }),
-          // Get 1 Guardian article
-          fetchGuardianArticle(),
-          // Get 1 NewsAPI article  
-          fetchNewsArticle()
+          // Get 2 Guardian articles from different sections
+          fetchMultipleGuardianArticles()
         ]);
 
         const mixedArticles = [];
@@ -219,14 +217,9 @@ export default function HomePage() {
           mixedArticles.push(...adaptedJournalite);
         }
 
-        // Add Guardian article
-        if (guardianArticles) {
-          mixedArticles.push(guardianArticles);
-        }
-
-        // Add NewsAPI article
-        if (newsArticles) {
-          mixedArticles.push(newsArticles);
+        // Add Guardian articles
+        if (guardianArticles && guardianArticles.length > 0) {
+          mixedArticles.push(...guardianArticles);
         }
 
         // Shuffle the articles for variety and limit to 4
@@ -280,102 +273,68 @@ export default function HomePage() {
     return cleanText;
   };
 
-  // Helper function to fetch Guardian article
-  const fetchGuardianArticle = async () => {
+  // Helper function to fetch multiple Guardian articles from different sections
+  const fetchMultipleGuardianArticles = async () => {
     try {
       const { guardianService } = await import('@/services/guardianService');
       
       if (!guardianService.isConfigured()) {
         console.log('Guardian API not configured');
-        return null;
+        return [];
       }
 
-      const response = await guardianService.searchArticles('', 'technology', 1, 1);
-      if (response.results && response.results.length > 0) {
-        const guardianArticle = response.results[0];
-        
-        // Clean the preview text
-        const previewText = guardianArticle.fields?.standfirst || 
-                           guardianArticle.fields?.trailText || 
-                           guardianArticle.fields?.bodyText ||
-                           'Read this article from The Guardian';
-        
-        return {
-          _id: `guardian-${guardianArticle.id}`,
-          title: guardianArticle.fields?.headline || guardianArticle.webTitle,
-          slug: `guardian-${guardianArticle.id}`,
-          authorId: 'guardian',
-          authorName: guardianArticle.fields?.byline || 'The Guardian',
-          coverImageUrl: guardianArticle.fields?.thumbnail || guardianArticle.fields?.main || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&q=80',
-          tags: [guardianArticle.sectionName, guardianArticle.pillarName].filter(Boolean),
-          content: [{
-            paragraphId: 'p1',
-            text: cleanHtmlText(previewText),
-            likes: [],
-            comments: []
-          }],
-          likes: [],
-          reposts: [],
-          comments: [],
-          createdAt: guardianArticle.webPublicationDate,
-          updatedAt: guardianArticle.webPublicationDate,
-          isExternal: true,
-          externalUrl: `/guardian-news/${guardianArticle.id}`
-        };
+      // Get articles from different sections for variety
+      const sections = ['technology', 'science', 'business', 'world'];
+      const articles = [];
+
+      for (const section of sections.slice(0, 2)) { // Get 2 different sections
+        try {
+          const response = await guardianService.searchArticles('', section, 1, 1);
+          if (response.results && response.results.length > 0) {
+            const guardianArticle = response.results[0];
+            
+            // Clean the preview text
+            const previewText = guardianArticle.fields?.standfirst || 
+                               guardianArticle.fields?.trailText || 
+                               guardianArticle.fields?.bodyText ||
+                               'Read this article from The Guardian';
+            
+            articles.push({
+              _id: `guardian-${guardianArticle.id}`,
+              title: guardianArticle.fields?.headline || guardianArticle.webTitle,
+              slug: `guardian-${guardianArticle.id}`,
+              authorId: 'guardian',
+              authorName: guardianArticle.fields?.byline || 'The Guardian',
+              coverImageUrl: guardianArticle.fields?.thumbnail || guardianArticle.fields?.main || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&q=80',
+              tags: [guardianArticle.sectionName, guardianArticle.pillarName].filter(Boolean),
+              content: [{
+                paragraphId: 'p1',
+                text: cleanHtmlText(previewText),
+                likes: [],
+                comments: []
+              }],
+              likes: [],
+              reposts: [],
+              comments: [],
+              createdAt: guardianArticle.webPublicationDate,
+              updatedAt: guardianArticle.webPublicationDate,
+              isExternal: true,
+              externalUrl: `/guardian-news/${guardianArticle.id}`
+            });
+          }
+        } catch (sectionError) {
+          console.error(`Error fetching Guardian article from ${section}:`, sectionError);
+        }
       }
+
+      return articles;
     } catch (error) {
-      console.error('Error fetching Guardian article:', error);
+      console.error('Error fetching Guardian articles:', error);
+      return [];
     }
-    return null;
   };
 
-  // Helper function to fetch NewsAPI article
-  const fetchNewsArticle = async () => {
-    try {
-      const { newsService } = await import('@/services/newsService');
-      
-      if (!newsService.isConfigured()) {
-        console.log('NewsAPI not configured');
-        return null;
-      }
 
-      const response = await newsService.getTopHeadlines('technology');
-      if (response.articles && response.articles.length > 0) {
-        const newsArticle = response.articles[0];
-        
-        // Clean the preview text
-        const previewText = newsArticle.description || 
-                           newsArticle.content ||
-                           'Read this breaking news article';
-        
-        return {
-          _id: `news-${encodeURIComponent(newsArticle.url)}`,
-          title: newsArticle.title,
-          slug: `news-${encodeURIComponent(newsArticle.url)}`,
-          authorId: 'newsapi',
-          authorName: newsArticle.author || newsArticle.source.name,
-          coverImageUrl: newsArticle.urlToImage || 'https://images.unsplash.com/photo-1495020689067-958852a7765e?w=800&q=80',
-          tags: [newsArticle.source.name],
-          content: [{
-            paragraphId: 'p1',
-            text: cleanHtmlText(previewText),
-            likes: [],
-            comments: []
-          }],
-          likes: [],
-          reposts: [],
-          comments: [],
-          createdAt: newsArticle.publishedAt,
-          updatedAt: newsArticle.publishedAt,
-          isExternal: true,
-          externalUrl: `/news/${encodeURIComponent(newsArticle.url)}`
-        };
-      }
-    } catch (error) {
-      console.error('Error fetching NewsAPI article:', error);
-    }
-    return null;
-  };
 
   const getAuthorName = (article: Article): string => {
     return article.authorName || 'Anonymous';
