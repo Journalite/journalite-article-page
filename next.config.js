@@ -55,12 +55,12 @@ const nextConfig = {
                             key: 'Content-Security-Policy',
                             value: [
                                 "default-src 'self'",
-                                "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com",
+                                "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://apis.google.com",
                                 "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
                                 "font-src 'self' https://fonts.gstatic.com",
                                 "img-src 'self' data: https: blob:",
                                 "media-src 'self' https:",
-                                "connect-src 'self' https://firestore.googleapis.com https://firebase.googleapis.com https://content.guardianapis.com https://newsapi.org wss://firestore.googleapis.com",
+                                "connect-src 'self' https://firestore.googleapis.com https://firebase.googleapis.com https://firebaseinstallations.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://content.guardianapis.com https://newsapi.org wss://firestore.googleapis.com",
                                 "frame-src 'none'",
                                 "object-src 'none'",
                                 "base-uri 'self'"
