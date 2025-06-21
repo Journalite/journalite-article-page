@@ -1,3 +1,27 @@
+// Alternative news service using NewsData.io (better free tier than NewsAPI.org)
+export interface NewsDataArticle {
+    title: string;
+    link: string;
+    description: string;
+    content: string;
+    pubDate: string;
+    image_url: string;
+    source_id: string;
+    source_name: string;
+    creator: string[];
+    category: string[];
+    country: string[];
+    language: string;
+}
+
+export interface NewsDataResponse {
+    status: string;
+    totalResults: number;
+    results: NewsDataArticle[];
+    nextPage?: string;
+}
+
+// Keep existing NewsAPI interfaces for backward compatibility
 export interface NewsArticle {
     title: string;
     description: string;

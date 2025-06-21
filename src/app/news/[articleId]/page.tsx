@@ -227,13 +227,33 @@ export default function NewsArticlePage() {
   const convertToArticleFormat = (article: NewsArticle) => {
     let articleHtml = '';
     
-    // Helper function to escape HTML attributes and content
-    const escapeHtml = (text: string): string => {
+    // Helper function to clean and unescape HTML content
+    const cleanHtmlContent = (text: string): string => {
+      if (!text) return '';
+      
+      // First, decode HTML entities
+      let cleanText = text
+        .replace(/&amp;/g, '&')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&quot;/g, '"')
+        .replace(/&#x27;/g, "'")
+        .replace(/&#39;/g, "'")
+        .replace(/&nbsp;/g, ' ');
+      
+      // Then remove HTML tags but preserve line breaks
+      cleanText = cleanText.replace(/<[^>]*>/g, ' ');
+      
+      // Clean up multiple spaces
+      cleanText = cleanText.replace(/\s+/g, ' ').trim();
+      
+      return cleanText;
+    };
+
+    // Helper function to safely escape HTML for attributes only
+    const escapeForAttribute = (text: string): string => {
       if (!text) return '';
       return text
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#x27;');
     };
@@ -242,25 +262,25 @@ export default function NewsArticlePage() {
     const isFallback = article.content?.includes('no longer available through our news feed') || false;
     
     if (article.urlToImage) {
-      const safeImageUrl = escapeHtml(article.urlToImage);
-      const safeImageAlt = escapeHtml(article.title || 'News article image');
+      const safeImageUrl = escapeForAttribute(article.urlToImage);
+      const safeImageAlt = escapeForAttribute(article.title || 'News article image');
       articleHtml += `<img src="${safeImageUrl}" alt="${safeImageAlt}" style="max-width: 100%; height: auto; margin: 2em auto; display: block; border-radius: 8px;" />`;
     }
     
     if (article.description) {
-      const safeDescription = escapeHtml(article.description);
-      articleHtml += `<p><strong>${safeDescription}</strong></p>`;
+      const cleanDescription = cleanHtmlContent(article.description);
+      articleHtml += `<p><strong>${cleanDescription}</strong></p>`;
     }
     
     if (article.content) {
       // Clean up the content (NewsAPI sometimes truncates with [+chars])
-      const cleanContent = article.content.replace(/\[\+\d+\s+chars\]$/, '...');
-      const safeContent = escapeHtml(cleanContent);
-      articleHtml += `<p>${safeContent}</p>`;
+      const rawContent = article.content.replace(/\[\+\d+\s+chars\]$/, '...');
+      const cleanContent = cleanHtmlContent(rawContent);
+      articleHtml += `<p>${cleanContent}</p>`;
     }
     
-        const safeUrl = escapeHtml(article.url || '');
-    const safeSourceName = escapeHtml(article.source?.name || 'News Source');
+        const safeUrl = escapeForAttribute(article.url || '');
+    const safeSourceName = cleanHtmlContent(article.source?.name || 'News Source');
 
     if (isFallback) {
       // Make the external link more prominent for fallback articles - using simple background color instead of gradient
