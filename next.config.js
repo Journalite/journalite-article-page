@@ -1,9 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    reactStrictMode: true,
+    // Remove static export for now due to dynamic external content
+    trailingSlash: true,
     images: {
-        domains: ['firebasestorage.googleapis.com', 'images.unsplash.com', 'upload.wikimedia.org'],
         unoptimized: true,
+        domains: ['firebasestorage.googleapis.com', 'images.unsplash.com', 'upload.wikimedia.org'],
     },
     // Unfortunately, there seems to be a type mismatch in Next.js 15's internal types
     // for dynamic route parameters. Despite creating proper type definitions,
@@ -12,33 +13,96 @@ const nextConfig = {
     typescript: {
         ignoreBuildErrors: true,
     },
-    // Using trailingSlash to ensure consistency in routing
-    trailingSlash: true,
-    // Disable ESLint for production build
-    eslint: {
-        ignoreDuringBuilds: true,
-    },
-    // Memory optimization for development - simplified
+    // Performance optimizations
     experimental: {
         optimizePackageImports: ['react', 'react-dom', 'firebase'],
+        optimizeServerReact: true,
     },
-    // Basic webpack optimization for memory
-    webpack: (config, { dev }) => {
-        if (dev) {
-            // Reduce file watching overhead
-            config.watchOptions = {
-                ...config.watchOptions,
-                aggregateTimeout: 300,
-                ignored: [
-                    'node_modules/**',
-                    '.next/**',
-                    '.git/**',
-                    '.storybook/**',
-                    'out/**'
-                ]
+    // Compiler optimizations
+    compiler: {
+        removeConsole: process.env.NODE_ENV === 'production' ? {
+            exclude: ['error', 'warn']
+        } : false,
+    },
+    // Security headers for production
+    async headers() {
+        if (process.env.NODE_ENV === 'production') {
+            return [
+                {
+                    source: '/(.*)',
+                    headers: [
+                        {
+                            key: 'X-Frame-Options',
+                            value: 'DENY'
+                        },
+                        {
+                            key: 'X-Content-Type-Options',
+                            value: 'nosniff'
+                        },
+                        {
+                            key: 'Referrer-Policy',
+                            value: 'strict-origin-when-cross-origin'
+                        },
+                        {
+                            key: 'Content-Security-Policy',
+                            value: [
+                                "default-src 'self'",
+                                "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com",
+                                "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+                                "font-src 'self' https://fonts.gstatic.com",
+                                "img-src 'self' data: https: blob:",
+                                "media-src 'self' https:",
+                                "connect-src 'self' https://firestore.googleapis.com https://firebase.googleapis.com https://content.guardianapis.com https://newsapi.org wss://firestore.googleapis.com",
+                                "frame-src 'none'",
+                                "object-src 'none'",
+                                "base-uri 'self'"
+                            ].join('; ')
+                        },
+                        {
+                            key: 'Permissions-Policy',
+                            value: 'camera=(), microphone=(), geolocation=(), interest-cohort=()'
+                        }
+                    ]
+                }
+            ];
+        }
+        return [];
+    },
+    // Bundle analyzer for production builds
+    webpack: (config, { dev, isServer }) => {
+        // Production optimizations
+        if (!dev && !isServer) {
+            config.optimization = {
+                ...config.optimization,
+                splitChunks: {
+                    chunks: 'all',
+                    cacheGroups: {
+                        vendor: {
+                            test: /[\\/]node_modules[\\/]/,
+                            name: 'vendors',
+                            chunks: 'all',
+                        },
+                        firebase: {
+                            test: /[\\/]node_modules[\\/]firebase[\\/]/,
+                            name: 'firebase',
+                            chunks: 'all',
+                        },
+                        prosemirror: {
+                            test: /[\\/]node_modules[\\/]prosemirror[\\/]/,
+                            name: 'prosemirror',
+                            chunks: 'all',
+                        },
+                    },
+                },
             };
         }
         return config;
+    },
+    // Disable powered by header
+    poweredByHeader: false,
+    // Disable ESLint for production build
+    eslint: {
+        ignoreDuringBuilds: true,
     },
 };
 

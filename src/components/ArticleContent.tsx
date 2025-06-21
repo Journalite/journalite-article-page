@@ -12,6 +12,7 @@ interface ArticleContentProps {
   hasReflectionRoom?: boolean;
   moodFeatureEnabled?: boolean;
   onToggleMoodFeature?: (enabled: boolean) => void;
+  mood?: 'joyful' | 'reflective' | 'sad' | 'angry' | 'peaceful' | 'energetic';
 }
 
 const ArticleContent: React.FC<ArticleContentProps> = ({
@@ -22,7 +23,8 @@ const ArticleContent: React.FC<ArticleContentProps> = ({
   articleSlug,
   hasReflectionRoom = false,
   moodFeatureEnabled,
-  onToggleMoodFeature
+  onToggleMoodFeature,
+  mood
 }) => {
   // Debug re-renders
   console.log('📝 ArticleContent re-rendered at:', new Date().toLocaleTimeString());
@@ -37,7 +39,8 @@ const ArticleContent: React.FC<ArticleContentProps> = ({
       hasReflectionRoom={hasReflectionRoom}
       {...(isAuthenticated && {
         moodFeatureEnabled: moodFeatureEnabled,
-        onToggleMoodFeature: onToggleMoodFeature
+        onToggleMoodFeature: onToggleMoodFeature,
+        mood: mood
       })}
     />
   );
@@ -53,7 +56,8 @@ export default React.memo(ArticleContent, (prevProps, nextProps) => {
     prevProps.articleSlug === nextProps.articleSlug &&
     prevProps.hasReflectionRoom === nextProps.hasReflectionRoom &&
     prevProps.moodFeatureEnabled === nextProps.moodFeatureEnabled &&
-    prevProps.onToggleMoodFeature === nextProps.onToggleMoodFeature
+    prevProps.onToggleMoodFeature === nextProps.onToggleMoodFeature &&
+    prevProps.mood === nextProps.mood
   );
   
   if (!shouldNotRerender) {
@@ -65,7 +69,8 @@ export default React.memo(ArticleContent, (prevProps, nextProps) => {
       articleSlug: prevProps.articleSlug !== nextProps.articleSlug,
       hasReflectionRoom: prevProps.hasReflectionRoom !== nextProps.hasReflectionRoom,
       moodFeatureEnabled: prevProps.moodFeatureEnabled !== nextProps.moodFeatureEnabled,
-      onToggleMoodFeature: prevProps.onToggleMoodFeature !== nextProps.onToggleMoodFeature
+      onToggleMoodFeature: prevProps.onToggleMoodFeature !== nextProps.onToggleMoodFeature,
+      mood: prevProps.mood !== nextProps.mood
     });
   }
   

@@ -90,9 +90,9 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({
               </Link>
               
               <Link 
-                href="/trending" 
-                className={`${styles['nav-link']} ${styles['nav-trending']} ${isActive('/trending') ? styles.active : ''}`}
-                title="Trending"
+                href="/explore" 
+                className={`${styles['nav-link']} ${styles['nav-explore']} ${isActive('/explore') ? styles.active : ''}`}
+                title="Explore"
               >
                 <span className={styles['nav-icon']}></span>
               </Link>

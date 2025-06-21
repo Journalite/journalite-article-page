@@ -23,6 +23,9 @@ interface ArticleWithHighlightsProps {
   articleSlug?: string;
   hasReflectionRoom?: boolean;
   authorId?: string;
+  moodFeatureEnabled?: boolean;
+  onToggleMoodFeature?: (enabled: boolean) => void;
+  mood?: 'joyful' | 'reflective' | 'sad' | 'angry' | 'peaceful' | 'energetic';
 }
 
 const ArticleWithHighlights: React.FC<ArticleWithHighlightsProps> = ({
@@ -32,13 +35,19 @@ const ArticleWithHighlights: React.FC<ArticleWithHighlightsProps> = ({
   articleTitle = 'Article',
   articleSlug = '',
   hasReflectionRoom = false,
-  authorId
+  authorId,
+  moodFeatureEnabled,
+  onToggleMoodFeature,
+  mood: externalMood
 }) => {
   // const [moodFeatureEnabled, setMoodFeatureEnabled] = useState(true); // Unused
   const [article, setArticle] = useState<{ title: string; body: string } | null>(null);
   const [isLoading, setIsLoading] = useState(!initialHtml);
   const [error, setError] = useState('');
-  const [mood, setMood] = useState<'joyful' | 'reflective' | 'sad' | 'angry' | 'peaceful' | 'energetic'>('reflective');
+  const [internalMood, setInternalMood] = useState<'joyful' | 'reflective' | 'sad' | 'angry' | 'peaceful' | 'energetic'>('reflective');
+  
+  // Use external mood if provided, otherwise use internal mood
+  const mood = externalMood || internalMood;
   const articleContainerRef = useRef<HTMLDivElement>(null);
 
 
@@ -61,9 +70,10 @@ const ArticleWithHighlights: React.FC<ArticleWithHighlightsProps> = ({
     if (content) {
       // Extract text from HTML for sentiment analysis
       const textContent = content.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
-      if (textContent) {
+      if (textContent && !externalMood) {
+        // Only set internal mood if no external mood is provided
         const detectedMood = getMoodFromText(textContent);
-        setMood(detectedMood);
+        setInternalMood(detectedMood);
       }
     }
   }, [initialHtml, article]);

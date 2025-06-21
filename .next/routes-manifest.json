@@ -25,7 +25,34 @@
       "regex": "^(?:/((?!\\.well-known(?:/.*)?)(?:[^/]+/)*[^/\\.]+))$"
     }
   ],
-  "headers": [],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; media-src 'self' https:; connect-src 'self' https://firestore.googleapis.com https://firebase.googleapis.com https://content.guardianapis.com https://newsapi.org wss://firestore.googleapis.com; frame-src 'none'; object-src 'none'; base-uri 'self'"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=(), interest-cohort=()"
+        }
+      ],
+      "regex": "^(?:/(.*))(?:/)?$"
+    }
+  ],
   "dynamicRoutes": [
     {
       "page": "/articles/[id]",
@@ -42,6 +69,22 @@
         "nxtPid": "nxtPid"
       },
       "namedRegex": "^/articles/(?<nxtPid>[^/]+?)/view(?:/)?$"
+    },
+    {
+      "page": "/guardian-news/[...articleId]",
+      "regex": "^/guardian\\-news/(.+?)(?:/)?$",
+      "routeKeys": {
+        "nxtParticleId": "nxtParticleId"
+      },
+      "namedRegex": "^/guardian\\-news/(?<nxtParticleId>.+?)(?:/)?$"
+    },
+    {
+      "page": "/news/[articleId]",
+      "regex": "^/news/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtParticleId": "nxtParticleId"
+      },
+      "namedRegex": "^/news/(?<nxtParticleId>[^/]+?)(?:/)?$"
     },
     {
       "page": "/tag/[tag]",
@@ -116,6 +159,12 @@
       "namedRegex": "^/create\\-article(?:/)?$"
     },
     {
+      "page": "/debug-guardian",
+      "regex": "^/debug\\-guardian(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/debug\\-guardian(?:/)?$"
+    },
+    {
       "page": "/dev",
       "regex": "^/dev(?:/)?$",
       "routeKeys": {},
@@ -144,6 +193,12 @@
       "regex": "^/forgot\\-password(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/forgot\\-password(?:/)?$"
+    },
+    {
+      "page": "/guardian-news",
+      "regex": "^/guardian\\-news(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/guardian\\-news(?:/)?$"
     },
     {
       "page": "/login",
@@ -182,6 +237,12 @@
       "namedRegex": "^/my\\-thoughts/reflections(?:/)?$"
     },
     {
+      "page": "/news",
+      "regex": "^/news(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/news(?:/)?$"
+    },
+    {
       "page": "/notifications",
       "regex": "^/notifications(?:/)?$",
       "routeKeys": {},
@@ -216,6 +277,12 @@
       "regex": "^/settings(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/settings(?:/)?$"
+    },
+    {
+      "page": "/test-guardian",
+      "regex": "^/test\\-guardian(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/test\\-guardian(?:/)?$"
     }
   ],
   "dataRoutes": [],

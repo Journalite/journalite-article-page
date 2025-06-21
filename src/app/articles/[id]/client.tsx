@@ -279,7 +279,7 @@ const ArticlePageClient: React.FC<ArticlePageClientProps> = ({ id }) => {
       {/* Dynamic animated mood gradient overlay (always rendered but controlled by MoodToggle) */}
       {isAuthenticated && (
         <>
-          {/* Primary flowing gradient */}
+          {/* Optimized subtle gradient background */}
           <div
             data-mood-element="primary-gradient"
             style={{
@@ -288,83 +288,32 @@ const ArticlePageClient: React.FC<ArticlePageClientProps> = ({ id }) => {
               left: 0,
               right: 0,
               bottom: 0,
-              backgroundImage: `linear-gradient(45deg, 
-                ${moodThemes[mood].gradientStart}40, 
-                ${moodThemes[mood].gradientEnd}60, 
-                ${moodThemes[mood].gradientStart}30, 
-                ${moodThemes[mood].gradientEnd}50)`,
-              backgroundSize: '400% 400%',
-              animation: 'gradientFlow 8s ease-in-out infinite',
-              filter: 'contrast(1.1) brightness(1.05) saturate(1.1)',
+              backgroundImage: `linear-gradient(135deg, 
+                ${moodThemes[mood].gradientStart}08, 
+                ${moodThemes[mood].gradientEnd}12, 
+                ${moodThemes[mood].gradientStart}06)`,
+              backgroundSize: '100% 100%',
               zIndex: 0,
-              transition: 'background-image 1s ease-in-out',
+              transition: 'background-image 0.8s ease-in-out',
               pointerEvents: 'none',
               display: typeof window !== 'undefined' && localStorage.getItem('moodFeatureEnabled') === 'false' ? 'none' : ''
             }}
           />
           
-          {/* Secondary wave layer */}
+          {/* Subtle accent overlay */}
           <div
-            data-mood-element="secondary-wave"
+            data-mood-element="accent-overlay"
             style={{
               position: 'fixed',
               top: 0,
               left: 0,
               right: 0,
               bottom: 0,
-              backgroundImage: `radial-gradient(circle at 20% 80%, ${moodThemes[mood].gradientEnd}25 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, ${moodThemes[mood].gradientStart}25 0%, transparent 50%),
-                radial-gradient(circle at 40% 40%, ${moodThemes[mood].gradientEnd}15 0%, transparent 50%)`,
-              backgroundSize: '600px 600px, 800px 800px, 400px 400px',
-              animation: 'moodFloat 12s ease-in-out infinite alternate',
+              backgroundImage: `radial-gradient(circle at 30% 70%, ${moodThemes[mood].gradientEnd}06 0%, transparent 60%),
+                radial-gradient(circle at 70% 30%, ${moodThemes[mood].gradientStart}06 0%, transparent 60%)`,
+              backgroundSize: '100% 100%',
               zIndex: 1,
-              opacity: 0.6,
-              pointerEvents: 'none',
-              display: typeof window !== 'undefined' && localStorage.getItem('moodFeatureEnabled') === 'false' ? 'none' : ''
-            }}
-          />
-          
-          {/* Floating orbs */}
-          <div
-            data-mood-element="floating-orbs"
-            style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              backgroundImage: `radial-gradient(circle at 25% 25%, ${moodThemes[mood].gradientStart}20 0%, transparent 25%),
-                radial-gradient(circle at 75% 75%, ${moodThemes[mood].gradientEnd}20 0%, transparent 25%),
-                radial-gradient(circle at 50% 10%, ${moodThemes[mood].gradientStart}15 0%, transparent 30%),
-                radial-gradient(circle at 10% 90%, ${moodThemes[mood].gradientEnd}15 0%, transparent 30%)`,
-              backgroundSize: '300px 300px, 500px 500px, 200px 200px, 400px 400px',
-              animation: 'orbitalFloat 20s linear infinite',
-              zIndex: 2,
-              opacity: 0.4,
-              pointerEvents: 'none',
-              display: typeof window !== 'undefined' && localStorage.getItem('moodFeatureEnabled') === 'false' ? 'none' : ''
-            }}
-          />
-          
-          {/* Grain texture overlay */}
-          <div
-            data-mood-element="grain-texture"
-            style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              backgroundImage: `repeating-linear-gradient(
-                90deg,
-                transparent,
-                transparent 2px,
-                ${moodThemes[mood].gradientStart}02 2px,
-                ${moodThemes[mood].gradientStart}02 4px
-              )`,
-              zIndex: 3,
-              opacity: 0.15,
-              mixBlendMode: 'overlay',
+              opacity: 0.7,
               pointerEvents: 'none',
               display: typeof window !== 'undefined' && localStorage.getItem('moodFeatureEnabled') === 'false' ? 'none' : ''
             }}

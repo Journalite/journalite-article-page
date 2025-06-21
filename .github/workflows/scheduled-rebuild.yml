@@ -32,6 +32,9 @@ jobs:
       NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID }}
       NEXT_PUBLIC_FIREBASE_APP_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_APP_ID }}
       NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID }}
+      # Add Guardian and NewsAPI environment variables from secrets
+      NEXT_PUBLIC_GUARDIAN_API_KEY: ${{ secrets.GUARDIAN_API_KEY }}
+      NEXT_PUBLIC_NEWS_API_KEY: ${{ secrets.NEWS_API_KEY }}
      
     steps:
       - name: Checkout

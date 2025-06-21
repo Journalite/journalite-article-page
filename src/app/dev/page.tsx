@@ -3009,6 +3009,606 @@ This memory optimization work demonstrates that with careful analysis and target
   `
 };
 
+const securityAuditDoc: DocSection = {
+  id: 'security-audit',
+  title: 'Security Audit & Hardening',
+  content: `
+## Security Audit Results ✅
+
+### **API Key Security**
+- ✅ All API keys use environment variables
+- ✅ GitHub Secrets configured for CI/CD
+- ✅ No hardcoded secrets in codebase
+- ✅ Production console logs sanitized
+
+### **Security Headers Implemented**
+\`\`\`javascript
+// next.config.js security headers
+X-Frame-Options: DENY
+X-Content-Type-Options: nosniff
+Referrer-Policy: strict-origin-when-cross-origin
+Content-Security-Policy: Comprehensive CSP rules
+Permissions-Policy: Disabled unnecessary permissions
+\`\`\`
+
+### **Content Security Policy**
+- **Scripts**: Self, Google Analytics only
+- **Styles**: Self, Google Fonts
+- **Images**: Self, HTTPS, data URLs, blob
+- **Connect**: Firebase, Guardian API, NewsAPI
+- **Frame**: Completely disabled
+
+### **Production Hardening**
+- Console logs removed in production (except errors/warnings)
+- Powered-by header disabled
+- SWC minification enabled
+- Bundle splitting optimized
+
+### **Environment Variables**
+\`\`\`bash
+# Required in GitHub Secrets
+GUARDIAN_API_KEY=your_guardian_key
+NEWS_API_KEY=your_news_key
+NEXT_PUBLIC_FIREBASE_API_KEY=your_firebase_key
+# ... other Firebase config
+\`\`\`
+  `
+};
+
+const performanceOptimizationDoc: DocSection = {
+  id: 'performance-optimization',
+  title: 'Performance Optimization',
+  content: `
+## Performance Enhancements 🚀
+
+### **Bundle Optimization**
+- **Code Splitting**: Vendor, Firebase, ProseMirror chunks
+- **Tree Shaking**: Unused code elimination
+- **Dynamic Imports**: Lazy loading for heavy components
+- **SWC Minification**: Faster than Terser
+
+### **Caching Strategy**
+\`\`\`typescript
+// API Response Caching (5 minutes)
+import { apiCache } from '@/utils/performance';
+
+// Cache Guardian articles
+const cacheKey = \`guardian-\${section}-\${page}\`;
+const cached = apiCache.get(cacheKey);
+if (cached) return cached;
+
+const data = await guardianService.searchArticles(...);
+apiCache.set(cacheKey, data);
+\`\`\`
+
+### **Image Optimization**
+\`\`\`typescript
+// Automatic WebP conversion for Unsplash
+getOptimizedImageUrl(url, 800, 600, 80);
+// Outputs: url?w=800&h=600&q=80&fm=webp
+\`\`\`
+
+### **Lazy Loading**
+- **Components**: Editor, ArticleComposer, ReflectionRoom
+- **Services**: Guardian, NewsAPI
+- **Images**: Intersection Observer with 50px margin
+- **Routes**: Next.js automatic code splitting
+
+### **Memory Management**
+- **Cache Cleanup**: Auto-clear when >100 entries
+- **Garbage Collection**: Development mode optimization
+- **Resource Preloading**: Critical CSS/JS
+
+### **Performance Monitoring**
+\`\`\`typescript
+import { measurePerformance } from '@/utils/performance';
+
+measurePerformance('API Call', () => {
+  return fetchArticles();
+});
+// Logs: Performance [API Call]: 245ms
+\`\`\`
+
+### **Debouncing & Throttling**
+\`\`\`typescript
+// Search input debouncing (300ms)
+const debouncedSearch = debounce(handleSearch, 300);
+
+// Scroll event throttling (100ms)
+const throttledScroll = throttle(handleScroll, 100);
+\`\`\`
+  `
+};
+
+const externalArticleIntegrationDoc: DocSection = {
+  id: 'external-articles',
+  title: 'External Article Integration',
+  content: `
+## Multi-Source Content System 🌐
+
+### **Integrated News Sources**
+1. **The Guardian API** - High-quality journalism
+2. **NewsAPI.org** - Global news aggregation  
+3. **Journalite** - Internal articles
+
+### **Content Distribution Strategy**
+\`\`\`typescript
+// Homepage: 2 Journalite + 1 Guardian + 1 NewsAPI
+// Explore: Balanced mix with external priority
+// Categories: Interest-based article matching
+\`\`\`
+
+### **Guardian API Integration**
+\`\`\`typescript
+// Service: /src/services/guardianService.ts
+await guardianService.searchArticles(
+  'climate change',  // query
+  'environment',     // section
+  1,                 // page
+  10                 // limit
+);
+
+// Features:
+- Article search by keywords
+- Section filtering (technology, science, etc.)
+- Full HTML content with images
+- Proper image positioning preservation
+- Author and metadata extraction
+\`\`\`
+
+### **NewsAPI Integration**
+\`\`\`typescript
+// Service: /src/services/newsService.ts
+await newsService.getTopHeadlines('technology');
+await newsService.searchArticles('artificial intelligence');
+
+// Features:
+- Top headlines by category
+- Global news search
+- Source attribution
+- Image optimization
+\`\`\`
+
+### **Content Adaptation**
+All external articles are converted to Journalite format:
+\`\`\`typescript
+interface BaseArticle {
+  id: string;
+  title: string;
+  slug: string;
+  authorName: string;
+  excerpt: string; // HTML cleaned
+  coverImageUrl?: string;
+  tags: string[];
+  source: 'journalite' | 'guardian' | 'newsapi';
+  isExternal: boolean;
+  externalUrl?: string;
+}
+\`\`\`
+
+### **HTML Content Cleaning**
+\`\`\`typescript
+// Removes HTML tags from previews
+const cleanHtmlText = (html: string) => {
+  return html
+    .replace(/<[^>]*>/g, ' ')      // Remove tags
+    .replace(/\s+/g, ' ')          // Clean whitespace
+    .replace(/&amp;/g, '&')        // Decode entities
+    .trim()
+    .substring(0, 200) + '...';    // Limit length
+};
+\`\`\`
+
+### **Smart Content Categorization**
+\`\`\`typescript
+const INTEREST_MAPPING = {
+  'Technology': {
+    newsCategory: 'technology',
+    guardianSections: ['technology', 'science'],
+    keywords: ['tech', 'AI', 'software', 'digital']
+  },
+  // ... 20+ interest mappings
+};
+\`\`\`
+
+### **Source Identification**
+- **Visual Badges**: Color-coded source indicators
+- **Guardian**: Dark blue (#052962)  
+- **NewsAPI**: Green (#10B981)
+- **Journalite**: Purple (#7C3AED)
+
+### **Error Handling**
+- Graceful API failures
+- Fallback to Journalite content
+- Retry mechanisms for network issues
+- Cache-first strategy
+  `
+};
+
+const homepageRedesignDoc: DocSection = {
+  id: 'homepage-redesign',
+  title: 'Homepage Redesign',
+  content: `
+## Modern Homepage Experience 🎨
+
+### **Dual-Purpose Design**
+**Unauthenticated Users**: Landing page with hero section
+**Authenticated Users**: Personalized dashboard
+
+### **Hero Section (Unauthenticated)**
+\`\`\`tsx
+<section className="hero-section">
+  <h1>Welcome to Journalite</h1>
+  <p>Where stories come alive through reflection</p>
+  <div className="cta-buttons">
+    <Link href="/register">Get Started</Link>
+    <Link href="/login">Sign In</Link>
+  </div>
+</section>
+\`\`\`
+
+### **Welcome Dashboard (Authenticated)**
+\`\`\`tsx
+<section className="welcome-section">
+  <h2>Welcome back, {user.displayName}</h2>
+  <div className="quick-actions">
+    <Link href="/explore">🔍 Explore</Link>
+    <Link href="/compose">✍️ Write</Link>
+    <Link href="/my-thoughts">💭 My Thoughts</Link>
+  </div>
+</section>
+\`\`\`
+
+### **Featured Articles**
+- **Mixed Content**: 2 Journalite + 1 Guardian + 1 NewsAPI
+- **Smart Image Selection**: Content-aware Unsplash images
+- **Glassmorphism Design**: Backdrop blur effects
+- **Hover Animations**: Smooth transitions
+
+### **Platform Features (Unauthenticated)**
+\`\`\`tsx
+const features = [
+  {
+    icon: <GlobeIcon />, // Professional SVG
+    title: "Diverse Sources",
+    description: "Curated content from trusted sources"
+  },
+  {
+    icon: <LightBulbIcon />,
+    title: "Personalized Feed", 
+    description: "AI-powered content recommendations"
+  },
+  {
+    icon: <DocumentCheckIcon />,
+    title: "Reflection Tools",
+    description: "Deep thinking and mindful reading"
+  }
+];
+\`\`\`
+
+### **Design System**
+\`\`\`css
+/* Glassmorphism Effects */
+.glass-card {
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+/* Gradient Backgrounds */
+.gradient-bg {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Hover Animations */
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
+}
+\`\`\`
+
+### **Content-Aware Image Selection**
+\`\`\`typescript
+const imageCategories = {
+  'Tech & Innovation': [
+    'https://images.unsplash.com/photo-1518709268805-4e9042af2176',
+    'https://images.unsplash.com/photo-1451187580459-43490279c0fa'
+  ],
+  'Culture & Society': [
+    'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d',
+    'https://images.unsplash.com/photo-1517077304055-6e89abbf09b0'
+  ]
+  // ... more categories
+};
+
+// Smart matching based on article tags/content
+const selectImageForArticle = (article) => {
+  const category = matchContentToCategory(article.tags, article.title);
+  return getRandomImage(imageCategories[category]);
+};
+\`\`\`
+  `
+};
+
+const explorePageEnhancementsDoc: DocSection = {
+  id: 'explore-enhancements',
+  title: 'Explore Page Enhancements',
+  content: `
+## Advanced Content Discovery 🔍
+
+### **Multi-Source Content Strategy**
+\`\`\`typescript
+// Content Distribution
+const contentSources = {
+  journalite: 8,    // Reduced from 12
+  guardian: 18,     // 6 per interest × 3 interests  
+  newsapi: 18,      // 6 per interest × 3 interests
+  total: 44         // Before deduplication
+};
+\`\`\`
+
+### **Intelligent Categorization**
+1. **Discover Stories** (Priority 100)
+   - 8 external articles + 4 Journalite
+   - Balanced source mixing
+   
+2. **For You/Featured** (Priority 95)
+   - Personalized based on interests
+   - Engagement scoring algorithm
+   
+3. **Latest News** (Priority 90)
+   - External articles only
+   - Guardian + NewsAPI content
+   
+4. **Interest Categories** (Priority 85)
+   - User's top 2 interests
+   - Mixed source content
+   
+5. **Trending on Journalite** (Priority 80)
+   - High engagement articles
+   - Journalite exclusive
+   
+6. **Latest Updates** (Priority 75)
+   - Recent from all sources
+
+### **Content Scoring Algorithm**
+\`\`\`typescript
+const scoreArticle = (article, userInterests) => {
+  let score = 0;
+  
+  // Interest keyword matching (+10 per match)
+  userInterests.forEach(interest => {
+    const keywords = INTEREST_MAPPING[interest].keywords;
+    keywords.forEach(keyword => {
+      if (article.content.includes(keyword)) score += 10;
+    });
+  });
+  
+  // Tag relevance (+15 per match)
+  article.tags.forEach(tag => {
+    if (userInterests.includes(tag)) score += 15;
+  });
+  
+  // Recency bonus
+  const daysSince = getDaysSincePublished(article.createdAt);
+  if (daysSince < 1) score += 5;
+  else if (daysSince < 7) score += 3;
+  
+  // Engagement metrics
+  score += (article.likes?.length || 0);
+  score += Math.log(article.viewCount || 1);
+  
+  return score;
+};
+\`\`\`
+
+### **Deduplication System**
+\`\`\`typescript
+const deduplicateArticles = (articles) => {
+  const seen = new Set();
+  
+  return articles.filter(article => {
+    // Create unique key from title + URL
+    const titleKey = article.title.toLowerCase()
+      .replace(/[^\w\s]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+    const key = \`\${titleKey}|\${article.url || ''}\`;
+    
+    // Check for similar titles (first 50 chars)
+    const isDuplicate = Array.from(seen).some(existingKey => {
+      const existingTitle = existingKey.split('|')[0].substring(0, 50);
+      const currentTitle = titleKey.substring(0, 50);
+      return existingTitle === currentTitle;
+    });
+    
+    if (!seen.has(key) && !isDuplicate) {
+      seen.add(key);
+      return true;
+    }
+    return false;
+  });
+};
+\`\`\`
+
+### **Performance Monitoring**
+\`\`\`typescript
+// Detailed logging for debugging
+console.log('📊 Final categories:', categoriesData.map(cat => ({
+  name: cat.name,
+  count: cat.articles.length,
+  sources: {
+    journalite: cat.articles.filter(a => a.source === 'journalite').length,
+    guardian: cat.articles.filter(a => a.source === 'guardian').length,
+    newsapi: cat.articles.filter(a => a.source === 'newsapi').length
+  }
+})));
+\`\`\`
+
+### **Fallback Strategies**
+1. **API Failure**: Fall back to Journalite only
+2. **No External Content**: Try general categories
+3. **Empty Categories**: Hide from UI
+4. **Network Issues**: Show cached content
+
+### **Interest Mapping System**
+\`\`\`typescript
+// 20+ interest categories mapped to:
+const INTEREST_MAPPING = {
+  'Technology': {
+    newsCategory: 'technology',           // NewsAPI category
+    guardianSections: ['technology'],     // Guardian sections
+    keywords: ['tech', 'AI', 'software'] // Search keywords
+  }
+  // ... comprehensive mapping
+};
+\`\`\`
+  `
+};
+
+const guardianIntegrationDoc: DocSection = {
+  id: 'guardian-integration',
+  title: 'Guardian API Deep Dive',
+  content: `
+## The Guardian Integration 📰
+
+### **API Configuration**
+\`\`\`typescript
+class GuardianService {
+  private apiKey: string;
+  private baseUrl = 'https://content.guardianapis.com';
+  
+  // Rate limiting: 1 req/sec, 500/day
+  // Free tier: Non-commercial use only
+}
+\`\`\`
+
+### **Content Preservation**
+**Problem**: Original implementation added images at the bottom
+**Solution**: Preserve Guardian's original HTML structure
+
+\`\`\`typescript
+convertToArticleFormat(article: GuardianArticle) {
+  let bodyContent = article.fields?.body || '';
+  
+  if (bodyContent) {
+    // Enhance existing images without moving them
+    bodyContent = bodyContent.replace(
+      /<img([^>]*?)>/g,
+      (match, attrs) => {
+        return \`<img \${attrs} style="max-width: 100%; height: auto; margin: 2em auto; display: block; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);" />\`;
+      }
+    );
+    
+    // Enhance figure elements
+    bodyContent = bodyContent.replace(
+      /<figure([^>]*?)>/g,
+      (match, attrs) => {
+        return \`<figure \${attrs} style="margin: 2em auto; text-align: center;">\`;
+      }
+    );
+  }
+  
+  // Only add fallback images if body has none
+  const hasImagesInBody = bodyContent.includes('<img');
+  if (!hasImagesInBody && article.elements) {
+    // Add main image at top, not bottom
+    const mainImage = article.elements.find(el => el.type === 'image');
+    if (mainImage) {
+      bodyContent = \`<figure>\${imageHtml}</figure>\` + bodyContent;
+    }
+  }
+}
+\`\`\`
+
+### **Article Fields Available**
+\`\`\`typescript
+interface GuardianArticle {
+  id: string;                    // Unique identifier
+  webTitle: string;              // Article title
+  webUrl: string;                // Original URL
+  webPublicationDate: string;    // ISO date
+  sectionName: string;           // e.g., "Technology"
+  pillarName: string;            // e.g., "News"
+  
+  fields?: {
+    headline?: string;           // Often better than webTitle
+    standfirst?: string;         // Article summary
+    body?: string;               // Full HTML content
+    bodyText?: string;           // Plain text version
+    trailText?: string;          // Preview text
+    main?: string;               // Main image URL
+    thumbnail?: string;          // Thumbnail URL
+    byline?: string;             // Author info
+  };
+  
+  elements?: Array<{             // Media elements
+    type: 'image' | 'video';
+    assets: Array<{
+      type: string;
+      file: string;              // Media URL
+      typeData: {
+        secureFile?: string;     // HTTPS URL
+        caption?: string;        // Image caption
+        alt?: string;            // Alt text
+        width?: number;
+        height?: number;
+      };
+    }>;
+  }>;
+  
+  tags: Array<{                  // Article tags
+    id: string;
+    type: 'contributor' | 'keyword';
+    webTitle: string;
+  }>;
+}
+\`\`\`
+
+### **Search Capabilities**
+\`\`\`typescript
+// Keyword search
+await guardianService.searchArticles('climate change');
+
+// Section filtering
+await guardianService.searchArticles('', 'environment');
+
+// Combined search
+await guardianService.searchArticles('renewable energy', 'environment');
+
+// Boolean search
+await guardianService.searchArticles('climate AND (warming OR change)');
+
+// Date range
+await guardianService.searchArticles('brexit', 'politics', 1, 10, {
+  fromDate: '2023-01-01',
+  toDate: '2023-12-31'
+});
+\`\`\`
+
+### **Available Sections**
+- \`world\` - World news
+- \`politics\` - Politics  
+- \`business\` - Business
+- \`technology\` - Technology
+- \`science\` - Science
+- \`environment\` - Environment & climate
+- \`sport\` - Sports
+- \`culture\` - Arts, books, music, film
+- \`lifeandstyle\` - Lifestyle
+- \`opinion\` - Opinion & commentary
+
+### **Image Handling Strategy**
+1. **Preserve Original Layout**: Keep images where Guardian placed them
+2. **Enhance Styling**: Add responsive CSS, shadows, borders
+3. **Fallback Images**: Only add if body content has no images
+4. **Caption Support**: Maintain figcaption elements
+5. **Performance**: Lazy loading with intersection observer
+  `
+};
+
 // Collection of all documentation sections
 const docSections: DocSection[] = [
   projectStructureDoc,
@@ -3027,7 +3627,13 @@ const docSections: DocSection[] = [
   enhancedHighlightsDoc,
   realTimePresenceDoc,
   messagingSystemDoc,
-  memoryOptimizationDoc
+  memoryOptimizationDoc,
+  securityAuditDoc,
+  performanceOptimizationDoc,
+  externalArticleIntegrationDoc,
+  homepageRedesignDoc,
+  explorePageEnhancementsDoc,
+  guardianIntegrationDoc
 ];
 
 // User Management Component

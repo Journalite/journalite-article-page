@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import { doc, collection, addDoc, query, orderBy, onSnapshot, updateDoc, deleteDoc, where, getDocs } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth, db as firestore } from '@/firebase/clientApp';
@@ -29,6 +30,8 @@ interface CommentSectionProps {
 }
 
 const CommentSection: React.FC<CommentSectionProps> = ({ articleId, className = '' }) => {
+  const router = useRouter();
+  
   // State management
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState('');
@@ -283,120 +286,118 @@ const CommentSection: React.FC<CommentSectionProps> = ({ articleId, className = 
   // Render individual comment
   const renderComment = useCallback((comment: Comment, isReply = false) => (
     <div key={comment.id} className={`${styles.comment} ${isReply ? styles.reply : ''}`}>
-      <div className={styles.commentContent}>
-        <div className={styles.commentHeader}>
-          <div className={styles.commentAvatar}>
-            {getUserAvatar(comment.authorName, comment.authorId)}
-          </div>
-          <div className={styles.commentMeta}>
-            <span className={styles.commentAuthor}>{comment.authorName}</span>
-            <span className={styles.commentTime}>{formatTimestamp(comment.createdAt)}</span>
-          </div>
-          {currentUser?.uid === comment.authorId && (
-            <div className={styles.commentActions}>
-              <button
-                onClick={() => {
-                  const newExpanded = new Set(expandedMenus);
-                  if (expandedMenus.has(comment.id)) {
-                    newExpanded.delete(comment.id);
-                  } else {
-                    newExpanded.add(comment.id);
-                  }
-                  setExpandedMenus(newExpanded);
-                }}
-                className={styles.menuButton}
-                aria-label="Comment options"
-              >
-                <DotsVerticalIcon size={16} color="#64748b" />
-              </button>
-              {expandedMenus.has(comment.id) && (
-                <div className={styles.dropdownMenu}>
-                  <button
-                    onClick={() => {
-                      setEditingComment(comment.id);
-                      setEditText(comment.text);
-                      setExpandedMenus(new Set());
-                    }}
-                    className={styles.menuItem}
-                  >
-                    <EditIcon size={14} color="#3b82f6" />
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(comment.id)}
-                    className={styles.menuItem}
-                    disabled={isSubmitting}
-                  >
-                    <TrashIcon size={14} color="#ef4444" />
-                    Delete
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
+      <div className={styles.commentHeader}>
+        <div className={styles.commentAvatar}>
+          {getUserAvatar(comment.authorName, comment.authorId)}
         </div>
-
-        {editingComment === comment.id ? (
-          <div className={styles.editForm}>
-            <textarea
-              value={editText}
-              onChange={(e) => setEditText(e.target.value)}
-              className={`${styles.editInput} mobile-optimized-input`}
-              data-mobile="true"
-              rows={3}
-              autoFocus
-            />
-            <div className={styles.editActions}>
-              <button
-                onClick={() => {
-                  setEditingComment(null);
-                  setEditText('');
-                }}
-                className={styles.cancelButton}
-                disabled={isSubmitting}
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => handleEditSubmit(comment.id)}
-                className={styles.saveButton}
-                disabled={!editText.trim() || isSubmitting}
-              >
-                {isSubmitting ? 'Saving...' : 'Save'}
-              </button>
-            </div>
-          </div>
-        ) : (
-          <>
-            <p className={styles.commentText}>{comment.text}</p>
-            <div className={styles.commentFooter}>
-              <button
-                onClick={() => handleLike(comment.id, comment.likes || [])}
-                className={`${styles.likeButton} ${
-                  comment.likes?.includes(currentUser?.uid) ? styles.liked : ''
-                }`}
-                disabled={!isAuthenticated}
-              >
-                <HeartIcon
-                  size={14}
-                  color={comment.likes?.includes(currentUser?.uid) ? '#ef4444' : '#64748b'}
-                />
-                {comment.likes?.length ? comment.likes.length : ''}
-              </button>
-              {!isReply && (
+        <div className={styles.commentMeta}>
+          <span className={styles.commentAuthor}>{comment.authorName}</span>
+          <span className={styles.commentTime}>{formatTimestamp(comment.createdAt)}</span>
+        </div>
+        {currentUser?.uid === comment.authorId && (
+          <div className={styles.commentActions}>
+            <button
+              onClick={() => {
+                const newExpanded = new Set(expandedMenus);
+                if (expandedMenus.has(comment.id)) {
+                  newExpanded.delete(comment.id);
+                } else {
+                  newExpanded.add(comment.id);
+                }
+                setExpandedMenus(newExpanded);
+              }}
+              className={styles.menuButton}
+              aria-label="Comment options"
+            >
+              <DotsVerticalIcon size={16} color="#64748b" />
+            </button>
+            {expandedMenus.has(comment.id) && (
+              <div className={styles.dropdownMenu}>
                 <button
-                  onClick={() => setReplyingTo(comment.id)}
-                  className={styles.replyButton}
-                  disabled={!isAuthenticated}
+                  onClick={() => {
+                    setEditingComment(comment.id);
+                    setEditText(comment.text);
+                    setExpandedMenus(new Set());
+                  }}
+                  className={styles.menuItem}
                 >
-                  <ReplyIcon size={14} color="#64748b" />
-                  Reply
+                  <EditIcon size={14} color="#3b82f6" />
+                  Edit
                 </button>
-              )}
-            </div>
-          </>
+                <button
+                  onClick={() => handleDelete(comment.id)}
+                  className={styles.menuItem}
+                  disabled={isSubmitting}
+                >
+                  <TrashIcon size={14} color="#ef4444" />
+                  Delete
+                </button>
+              </div>
+            )}
+          </div>
         )}
       </div>
+
+      {editingComment === comment.id ? (
+        <div className={styles.editForm}>
+          <textarea
+            value={editText}
+            onChange={(e) => setEditText(e.target.value)}
+            className={`${styles.editInput} mobile-optimized-input`}
+            data-mobile="true"
+            rows={3}
+            autoFocus
+          />
+          <div className={styles.editActions}>
+            <button
+              onClick={() => {
+                setEditingComment(null);
+                setEditText('');
+              }}
+              className={styles.cancelButton}
+              disabled={isSubmitting}
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => handleEditSubmit(comment.id)}
+              className={styles.saveButton}
+              disabled={!editText.trim() || isSubmitting}
+            >
+              {isSubmitting ? 'Saving...' : 'Save'}
+            </button>
+          </div>
+        </div>
+      ) : (
+        <>
+          <p className={styles.commentText}>{comment.text}</p>
+          <div className={styles.commentFooter}>
+            <button
+              onClick={() => handleLike(comment.id, comment.likes || [])}
+              className={`${styles.likeButton} ${
+                comment.likes?.includes(currentUser?.uid) ? styles.liked : ''
+              }`}
+              disabled={!isAuthenticated}
+            >
+              <HeartIcon
+                size={14}
+                color={comment.likes?.includes(currentUser?.uid) ? '#ef4444' : '#64748b'}
+              />
+              {comment.likes?.length ? comment.likes.length : ''}
+            </button>
+            {!isReply && (
+              <button
+                onClick={() => setReplyingTo(comment.id)}
+                className={styles.replyButton}
+                disabled={!isAuthenticated}
+              >
+                <ReplyIcon size={14} color="#64748b" />
+                Reply
+              </button>
+            )}
+          </div>
+        </>
+      )}
 
       {/* Reply form */}
       {replyingTo === comment.id && (
@@ -461,123 +462,59 @@ const CommentSection: React.FC<CommentSectionProps> = ({ articleId, className = 
 
       {/* Comment Form */}
       <form className={styles.commentForm} onSubmit={handleCommentSubmit}>
-        <div
-          className={styles.commentInputContainer}
-          style={{
-            background: moodFeatureEnabled 
-              ? `linear-gradient(135deg, 
-                  rgba(255, 255, 255, ${focusState ? '0.12' : '0.06'}), 
-                  ${moodThemes[mood].gradientStart}${focusState ? '10' : '04'}, 
-                  ${moodThemes[mood].gradientEnd}${focusState ? '06' : '03'})`
-              : `rgba(255, 255, 255, ${focusState ? '0.1' : '0.05'})`,
-            border: moodFeatureEnabled 
-              ? `1px solid ${moodThemes[mood].gradientStart}${focusState ? '20' : '12'}`
-              : `1px solid rgba(255, 255, 255, ${focusState ? '0.2' : '0.12'})`,
-            borderRadius: '16px',
-            boxShadow: moodFeatureEnabled
-              ? (focusState 
-                  ? `0 4px 20px -4px ${moodThemes[mood].gradientStart}15, 
-                     inset 0 1px 0 rgba(255, 255, 255, 0.2)`
-                  : `0 2px 12px -4px ${moodThemes[mood].gradientStart}08`)
-              : (focusState
-                  ? `0 4px 20px rgba(0, 0, 0, 0.1),
-                     inset 0 1px 0 rgba(255, 255, 255, 0.2)`
-                  : `0 2px 12px rgba(0, 0, 0, 0.06),
-                     inset 0 1px 0 rgba(255, 255, 255, 0.12)`),
-            backdropFilter: 'blur(16px) saturate(180%)',
-            WebkitBackdropFilter: 'blur(16px) saturate(180%)',
-            transform: focusState ? 'translateY(-1px)' : 'translateY(0)',
-            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-            position: 'relative',
-            overflow: 'hidden',
-            padding: deviceInfo.isMobile ? '0.875rem' : '1rem',
-            marginBottom: deviceInfo.isMobile ? '20px' : '0'
-          }}
-        >
-          {isAuthenticated ? (
-            <>
-              <div className={styles.commentAvatar}>
-                {getUserAvatar(currentUser.displayName || currentUser.name, currentUser.uid || currentUser.id)}
-              </div>
-              <textarea
-                className={`${styles.commentInput} mobile-optimized-input comment-input`}
-                placeholder="Share your thoughts..."
-                value={newComment}
-                onChange={e => setNewComment(e.target.value)}
-                onFocus={(e) => {
-                  setFocusState(true);
-                  // Ensure mobile input is visible
-                  if (deviceInfo.isMobile) {
-                    setTimeout(() => {
-                      const element = e.target as HTMLTextAreaElement;
-                      element.scrollIntoView({ 
-                        behavior: 'smooth', 
-                        block: 'center' 
-                      });
-                    }, 100);
-                  }
-                }}
-                onBlur={() => {
-                  if (!newComment.trim()) {
-                    setFocusState(false);
-                  }
-                }}
-                data-mobile="true"
-                rows={deviceInfo.isSmallPhone ? 3 : 4}
-                style={{
-                  background: 'rgba(255, 255, 255, 0.1)',
-                  border: 'none',
-                  borderRadius: '20px',
-                  color: '#2d3748',
-                  fontSize: deviceInfo.isMobile ? '16px' : '1rem', // Prevent zoom on mobile
-                  padding: deviceInfo.isMobile ? '0.875rem' : '1rem',
-                  resize: 'vertical',
-                  minHeight: deviceInfo.isMobile ? '80px' : '120px',
-                  backdropFilter: 'blur(8px)',
-                  transition: 'all 0.3s ease',
-                  ...(moodFeatureEnabled ? {} : {})
-                }}
-              />
-              
-              {(focusState || newComment.trim()) && (
-                <div className={styles.commentActions}>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setNewComment('');
-                      setFocusState(false);
-                    }}
-                    className={styles.cancelButton}
-                    disabled={isSubmitting}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className={styles.submitButton}
-                    disabled={!newComment.trim() || isSubmitting}
-                    style={{
-                      minHeight: deviceInfo.isMobile ? '44px' : '36px'
-                    }}
-                  >
-                    {isSubmitting ? 'Posting...' : 'Post Comment'}
-                  </button>
-                </div>
-              )}
-            </>
-          ) : (
-            <div className={styles.authPrompt}>
-              <p>Please log in to join the conversation.</p>
+        {isAuthenticated ? (
+          <div className={styles.commentInputContainer}>
+            <div className={styles.commentAvatar}>
+              {getUserAvatar(currentUser.displayName || currentUser.name, currentUser.uid || currentUser.id)}
             </div>
-          )}
-        </div>
+            <textarea
+              className={styles.commentInput}
+              placeholder="Share your thoughts..."
+              value={newComment}
+              onChange={e => setNewComment(e.target.value)}
+              onFocus={() => setFocusState(true)}
+              onBlur={() => setFocusState(false)}
+              rows={4}
+            />
+            <div className={styles.commentActions}>
+              <button
+                type="button"
+                onClick={() => setNewComment('')}
+                className={styles.cancelButton}
+                disabled={isSubmitting}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className={styles.submitButton}
+                disabled={!newComment.trim() || isSubmitting}
+              >
+                <span>{isSubmitting ? 'Posting...' : 'Post Comment'}</span>
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className={styles.loginPromptContainer}>
+            <h4>Join the conversation</h4>
+            <p>Please log in to share your thoughts and engage with the community.</p>
+            <button
+              type="button"
+              onClick={() => router.push('/login')}
+              className={styles.loginButton}
+            >
+              Sign In
+            </button>
+          </div>
+        )}
       </form>
 
       {/* Comments List */}
       <div className={styles.commentsList}>
         {comments.length === 0 ? (
-          <div className={styles.emptyState}>
-            <p>No comments yet. Be the first to share your thoughts!</p>
+          <div className={styles.noComments}>
+            <h4>No comments yet</h4>
+            <p>Be the first to share your thoughts!</p>
           </div>
         ) : (
           comments.map(comment => renderComment(comment))

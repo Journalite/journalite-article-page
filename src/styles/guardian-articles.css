@@ -1,0 +1,96 @@
+/* Guardian Article Specific Styles */
+
+/* Ensure Guardian article content appears above background gradients */
+.guardian-article {
+  position: relative;
+  z-index: 10;
+  background: transparent;
+}
+
+.article-standfirst {
+  font-size: 1.2em !important;
+  color: #666 !important;
+  font-weight: 400 !important;
+  line-height: 1.4 !important;
+  margin: 0 0 2em 0 !important;
+  padding: 0 !important;
+}
+
+.article-standfirst strong {
+  font-weight: 600 !important;
+}
+
+/* Fix Guardian images */
+.article-content img {
+  max-width: 100% !important;
+  height: auto !important;
+  margin: 2em auto !important;
+  display: block !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+}
+
+/* Only hide truly broken images (without src attribute or empty src) */
+.article-content img:not([src]),
+.article-content img[src=""] {
+  display: none !important;
+}
+
+/* Guardian specific content styling */
+.guardian-article .article-content {
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  position: relative;
+  z-index: 10;
+}
+
+.guardian-article .article-content p {
+  margin: 1.5em 0 !important;
+  line-height: 1.7 !important;
+  color: #2c2c2c !important;
+}
+
+.guardian-article .article-content h2,
+.guardian-article .article-content h3,
+.guardian-article .article-content h4 {
+  font-weight: 600 !important;
+  margin: 2em 0 1em 0 !important;
+  color: #1a1a1a !important;
+}
+
+/* Original article link styling */
+.original-article-link {
+  margin-top: 3em !important;
+  padding: 1.5em !important;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+  border-radius: 12px !important;
+  border-left: 4px solid #0066cc !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+}
+
+.original-article-link p {
+  margin: 0 !important;
+  color: #495057 !important;
+}
+
+.original-article-link a {
+  color: #0066cc !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+  border-bottom: 1px solid transparent !important;
+  transition: border-bottom 0.2s ease !important;
+}
+
+.original-article-link a:hover {
+  border-bottom: 1px solid #0066cc !important;
+}
+
+/* Ensure videos display properly */
+.article-content video {
+  max-width: 100% !important;
+  height: auto !important;
+  margin: 2em auto !important;
+  display: block !important;
+  border-radius: 8px !important;
+}
+
+/* Allow Guardian's original content to display properly */ 

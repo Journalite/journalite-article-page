@@ -22,7 +22,7 @@
       "jsx",
       "js"
     ],
-    "poweredByHeader": true,
+    "poweredByHeader": false,
     "compress": true,
     "images": {
       "deviceSizes": [
@@ -83,7 +83,7 @@
     "serverRuntimeConfig": {},
     "publicRuntimeConfig": {},
     "reactProductionProfiling": false,
-    "reactStrictMode": true,
+    "reactStrictMode": null,
     "reactMaxHeadersLength": 6000,
     "httpAgentOptions": {
       "keepAlive": true
@@ -284,6 +284,14 @@
     "htmlLimitedBots": "Mediapartners-Google|Slurp|DuckDuckBot|baiduspider|yandex|sogou|bitlybot|tumblr|vkShare|quora link preview|redditbot|ia_archiver|Bingbot|BingPreview|applebot|facebookexternalhit|facebookcatalog|Twitterbot|LinkedInBot|Slackbot|Discordbot|WhatsApp|SkypeUriPreview|Yeti",
     "bundlePagesRouterDependencies": false,
     "configFileName": "next.config.js",
+    "compiler": {
+      "removeConsole": {
+        "exclude": [
+          "error",
+          "warn"
+        ]
+      }
+    },
     "turbopack": {
       "root": "/Users/sirabdisalam/journalite-article-page"
     }

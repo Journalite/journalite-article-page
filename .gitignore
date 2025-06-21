@@ -38,6 +38,11 @@ sensitive-patterns.txt
 SECURITY.md
 PROSEMIRROR_MIGRATION.md
 
+# Developer documentation files (generated during optimization)
+SECURITY_CHECKLIST.md
+PERFORMANCE_GUIDE.md
+OPTIMIZATION_SUMMARY.md
+
 # Backup files from optimization work
 *.bak
 next.config.ts.bak

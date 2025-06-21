@@ -3,6 +3,7 @@
 import React from 'react';
 import ArticleContent from './ArticleContent';
 import LikeButton from './LikeButton';
+import ExternalLikeButton from './ExternalLikeButton';
 import ActiveReaders from './ActiveReaders';
 import styles from '@/styles/ArticlePage.module.css';
 
@@ -31,6 +32,17 @@ interface ArticleLayoutProps {
   // Other props
   articleTitle: string;
   articleSlug: string;
+  
+  // Mood feature props
+  moodFeatureEnabled?: boolean;
+  onToggleMoodFeature?: (enabled: boolean) => void;
+  mood?: 'joyful' | 'reflective' | 'sad' | 'angry' | 'peaceful' | 'energetic';
+  
+  // External article props (for Guardian/NewsAPI)
+  isExternal?: boolean;
+  externalSource?: 'guardian' | 'newsapi';
+  externalId?: string;
+  externalUrl?: string;
 }
 
 const ArticleLayout: React.FC<ArticleLayoutProps> = ({
@@ -42,7 +54,14 @@ const ArticleLayout: React.FC<ArticleLayoutProps> = ({
   isAuthenticated,
   onEditClick,
   articleTitle,
-  articleSlug
+  articleSlug,
+  moodFeatureEnabled,
+  onToggleMoodFeature,
+  mood,
+  isExternal = false,
+  externalSource,
+  externalId,
+  externalUrl
 }) => {
   console.log('🏗️ ArticleLayout re-rendered at:', new Date().toLocaleTimeString());
 
@@ -72,12 +91,24 @@ const ArticleLayout: React.FC<ArticleLayoutProps> = ({
             </div>
             
             <div className={styles.articleActions}>
-              <LikeButton
-                articleId={articleId}
-                initialLikes={initialLikes}
-                className={styles.likeButton}
-                styles={styles}
-              />
+              {isExternal && externalSource && externalId ? (
+                <ExternalLikeButton
+                  externalId={externalId}
+                  source={externalSource}
+                  title={article.title}
+                  url={externalUrl || ''}
+                  initialLikes={initialLikes}
+                  className={styles.likeButton}
+                  styles={styles}
+                />
+              ) : (
+                <LikeButton
+                  articleId={articleId}
+                  initialLikes={initialLikes}
+                  className={styles.likeButton}
+                  styles={styles}
+                />
+              )}
             
               {currentUser && article.authorId === currentUser.uid && (
                 <button 
@@ -108,6 +139,9 @@ const ArticleLayout: React.FC<ArticleLayoutProps> = ({
         articleTitle={articleTitle}
         articleSlug={articleSlug}
         hasReflectionRoom={article?.hasReflectionRoom || false}
+        moodFeatureEnabled={moodFeatureEnabled}
+        onToggleMoodFeature={onToggleMoodFeature}
+        mood={mood}
       />
     </div>
   );
@@ -134,8 +168,19 @@ export default React.memo(ArticleLayout, (prevProps, nextProps) => {
     prevProps.articleTitle === nextProps.articleTitle &&
     prevProps.articleSlug === nextProps.articleSlug &&
     
+    // Mood feature props
+    prevProps.moodFeatureEnabled === nextProps.moodFeatureEnabled &&
+    prevProps.mood === nextProps.mood &&
+    
+    // External article props
+    prevProps.isExternal === nextProps.isExternal &&
+    prevProps.externalSource === nextProps.externalSource &&
+    prevProps.externalId === nextProps.externalId &&
+    prevProps.externalUrl === nextProps.externalUrl &&
+    
     // Callbacks (should be stable)
-    prevProps.onEditClick === nextProps.onEditClick
+    prevProps.onEditClick === nextProps.onEditClick &&
+    prevProps.onToggleMoodFeature === nextProps.onToggleMoodFeature
   );
   
   if (!shouldNotRerender) {
