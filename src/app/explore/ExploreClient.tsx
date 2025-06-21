@@ -410,9 +410,9 @@ export default function ExploreClient() {
             newsapi: cat.articles.filter(a => a.source === 'newsapi').length
           }
         })));
-        
-        setCategories(categoriesData);
-        
+          
+          setCategories(categoriesData);
+          
       } catch (error) {
         console.error('Error fetching mixed articles:', error);
       } finally {
@@ -765,12 +765,12 @@ export default function ExploreClient() {
   return (
     <div className={styles.container}>
       <TopLeftLogo />
-      
-             <LeftSidebar 
+    
+      <LeftSidebar 
          isSidebarCollapsed={isSidebarCollapsed} 
          toggleSidebar={toggleSidebar}
-         isAuthenticated={isAuthenticated}
-         handleLogout={handleLogout}
+        isAuthenticated={isAuthenticated} 
+        handleLogout={handleLogout} 
        />
       
       <main className={`${styles.main} ${isSidebarCollapsed ? styles.mainExpanded : styles.mainWithSidebar}`}>
@@ -807,15 +807,15 @@ export default function ExploreClient() {
               {category.articles.map((article) => (
                 <article key={article.id} className={styles.articleCard}>
                   <Link href={getArticleLink(article)} className={styles.articleLink}>
-                    {article.coverImageUrl && (
+                      {article.coverImageUrl && (
                       <div className={styles.articleImage}>
-                        <img 
-                          src={article.coverImageUrl} 
-                          alt={article.title}
+                          <img 
+                            src={article.coverImageUrl} 
+                            alt={article.title}
                           className={styles.image}
-                        />
-                      </div>
-                    )}
+                          />
+                        </div>
+                      )}
                     
                     <div className={styles.articleContent}>
                       <div className={styles.sourceBadgeContainer}>
@@ -833,21 +833,21 @@ export default function ExploreClient() {
                         <span className={styles.date}>
                           {new Date(article.createdAt).toLocaleDateString()}
                         </span>
-                      </div>
-                      
-                      {article.tags && article.tags.length > 0 && (
+                        </div>
+                        
+                        {article.tags && article.tags.length > 0 && (
                         <div className={styles.tags}>
                           {article.tags.slice(0, 3).map((tag, index) => (
                             <span key={index} className={styles.tag}>{tag}</span>
-                          ))}
-                        </div>
-                      )}
+                            ))}
+                          </div>
+                        )}
                     </div>
                   </Link>
                   
                   <div className={styles.articleActions}>
-                    <button 
-                      onClick={() => handleOpenShareModal(article)}
+                          <button 
+                            onClick={() => handleOpenShareModal(article)}
                       className={styles.shareButton}
                       title="Share article"
                     >
@@ -855,26 +855,26 @@ export default function ExploreClient() {
                         <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
                         <polyline points="16,6 12,2 8,6"/>
                         <line x1="12" y1="2" x2="12" y2="15"/>
-                      </svg>
-                    </button>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </section>
-        ))}
+                            </svg>
+                          </button>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </section>
+            ))}
       </main>
 
-             {/* Share Modal */}
+      {/* Share Modal */} 
        {isShareModalOpen && sharingArticleDetails && (
-         <ShareModal
-           isOpen={isShareModalOpen}
-           onClose={handleCloseShareModal}
-           highlightText={sharingArticleDetails.excerpt || 'Check out this article'}
-           articleTitle={sharingArticleDetails.title}
+        <ShareModal 
+          isOpen={isShareModalOpen}
+          onClose={handleCloseShareModal}
+          highlightText={sharingArticleDetails.excerpt || 'Check out this article'}
+          articleTitle={sharingArticleDetails.title}
            shareUrl={`${typeof window !== 'undefined' ? window.location.origin : ''}/articles?slug=${encodeURIComponent(sharingArticleDetails.slug)}`}
-         />
-       )}
+        />
+      )}
     </div>
   );
 } 

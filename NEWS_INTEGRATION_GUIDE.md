@@ -1,142 +1,200 @@
 # News API Integration Guide
 
-This guide shows you how to integrate a free news API into your journal application while reusing your existing article page styling.
+This guide shows you how to integrate free news APIs into your journal application while reusing your existing article page styling.
+
+## Available News APIs
+
+### ✅ Currently Integrated
+- **The Guardian API** - High-quality journalism (500 requests/day free)
+- **NewsAPI.org** - Multiple sources (1000 requests/day free)
+
+### 🆕 New Free Alternatives
+- **NewsData.io** - Better free tier (200 requests/day, more reliable)
+- **Hacker News API** - Tech news (unlimited, completely free)
 
 ## Features
 
-✅ **Reuses your existing article styling** - News articles are displayed using the same beautiful layout as your regular articles  
-✅ **Free to use** - Uses NewsAPI.org which offers 1000 free requests per day  
-✅ **Search functionality** - Search for specific topics or browse by category  
-✅ **Category filtering** - Browse news by Business, Technology, Science, Health, Sports, Entertainment  
+✅ **Multiple API Support** - Use multiple news sources with automatic fallback  
+✅ **Reuses your existing article styling** - All news articles use your beautiful layout  
+✅ **Free tiers available** - Several APIs with generous free limits  
+✅ **Search functionality** - Search across different news sources  
+✅ **Category filtering** - Browse by topic across all sources  
 ✅ **Mobile responsive** - Works perfectly on all device sizes  
 ✅ **Authentication aware** - Shows different navigation based on user login status  
 
 ## Setup Instructions
 
-### 1. Get a Free News API Key
+### 1. Get API Keys
 
-1. Visit [NewsAPI.org](https://newsapi.org/)
-2. Click "Get API Key" 
-3. Sign up for a free account (no credit card required)
-4. Copy your API key
+#### NewsData.io (Recommended Replacement)
+1. Visit [NewsData.io](https://newsdata.io/)
+2. Sign up for free (200 requests/day)
+3. Get your API key from dashboard
+
+#### Hacker News (Completely Free)
+- No API key needed! Ready to use immediately.
+
+#### Keep Existing APIs
+- **The Guardian API** - Keep if you have it (high quality)
+- **NewsAPI.org** - Keep as fallback if desired
 
 ### 2. Configure Environment Variables
 
-Create a `.env.local` file in your project root (if it doesn't exist) and add:
+Add to your `.env.local` file:
 
 ```bash
-# News API Configuration
-NEXT_PUBLIC_NEWS_API_KEY=your_actual_api_key_here
+# Recommended: NewsData.io (better than NewsAPI.org)
+NEXT_PUBLIC_NEWSDATA_API_KEY=your_newsdata_api_key_here
+
+# Keep existing (optional)
+NEXT_PUBLIC_NEWS_API_KEY=your_newsapi_key_here
+NEXT_PUBLIC_GUARDIAN_API_KEY=your_guardian_api_key_here
+
+# Hacker News needs no key (completely free)
 ```
 
-Replace `your_actual_api_key_here` with the API key you got from NewsAPI.org.
+### 3. Usage Priority
 
-### 3. Add Navigation Link (Optional)
+The system now uses this priority order:
+1. **NewsData.io** (if configured) - Better free tier
+2. **NewsAPI.org** (fallback) - Your existing setup  
+3. **Hacker News** - For tech news (always available)
+4. **The Guardian** - High-quality journalism
 
-You can add a link to your news page anywhere in your app. For example, in your main navigation:
+## API Comparison
 
-```tsx
-<Link href="/news" className="nav-link">
-  📰 News
-</Link>
-```
+| API | Free Limit | Content Quality | Sources | Setup |
+|-----|------------|----------------|---------|-------|
+| **NewsData.io** | 200/day | High | 7500+ sources | Easy |
+| **Hacker News** | Unlimited | Tech-focused | HackerNews only | None needed |
+| **The Guardian** | 500/day | Very High | Guardian only | Easy |
+| **NewsAPI.org** | 1000/day | Mixed | 150k+ sources | Easy |
 
 ## How It Works
 
 ### Architecture
 
-- **News Service** (`src/services/newsService.ts`) - Handles API calls to NewsAPI.org
-- **News Page** (`src/app/news/page.tsx`) - Server component wrapper
-- **News Client** (`src/app/news/client.tsx`) - Main news component with state management
-- **Article Layout Reuse** - Uses your existing `ArticleLayout` component for consistent styling
-
-### News Article Display
-
-When a user clicks on a news article card, it:
-
-1. Converts the news article data to match your internal article format
-2. Uses your existing `ArticleLayout` component 
-3. Applies all your existing article styling from `article.css`
-4. Maintains the same reading experience as your regular articles
-
-### Data Flow
+The updated news service now supports multiple APIs with automatic fallback:
 
 ```
-User Action → News Service → NewsAPI.org → Article Conversion → Your Article Layout
+User Request → NewsData.io → (fallback) → NewsAPI.org → Article Display
+             ↘ HackerNews (for tech) ↗
 ```
 
-## Available News Sources
+### New Service Files
+- `src/services/newsService.ts` - Updated with NewsData.io support
+- `src/services/hackerNewsService.ts` - New Hacker News integration
+- `src/services/guardianService.ts` - Existing Guardian integration
 
-NewsAPI.org aggregates from over 150,000 sources including:
-- Major news outlets (CNN, BBC, Reuters, etc.)
-- Tech publications (TechCrunch, Wired, etc.) 
-- Business news (Wall Street Journal, Financial Times, etc.)
-- Sports, Entertainment, Science publications
+### Automatic Fallback
+If your primary API (NewsData.io) fails or hits limits, the system automatically falls back to NewsAPI.org, ensuring your app always has news content.
 
-## API Limits
+## Using Different APIs
 
-**Free Tier:**
-- 1,000 requests per day
-- Only current and 30-day historical news
-- Rate limited to prevent abuse
-
-**Paid Tiers Available** if you need more requests or historical data.
-
-## Customization
-
-### Styling
-All news articles use your existing article styles from:
-- `src/styles/article.css` - Main article styling
-- `src/styles/ArticlePage.module.css` - Page-specific styles
-- Your `ArticleLayout` component styles
-
-### Categories
-You can modify the available categories in `src/app/news/client.tsx`:
-
-```tsx
-const categories = ['general', 'business', 'technology', 'science', 'health', 'sports', 'entertainment'];
+### NewsData.io (Primary)
+```typescript
+// Automatically used if NEXT_PUBLIC_NEWSDATA_API_KEY is set
+const news = await newsService.getTopHeadlines('technology');
 ```
 
-### Search
-The search functionality supports:
-- Keyword search
-- Phrase search (with quotes)
-- Boolean operators (AND, OR, NOT)
-- Date filtering
+### Hacker News (Tech Stories)
+```typescript
+import { hackerNewsService } from '@/services/hackerNewsService';
 
-## Alternative Free News APIs
+// Get top tech stories (completely free)
+const techNews = await hackerNewsService.getTopStories(10);
+const newStories = await hackerNewsService.getNewStories(10);
+const bestStories = await hackerNewsService.getBestStories(10);
+```
 
-If you want to use a different news API:
+### Search Across Sources
+```typescript
+// Searches NewsData.io first, then falls back to NewsAPI.org
+const searchResults = await newsService.searchArticles('artificial intelligence');
 
-1. **Guardian API** - Free, well documented
-2. **Reddit API** - Free, good for trending topics  
-3. **Hacker News API** - Free, tech-focused
-4. **RSS Feeds** - Parse RSS directly
+// Search Hacker News
+const hnResults = await hackerNewsService.searchStories('AI');
+```
 
-To switch APIs, just modify the `newsService.ts` file with your preferred API endpoint and data mapping.
+## Alternative Free APIs (Not Yet Integrated)
+
+If you want even more sources, consider these free options:
+
+### Reddit API
+- **Free**: 60 requests/minute
+- **Good for**: Trending topics, community discussions
+- **Setup**: Easy OAuth
+
+### RSS Feeds (Always Free)
+- **BBC**: `http://feeds.bbci.co.uk/news/rss.xml`
+- **CNN**: `http://rss.cnn.com/rss/edition.rss`  
+- **Reuters**: Various RSS feeds
+- **Setup**: Parse XML directly
+
+### Other APIs
+- **Currents API**: 600 requests/day free
+- **GNews API**: 100 requests/day free
+- **Mediastack**: 1000 requests/month free
+
+## Benefits of New Setup
+
+### ✅ Better Reliability
+- Multiple APIs mean if one is down, others work
+- NewsData.io is more reliable than NewsAPI.org
+
+### ✅ More Content
+- Tech news from Hacker News
+- Quality journalism from Guardian
+- General news from NewsData.io
+- Fallback from NewsAPI.org
+
+### ✅ Cost Effective
+- Hacker News is completely free
+- NewsData.io has better free tier
+- Guardian provides quality content
+- Only pay if you need more
+
+### ✅ Same User Experience
+- All APIs convert to the same format
+- Your existing UI works unchanged
+- Same article layouts and styling
 
 ## Troubleshooting
 
-### "News API not configured" Error
-- Check that your `.env.local` file exists and has the correct API key
-- Restart your development server after adding environment variables
-- Make sure the variable name is exactly `NEXT_PUBLIC_NEWS_API_KEY`
+### "No news API keys configured" Error
+- Add at least one API key to `.env.local`
+- `NEXT_PUBLIC_NEWSDATA_API_KEY` is recommended
+- Hacker News works without any keys
 
 ### API Rate Limits
-- Free tier is limited to 1,000 requests/day
+- System automatically switches between APIs
+- Monitor usage on each API's dashboard
 - Consider caching responses in production
-- Monitor your usage on the NewsAPI.org dashboard
 
-### CORS Issues
-- NewsAPI.org supports CORS for browser requests
-- If you encounter issues, you may need to proxy requests through your backend
+### Missing Articles
+- Different APIs have different content
+- Try multiple sources for comprehensive coverage
+- Hacker News focuses on tech content
 
-## Production Considerations
+## Production Recommendations
 
-1. **Caching** - Consider caching news responses to reduce API calls
-2. **Error Handling** - The service includes comprehensive error handling
-3. **Rate Limiting** - Monitor your API usage to stay within limits
-4. **Backup Sources** - Consider having fallback news sources
+1. **Use Multiple APIs** - Don't rely on just one source
+2. **Monitor Usage** - Track API usage across all services  
+3. **Cache Responses** - Reduce API calls with caching
+4. **Error Handling** - The system handles API failures gracefully
+5. **Update Keys** - Rotate API keys periodically
+
+## Migration from NewsAPI.org
+
+If you want to completely replace NewsAPI.org:
+
+1. **Add NewsData.io key** - Better free tier, more reliable
+2. **Test thoroughly** - Ensure all features work
+3. **Keep NewsAPI as fallback** - Or remove it entirely
+4. **Add Hacker News** - For free tech content
+5. **Monitor performance** - Check response times and reliability
+
+The updated system is designed to provide better reliability, more content variety, and reduced dependence on any single news API provider.
 
 ## Contributing
 
