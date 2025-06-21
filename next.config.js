@@ -1,6 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    // Remove static export for now due to dynamic external content
+    // Conditionally enable static export for GitHub Pages
+    ...(process.env.STATIC_EXPORT === 'true' && {
+        output: 'export',
+        distDir: 'out',
+        images: {
+            unoptimized: true,
+        },
+    }),
+
     trailingSlash: true,
     images: {
         unoptimized: true,
@@ -24,9 +32,9 @@ const nextConfig = {
             exclude: ['error', 'warn']
         } : false,
     },
-    // Security headers for production
+    // Security headers for production (only if not using static export)
     async headers() {
-        if (process.env.NODE_ENV === 'production') {
+        if (process.env.NODE_ENV === 'production' && process.env.STATIC_EXPORT !== 'true') {
             return [
                 {
                     source: '/(.*)',
