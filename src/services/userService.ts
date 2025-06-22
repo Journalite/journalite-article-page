@@ -14,7 +14,7 @@ import {
     limit,
     deleteDoc
 } from 'firebase/firestore';
-import { updateProfile, deleteUser as deleteFirebaseAuthUser } from 'firebase/auth';
+import { updateProfile, deleteUser as deleteFirebaseAuthUser, User, onIdTokenChanged } from 'firebase/auth';
 import { auth, db } from '../firebase/clientApp';
 import { createFollowNotification } from '../firebase/notifications';
 
@@ -36,6 +36,70 @@ export interface UserProfile {
     interestsVersion?: number; // Version number to track when interests were last reviewed
     cacheEnabled?: boolean; // Flag to control caching behavior for this user
     cachePreferenceUpdatedAt?: any; // When cache preference was last updated
+}
+
+// Session monitoring utilities
+let sessionMonitorInterval: NodeJS.Timeout | null = null;
+let lastUserActivity = Date.now();
+
+// Initialize session monitoring
+if (typeof window !== 'undefined') {
+    const updateActivity = () => {
+        lastUserActivity = Date.now();
+    };
+
+    // Track user activity
+    ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'].forEach(event => {
+        document.addEventListener(event, updateActivity, { passive: true });
+    });
+
+    // Monitor token freshness every minute
+    sessionMonitorInterval = setInterval(async () => {
+        const user = auth.currentUser;
+        if (user) {
+            const timeSinceActivity = Date.now() - lastUserActivity;
+            const inactiveFor = timeSinceActivity / (1000 * 60); // minutes
+
+            // If user has been inactive for more than 45 minutes, refresh token preemptively
+            if (inactiveFor > 45) {
+                try {
+                    await user.getIdToken(true);
+                    console.log('🔄 Preemptively refreshed auth token due to inactivity');
+                } catch (error) {
+                    console.error('Failed to refresh token:', error);
+                    // Don't redirect here, let the app handle it naturally
+                }
+            }
+        }
+    }, 60000); // Check every minute
+
+    // Listen for token changes and handle failures gracefully
+    onIdTokenChanged(auth, async (user) => {
+        if (user) {
+            try {
+                // Silently refresh token to ensure it's valid
+                await user.getIdToken(true);
+            } catch (error: any) {
+                console.error('Token refresh failed in session monitor:', error);
+
+                // Only show error for critical auth failures, not network issues
+                if (error.code === 'auth/user-token-expired' ||
+                    error.code === 'auth/requires-recent-login') {
+                    // Let the auth wrapper handle this gracefully
+                    console.warn('Session expired, will be handled by auth wrapper');
+                }
+            }
+        }
+    });
+}
+
+// Cleanup function
+if (typeof window !== 'undefined') {
+    window.addEventListener('beforeunload', () => {
+        if (sessionMonitorInterval) {
+            clearInterval(sessionMonitorInterval);
+        }
+    });
 }
 
 /**

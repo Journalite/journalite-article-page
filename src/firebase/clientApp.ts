@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp, getApps } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getAuth } from "firebase/auth";
+import { getAuth, setPersistence, browserSessionPersistence } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -45,6 +45,13 @@ if (typeof window !== 'undefined') {
 
 // Initialize Firebase Authentication
 const auth = getAuth(app);
+
+// Set persistence to session-only to prevent issues with idle timeouts
+if (typeof window !== 'undefined') {
+    setPersistence(auth, browserSessionPersistence).catch((error) => {
+        console.error('Failed to set auth persistence:', error);
+    });
+}
 
 // Initialize Firestore
 const db = getFirestore(app);
