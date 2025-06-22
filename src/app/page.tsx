@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import Link from 'next/link'
 // import Image from 'next/image' // Unused
 import styles from '@/styles/home.module.css'
@@ -20,6 +20,7 @@ import MobileHeaderLogo from '@/components/MobileHeaderLogo'
 import EventsBar from '@/components/EventsBar'
 import InterestsReengagementWrapper from '@/components/InterestsReengagementWrapper'
 import { getUserProfile } from '@/services/userService'
+import { getArticleImage } from '@/lib/buildMeta'
 
 // Types for our article data based on actual API structure
 interface Article {
@@ -59,40 +60,25 @@ interface SharingArticleDetails {
 const adaptFirestoreArticle = (firestoreArticle: FirestoreArticle): Article => {
   // Enhanced image selection for better homepage appeal
   const getEnhancedCoverImage = (article: FirestoreArticle): string | null => {
-    // Always use the real cover image if it exists
-    if (article.coverImage && article.coverImage.trim() !== '') {
-      return article.coverImage;
-    }
+    // Use the helper function from buildMeta.ts for consistent image handling
+    return getArticleImage(article.coverImage, article.body) === '/images/journalite-social-banner.png' 
+      ? null // Return null if only default image is available
+      : getArticleImage(article.coverImage, article.body);
+  };
+
+  // Helper function to clean HTML and create excerpt
+  const createCleanExcerpt = (html: string, maxLength = 200): string => {
+    if (!html) return '';
     
-    // Fallback: Extract first image from article content
-    if (article.body) {
-      // Look for img tags in the content
-      const imgRegex = /<img[^>]+src=["']([^"']+)["'][^>]*>/i;
-      const match = article.body.match(imgRegex);
-      
-      if (match && match[1]) {
-        return match[1];
-      }
-      
-      // Look for markdown-style images
-      const markdownImgRegex = /!\[.*?\]\(([^)]+)\)/;
-      const markdownMatch = article.body.match(markdownImgRegex);
-      
-      if (markdownMatch && markdownMatch[1]) {
-        return markdownMatch[1];
-      }
-      
-      // Look for standalone image URLs in the text
-      const urlRegex = /(https?:\/\/[^\s]+\.(?:jpg|jpeg|png|gif|webp|svg))/i;
-      const urlMatch = article.body.match(urlRegex);
-      
-      if (urlMatch && urlMatch[1]) {
-        return urlMatch[1];
-      }
-    }
+    // Create a temporary DOM element to strip HTML
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+    const cleanText = tempDiv.textContent || tempDiv.innerText || '';
     
-    // Return null if no images found - let the card reshape itself
-    return null;
+    // Return truncated clean text
+    return cleanText.length > maxLength 
+      ? cleanText.substring(0, maxLength).trim() + '...'
+      : cleanText.trim();
   };
 
   return {
@@ -101,21 +87,18 @@ const adaptFirestoreArticle = (firestoreArticle: FirestoreArticle): Article => {
     slug: firestoreArticle.slug || firestoreArticle.title.toLowerCase().replace(/[^\w\s]/gi, '').replace(/\s+/g, '-'),
     authorId: firestoreArticle.authorId,
     authorName: firestoreArticle.authorName,
+    excerpt: firestoreArticle.excerpt ? createCleanExcerpt(firestoreArticle.excerpt) : createCleanExcerpt(firestoreArticle.body),
     coverImageUrl: getEnhancedCoverImage(firestoreArticle),
     tags: firestoreArticle.tags,
-    content: [
-      {
-        paragraphId: 'p1',
-        text: firestoreArticle.body,
-        likes: [],
-        comments: []
-      }
-    ],
-    likes: [],
-    reposts: [],
-    comments: [],
+    content: [],
     createdAt: firestoreArticle.createdAt.toDate().toISOString(),
-    updatedAt: firestoreArticle.createdAt.toDate().toISOString()
+    updatedAt: firestoreArticle.updatedAt?.toDate().toISOString() || firestoreArticle.createdAt.toDate().toISOString(),
+    viewCount: firestoreArticle.viewCount || 0,
+    likes: firestoreArticle.likes || [],
+    reposts: firestoreArticle.reposts || [],
+    comments: firestoreArticle.comments || [],
+    isExternal: false,
+    externalUrl: undefined
   };
 };
 
@@ -359,24 +342,25 @@ export default function HomePage() {
   };
 
   const getExcerpt = (article: Article, maxLength = 150) => {
+    // Helper function to strip HTML tags
+    const stripHtml = (html: string) => {
+      if (!html) return '';
+      const tmp = document.createElement('div');
+      tmp.innerHTML = html;
+      return tmp.textContent || tmp.innerText || '';
+    };
+
     // First try to use the excerpt if available
     if (article.excerpt) {
-      return article.excerpt.length > maxLength 
-        ? article.excerpt.substring(0, maxLength) + '...'
-        : article.excerpt;
+      const cleanExcerpt = stripHtml(article.excerpt);
+      return cleanExcerpt.length > maxLength 
+        ? cleanExcerpt.substring(0, maxLength) + '...'
+        : cleanExcerpt;
     }
     
     // Otherwise, extract from content
     if (article.content && article.content.length > 0) {
       const firstParagraph = article.content[0].text;
-      
-      // Strip HTML tags if present
-      const stripHtml = (html: string) => {
-        const tmp = document.createElement('div');
-        tmp.innerHTML = html;
-        return tmp.textContent || tmp.innerText || '';
-      };
-      
       const cleanText = stripHtml(firstParagraph);
       return cleanText.length > maxLength 
         ? cleanText.substring(0, maxLength) + '...'
@@ -384,6 +368,11 @@ export default function HomePage() {
     }
     
     return 'Read this thought-provoking article...';
+  };
+
+  // Helper function to check if a Guardian article is fallback content
+  const isGuardianFallbackArticle = (article: Article) => {
+    return article.authorId === 'guardian' && article._id && article._id.includes('fallback/');
   };
 
   const toggleSidebar = () => {
@@ -466,7 +455,18 @@ export default function HomePage() {
           onClick={toggleSidebar}
           aria-label={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
-          {isSidebarCollapsed ? "☰" : "✕"}
+          {isSidebarCollapsed ? (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <line x1="3" y1="6" x2="21" y2="6"/>
+              <line x1="3" y1="12" x2="21" y2="12"/>
+              <line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+          ) : (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          )}
         </button>
       )}
 
@@ -507,15 +507,28 @@ export default function HomePage() {
               </p>
               <div className={styles['quick-actions']}>
                 <Link href="/explore" className={styles['action-button']}>
-                  <span className={styles['action-icon']}>✨</span>
+                  <span className={styles['action-icon']}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="11" cy="11" r="8"/>
+                      <path d="m21 21-4.35-4.35"/>
+                    </svg>
+                  </span>
                   Explore Articles
                 </Link>
                 <Link href="/compose" className={styles['action-button']}>
-                  <span className={styles['action-icon']}>✍️</span>
+                  <span className={styles['action-icon']}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
+                    </svg>
+                  </span>
                   Write Article
                 </Link>
                 <Link href="/my-thoughts" className={styles['action-button']}>
-                  <span className={styles['action-icon']}>💭</span>
+                  <span className={styles['action-icon']}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                    </svg>
+                  </span>
                   My Thoughts
                 </Link>
               </div>
@@ -538,39 +551,77 @@ export default function HomePage() {
             <div className={styles['loading']}>Loading articles...</div>
           ) : (
             <div className={styles['featured-grid']}>
-              {featuredArticles.map((article, index) => (
-                <article 
-                  key={article._id || article.slug || `article-${index}`} 
-                  className={styles['featured-article-card']}
-                >
-                  {article.coverImageUrl && (
-                    <div className={styles['article-image']}>
-                      <img 
-                        src={article.coverImageUrl} 
-                        alt={article.title}
-                        className={styles['cover-image']}
-                      />
-                    </div>
-                  )}
-                  
-                  <div className={styles['article-content']}>
-                    <div className={styles['source-badge-container']}>
-                      {article.authorId === 'guardian' && (
-                        <span className={styles['source-badge']} style={{backgroundColor: '#052962', color: 'white'}}>
-                          Guardian
-                        </span>
-                      )}
-                      {article.authorId === 'newsapi' && (
-                        <span className={styles['source-badge']} style={{backgroundColor: '#10B981', color: 'white'}}>
-                          News
-                        </span>
-                      )}
-                      {!article.isExternal && (
-                        <span className={styles['source-badge']} style={{backgroundColor: '#7C3AED', color: 'white'}}>
-                          Journalite
-                        </span>
-                      )}
-                    </div>
+              {featuredArticles.map((article, index) => {
+                const isFallbackArticle = isGuardianFallbackArticle(article);
+                
+                return (
+                  <article 
+                    key={article._id || article.slug || `article-${index}`} 
+                    className={`${styles['featured-article-card']} ${isFallbackArticle ? styles['fallback-article'] : ''}`}
+                    style={isFallbackArticle ? {
+                      background: 'rgba(255, 193, 7, 0.15)',
+                      border: '1px solid rgba(255, 193, 7, 0.3)',
+                      position: 'relative',
+                      opacity: '0.85'
+                    } : {}}
+                  >
+                    {/* Rate Limit Notice for Fallback Articles */}
+                    {isFallbackArticle && (
+                      <div style={{
+                        position: 'absolute',
+                        top: '8px',
+                        right: '8px',
+                        background: 'rgba(255, 193, 7, 0.9)',
+                        color: '#b45309',
+                        padding: '6px 10px',
+                        borderRadius: '12px',
+                        fontSize: '0.75rem',
+                        fontWeight: '600',
+                        zIndex: 2,
+                        border: '1px solid rgba(255, 193, 7, 0.6)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px'
+                      }}>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <circle cx="12" cy="12" r="10"/>
+                          <polyline points="12,6 12,12 16,14"/>
+                        </svg>
+                        API Rate Limited • Resets 7:00 PM CDT
+                      </div>
+                    )}
+
+                    {article.coverImageUrl && (
+                      <div className={styles['article-image']}>
+                        <img 
+                          src={article.coverImageUrl} 
+                          alt={article.title}
+                          className={styles['cover-image']}
+                        />
+                      </div>
+                    )}
+                    
+                    <div className={styles['article-content']}>
+                      <div className={styles['source-badge-container']}>
+                        {article.authorId === 'guardian' && (
+                          <span className={styles['source-badge']} style={{
+                            backgroundColor: isFallbackArticle ? '#f59e0b' : '#052962', 
+                            color: 'white'
+                          }}>
+                            Guardian
+                          </span>
+                        )}
+                        {article.authorId === 'newsapi' && (
+                          <span className={styles['source-badge']} style={{backgroundColor: '#10B981', color: 'white'}}>
+                            News
+                          </span>
+                        )}
+                        {!article.isExternal && (
+                          <span className={styles['source-badge']} style={{backgroundColor: '#7C3AED', color: 'white'}}>
+                            Journalite
+                          </span>
+                        )}
+                      </div>
                     <h3 className={styles['article-title']}>{article.title}</h3>
                     <div className={styles['article-meta']}>
                       by {getAuthorName(article)} • 
@@ -585,9 +636,16 @@ export default function HomePage() {
                             background: 'rgba(255, 152, 0, 0.15)',
                             padding: '2px 6px',
                             borderRadius: '8px',
-                            border: '1px solid rgba(255, 152, 0, 0.3)'
+                            border: '1px solid rgba(255, 152, 0, 0.3)',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px'
                           }}>
-                            📖 {readingTime} min read
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                            </svg>
+                            {readingTime} min read
                           </span>
                         ) : (
                           <span>{readingTime} min read</span>
@@ -638,7 +696,8 @@ export default function HomePage() {
                     </div>
                   </div>
                 </article>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
@@ -731,7 +790,7 @@ export default function HomePage() {
                 fontWeight: '500'
               }}
             >
-              📰 General News
+              General News
             </Link>
           </div>
         </div>

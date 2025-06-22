@@ -1,8 +1,8 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp, getApps } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getAuth, connectAuthEmulator } from "firebase/auth";
-import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
+import { getFirestore, enableNetwork, disableNetwork } from "firebase/firestore";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -17,12 +17,20 @@ const firebaseConfig = {
     measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
 };
 
+// Validate Firebase configuration
+if (!firebaseConfig.apiKey || !firebaseConfig.projectId) {
+    console.error('❌ Firebase configuration is missing required fields');
+    throw new Error('Firebase configuration incomplete');
+}
+
 // Initialize Firebase with duplicate app check
 let app;
 if (getApps().length === 0) {
     app = initializeApp(firebaseConfig);
+    console.log('🔥 Firebase app initialized with project:', firebaseConfig.projectId);
 } else {
     app = getApps()[0];
+    console.log('🔥 Using existing Firebase app');
 }
 
 // Initialize Analytics only in browser environment
@@ -31,15 +39,31 @@ if (typeof window !== 'undefined') {
     try {
         analytics = getAnalytics(app);
     } catch (error) {
-        // Analytics initialization skipped in development
+        console.log('Analytics initialization skipped:', (error as Error).message);
     }
 }
 
 // Initialize Firebase Authentication
 const auth = getAuth(app);
 
-// Initialize Firestore
+// Initialize Firestore with better error handling
 const db = getFirestore(app);
+
+// Ensure Firestore is online
+if (typeof window !== 'undefined') {
+    enableNetwork(db).catch((error) => {
+        console.warn('Firestore enable network failed:', error);
+    });
+
+    // Add visibility change listener to handle network reconnection
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) {
+            enableNetwork(db).catch((error) => {
+                console.warn('Firestore reconnection failed:', error);
+            });
+        }
+    });
+}
 
 // Configure custom auth actions URL
 if (typeof window !== 'undefined') {
@@ -51,22 +75,10 @@ if (typeof window !== 'undefined') {
     // We need to update this in the forgot-password component when sending the reset email
 }
 
-// Connect to Auth Emulator in development
-if (process.env.NODE_ENV === 'development') {
-    try {
-        connectAuthEmulator(auth, 'http://localhost:9099', { disableWarnings: true });
-    } catch (error) {
-        // Auth emulator already connected, ignore error
-        console.log('Auth emulator already connected or error connecting:', (error as Error).message);
-    }
-
-    try {
-        connectFirestoreEmulator(db, 'localhost', 8080);
-    } catch (error) {
-        // Firestore emulator already connected, ignore error
-        console.log('Firestore emulator already connected or error connecting:', (error as Error).message);
-    }
-}
+// PRODUCTION FIREBASE ONLY - NO EMULATORS
+console.log('🔥 Using production Firebase services');
+console.log('📍 Auth Domain:', firebaseConfig.authDomain);
+console.log('📍 Project ID:', firebaseConfig.projectId);
 
 /////
 

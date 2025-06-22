@@ -4952,13 +4952,18 @@ function CacheControl() {
   };
 
   const updateCachePreference = async (userId: string, enableCache: boolean) => {
+    if (!userId || typeof userId !== 'string' || userId.trim() === '') {
+      setMessage({ type: 'error', text: 'Invalid user ID provided' });
+      return;
+    }
+
     setUpdating(userId);
     try {
       const { setUserCachePreference } = await import('@/services/userService');
       await setUserCachePreference(userId, enableCache);
       
-      // Update local state
-      if (foundUser && foundUser.id === userId) {
+      // Update local state (Firebase uses 'uid' not 'id')
+      if (foundUser && foundUser.uid === userId) {
         setFoundUser({ ...foundUser, cacheEnabled: enableCache });
       }
       
@@ -4968,7 +4973,7 @@ function CacheControl() {
       });
     } catch (error) {
       console.error('Error updating cache preference:', error);
-      setMessage({ type: 'error', text: 'Error updating cache preference' });
+      setMessage({ type: 'error', text: `Failed to update cache preference: ${error instanceof Error ? error.message : 'Unknown error'}` });
     } finally {
       setUpdating(null);
     }
@@ -5087,29 +5092,29 @@ function CacheControl() {
           {/* Cache Control Buttons */}
           <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
             <button 
-              onClick={() => updateCachePreference(foundUser.id, true)}
-              disabled={updating === foundUser.id || foundUser.cacheEnabled}
+                                  onClick={() => updateCachePreference(foundUser.uid, true)}
+                              disabled={updating === foundUser.uid || foundUser.cacheEnabled}
               className={styles.submitButton}
               style={{ 
                 backgroundColor: foundUser.cacheEnabled ? '#28a745' : '#007bff',
-                cursor: updating === foundUser.id || foundUser.cacheEnabled ? 'not-allowed' : 'pointer',
-                opacity: updating === foundUser.id || foundUser.cacheEnabled ? 0.6 : 1 
+                                  cursor: updating === foundUser.uid || foundUser.cacheEnabled ? 'not-allowed' : 'pointer',
+                  opacity: updating === foundUser.uid || foundUser.cacheEnabled ? 0.6 : 1 
               }}
             >
-              {updating === foundUser.id ? 'Updating...' : 'Enable Cache'}
+                              {updating === foundUser.uid ? 'Updating...' : 'Enable Cache'}
             </button>
             
             <button 
-              onClick={() => updateCachePreference(foundUser.id, false)}
-              disabled={updating === foundUser.id || !foundUser.cacheEnabled}
+                                  onClick={() => updateCachePreference(foundUser.uid, false)}
+                              disabled={updating === foundUser.uid || !foundUser.cacheEnabled}
               className={styles.submitButton}
               style={{ 
                 backgroundColor: !foundUser.cacheEnabled ? '#dc3545' : '#6c757d',
-                cursor: updating === foundUser.id || !foundUser.cacheEnabled ? 'not-allowed' : 'pointer',
-                opacity: updating === foundUser.id || !foundUser.cacheEnabled ? 0.6 : 1 
+                                  cursor: updating === foundUser.uid || !foundUser.cacheEnabled ? 'not-allowed' : 'pointer',
+                  opacity: updating === foundUser.uid || !foundUser.cacheEnabled ? 0.6 : 1 
               }}
             >
-              {updating === foundUser.id ? 'Updating...' : 'Disable Cache'}
+                              {updating === foundUser.uid ? 'Updating...' : 'Disable Cache'}
             </button>
 
             <button 

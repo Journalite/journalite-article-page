@@ -15,6 +15,7 @@ import TopLeftLogo from '@/components/TopLeftLogo'
 import ShareModal from '@/components/ShareModal'
 import ShareButton from '@/components/ShareButton'
 import { logger, devLogger } from '@/utils/logger'
+import { getArticleImage } from '@/lib/buildMeta'
 
 // Types for mixed article data
 interface BaseArticle {
@@ -142,42 +143,12 @@ const adaptFirestoreArticle = (firestoreArticle: FirestoreArticle, cleanHtmlText
   // Extract clean text for excerpt
   const rawExcerpt = firestoreArticle.body.substring(0, 200) + '...';
   
-  // Extract image from article content if no cover image
-  const getArticleImage = () => {
-    // Always use the real cover image if it exists
-    if (firestoreArticle.coverImage && firestoreArticle.coverImage.trim() !== '') {
-      return firestoreArticle.coverImage;
-    }
-    
-    // Fallback: Extract first image from article content
-    if (firestoreArticle.body) {
-      // Look for img tags in the content
-      const imgRegex = /<img[^>]+src=["']([^"']+)["'][^>]*>/i;
-      const match = firestoreArticle.body.match(imgRegex);
-      
-      if (match && match[1]) {
-        return match[1];
-      }
-      
-      // Look for markdown-style images
-      const markdownImgRegex = /!\[.*?\]\(([^)]+)\)/;
-      const markdownMatch = firestoreArticle.body.match(markdownImgRegex);
-      
-      if (markdownMatch && markdownMatch[1]) {
-        return markdownMatch[1];
-      }
-      
-      // Look for standalone image URLs in the text
-      const urlRegex = /(https?:\/\/[^\s]+\.(?:jpg|jpeg|png|gif|webp|svg))/i;
-      const urlMatch = firestoreArticle.body.match(urlRegex);
-      
-      if (urlMatch && urlMatch[1]) {
-        return urlMatch[1];
-      }
-    }
-    
-    // Return null if no images found - let the card reshape itself
-    return null;
+  // Use the centralized image helper function
+  const getArticleImage_Enhanced = () => {
+    // Use the helper function from buildMeta.ts for consistent image handling
+    const image = getArticleImage(firestoreArticle.coverImage, firestoreArticle.body);
+    // Return null if only default image is available to let the card reshape
+    return image === '/images/journalite-social-banner.png' ? null : image;
   };
   
   return {
@@ -186,7 +157,7 @@ const adaptFirestoreArticle = (firestoreArticle: FirestoreArticle, cleanHtmlText
     slug: firestoreArticle.slug || firestoreArticle.title.toLowerCase().replace(/[^\w\s]/gi, '').replace(/\s+/g, '-'),
     authorName: firestoreArticle.authorName,
     excerpt: cleanHtmlText(rawExcerpt),
-    coverImageUrl: getArticleImage(),
+    coverImageUrl: getArticleImage_Enhanced(),
     tags: firestoreArticle.tags,
     createdAt: firestoreArticle.createdAt.toDate().toISOString(),
     readTime: Math.ceil(firestoreArticle.body.split(' ').length / 200),
@@ -236,7 +207,7 @@ const adaptGuardianArticle = (guardianArticle: GuardianArticle, cleanHtmlText: (
   };
 
   return {
-    id: `guardian-${encodeURIComponent(guardianArticle.id)}`,
+    id: `guardian-${encodeURIComponent(guardianArticle.id)}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
     title: guardianArticle.fields?.headline || guardianArticle.webTitle,
     slug: `guardian-${encodeURIComponent(guardianArticle.id)}`,
     authorName: guardianArticle.fields?.byline || 'The Guardian',
@@ -288,7 +259,7 @@ const adaptNewsApiArticle = (newsArticle: NewsArticle, cleanHtmlText: (text: str
   };
 
   return {
-    id: `news-${encodeURIComponent(newsArticle.url)}`,
+    id: `news-${encodeURIComponent(newsArticle.url)}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
     title: newsArticle.title,
     slug: `news-${encodeURIComponent(newsArticle.url)}`,
     authorName: newsArticle.author || newsArticle.source.name,
@@ -571,7 +542,7 @@ export default function ExploreClient() {
               if (adaptedPersonalizedGuardian.length > 0) {
                 categoriesData.push({
                   id: 'guardian-recommended',
-                  name: '🎯 Recommended News',
+                  name: 'Recommended News',
                   articles: adaptedPersonalizedGuardian,
                   priority: 99 // Very high priority, just below "For You"
                 });
@@ -1096,10 +1067,12 @@ export default function ExploreClient() {
     setSharingArticleDetails(null);
   };
 
-  const getSourceBadge = (source: string) => {
+  const getSourceBadge = (source: string, isFallback: boolean = false) => {
     switch (source) {
       case 'guardian':
-        return <span className={`${styles.sourceBadge} ${styles.guardian}`}>Guardian</span>;
+        return <span className={`${styles.sourceBadge} ${styles.guardian}`} style={isFallback ? {backgroundColor: '#f59e0b'} : {}}>
+          Guardian
+        </span>;
       case 'newsapi':
         return <span className={`${styles.sourceBadge} ${styles.newsapi}`}>News</span>;
       case 'journalite':
@@ -1107,6 +1080,15 @@ export default function ExploreClient() {
       default:
         return null;
     }
+  };
+
+  // Helper function to check if a Guardian article is fallback content
+  const isGuardianFallbackArticle = (article: BaseArticle) => {
+    return article.source === 'guardian' && article.id && (
+      article.id.includes('fallback/') || 
+      article.id.includes('fallback%2F') ||
+      decodeURIComponent(article.id).includes('fallback/')
+    );
   };
 
   const getArticleLink = (article: BaseArticle) => {
@@ -1154,6 +1136,7 @@ export default function ExploreClient() {
                 <span className={styles.toggleText}>Show Political Content</span>
               </label>
             </div>
+
             {isAuthenticated && <NotificationBell />}
           </div>
         </div>
@@ -1181,24 +1164,78 @@ export default function ExploreClient() {
             </div>
             
             <div className={styles.articlesGrid}>
-              {category.articles.map((article) => (
-                <article key={article.id} className={styles.articleCard}>
-                  <Link href={getArticleLink(article)} className={styles.articleLink}>
-                      {article.coverImageUrl && (
-                      <div className={styles.articleImage}>
-                          <img 
-                            src={article.coverImageUrl} 
-                            alt={article.title}
-                          className={styles.image}
-                          />
-                        </div>
-                      )}
-                    
-                    <div className={styles.articleContent}>
-                      <div className={styles.sourceBadgeContainer}>
-                        {getSourceBadge(article.source)}
+              {category.articles.map((article, index) => {
+                const isFallbackArticle = isGuardianFallbackArticle(article);
+                
+                return (
+                  <article 
+                    key={`${article.id}-${index}`} 
+                    className={styles.articleCard}
+                    style={isFallbackArticle ? {
+                      background: 'rgba(255, 193, 7, 0.15)',
+                      border: '1px solid rgba(255, 193, 7, 0.3)',
+                      position: 'relative',
+                      opacity: '0.85'
+                    } : {}}
+                  >
+                    {/* Rate Limit Notice for Fallback Articles */}
+                                         {isFallbackArticle && (
+                       <div style={{
+                         position: 'absolute',
+                         top: '8px',
+                         right: '8px',
+                         background: 'rgba(255, 193, 7, 0.9)',
+                         color: '#b45309',
+                         padding: '6px 10px',
+                         borderRadius: '12px',
+                         fontSize: '0.75rem',
+                         fontWeight: '600',
+                         zIndex: 2,
+                         border: '1px solid rgba(255, 193, 7, 0.6)',
+                         display: 'flex',
+                         alignItems: 'center',
+                         gap: '4px'
+                       }}>
+                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                           <circle cx="12" cy="12" r="10"/>
+                           <polyline points="12,6 12,12 16,14"/>
+                         </svg>
+                         API Rate Limited • Resets 7:00 PM CDT
+                       </div>
+                     )}
+
+                    <Link href={isFallbackArticle ? '#' : getArticleLink(article)} className={styles.articleLink} style={isFallbackArticle ? {pointerEvents: 'none' as const} : {}}>
+                        {article.coverImageUrl && (
+                        <div className={styles.articleImage}>
+                            <img 
+                              src={article.coverImageUrl} 
+                              alt={article.title}
+                            className={styles.image}
+                            />
+                          </div>
+                        )}
+                      
+                      <div className={styles.articleContent}>
+                        <div className={styles.sourceBadgeContainer}>
+                          {getSourceBadge(article.source, Boolean(isFallbackArticle))}
                                               <span className={`${styles.readTime} ${article.source === 'guardian' && article.readTime > 22 ? styles.longReadTime : ''}`}>
-                        {article.source === 'guardian' && article.readTime > 22 ? '📖 ' : ''}{getReadingTime(article.readTime)}
+                        {article.source === 'guardian' && article.readTime > 22 ? (
+                          <span style={{ 
+                            display: 'inline-flex', 
+                            alignItems: 'center', 
+                            gap: '4px',
+                            color: '#e65100', 
+                            fontWeight: '600'
+                          }}>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                            </svg>
+                            {getReadingTime(article.readTime)}
+                          </span>
+                        ) : (
+                          getReadingTime(article.readTime)
+                        )}
                         </span>
                       </div>
                       
@@ -1215,7 +1252,7 @@ export default function ExploreClient() {
                         {article.tags && article.tags.length > 0 && (
                         <div className={styles.tags}>
                           {article.tags.slice(0, 3).map((tag, index) => (
-                            <span key={index} className={styles.tag}>{tag}</span>
+                            <span key={`${article.id}-tag-${index}-${tag}`} className={styles.tag}>{tag}</span>
                             ))}
                           </div>
                         )}
@@ -1238,11 +1275,12 @@ export default function ExploreClient() {
                             }}
                             iconOnly={true}
                           />
-                      </div>
+                                            </div>
                     </article>
-                  ))}
+                  );
+                })}
                 </div>
-              </section>
+                </section>
             ))}
       </main>
 

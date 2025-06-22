@@ -450,7 +450,7 @@ class GuardianService {
 
         // Extract author from byline or contributor tags
         const author = article.fields?.byline ||
-            article.tags.find(tag => tag.type === 'contributor')?.webTitle ||
+            article.tags?.find(tag => tag.type === 'contributor')?.webTitle ||
             'The Guardian';
 
         // Format publication date

@@ -4,58 +4,90 @@ import { getUserCachePreferenceByEmail } from '@/services/userService';
 
 interface GuardianArticle {
     id: string;
+    sectionId: string;
+    sectionName: string;
+    webPublicationDate: string;
     webTitle: string;
     webUrl: string;
-    webPublicationDate: string;
+    apiUrl: string;
     fields?: {
         headline?: string;
+        byline?: string;
         standfirst?: string;
         body?: string;
-        bodyText?: string;
-        trailText?: string;
-        main?: string;
         thumbnail?: string;
-        byline?: string;
+        bodyText?: string;
     };
-    elements?: Array<any>;
-    tags: Array<{
-        id: string;
-        type: string;
-        webTitle: string;
-    }>;
-    sectionName: string;
-    pillarName: string;
 }
 
 interface GuardianResponse {
     status: string;
     userTier: string;
     total: number;
+    startIndex: number;
+    pageSize: number;
+    currentPage: number;
+    pages: number;
+    orderBy: string;
     results: GuardianArticle[];
 }
+
+// Fallback articles for when API is rate limited
+const getFallbackArticles = (section?: string): GuardianResponse => {
+    // Create unique ID with timestamp and random string to prevent key collisions
+    const uniqueId = `fallback/${section || 'general'}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
+    const fallbackArticles: GuardianArticle[] = [
+        {
+            id: uniqueId,
+            sectionId: section || "technology",
+            sectionName: section ? section.charAt(0).toUpperCase() + section.slice(1) : "Technology",
+            webPublicationDate: new Date().toISOString(),
+            webTitle: "Guardian API Rate Limited - Cached Content Unavailable",
+            webUrl: "#",
+            apiUrl: "#",
+            fields: {
+                headline: "Guardian API Rate Limited",
+                standfirst: "The Guardian API has reached its daily rate limit. Please try again later or upgrade to a paid tier for higher limits.",
+                bodyText: "We've temporarily reached the Guardian API rate limit. This happens when we exceed 500 requests per day on the free tier."
+            }
+        }
+    ];
+
+    return {
+        status: "ok",
+        userTier: "developer",
+        total: 1,
+        startIndex: 1,
+        pageSize: 1,
+        currentPage: 1,
+        pages: 1,
+        orderBy: "newest",
+        results: fallbackArticles
+    };
+};
 
 async function searchGuardianArticles(
     query: string = '',
     section?: string,
     pageSize: number = 50
 ): Promise<GuardianResponse> {
-    const apiKey = process.env.NEXT_PUBLIC_GUARDIAN_API_KEY;
+    const apiKey = process.env.GUARDIAN_API_KEY || process.env.NEXT_PUBLIC_GUARDIAN_API_KEY;
 
-    if (!apiKey || apiKey === 'YOUR_API_KEY_HERE') {
-        throw new Error('Guardian API key not configured');
+    if (!apiKey) {
+        throw new Error('Guardian API key not found');
     }
 
+    // Build API URL
+    const baseUrl = 'https://content.guardianapis.com/search';
     const params = new URLSearchParams({
         'api-key': apiKey,
-        'show-fields': 'headline,standfirst,body,main,thumbnail,byline,trailText,bodyText',
-        'show-tags': 'contributor,keyword',
-        'show-elements': 'image,video',
+        'show-fields': 'headline,byline,standfirst,body,thumbnail,bodyText',
         'page-size': pageSize.toString(),
-        'page': '1',
         'order-by': 'newest'
     });
 
-    if (query) {
+    if (query.trim()) {
         params.append('q', query);
     }
 
@@ -63,17 +95,33 @@ async function searchGuardianArticles(
         params.append('section', section);
     }
 
-    const url = `https://content.guardianapis.com/search?${params.toString()}`;
+    const url = `${baseUrl}?${params.toString()}`;
     console.log('🔍 Making Guardian API call:', { query, section, pageSize });
 
     const response = await fetch(url);
 
     if (!response.ok) {
+        if (response.status === 429) {
+            console.warn('⚠️ Guardian API rate limit reached (429). Using fallback content.');
+            return getFallbackArticles(section);
+        }
         throw new Error(`Guardian API error: ${response.status}`);
     }
 
     const data = await response.json();
-    return data.response;
+
+    // Transform the response to match our interface
+    return {
+        status: data.response.status,
+        userTier: data.response.userTier,
+        total: data.response.total,
+        startIndex: data.response.startIndex,
+        pageSize: data.response.pageSize,
+        currentPage: data.response.currentPage,
+        pages: data.response.pages,
+        orderBy: data.response.orderBy,
+        results: data.response.results
+    };
 }
 
 export async function GET(request: NextRequest) {
@@ -88,58 +136,83 @@ export async function GET(request: NextRequest) {
         // Create cache key from search parameters
         const cacheKey = `guardian-search:${query}:${section || 'all'}:${pageSize}`;
 
-        // Check if caching should be used for this user
-        let shouldUseCache = !forceNoCache;
-        if (userEmail && shouldUseCache) {
-            try {
-                const userCacheEnabled = await getUserCachePreferenceByEmail(userEmail);
-                shouldUseCache = userCacheEnabled;
-                console.log(`🎯 Cache preference for ${userEmail}: ${userCacheEnabled ? 'enabled' : 'disabled'}`);
-            } catch (error) {
-                console.warn('Error checking user cache preference, defaulting to cache enabled:', error);
-            }
+        // Check if user wants cache disabled
+        let shouldUseCache = true;
+        if (userEmail && !forceNoCache) {
+            shouldUseCache = await getUserCachePreferenceByEmail(userEmail);
         }
 
-        // Check cache first (only if caching is enabled for this user)
+        // Force disable cache if explicitly requested
+        if (forceNoCache) {
+            shouldUseCache = false;
+        }
+
+        // Try cache first (if enabled)
         if (shouldUseCache) {
-            const cachedData = guardianCache.get(cacheKey);
-            if (cachedData) {
-                console.log('📋 Cache HIT for Guardian search:', cacheKey);
+            const cachedResult = guardianCache.get(cacheKey);
+            if (cachedResult) {
+                console.log(`📋 Cache HIT for Guardian search: ${cacheKey}`);
                 return NextResponse.json({
-                    ...cachedData,
+                    ...cachedResult,
                     cached: true,
-                    cacheHit: true,
-                    cacheDisabledForUser: false
+                    cacheKey,
+                    userCacheEnabled: shouldUseCache
                 });
             }
-        } else {
-            console.log('🚫 Cache DISABLED for user:', userEmail);
         }
 
-        console.log('🚫 Cache MISS for Guardian search:', cacheKey);
+        console.log(`🚫 Cache MISS for Guardian search: ${cacheKey}`);
 
-        // Fetch fresh data from Guardian API
-        const guardianData = await searchGuardianArticles(query, section, pageSize);
+        try {
+            // Make API call
+            const result = await searchGuardianArticles(query, section, pageSize);
 
-        // Cache the result for 8 minutes (only if caching is enabled)
-        if (shouldUseCache) {
-            guardianCache.set(cacheKey, guardianData, 8);
-            console.log(`💾 Cached Guardian search results: ${guardianData.results.length} articles`);
+            // Cache the result for future requests (regardless of user preference)
+            guardianCache.set(cacheKey, result);
+
+            return NextResponse.json({
+                ...result,
+                cached: false,
+                cacheKey,
+                userCacheEnabled: shouldUseCache
+            });
+        } catch (error) {
+            console.error('❌ Guardian search API error:', error);
+
+            // For rate limit errors, try to return cached content if available
+            if (error instanceof Error && error.message.includes('429')) {
+                const cachedFallback = guardianCache.get(cacheKey);
+                if (cachedFallback) {
+                    console.log(`🔄 Using cached fallback for rate-limited request: ${cacheKey}`);
+                    return NextResponse.json({
+                        ...cachedFallback,
+                        cached: true,
+                        rateLimited: true,
+                        cacheKey,
+                        userCacheEnabled: shouldUseCache
+                    });
+                }
+
+                // No cache available, return fallback content
+                const fallback = getFallbackArticles(section);
+                return NextResponse.json({
+                    ...fallback,
+                    cached: false,
+                    rateLimited: true,
+                    cacheKey,
+                    userCacheEnabled: shouldUseCache
+                });
+            }
+
+            throw error; // Re-throw other errors
         }
-
-        return NextResponse.json({
-            ...guardianData,
-            cached: false,
-            cacheHit: false,
-            cacheDisabledForUser: !shouldUseCache
-        });
-
     } catch (error) {
         console.error('❌ Guardian search API error:', error);
         return NextResponse.json(
             {
-                error: 'Failed to fetch Guardian articles',
-                details: error instanceof Error ? error.message : 'Unknown error'
+                error: 'Failed to search Guardian articles',
+                details: error instanceof Error ? error.message : 'Unknown error',
+                rateLimited: error instanceof Error && error.message.includes('429')
             },
             { status: 500 }
         );

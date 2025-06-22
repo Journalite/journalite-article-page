@@ -128,6 +128,37 @@ export function extractPlainText(html: string, maxLength: number = 160): string 
         : text;
 }
 
+// Helper function to extract images from article content
+export function extractImageFromContent(content: string): string | null {
+    if (!content) return null;
+
+    // Look for img tags in the content
+    const imgRegex = /<img[^>]+src=["']([^"']+)["'][^>]*>/i;
+    const match = content.match(imgRegex);
+
+    if (match && match[1]) {
+        return match[1];
+    }
+
+    // Look for markdown-style images
+    const markdownImgRegex = /!\[.*?\]\(([^)]+)\)/;
+    const markdownMatch = content.match(markdownImgRegex);
+
+    if (markdownMatch && markdownMatch[1]) {
+        return markdownMatch[1];
+    }
+
+    // Look for standalone image URLs in the text
+    const urlRegex = /(https?:\/\/[^\s]+\.(?:jpg|jpeg|png|gif|webp|svg))/i;
+    const urlMatch = content.match(urlRegex);
+
+    if (urlMatch && urlMatch[1]) {
+        return urlMatch[1];
+    }
+
+    return null;
+}
+
 // Helper function to generate article excerpt
 export function generateArticleExcerpt(body: string, excerpt?: string): string {
     if (excerpt && excerpt.trim()) {
@@ -135,4 +166,23 @@ export function generateArticleExcerpt(body: string, excerpt?: string): string {
     }
 
     return extractPlainText(body, 160);
+}
+
+// Helper function to get the best image for an article (cover image or extracted from content)
+export function getArticleImage(coverImage?: string | null, content?: string): string {
+    // First try the cover image
+    if (coverImage && coverImage.trim() !== '') {
+        return coverImage;
+    }
+
+    // Fallback: Extract from content
+    if (content) {
+        const extractedImage = extractImageFromContent(content);
+        if (extractedImage) {
+            return extractedImage;
+        }
+    }
+
+    // Final fallback
+    return seoDefaults.defaultImage;
 } 

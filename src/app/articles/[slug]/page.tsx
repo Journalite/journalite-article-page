@@ -5,7 +5,7 @@ import { collection, getDocs, query, where } from 'firebase/firestore'
 import { db } from '@/firebase/clientApp'
 import { getArticleBySlug } from '@/firebase/articles';
 import { buildMetadata } from '@/lib/buildMeta';
-import { generateArticleExcerpt } from '@/lib/buildMeta';
+import { generateArticleExcerpt, getArticleImage } from '@/lib/buildMeta';
 import { getDefaultMetadata } from '@/lib/seoDefaults';
 import { redirect } from 'next/navigation';
 
@@ -45,8 +45,8 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     const authors = article.authorName ? [article.authorName] : undefined;
     const tags = article.tags || [];
     
-    // Use cover image if available, otherwise default
-    const image = article.coverImage || undefined;
+    // Use the helper function to get the best available image (cover image or extracted from content)
+    const image = getArticleImage(article.coverImage, article.body);
     
     return buildMetadata({
       title,

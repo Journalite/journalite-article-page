@@ -566,8 +566,13 @@ export async function deleteUserAccount(uid: string): Promise<void> {
 
 // Cache preference management
 export async function setUserCachePreference(userId: string, enableCache: boolean): Promise<void> {
+    if (!userId || typeof userId !== 'string' || userId.trim() === '') {
+        console.error('❌ Invalid userId provided to setUserCachePreference:', userId);
+        throw new Error('Valid userId is required');
+    }
+
     try {
-        const userRef = doc(db, 'users', userId);
+        const userRef = doc(db, 'users', userId.trim());
         await updateDoc(userRef, {
             cacheEnabled: enableCache,
             cachePreferenceUpdatedAt: serverTimestamp()
@@ -580,40 +585,50 @@ export async function setUserCachePreference(userId: string, enableCache: boolea
 }
 
 export async function getUserCachePreference(userId: string): Promise<boolean> {
+    if (!userId || typeof userId !== 'string' || userId.trim() === '') {
+        console.warn('⚠️ Invalid userId provided to getUserCachePreference, defaulting to cache enabled');
+        return true; // Default to cache enabled for invalid user IDs
+    }
+
     try {
-        const userRef = doc(db, 'users', userId);
+        const userRef = doc(db, 'users', userId.trim());
         const userSnap = await getDoc(userRef);
 
         if (userSnap.exists()) {
             const userData = userSnap.data();
-            // Default to true (cache enabled) if not set
+            // Default to cache enabled if preference not set
             return userData.cacheEnabled !== undefined ? userData.cacheEnabled : true;
+        } else {
+            console.log(`📝 User document not found for ${userId}, defaulting to cache enabled`);
+            return true; // Default to cache enabled for non-existent users
         }
-
-        // Default to cache enabled for new users
-        return true;
-    } catch (error) {
-        console.error('Error getting cache preference:', error);
-        // Default to cache enabled on error
-        return true;
+    } catch (error: any) {
+        // Handle specific Firestore errors
+        if (error.code === 'unavailable' || error.message?.includes('offline')) {
+            console.warn('⚠️ Firestore is offline, defaulting to cache enabled');
+        } else {
+            console.error('Error getting cache preference:', error);
+        }
+        return true; // Default to cache enabled on any error
     }
 }
 
 export async function getUserCachePreferenceByEmail(email: string): Promise<boolean> {
-    try {
-        const usersRef = collection(db, 'users');
-        const q = query(usersRef, where('email', '==', email), limit(1));
-        const querySnapshot = await getDocs(q);
-
-        if (!querySnapshot.empty) {
-            const userDoc = querySnapshot.docs[0];
-            const userData = userDoc.data();
-            return userData.cacheEnabled !== undefined ? userData.cacheEnabled : true;
-        }
-
+    if (!email || typeof email !== 'string' || email.trim() === '') {
+        console.warn('⚠️ Invalid email provided to getUserCachePreferenceByEmail, defaulting to cache enabled');
         return true;
+    }
+
+    try {
+        const user = await getUserProfileByEmail(email.trim());
+        if (user && user.uid) {
+            return await getUserCachePreference(user.uid);
+        } else {
+            console.log(`📝 User not found for email ${email}, defaulting to cache enabled`);
+            return true;
+        }
     } catch (error) {
         console.error('Error getting cache preference by email:', error);
-        return true;
+        return true; // Default to cache enabled on error
     }
 } 

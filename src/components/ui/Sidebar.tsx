@@ -14,7 +14,7 @@ const navigationItems = [
   { 
     label: 'Today', 
     href: '/', 
-    icon: '📖',
+    icon: 'book',
     isHighlighted: true 
   },
   { 
@@ -26,12 +26,12 @@ const navigationItems = [
   { 
     label: 'Sports', 
     href: '/tag/sports', 
-    icon: '⚽' 
+    icon: 'sports' 
   },
   { 
     label: 'Politics', 
     href: '/tag/politics', 
-    icon: '🏛️' 
+    icon: 'politics' 
   },
   { 
     label: 'Technology', 
@@ -41,7 +41,7 @@ const navigationItems = [
   { 
     label: 'Science', 
     href: '/tag/science', 
-    icon: '🔬' 
+    icon: 'science' 
   },
   { 
     label: 'Culture', 
@@ -51,7 +51,7 @@ const navigationItems = [
   { 
     label: 'Puzzles', 
     href: '/puzzles', 
-    icon: '🧩' 
+    icon: 'puzzles' 
   },
 ]
 
@@ -64,12 +64,12 @@ const userItems = [
   { 
     label: 'Messages', 
     href: '/messages', 
-    icon: '💬' 
+    icon: 'messages' 
   },
   { 
     label: 'My Articles', 
     href: '/my-thoughts', 
-    icon: '📝' 
+    icon: 'articles' 
   },
   { 
     label: 'Compose', 
@@ -82,6 +82,65 @@ const userItems = [
     icon: SettingsIcon 
   },
 ]
+
+// Helper function to render custom icons
+const renderCustomIcon = (iconName: string) => {
+  switch (iconName) {
+    case 'book':
+      return (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+        </svg>
+      );
+    case 'sports':
+      return (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/>
+          <path d="M2 12h20"/>
+        </svg>
+      );
+    case 'politics':
+      return (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M3 21h18"/>
+          <path d="M5 21V7l8-4v18"/>
+          <path d="M19 21V11l-6-4"/>
+        </svg>
+      );
+    case 'science':
+      return (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M9 3v6l-3 3v6a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-6l-3-3V3"/>
+          <path d="M12 3h0"/>
+          <circle cx="12" cy="16" r="1"/>
+        </svg>
+      );
+    case 'puzzles':
+      return (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M9 2v2.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V2h4v4.5c0 .83-.67 1.5-1.5 1.5S13 7.33 13 6.5V6H9v4"/>
+          <path d="M15 9h2.5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5H15v4h-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5H15V9z"/>
+          <path d="M9 15v2.5c0 .83-.67 1.5-1.5 1.5S6 18.33 6 17.5V15H2v-2.5c0-.83.67-1.5 1.5-1.5S5 11.67 5 12.5V15h4z"/>
+        </svg>
+      );
+    case 'messages':
+      return (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+      );
+    case 'articles':
+      return (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
+        </svg>
+      );
+    default:
+      return null;
+  }
+};
 
 const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
   const pathname = usePathname()
@@ -158,7 +217,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
                   `}
                 >
                   <span className="mr-3 text-base">
-                    {typeof item.icon === 'string' ? item.icon : <item.icon size={18} />}
+                    {typeof item.icon === 'string' ? renderCustomIcon(item.icon) : <item.icon size={18} />}
                   </span>
                   <span className="flex-1">{item.label}</span>
                   {item.isPremium && (
@@ -199,7 +258,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
                   `}
                 >
                   <span className="mr-3 text-base">
-                    {typeof item.icon === 'string' ? item.icon : <item.icon size={18} />}
+                    {typeof item.icon === 'string' ? renderCustomIcon(item.icon) : <item.icon size={18} />}
                   </span>
                   <span className="flex-1">{item.label}</span>
                 </Link>

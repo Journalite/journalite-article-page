@@ -1,7 +1,7 @@
 'use client'
 
 // src/components/RenderArticle.tsx
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import ReactMarkdown from 'react-markdown';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -20,6 +20,7 @@ import { HighlightProvider } from '@/context/HighlightContext';
 import InlineReflection from './InlineReflection';
 import { highlightCodeBlocks } from '@/utils/syntaxHighlighter';
 import ClientSideHighlighter from './ClientSideHighlighter';
+import { getArticleImage } from '@/lib/buildMeta';
 
 interface Comment {
   userId: string;
@@ -416,7 +417,11 @@ const RenderArticle: React.FC<RenderArticleProps> = ({ article }) => {
   const ogUrl = `${baseUrl}/articles/${encodeURIComponent(article.slug)}`;
   const ogTitle = article.title;
   const ogDescription = getExcerptForSharing(100);
-  const ogImage = article.coverImageUrl || `${baseUrl}/default-journalite-og-image.png`; // Add a default OG image to your public folder
+  
+  // Use the helper function to get the best available image for Open Graph
+  const ogImage = isSimple(article) 
+    ? getArticleImage(article.coverImageUrl, article.body)
+    : getArticleImage(article.coverImageUrl, article.content?.[0]?.text);
 
   // Common article header structure
   const ArticleHeader = () => {
@@ -561,11 +566,11 @@ const RenderArticle: React.FC<RenderArticleProps> = ({ article }) => {
         {/* Share Modal */}
         {isShareModalOpen && (
           <ShareModal
-            title={article.title}
-            url={`${baseUrl}article/${article.slug}`}
-            excerpt={getExcerptForSharing()}
+            isOpen={isShareModalOpen}
             onClose={handleCloseShareModal}
-            coverImageUrl={article.coverImageUrl}
+            highlightText={getExcerptForSharing()}
+            articleTitle={article.title}
+            shareUrl={`${baseUrl}/articles/${encodeURIComponent(article.slug)}`}
           />
         )}
 
@@ -630,7 +635,8 @@ const RenderArticle: React.FC<RenderArticleProps> = ({ article }) => {
         <HighlightProvider articleId={article.id}>
           <ArticleHighlights 
             articleId={article.id}
-            onShare={handleShareHighlighted}
+            articleTitle={article.title}
+            articleSlug={article.slug}
           >
             <div className="article-content article-highlight-container">
             {isComplex(article) ? (
@@ -702,9 +708,7 @@ const RenderArticle: React.FC<RenderArticleProps> = ({ article }) => {
 
         {/* Comment Section */}
         <CommentSection 
-          articleId={article.id} 
-          isComplex={isComplex(article)}
-          slug={article.slug}
+          articleId={article.id}
         />
       </div>
     </>
