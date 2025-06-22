@@ -707,3 +707,4 @@ To set up this project locally:
 5. Open a Pull Request
 
 Please make sure your code follows the existing coding patterns and includes appropriate tests. # Deployment test with updated Vercel secrets
+# Testing deployment to mvp.journalite project
