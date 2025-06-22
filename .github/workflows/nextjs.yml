@@ -57,20 +57,17 @@ jobs:
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
       
-      - name: Deploy to Vercel
+      - name: Re-link and Deploy to Vercel
         run: |
           # Remove any existing .vercel directory completely
           rm -rf .vercel
           
-          # Deploy using npx to avoid any cached CLI issues
-          # Use --name to target specific project without linking
-          npx vercel@latest \
-            --prod \
-            --token=${{ secrets.VERCEL_TOKEN }} \
-            --scope=${{ secrets.VERCEL_ORG_ID }} \
-            --name=mvp.journalite \
-            --yes \
-            --force
+          # Re-link the project from scratch
+          echo "Re-linking project to fix broken connection..."
+          vercel link --yes --token=${{ secrets.VERCEL_TOKEN }}
+          
+          # Deploy to production
+          vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
