@@ -2409,7 +2409,7 @@ service cloud.firestore {
 ## 🚀 Integration
 
 The feature is integrated into both article routes:
-- \`/articles/[id]\` - Individual article pages
+- \`/articles/[slug]\` - Individual article pages
 - \`/articles?slug=\` - Slug-based article pages
 
 ### Example Usage
