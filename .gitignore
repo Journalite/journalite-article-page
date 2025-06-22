@@ -1,9 +1,9 @@
 # Dependencies
 /node_modules/
 
-# Build cache (but keep the rest of .next and out)
-/.next/cache/
-/.next/static/development/
+# Build output
+/.next/
+/out/
 
 # Debug logs
 npm-debug.log*

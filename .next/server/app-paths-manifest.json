@@ -1,5 +1,0 @@
-{
-  "/[...firebase_auth]/page": "app/[...firebase_auth]/page.js",
-  "/news/[articleId]/page": "app/news/[articleId]/page.js",
-  "/page": "app/page.js"
-}
