@@ -57,12 +57,27 @@ jobs:
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
       
-      - name: Pull Vercel env & link
+      - name: Clear all stale Vercel configurations
         run: |
-          # Remove any existing .vercel directory to start fresh
+          # Clear all 4 places where stale projectId can hide (per Vercel docs)
+          
+          # 1. Project root - .vercel/project.json
           rm -rf .vercel
           
-          # Pull environment and recreate the link (official Vercel recommendation)
+          # 2. Parent folders - any forgotten .vercel/ higher up the path
+          find $PWD -maxdepth 3 -type d -name .vercel -print -exec rm -rf {} + 2>/dev/null || true
+          
+          # 3. Shell env - unset any existing VERCEL vars to avoid conflicts
+          unset VERCEL_PROJECT_ID VERCEL_ORG_ID || true
+          
+          # 4. Global config - ~/.config/vercel (safe to delete)
+          rm -rf ~/.config/vercel || true
+          
+          echo "All stale Vercel configurations cleared"
+      
+      - name: Pull Vercel env & link
+        run: |
+          # Fresh link with clean environment (official Vercel recommendation)
           vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
