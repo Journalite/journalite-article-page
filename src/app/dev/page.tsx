@@ -3836,7 +3836,7 @@ function RecommendationAnalytics() {
     try {
       // Search for user by username in Firestore
       const { collection, query, where, getDocs } = await import('firebase/firestore');
-      const { db } = await import('@/lib/firebase');
+      const { db } = await import('@/firebase/clientApp');
       
       const usersQuery = query(
         collection(db, 'users'),

@@ -12,7 +12,7 @@ import {
     arrayUnion,
     serverTimestamp
 } from 'firebase/firestore';
-import { db } from '../lib/firebase';
+import { db } from '../firebase/clientApp';
 
 export interface UserInteraction {
     userId: string;
