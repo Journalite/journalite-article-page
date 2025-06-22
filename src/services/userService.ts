@@ -34,6 +34,8 @@ export interface UserProfile {
     lastInterestsUpdate?: any; // When user last updated their interests
     needsInterestsUpdate?: boolean; // Flag to prompt for interest updates
     interestsVersion?: number; // Version number to track when interests were last reviewed
+    cacheEnabled?: boolean; // Flag to control caching behavior for this user
+    cachePreferenceUpdatedAt?: any; // When cache preference was last updated
 }
 
 /**
@@ -559,5 +561,59 @@ export async function deleteUserAccount(uid: string): Promise<void> {
             throw new Error('This operation is sensitive and requires recent authentication. Please sign out and sign back in, then try again.');
         }
         throw new Error('Failed to delete user account. ' + error.message);
+    }
+}
+
+// Cache preference management
+export async function setUserCachePreference(userId: string, enableCache: boolean): Promise<void> {
+    try {
+        const userRef = doc(db, 'users', userId);
+        await updateDoc(userRef, {
+            cacheEnabled: enableCache,
+            cachePreferenceUpdatedAt: serverTimestamp()
+        });
+        console.log(`✅ Cache preference updated for user ${userId}: ${enableCache ? 'enabled' : 'disabled'}`);
+    } catch (error) {
+        console.error('Error setting cache preference:', error);
+        throw error;
+    }
+}
+
+export async function getUserCachePreference(userId: string): Promise<boolean> {
+    try {
+        const userRef = doc(db, 'users', userId);
+        const userSnap = await getDoc(userRef);
+
+        if (userSnap.exists()) {
+            const userData = userSnap.data();
+            // Default to true (cache enabled) if not set
+            return userData.cacheEnabled !== undefined ? userData.cacheEnabled : true;
+        }
+
+        // Default to cache enabled for new users
+        return true;
+    } catch (error) {
+        console.error('Error getting cache preference:', error);
+        // Default to cache enabled on error
+        return true;
+    }
+}
+
+export async function getUserCachePreferenceByEmail(email: string): Promise<boolean> {
+    try {
+        const usersRef = collection(db, 'users');
+        const q = query(usersRef, where('email', '==', email), limit(1));
+        const querySnapshot = await getDocs(q);
+
+        if (!querySnapshot.empty) {
+            const userDoc = querySnapshot.docs[0];
+            const userData = userDoc.data();
+            return userData.cacheEnabled !== undefined ? userData.cacheEnabled : true;
+        }
+
+        return true;
+    } catch (error) {
+        console.error('Error getting cache preference by email:', error);
+        return true;
     }
 } 

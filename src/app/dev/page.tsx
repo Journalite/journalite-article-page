@@ -4917,6 +4917,255 @@ function markdownToHtml(markdown: string): string {
   return html;
 }
 
+function CacheControl() {
+  const [users, setUsers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [searchEmail, setSearchEmail] = useState('');
+  const [foundUser, setFoundUser] = useState<any>(null);
+  const [updating, setUpdating] = useState<string | null>(null);
+  const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+
+  const searchUser = async () => {
+    if (!searchEmail.trim()) return;
+    
+    setLoading(true);
+    try {
+      const { getUserProfileByEmail } = await import('@/services/userService');
+      const user = await getUserProfileByEmail(searchEmail.trim());
+      
+      if (user) {
+        setFoundUser({
+          ...user,
+          cacheEnabled: user.cacheEnabled !== undefined ? user.cacheEnabled : true
+        });
+        setMessage({ type: 'success', text: `Found user: ${user.firstName} ${user.lastName}` });
+      } else {
+        setFoundUser(null);
+        setMessage({ type: 'error', text: 'User not found' });
+      }
+    } catch (error) {
+      console.error('Error searching user:', error);
+      setMessage({ type: 'error', text: 'Error searching for user' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateCachePreference = async (userId: string, enableCache: boolean) => {
+    setUpdating(userId);
+    try {
+      const { setUserCachePreference } = await import('@/services/userService');
+      await setUserCachePreference(userId, enableCache);
+      
+      // Update local state
+      if (foundUser && foundUser.id === userId) {
+        setFoundUser({ ...foundUser, cacheEnabled: enableCache });
+      }
+      
+      setMessage({ 
+        type: 'success', 
+        text: `Cache ${enableCache ? 'enabled' : 'disabled'} for user ${foundUser?.firstName} ${foundUser?.lastName}` 
+      });
+    } catch (error) {
+      console.error('Error updating cache preference:', error);
+      setMessage({ type: 'error', text: 'Error updating cache preference' });
+    } finally {
+      setUpdating(null);
+    }
+  };
+
+  const testCacheBypass = async () => {
+    if (!foundUser) return;
+    
+    setLoading(true);
+    try {
+      console.log('🧪 Testing cache bypass for user:', foundUser.email);
+      
+      // Test with cache
+      const start1 = Date.now();
+      const response1 = await fetch(`/api/guardian/search?q=technology&userEmail=${foundUser.email}`);
+      const data1 = await response1.json();
+      const time1 = Date.now() - start1;
+      
+      // Test without cache (force fresh)
+      const start2 = Date.now();
+      const response2 = await fetch(`/api/guardian/search?q=technology&userEmail=${foundUser.email}&noCache=true`);
+      const data2 = await response2.json();
+      const time2 = Date.now() - start2;
+      
+      console.log('Cache test results:', {
+        withCache: { time: time1, hit: data1.cacheHit, disabled: data1.cacheDisabledForUser },
+        withoutCache: { time: time2, hit: data2.cacheHit, disabled: data2.cacheDisabledForUser }
+      });
+      
+      setMessage({ 
+        type: 'success', 
+        text: `Cache test complete: ${time1}ms (cache) vs ${time2}ms (fresh)` 
+      });
+    } catch (error) {
+      console.error('Error testing cache:', error);
+      setMessage({ type: 'error', text: 'Error testing cache' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className={styles.docsContainer}>
+      <div className={styles.sectionTitle} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+        <SettingsIcon size={24} color="#0066cc" />
+        Per-User Cache Control
+      </div>
+      <p style={{ color: '#666', marginBottom: '2rem', fontSize: '1rem', lineHeight: '1.6' }}>
+        Control caching behavior for specific users. Useful for testing, debugging, or providing different experiences.
+      </p>
+
+      {/* User Search */}
+      <div style={{ marginBottom: '2rem' }}>
+        <h3 style={{ color: '#333', marginBottom: '1rem' }}>Find User by Email</h3>
+        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: '1rem' }}>
+          <input
+            type="email"
+            value={searchEmail}
+            onChange={(e) => setSearchEmail(e.target.value)}
+            placeholder="Enter user email..."
+            style={{
+              padding: '0.75rem',
+              border: '1px solid #ddd',
+              borderRadius: '4px',
+              flex: 1,
+              fontSize: '1rem'
+            }}
+            onKeyDown={(e) => e.key === 'Enter' && searchUser()}
+          />
+          <button 
+            onClick={searchUser}
+            disabled={loading || !searchEmail.trim()}
+            className={styles.submitButton}
+            style={{ 
+              cursor: loading || !searchEmail.trim() ? 'not-allowed' : 'pointer',
+              opacity: loading || !searchEmail.trim() ? 0.6 : 1 
+            }}
+          >
+            {loading ? 'Searching...' : 'Search'}
+          </button>
+        </div>
+      </div>
+
+      {/* Found User */}
+      {foundUser && (
+        <div style={{
+          padding: '1.5rem',
+          backgroundColor: '#f9f9f9',
+          border: '1px solid #ddd',
+          borderRadius: '8px',
+          marginBottom: '2rem'
+        }}>
+          <h3 style={{ color: '#333', marginBottom: '1rem' }}>User Found</h3>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
+            <div>
+              <strong>Name:</strong> {foundUser.firstName} {foundUser.lastName}
+            </div>
+            <div>
+              <strong>Email:</strong> {foundUser.email}
+            </div>
+            <div>
+              <strong>Username:</strong> @{foundUser.username}
+            </div>
+            <div>
+              <strong>Cache Status:</strong> 
+              <span style={{ 
+                color: foundUser.cacheEnabled ? '#28a745' : '#dc3545',
+                fontWeight: 'bold',
+                marginLeft: '0.5rem'
+              }}>
+                {foundUser.cacheEnabled ? 'ENABLED' : 'DISABLED'}
+              </span>
+            </div>
+          </div>
+
+          {/* Cache Control Buttons */}
+          <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
+            <button 
+              onClick={() => updateCachePreference(foundUser.id, true)}
+              disabled={updating === foundUser.id || foundUser.cacheEnabled}
+              className={styles.submitButton}
+              style={{ 
+                backgroundColor: foundUser.cacheEnabled ? '#28a745' : '#007bff',
+                cursor: updating === foundUser.id || foundUser.cacheEnabled ? 'not-allowed' : 'pointer',
+                opacity: updating === foundUser.id || foundUser.cacheEnabled ? 0.6 : 1 
+              }}
+            >
+              {updating === foundUser.id ? 'Updating...' : 'Enable Cache'}
+            </button>
+            
+            <button 
+              onClick={() => updateCachePreference(foundUser.id, false)}
+              disabled={updating === foundUser.id || !foundUser.cacheEnabled}
+              className={styles.submitButton}
+              style={{ 
+                backgroundColor: !foundUser.cacheEnabled ? '#dc3545' : '#6c757d',
+                cursor: updating === foundUser.id || !foundUser.cacheEnabled ? 'not-allowed' : 'pointer',
+                opacity: updating === foundUser.id || !foundUser.cacheEnabled ? 0.6 : 1 
+              }}
+            >
+              {updating === foundUser.id ? 'Updating...' : 'Disable Cache'}
+            </button>
+
+            <button 
+              onClick={testCacheBypass}
+              disabled={loading}
+              className={styles.submitButton}
+              style={{ 
+                backgroundColor: '#17a2b8',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                opacity: loading ? 0.6 : 1 
+              }}
+            >
+              {loading ? 'Testing...' : 'Test Cache'}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Message Display */}
+      {message && (
+        <div style={{
+          padding: '1rem',
+          backgroundColor: message.type === 'success' ? '#d4edda' : '#f8d7da',
+          border: `1px solid ${message.type === 'success' ? '#c3e6cb' : '#f5c6cb'}`,
+          borderRadius: '4px',
+          color: message.type === 'success' ? '#155724' : '#721c24',
+          marginBottom: '1rem'
+        }}>
+          {message.text}
+        </div>
+      )}
+
+      {/* Cache Control Info */}
+      <div style={{
+        padding: '1.5rem',
+        backgroundColor: '#e8f4fd',
+        border: '1px solid #b3d9ff',
+        borderRadius: '8px'
+      }}>
+        <h4 style={{ color: '#0066cc', marginBottom: '1rem' }}>How Cache Control Works</h4>
+        <ul style={{ margin: 0, paddingLeft: '1.5rem', color: '#0066cc', lineHeight: '1.6' }}>
+          <li><strong>Cache Enabled:</strong> User gets cached articles (faster loading, 8-min TTL)</li>
+          <li><strong>Cache Disabled:</strong> User always gets fresh articles (slower, direct API calls)</li>
+          <li><strong>URL Parameters:</strong> 
+            <ul style={{ marginTop: '0.5rem' }}>
+              <li><code>?userEmail=user@example.com</code> - Check user cache preference</li>
+              <li><code>&noCache=true</code> - Force bypass cache for any user</li>
+            </ul>
+          </li>
+          <li><strong>Console Logs:</strong> Watch browser console for cache behavior indicators</li>
+        </ul>
+      </div>
+    </div>
+  );
+}
+
 export default function DevPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
@@ -5025,6 +5274,15 @@ export default function DevPage() {
               Recommendation Analytics
             </span>
           </button>
+          <button 
+            className={`${styles.tabButton} ${activeTab === 'cache-control' ? styles.activeTab : ''}`}
+            onClick={() => setActiveTab('cache-control')}
+          >
+            <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <SettingsIcon size={16} />
+              Cache Control
+            </span>
+          </button>
         </div>
         
         {activeTab === 'docs' ? (
@@ -5035,6 +5293,8 @@ export default function DevPage() {
           <CacheMonitor />
         ) : activeTab === 'recommendations' ? (
           <RecommendationAnalytics />
+        ) : activeTab === 'cache-control' ? (
+          <CacheControl />
         ) : (
           <UserManagement />
         )}

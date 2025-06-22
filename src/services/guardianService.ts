@@ -74,7 +74,9 @@ class GuardianService {
         query: string = '',
         section?: string,
         page: number = 1,
-        pageSize: number = 50
+        pageSize: number = 50,
+        userEmail?: string,
+        forceNoCache: boolean = false
     ): Promise<GuardianResponse> {
         // Use cached API route instead of direct Guardian API calls
         const params = new URLSearchParams({
@@ -84,6 +86,14 @@ class GuardianService {
 
         if (section) {
             params.append('section', section);
+        }
+
+        if (userEmail) {
+            params.append('userEmail', userEmail);
+        }
+
+        if (forceNoCache) {
+            params.append('noCache', 'true');
         }
 
         const url = `/api/guardian/search?${params.toString()}`;
@@ -102,7 +112,9 @@ class GuardianService {
         }
 
         // Log cache performance
-        if (data.cacheHit) {
+        if (data.cacheDisabledForUser) {
+            console.log('🚫 Cache DISABLED for this user - Always fresh data');
+        } else if (data.cacheHit) {
             console.log('⚡ Cache HIT - Fast response from in-memory cache');
         } else {
             console.log('🔄 Cache MISS - Fresh data fetched and cached');
@@ -121,9 +133,20 @@ class GuardianService {
         };
     }
 
-    async getArticleById(articleId: string): Promise<GuardianArticle> {
+    async getArticleById(articleId: string, userEmail?: string, forceNoCache: boolean = false): Promise<GuardianArticle> {
         // Use cached API route instead of direct Guardian API calls
-        const url = `/api/guardian/article/${encodeURIComponent(articleId)}`;
+        const params = new URLSearchParams();
+
+        if (userEmail) {
+            params.append('userEmail', userEmail);
+        }
+
+        if (forceNoCache) {
+            params.append('noCache', 'true');
+        }
+
+        const queryString = params.toString();
+        const url = `/api/guardian/article/${encodeURIComponent(articleId)}${queryString ? `?${queryString}` : ''}`;
         console.log('🚀 Using cached Guardian article API route:', url);
 
         const response = await fetch(url);
@@ -139,7 +162,9 @@ class GuardianService {
         }
 
         // Log cache performance
-        if (data.cacheHit) {
+        if (data.cacheDisabledForUser) {
+            console.log('🚫 Cache DISABLED for this user - Always fresh data');
+        } else if (data.cacheHit) {
             console.log('⚡ Cache HIT - Fast article response from in-memory cache');
         } else {
             console.log('🔄 Cache MISS - Fresh article data fetched and cached');

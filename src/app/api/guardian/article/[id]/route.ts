@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { guardianCache } from '@/lib/cache';
+import { getUserCachePreferenceByEmail } from '@/services/userService';
 
 interface GuardianArticle {
     id: string;
@@ -73,18 +74,40 @@ export async function GET(
 
         console.log('🔍 Processing Guardian article request for ID:', articleId);
 
+        // Get query parameters
+        const { searchParams } = new URL(request.url);
+        const userEmail = searchParams.get('userEmail') || undefined;
+        const forceNoCache = searchParams.get('noCache') === 'true';
+
         // Create cache key for the article
         const cacheKey = `guardian-article:${articleId}`;
 
-        // Check cache first
-        const cachedArticle = guardianCache.get(cacheKey);
-        if (cachedArticle) {
-            console.log('📋 Cache HIT for Guardian article:', articleId);
-            return NextResponse.json({
-                article: cachedArticle,
-                cached: true,
-                cacheHit: true
-            });
+        // Check if caching should be used for this user
+        let shouldUseCache = !forceNoCache;
+        if (userEmail && shouldUseCache) {
+            try {
+                const userCacheEnabled = await getUserCachePreferenceByEmail(userEmail);
+                shouldUseCache = userCacheEnabled;
+                console.log(`🎯 Cache preference for ${userEmail}: ${userCacheEnabled ? 'enabled' : 'disabled'}`);
+            } catch (error) {
+                console.warn('Error checking user cache preference, defaulting to cache enabled:', error);
+            }
+        }
+
+        // Check cache first (only if caching is enabled for this user)
+        if (shouldUseCache) {
+            const cachedArticle = guardianCache.get(cacheKey);
+            if (cachedArticle) {
+                console.log('📋 Cache HIT for Guardian article:', articleId);
+                return NextResponse.json({
+                    article: cachedArticle,
+                    cached: true,
+                    cacheHit: true,
+                    cacheDisabledForUser: false
+                });
+            }
+        } else {
+            console.log('🚫 Cache DISABLED for user:', userEmail);
         }
 
         console.log('🚫 Cache MISS for Guardian article:', articleId);
@@ -92,15 +115,17 @@ export async function GET(
         // Fetch fresh data from Guardian API
         const article = await fetchGuardianArticle(articleId);
 
-        // Cache the result for 8 minutes
-        guardianCache.set(cacheKey, article, 8);
-
-        console.log(`💾 Cached Guardian article: ${article.webTitle}`);
+        // Cache the result for 8 minutes (only if caching is enabled)
+        if (shouldUseCache) {
+            guardianCache.set(cacheKey, article, 8);
+            console.log(`💾 Cached Guardian article: ${article.webTitle}`);
+        }
 
         return NextResponse.json({
             article,
             cached: false,
-            cacheHit: false
+            cacheHit: false,
+            cacheDisabledForUser: !shouldUseCache
         });
 
     } catch (error) {
