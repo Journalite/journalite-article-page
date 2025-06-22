@@ -57,28 +57,16 @@ jobs:
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
       
-      - name: Re-link and Deploy to Vercel
+      - name: Pull Vercel env & link
         run: |
-          # Remove any existing .vercel directory completely
+          # Remove any existing .vercel directory to start fresh
           rm -rf .vercel
           
-          # Re-link the project from scratch
-          echo "Re-linking project to fix broken connection..."
-          vercel link --yes --token=${{ secrets.VERCEL_TOKEN }}
-          
-          # Deploy to production
-          vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }}
+          # Pull environment and recreate the link (official Vercel recommendation)
+          vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-          # Ensure all environment variables are available
-          NEXT_PUBLIC_FIREBASE_API_KEY: ${{ secrets.NEXT_PUBLIC_FIREBASE_API_KEY }}
-          NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: ${{ secrets.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN }}
-          NEXT_PUBLIC_FIREBASE_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_PROJECT_ID }}
-          NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: ${{ secrets.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET }}
-          NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID }}
-          NEXT_PUBLIC_FIREBASE_APP_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_APP_ID }}
-          NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID }}
-          NEXT_PUBLIC_API_BASE_URL: ${{ secrets.NEXT_PUBLIC_API_BASE_URL }}
-          NEXT_PUBLIC_GUARDIAN_API_KEY: ${{ secrets.GUARDIAN_API_KEY }}
-          NEXT_PUBLIC_NEWS_API_KEY: ${{ secrets.NEWS_API_KEY }}
+      
+      - name: Deploy to Vercel
+        run: vercel deploy --prod --yes --token=${{ secrets.VERCEL_TOKEN }}
