@@ -2,7 +2,7 @@
 import { initializeApp, getApps } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
-import { getFirestore, enableNetwork, disableNetwork } from "firebase/firestore";
+import { getFirestore } from "firebase/firestore";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -46,24 +46,8 @@ if (typeof window !== 'undefined') {
 // Initialize Firebase Authentication
 const auth = getAuth(app);
 
-// Initialize Firestore with better error handling
+// Initialize Firestore
 const db = getFirestore(app);
-
-// Ensure Firestore is online
-if (typeof window !== 'undefined') {
-    enableNetwork(db).catch((error) => {
-        console.warn('Firestore enable network failed:', error);
-    });
-
-    // Add visibility change listener to handle network reconnection
-    document.addEventListener('visibilitychange', () => {
-        if (!document.hidden) {
-            enableNetwork(db).catch((error) => {
-                console.warn('Firestore reconnection failed:', error);
-            });
-        }
-    });
-}
 
 // Configure custom auth actions URL
 if (typeof window !== 'undefined') {
