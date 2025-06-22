@@ -706,4 +706,4 @@ To set up this project locally:
 4. Push to the branch: `git push origin feature/your-feature-name`
 5. Open a Pull Request
 
-Please make sure your code follows the existing coding patterns and includes appropriate tests. 
+Please make sure your code follows the existing coding patterns and includes appropriate tests. # Deployment test with updated Vercel secrets
