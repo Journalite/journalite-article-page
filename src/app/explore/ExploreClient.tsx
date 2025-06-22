@@ -33,6 +33,8 @@ interface BaseArticle {
   viewCount?: number;
   isExternal?: boolean;
   externalUrl?: string;
+  recommendationScore?: number;
+  recommendationReasons?: string[];
 }
 
 // Interface for article details to be passed to the modal
@@ -528,28 +530,84 @@ export default function ExploreClient() {
         // Create categories with better external content distribution
         const categoriesData: Category[] = [];
         
-        // 1. Mixed/Discover section (prioritize external content)
+        // 1. PRIORITY: For You/Personalized section (get first pick of articles)
+        const personalizedArticles = await getPersonalizedArticles(deduplicatedArticles, userInterests, usedArticleIds);
+        if (personalizedArticles.length > 0 && isAuthenticated && userInterests.length > 0) {
+          // Ensure we have at least 4 articles for "For You" section
+          const minForYou = Math.max(4, personalizedArticles.length);
+          const forYouArticles = personalizedArticles.slice(0, minForYou);
+          
+          categoriesData.push({
+            id: 'personalized',
+            name: 'For You',
+            articles: forYouArticles,
+            priority: 100 // Highest priority
+          });
+          forYouArticles.forEach(article => usedArticleIds.add(article.id));
+        }
+
+        // 1.5 PERSONALIZED GUARDIAN: Recommended Guardian articles based on user interactions
+        if (isAuthenticated && currentUser?.uid) {
+          try {
+            const personalizedGuardianArticles = await guardianService.getPersonalizedArticles(
+              currentUser.uid,
+              userInterests,
+              6 // Get 6 personalized Guardian articles
+            );
+            
+            if (personalizedGuardianArticles.length > 0) {
+              const adaptedPersonalizedGuardian = personalizedGuardianArticles
+                .map(article => {
+                  const adapted = adaptGuardianArticle(article, cleanHtmlText);
+                  adapted.recommendationScore = article.recommendationScore;
+                  adapted.recommendationReasons = article.recommendationReasons;
+                  return adapted;
+                })
+                .filter(article => 
+                  (showPoliticalContent || !isPoliticalContent(article)) && 
+                  !usedArticleIds.has(article.id)
+                );
+
+              if (adaptedPersonalizedGuardian.length > 0) {
+                categoriesData.push({
+                  id: 'guardian-recommended',
+                  name: '🎯 Recommended News',
+                  articles: adaptedPersonalizedGuardian,
+                  priority: 99 // Very high priority, just below "For You"
+                });
+                adaptedPersonalizedGuardian.forEach(article => usedArticleIds.add(article.id));
+                console.log(`🎯 Added ${adaptedPersonalizedGuardian.length} personalized Guardian articles`);
+              }
+            }
+          } catch (error) {
+            console.warn('Failed to get personalized Guardian articles for category:', error);
+          }
+        }
+        
+        // 2. Mixed/Discover section (gets remaining articles)
         const mixedArticles = getMixedArticlesWithBalance(deduplicatedArticles, usedArticleIds);
         if (mixedArticles.length > 0) {
           categoriesData.push({
             id: 'mixed',
             name: 'Discover Stories',
             articles: mixedArticles,
-            priority: 100 // Highest priority
+            priority: 95
           });
           mixedArticles.forEach(article => usedArticleIds.add(article.id));
         }
         
-        // 2. Personalized/Featured articles
-        const personalizedArticles = await getPersonalizedArticles(deduplicatedArticles, userInterests, usedArticleIds);
-        if (personalizedArticles.length > 0) {
-          categoriesData.push({
-            id: 'personalized',
-            name: isAuthenticated && userInterests.length > 0 ? 'For You' : 'Featured Stories',
-            articles: personalizedArticles,
-            priority: 95
-          });
-          personalizedArticles.forEach(article => usedArticleIds.add(article.id));
+        // 3. Featured section for non-authenticated users
+        if (!isAuthenticated || userInterests.length === 0) {
+          const featuredArticles = await getPersonalizedArticles(deduplicatedArticles, [], usedArticleIds);
+          if (featuredArticles.length > 0) {
+            categoriesData.push({
+              id: 'featured',
+              name: 'Featured Stories',
+              articles: featuredArticles.slice(0, 6),
+              priority: 98
+            });
+            featuredArticles.slice(0, 6).forEach(article => usedArticleIds.add(article.id));
+          }
         }
         
         // 3. External News section (if we have external articles)
@@ -641,30 +699,65 @@ export default function ExploreClient() {
       
       console.log('🔍 Fetching external articles for interests:', interestsToFetch);
       
-      // Fetch Guardian articles
+      // Fetch Guardian articles (with personalization if user is authenticated)
       console.log('📰 Checking Guardian API configuration...');
       if (guardianService.isConfigured()) {
         console.log('✅ Guardian API is configured');
-        for (const interest of interestsToFetch.slice(0, 3)) {
-          const mapping = INTEREST_MAPPING[interest];
-          if (mapping) {
-            try {
-              console.log(`🔍 Fetching Guardian articles for: ${interest}`);
-              // Search by keywords first
-              const guardianResponse = await guardianService.searchArticles(
-                mapping.keywords[0], // Use primary keyword
-                mapping.guardianSections[0], // Use primary section
-                1, // page
-                6 // Increased from 4 to 6 per interest
-              );
-              
-              const guardianArticles = guardianResponse.results
-                .map(article => adaptGuardianArticle(article, cleanHtmlText))
-                .filter(article => showPoliticalContent || !isPoliticalContent(article));
-              console.log(`📰 Found ${guardianArticles.length} Guardian articles for ${interest} (after political filtering)`);
-              externalArticles.push(...guardianArticles);
-            } catch (error) {
-              console.error(`❌ Error fetching Guardian articles for ${interest}:`, error);
+        
+        // If user is authenticated, try to get personalized Guardian articles first
+        if (isAuthenticated && currentUser?.uid) {
+          try {
+            console.log('🎯 Fetching personalized Guardian articles...');
+            const personalizedGuardianArticles = await guardianService.getPersonalizedArticles(
+              currentUser.uid,
+              interestsToFetch,
+              12 // Get more for better selection
+            );
+            
+            const adaptedPersonalizedArticles = personalizedGuardianArticles
+              .map(article => {
+                const adapted = adaptGuardianArticle(article, cleanHtmlText);
+                // Add recommendation metadata
+                adapted.recommendationScore = article.recommendationScore;
+                adapted.recommendationReasons = article.recommendationReasons;
+                return adapted;
+              })
+              .filter(article => showPoliticalContent || !isPoliticalContent(article));
+            
+            console.log(`🎯 Found ${adaptedPersonalizedArticles.length} personalized Guardian articles`);
+            externalArticles.push(...adaptedPersonalizedArticles);
+          } catch (error) {
+            console.warn('⚠️ Error fetching personalized Guardian articles, falling back to interest-based search:', error);
+            // Fallback to regular interest-based search
+            await fetchGuardianByInterests();
+          }
+        } else {
+          // Non-authenticated users get regular interest-based articles
+          await fetchGuardianByInterests();
+        }
+
+        // Helper function for regular interest-based Guardian articles
+        async function fetchGuardianByInterests() {
+          for (const interest of interestsToFetch.slice(0, 3)) {
+            const mapping = INTEREST_MAPPING[interest];
+            if (mapping) {
+              try {
+                console.log(`🔍 Fetching Guardian articles for: ${interest}`);
+                const guardianResponse = await guardianService.searchArticles(
+                  mapping.keywords[0], // Use primary keyword
+                  mapping.guardianSections[0], // Use primary section
+                  1, // page
+                  8 // Increased to 8 per interest for better selection
+                );
+                
+                const guardianArticles = guardianResponse.results
+                  .map(article => adaptGuardianArticle(article, cleanHtmlText))
+                  .filter(article => showPoliticalContent || !isPoliticalContent(article));
+                console.log(`📰 Found ${guardianArticles.length} Guardian articles for ${interest} (after political filtering)`);
+                externalArticles.push(...guardianArticles);
+              } catch (error) {
+                console.error(`❌ Error fetching Guardian articles for ${interest}:`, error);
+              }
             }
           }
         }
@@ -682,7 +775,7 @@ export default function ExploreClient() {
             try {
               console.log(`🔍 Fetching NewsAPI articles for: ${interest}`);
               const newsResponse = await newsService.getTopHeadlines(mapping.newsCategory);
-              const newsArticles = newsResponse.articles.slice(0, 6)
+              const newsArticles = newsResponse.articles.slice(0, 8)
                 .map(article => adaptNewsApiArticle(article, cleanHtmlText))
                 .filter(article => showPoliticalContent || !isPoliticalContent(article));
               console.log(`📺 Found ${newsArticles.length} NewsAPI articles for ${interest} (after political filtering)`);
@@ -767,7 +860,10 @@ export default function ExploreClient() {
   // Get personalized articles based on user interests
   const getPersonalizedArticles = async (articles: BaseArticle[], interests: string[], usedArticleIds?: Set<string>): Promise<BaseArticle[]> => {
     if (!interests.length) {
-      return articles.slice(0, 8); // Return top articles if no interests
+      // Return diverse, high-quality articles if no interests
+      return articles
+        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+        .slice(0, 8);
     }
     
     // Score articles based on interest matching
@@ -780,27 +876,69 @@ export default function ExploreClient() {
       for (const interest of interests) {
         const mapping = INTEREST_MAPPING[interest];
         if (mapping) {
+          // Enhanced keyword matching
           for (const keyword of mapping.keywords) {
-            if (content.includes(keyword.toLowerCase())) {
+            const keywordLower = keyword.toLowerCase();
+            
+            // Title matches get higher score
+            if (article.title.toLowerCase().includes(keywordLower)) {
+              score += 20;
+            }
+            // Excerpt matches get medium score
+            else if (article.excerpt.toLowerCase().includes(keywordLower)) {
               score += 10;
+            }
+          }
+          
+          // Direct interest name matching
+          if (content.includes(interest.toLowerCase())) {
+            score += 25;
+          }
+          
+          // Guardian section matching (for Guardian articles)
+          if (article.source === 'guardian' && mapping.guardianSections) {
+            // We can't directly check Guardian sections from the article, but we can infer from content
+            for (const section of mapping.guardianSections) {
+              if (content.includes(section)) {
+                score += 15;
+              }
             }
           }
         }
         
-        // Check tags
+        // Check tags with more flexible matching
         if (article.tags) {
           for (const tag of article.tags) {
-            if (tag.toLowerCase().includes(interest.toLowerCase())) {
-              score += 15;
+            const tagLower = tag.toLowerCase();
+            const interestLower = interest.toLowerCase();
+            
+            if (tagLower.includes(interestLower) || interestLower.includes(tagLower)) {
+              score += 18;
+            }
+            
+            // Check if tag matches any keywords for this interest
+            const mapping = INTEREST_MAPPING[interest];
+            if (mapping) {
+              for (const keyword of mapping.keywords) {
+                if (tagLower.includes(keyword.toLowerCase())) {
+                  score += 12;
+                }
+              }
             }
           }
         }
+      }
+      
+      // Boost external articles (Guardian, NewsAPI) as they're more likely to match interests
+      if (article.source === 'guardian' || article.source === 'newsapi') {
+        score += 8;
       }
       
       // Boost recent articles
       const daysSinceCreated = (Date.now() - new Date(article.createdAt).getTime()) / (1000 * 60 * 60 * 24);
       if (daysSinceCreated < 1) score += 5;
       else if (daysSinceCreated < 7) score += 3;
+      else if (daysSinceCreated < 30) score += 1;
       
       // Boost articles with engagement
       if (article.likes && article.likes.length > 0) score += article.likes.length;
@@ -809,14 +947,25 @@ export default function ExploreClient() {
       return { ...article, score };
     });
     
-    // Filter out already used articles and sort by score
+    // Filter out already used articles and get high-scoring articles
     const availableArticles = usedArticleIds ? 
       scoredArticles.filter(article => !usedArticleIds.has(article.id)) : 
       scoredArticles;
-      
-    return availableArticles
-      .sort((a, b) => b.score - a.score)
-      .slice(0, 8);
+    
+    // Sort by score and get the best matches
+    const sortedArticles = availableArticles.sort((a, b) => b.score - a.score);
+    
+    // Ensure we have at least some articles with positive scores (meaning they match interests)
+    const matchingArticles = sortedArticles.filter(article => article.score > 0);
+    
+    // If we have enough matching articles, use them. Otherwise, pad with recent articles
+    if (matchingArticles.length >= 4) {
+      return matchingArticles.slice(0, 10); // Return up to 10 for better selection
+    } else {
+      // Not enough matching articles, add some recent diverse articles
+      const recentArticles = sortedArticles.slice(0, 8);
+      return recentArticles;
+    }
   };
 
   // Get trending articles (high engagement)

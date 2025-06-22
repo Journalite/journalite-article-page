@@ -1,3 +1,5 @@
+import { recommendationService, RecommendationScore } from './recommendationService';
+
 export interface GuardianArticle {
     id: string;
     webTitle: string;
@@ -41,6 +43,8 @@ export interface GuardianArticle {
     }>;
     sectionName: string;
     pillarName: string;
+    recommendationScore?: number;
+    recommendationReasons?: string[];
 }
 
 export interface GuardianResponse {
@@ -58,37 +62,11 @@ export interface GuardianResponse {
 class GuardianService {
     private apiKey: string;
     private baseUrl = 'https://content.guardianapis.com';
-    private cache: Map<string, any> = new Map();
-    private cacheExpiry = 5 * 60 * 1000; // 5 minutes cache
 
     constructor() {
         this.apiKey = process.env.NEXT_PUBLIC_GUARDIAN_API_KEY || '';
         if (!this.apiKey || this.apiKey === 'YOUR_API_KEY_HERE') {
             console.warn('Guardian API key not configured. Please set NEXT_PUBLIC_GUARDIAN_API_KEY in your environment variables.');
-        }
-    }
-
-    private getCacheKey(endpoint: string, params: URLSearchParams): string {
-        return `${endpoint}?${params.toString()}`;
-    }
-
-    private getFromCache(cacheKey: string): any | null {
-        if (this.cache.has(cacheKey)) {
-            // Using cached data
-            return this.cache.get(cacheKey)!;
-        }
-        return null;
-    }
-
-    private setCache(cacheKey: string, data: any): void {
-        this.cache.set(cacheKey, data);
-
-        // Clean old cache entries (keep max 100 entries)
-        if (this.cache.size > 100) {
-            const oldestKey = this.cache.keys().next().value;
-            if (oldestKey) {
-                this.cache.delete(oldestKey);
-            }
         }
     }
 
@@ -98,75 +76,76 @@ class GuardianService {
         page: number = 1,
         pageSize: number = 50
     ): Promise<GuardianResponse> {
-        if (!this.apiKey || this.apiKey === 'YOUR_API_KEY_HERE') {
-            throw new Error('Guardian API key not configured');
-        }
-
+        // Use cached API route instead of direct Guardian API calls
         const params = new URLSearchParams({
-            'api-key': this.apiKey,
-            'show-fields': 'headline,standfirst,body,main,thumbnail,byline,trailText,bodyText',
-            'show-tags': 'contributor,keyword',
-            'show-elements': 'image,video',
-            'page-size': pageSize.toString(),
-            'page': page.toString(),
-            'order-by': 'newest'
+            'q': query,
+            'pageSize': pageSize.toString()
         });
-
-        if (query) {
-            params.append('q', query);
-        }
 
         if (section) {
             params.append('section', section);
         }
 
-        // Check cache first
-        const cacheKey = this.getCacheKey('/search', params);
-        const cachedData = this.getFromCache(cacheKey);
-        if (cachedData) {
-            return cachedData;
-        }
-
-        const url = `${this.baseUrl}/search?${params.toString()}`;
+        const url = `/api/guardian/search?${params.toString()}`;
+        console.log('🚀 Using cached Guardian API route:', url);
 
         const response = await fetch(url);
 
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            throw new Error(`Cached API error! status: ${response.status}`);
         }
 
         const data = await response.json();
-        const result = data.response;
 
-        // Cache the result
-        this.setCache(cacheKey, result);
+        if (data.error) {
+            throw new Error(data.error);
+        }
 
-        return result;
+        // Log cache performance
+        if (data.cacheHit) {
+            console.log('⚡ Cache HIT - Fast response from in-memory cache');
+        } else {
+            console.log('🔄 Cache MISS - Fresh data fetched and cached');
+        }
+
+        return {
+            status: data.status,
+            userTier: data.userTier,
+            total: data.total,
+            startIndex: data.startIndex || 1,
+            pageSize: data.pageSize || pageSize,
+            currentPage: data.currentPage || page,
+            pages: data.pages || 1,
+            orderBy: data.orderBy || 'newest',
+            results: data.results
+        };
     }
 
     async getArticleById(articleId: string): Promise<GuardianArticle> {
-        if (!this.apiKey || this.apiKey === 'YOUR_API_KEY_HERE') {
-            throw new Error('Guardian API key not configured');
-        }
-
-        const params = new URLSearchParams({
-            'api-key': this.apiKey,
-            'show-fields': 'headline,standfirst,body,main,thumbnail,byline,trailText,bodyText,liveBloggingNow,isLive',
-            'show-tags': 'contributor,keyword,type',
-            'show-elements': 'image,video,audio,embed,rich-link,comment,interactive',
-            'show-blocks': 'body,main'
-        });
-
-        const url = `${this.baseUrl}/${articleId}?${params.toString()}`;
+        // Use cached API route instead of direct Guardian API calls
+        const url = `/api/guardian/article/${encodeURIComponent(articleId)}`;
+        console.log('🚀 Using cached Guardian article API route:', url);
 
         const response = await fetch(url);
 
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            throw new Error(`Cached API error! status: ${response.status}`);
         }
 
         const data = await response.json();
-        return data.response.content;
+
+        if (data.error) {
+            throw new Error(data.error);
+        }
+
+        // Log cache performance
+        if (data.cacheHit) {
+            console.log('⚡ Cache HIT - Fast article response from in-memory cache');
+        } else {
+            console.log('🔄 Cache MISS - Fresh article data fetched and cached');
+        }
+
+        return data.article;
     }
 
     async getSections(): Promise<Array<{ id: string, webTitle: string }>> {
@@ -841,6 +820,153 @@ class GuardianService {
 
     isConfigured(): boolean {
         return !!(this.apiKey && this.apiKey !== 'YOUR_API_KEY_HERE');
+    }
+
+    // Get personalized Guardian articles based on user interactions
+    async getPersonalizedArticles(
+        userId: string,
+        interests: string[] = [],
+        count: number = 20
+    ): Promise<GuardianArticle[]> {
+        try {
+            // Get articles from multiple relevant sections
+            const articlesToScore: GuardianArticle[] = [];
+
+            // Get user preferences to understand their interests
+            const userPreferences = await recommendationService.getUserPreferences(userId);
+
+            // Determine sections to search based on user preferences or interests
+            let sectionsToSearch: string[] = [];
+
+            if (userPreferences && Object.keys(userPreferences.preferredSections).length > 0) {
+                // Use top 3 preferred sections
+                sectionsToSearch = Object.entries(userPreferences.preferredSections)
+                    .sort(([, a], [, b]) => b - a)
+                    .slice(0, 3)
+                    .map(([section]) => section);
+            } else {
+                // Fallback to interests or popular sections
+                sectionsToSearch = interests.slice(0, 3);
+                if (sectionsToSearch.length === 0) {
+                    sectionsToSearch = ['world', 'technology', 'politics'];
+                }
+            }
+
+            // Fetch articles from each preferred section
+            for (const section of sectionsToSearch) {
+                try {
+                    const sectionArticles = await this.searchArticles('', section, 1, 8);
+                    articlesToScore.push(...sectionArticles.results);
+                } catch (error) {
+                    console.warn(`Failed to fetch articles from section ${section}:`, error);
+                }
+            }
+
+            // Also get some general articles for diversity
+            try {
+                const generalArticles = await this.searchArticles('', undefined, 1, 10);
+                articlesToScore.push(...generalArticles.results);
+            } catch (error) {
+                console.warn('Failed to fetch general articles:', error);
+            }
+
+            // Remove duplicates
+            const uniqueArticles = articlesToScore.filter((article, index, self) =>
+                index === self.findIndex(a => a.id === article.id)
+            );
+
+            // Score articles using recommendation system
+            const scoredArticles = await recommendationService.scoreGuardianArticles(userId, uniqueArticles);
+
+            // Apply scores to articles and sort by recommendation score
+            const personalizedArticles = uniqueArticles.map(article => {
+                const scoreData = scoredArticles.find(s => s.articleId === article.id);
+                return {
+                    ...article,
+                    recommendationScore: scoreData?.score || 0,
+                    recommendationReasons: scoreData?.reasons || []
+                };
+            }).sort((a, b) => (b.recommendationScore || 0) - (a.recommendationScore || 0));
+
+            return personalizedArticles.slice(0, count);
+        } catch (error) {
+            console.error('Error getting personalized articles:', error);
+            // Fallback to regular search
+            const fallbackResponse = await this.searchArticles('', undefined, 1, count);
+            return fallbackResponse.results;
+        }
+    }
+
+    // Track user interaction with a Guardian article
+    async trackUserInteraction(
+        userId: string,
+        article: GuardianArticle,
+        interactionType: 'like' | 'comment' | 'view',
+        context?: string
+    ): Promise<void> {
+        try {
+            await recommendationService.trackInteraction({
+                userId,
+                articleId: article.id,
+                articleType: 'guardian',
+                interactionType,
+                articleMetadata: {
+                    title: article.webTitle,
+                    section: article.sectionName,
+                    tags: article.tags?.map(tag => tag.webTitle) || [],
+                    url: article.webUrl,
+                    publishedDate: article.webPublicationDate
+                },
+                interactionContext: context
+            });
+        } catch (error) {
+            console.error('Error tracking user interaction:', error);
+        }
+    }
+
+    // Get similar articles to one the user engaged with
+    async getSimilarArticles(
+        userId: string,
+        referenceArticle: GuardianArticle,
+        count: number = 5
+    ): Promise<GuardianArticle[]> {
+        try {
+            // Search for articles in the same section with related keywords
+            const keywords = referenceArticle.webTitle.split(' ')
+                .filter(word => word.length > 3)
+                .slice(0, 3)
+                .join(' ');
+
+            const similarArticlesResponse = await this.searchArticles(
+                keywords,
+                referenceArticle.sectionName,
+                1,
+                count * 2
+            );
+
+            // Filter out the reference article itself
+            const candidateArticles = similarArticlesResponse.results.filter(
+                article => article.id !== referenceArticle.id
+            );
+
+            // Score articles for similarity
+            const scoredArticles = await recommendationService.scoreGuardianArticles(userId, candidateArticles);
+
+            // Apply scores and sort
+            const rankedArticles = candidateArticles.map(article => {
+                const scoreData = scoredArticles.find(s => s.articleId === article.id);
+                return {
+                    ...article,
+                    recommendationScore: scoreData?.score || 0,
+                    recommendationReasons: scoreData?.reasons || []
+                };
+            }).sort((a, b) => (b.recommendationScore || 0) - (a.recommendationScore || 0));
+
+            return rankedArticles.slice(0, count);
+        } catch (error) {
+            console.error('Error getting similar articles:', error);
+            return [];
+        }
     }
 }
 

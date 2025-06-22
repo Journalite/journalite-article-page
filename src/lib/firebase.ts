@@ -1,5 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, connectAuthEmulator } from 'firebase/auth';
+import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
 
 // Firebase configuration from environment variables
 // This is a placeholder config for the emulator only - not real credentials
@@ -13,14 +14,36 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+import { getApps } from 'firebase/app';
+
+let app;
+if (getApps().length === 0) {
+    app = initializeApp(firebaseConfig);
+} else {
+    app = getApps()[0];
+}
 
 // Initialize Firebase Authentication
 const auth = getAuth(app);
 
+// Initialize Firestore
+const db = getFirestore(app);
+
 // Connect to Auth Emulator in development
 if (process.env.NODE_ENV === 'development') {
-    connectAuthEmulator(auth, 'http://localhost:9099', { disableWarnings: true });
+    try {
+        connectAuthEmulator(auth, 'http://localhost:9099', { disableWarnings: true });
+    } catch (error) {
+        // Auth emulator already connected, ignore error
+        console.log('Auth emulator already connected or error connecting:', (error as Error).message);
+    }
+
+    try {
+        connectFirestoreEmulator(db, 'localhost', 8080);
+    } catch (error) {
+        // Firestore emulator already connected, ignore error
+        console.log('Firestore emulator already connected or error connecting:', (error as Error).message);
+    }
 }
 
-export { auth }; 
+export { auth, db }; 

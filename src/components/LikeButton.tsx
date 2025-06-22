@@ -3,19 +3,30 @@
 import React, { useState, useEffect } from 'react';
 import { auth } from '@/firebase/clientApp';
 import { User } from 'firebase/auth';
+import { guardianService } from '@/services/guardianService';
 
 interface LikeButtonProps {
   articleId: string;
   initialLikes?: string[];
   className?: string;
   styles?: any;
+  // Guardian article tracking metadata
+  articleMetadata?: {
+    title: string;
+    source: 'journalite' | 'guardian' | 'newsapi';
+    section?: string;
+    tags?: string[];
+    url?: string;
+    publishedDate?: string;
+  };
 }
 
 const LikeButton: React.FC<LikeButtonProps> = ({ 
   articleId, 
   initialLikes = [], 
   className = '',
-  styles = {}
+  styles = {},
+  articleMetadata
 }) => {
   const [likes, setLikes] = useState<string[]>(initialLikes);
   const [isLiked, setIsLiked] = useState(false);
@@ -79,6 +90,28 @@ const LikeButton: React.FC<LikeButtonProps> = ({
         setLikes(newLikes);
         setIsLiked(true);
         console.log('👍 Like completed - likes:', newLikes.length);
+
+        // Track interaction for Guardian articles
+        if (articleMetadata && articleMetadata.source === 'guardian') {
+          try {
+            await guardianService.trackUserInteraction(
+              currentUser.uid,
+              {
+                id: articleId,
+                webTitle: articleMetadata.title,
+                webUrl: articleMetadata.url || '',
+                webPublicationDate: articleMetadata.publishedDate || new Date().toISOString(),
+                sectionName: articleMetadata.section || '',
+                pillarName: articleMetadata.section || '',
+                tags: (articleMetadata.tags || []).map(tag => ({ id: tag, type: 'keyword', webTitle: tag }))
+              },
+              'like'
+            );
+            console.log('🎯 Guardian article like interaction tracked');
+          } catch (error) {
+            console.warn('Failed to track Guardian interaction:', error);
+          }
+        }
         
         // Update Firestore
         const { doc, updateDoc, arrayUnion } = await import('firebase/firestore');
