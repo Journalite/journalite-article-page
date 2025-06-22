@@ -59,13 +59,15 @@ jobs:
       
       - name: Deploy to Vercel
         run: |
-          # Deploy directly without linking - bypass project settings issue
-          # Use environment variables to specify org and project
-          vercel deploy --prod \
-            --token=${{ secrets.VERCEL_TOKEN }} \
-            --scope=${{ secrets.VERCEL_ORG_ID }} \
-            --name=mvp.journalite \
-            --force
+          # Ensure no .vercel directory exists
+          rm -rf .vercel
+          
+          # Set Vercel environment variables and deploy directly
+          export VERCEL_ORG_ID="${{ secrets.VERCEL_ORG_ID }}"
+          export VERCEL_PROJECT_ID="${{ secrets.VERCEL_PROJECT_ID }}"
+          
+          # Deploy directly using environment variables (no linking required)
+          vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }} --yes
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
