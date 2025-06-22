@@ -108,7 +108,7 @@ const MinimalNotificationBell = () => {
       }
       return '/notifications';
     } else if (notification.articleSlug) {
-      return `/articles?slug=${notification.articleSlug}`;
+      return `/articles/${notification.articleSlug}`;
     } else {
       return '/notifications';
     }

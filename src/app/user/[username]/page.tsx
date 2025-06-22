@@ -28,6 +28,8 @@ export async function generateStaticParams() {
 }
 
 // Server component
-export default function UserProfilePage({ params }: { params: { username: string } }) {
-  return <ProfileClient username={params.username} />;
+export default async function UserProfilePage({ params }: { params: { username: string } }) {
+  // Await params as required by Next.js 15
+  const resolvedParams = await params;
+  return <ProfileClient username={resolvedParams.username} />;
 } 

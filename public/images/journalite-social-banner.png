@@ -1,0 +1,8 @@
+<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="#000000"/>
+  <circle cx="200" cy="315" r="60" fill="#ffffff"/>
+  <text x="200" y="335" font-family="Arial, sans-serif" font-size="60" font-weight="900" text-anchor="middle" fill="#000000">J</text>
+  <text x="320" y="280" font-family="Arial, sans-serif" font-size="64" font-weight="700" fill="#ffffff">Journalite</text>
+  <text x="320" y="330" font-family="Arial, sans-serif" font-size="32" fill="#cccccc">Your Trusted Journalism Source</text>
+  <text x="320" y="370" font-family="Arial, sans-serif" font-size="20" fill="#999999">Reliable journalism • Thoughtful analysis • Community discussions</text>
+</svg>

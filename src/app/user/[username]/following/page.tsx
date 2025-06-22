@@ -29,6 +29,8 @@ export async function generateStaticParams() {
 }
 
 // Server component that renders client component
-export default function FollowingPage({ params }: { params: { username: string } }) {
-  return <FollowingClient username={params.username} />;
+export default async function FollowingPage({ params }: { params: { username: string } }) {
+  // Await params as required by Next.js 15
+  const resolvedParams = await params;
+  return <FollowingClient username={resolvedParams.username} />;
 } 

@@ -41,10 +41,12 @@ export async function generateStaticParams() {
 }
 
 // Server component that renders the client component
-export default function TagPage({ params }: { params: { tag: string } }) {
+export default async function TagPage({ params }: { params: { tag: string } }) {
+  // Await params as required by Next.js 15
+  const resolvedParams = await params;
   return (
     <Suspense fallback={<div>Loading tag page...</div>}>
-      <TagPageClient tag={params.tag} />
+      <TagPageClient tag={resolvedParams.tag} />
     </Suspense>
   );
 } 

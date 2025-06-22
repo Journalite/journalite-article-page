@@ -52,7 +52,7 @@ const TopStoriesHero: React.FC<TopStoriesHeroProps> = ({ articles }) => {
           transition={{ duration: 0.5, delay: 0.1 }}
           className="lg:col-span-2"
         >
-          <Link href={`/articles?slug=${encodeURIComponent(featuredArticle.slug)}`}>
+          <Link href={`/articles/${encodeURIComponent(featuredArticle.slug)}`}>
             <div className="group relative overflow-hidden rounded-2xl aspect-[16/10] apple-card">
               {/* Background Image */}
               {featuredArticle.coverImageUrl && (
@@ -134,7 +134,7 @@ const TopStoriesHero: React.FC<TopStoriesHeroProps> = ({ articles }) => {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.4, delay: 0.2 + (index * 0.1) }}
             >
-              <Link href={`/articles?slug=${encodeURIComponent(article.slug)}`}>
+              <Link href={`/articles/${encodeURIComponent(article.slug)}`}>
                 <div className="group apple-card p-4 hover:shadow-lg">
                   <div className="flex space-x-4">
                     {/* Image */}

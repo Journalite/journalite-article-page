@@ -65,7 +65,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
         initial="hidden"
         animate="visible"
       >
-        <Link href={`/articles?slug=${encodeURIComponent(article.slug)}`}>
+        <Link href={`/articles/${encodeURIComponent(article.slug)}`}>
           <div className="group apple-card p-4 hover:shadow-lg">
             <div className="flex space-x-3">
               {article.coverImageUrl && (
@@ -103,7 +103,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
       animate="visible"
       className="group"
     >
-      <Link href={`/articles?slug=${encodeURIComponent(article.slug)}`}>
+      <Link href={`/articles/${encodeURIComponent(article.slug)}`}>
         <article className="apple-card overflow-hidden">
           {/* Image */}
           {article.coverImageUrl && (

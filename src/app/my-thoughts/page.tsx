@@ -302,7 +302,7 @@ export default function MyThoughtsPage() {
                 <div className="relative z-10 flex justify-between items-start">
                   <div className="flex-1">
                     <h2 className="text-2xl font-bold text-stone-800 mb-2 font-serif hover:text-blue-600 transition-colors">
-                      <Link href={`/articles?slug=${article.slug}`}>
+                      <Link href={`/articles/${article.slug}`}>
                         {article.title}
                       </Link>
                     </h2>
@@ -323,7 +323,7 @@ export default function MyThoughtsPage() {
                   
                   <div className="flex flex-col gap-2 ml-6">
                     <Link 
-                      href={`/articles?slug=${article.slug}`} 
+                      href={`/articles/${article.slug}`} 
                       className={`${styles['glass-button']} ${styles['glass-button-success']} px-4 py-2 text-sm font-medium`}
                     >
                       View

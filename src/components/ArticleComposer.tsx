@@ -316,10 +316,12 @@ const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId, onUpdateCo
           } else {
             // Only navigate if no callback is provided (standalone editor usage)
             if (process.env.NODE_ENV === 'development') {
-              console.log('No callback provided, navigating to article page');
+              console.log('No callback provided, navigating to article page with updated slug');
             }
             setTimeout(() => {
-              router.push(`/articles/?slug=${slug}`);
+              // Use the updated slug from the returned article data
+              const updatedSlug = updatedArticleData?.slug || slug;
+              router.push(`/articles/${updatedSlug}`);
             }, 1000);
           }
         } catch (error) {
@@ -346,7 +348,7 @@ const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId, onUpdateCo
         
         if (status === 'published') {
           // Redirect to the new article page using slug
-          router.push(`/articles/?slug=${slug}`);
+          router.push(`/articles/${slug}`);
         } else {
           // Redirect to dashboard
           router.push(`/dashboard`);

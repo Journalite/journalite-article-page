@@ -201,5 +201,5 @@ export const generateHighlightShareUrl = (
     highlightId: string,
     baseUrl: string = typeof window !== 'undefined' ? window.location.origin : ''
 ): string => {
-    return `${baseUrl}/articles?slug=${articleSlug}#highlight=${highlightId}`;
+    return `${baseUrl}/articles/${articleSlug}#highlight=${highlightId}`;
 }; 

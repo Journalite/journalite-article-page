@@ -246,7 +246,7 @@ export default function TagPageClient({ tag }: TagPageClientProps) {
                   <button className={styles['reaction-button']}>🔁 Resonate</button>
                   <button className={styles['reaction-button']}>💬 Comment</button>
                   <Link 
-                    href={`/articles?slug=${encodeURIComponent(article.slug)}`} 
+                    href={`/articles/${encodeURIComponent(article.slug)}`} 
                     className={styles['read-link']}
                   >
                     Read →

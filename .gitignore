@@ -115,4 +115,43 @@ tmp/
 temp/
 .tmp
 
+# Production & Deployment Files (Security Risk)
+# These files may contain sensitive information or deployment-specific configs
+PRODUCTION_CHECKLIST.md
+build-report.txt
+production-report.json
+deployment-config.json
+.deployment
+deploy.sh
+production.env
+
+# Build and cleanup scripts (may contain sensitive paths/configs)
+scripts/production-cleanup.js
+scripts/build-production.sh
+scripts/deploy-*.sh
+scripts/cleanup-*.js
+
+# Environment-specific files
+src/utils/env.ts
+config/production.js
+config/staging.js
+
+# Performance and monitoring reports
+performance-report.json
+bundle-analysis.json
+lighthouse-report.json
+web-vitals.json
+
+# Security audit reports
+security-audit.json
+vulnerability-report.json
+
+# Analytics and tracking configs
+analytics-config.js
+tracking-config.json
+
+# Error monitoring configs (may contain API keys)
+sentry.config.js
+error-monitoring.json
+
 .vercel

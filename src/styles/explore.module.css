@@ -24,7 +24,7 @@
 /* Header */
 .header {
   display: flex;
-  justify-content: between;
+  justify-content:space-between;
   align-items: center;
   margin-bottom: 3rem;
   padding: 0 1rem;
@@ -35,16 +35,92 @@
   font-weight: 700;
   color: #1a202c;
   margin: 0;
+  margin-right: 2rem; /* Add space between title and toggle */
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  flex-shrink: 0; /* Prevent title from shrinking */
 }
 
 .headerActions {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 1.5rem;
+  margin-left: auto;
+  margin-right: 80px; /* Give space for profile/message icons */
+}
+
+/* Political Content Toggle */
+.politicalToggle {
+  display: flex;
+  align-items: center;
+  margin-right: 1.5rem;
+}
+
+.toggleLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.toggleInput {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggleSlider {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.toggleSlider::before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.toggleInput:checked + .toggleSlider {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-color: rgba(102, 126, 234, 0.5);
+}
+
+.toggleInput:checked + .toggleSlider::before {
+  transform: translateX(20px);
+}
+
+.toggleText {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #4a5568;
+  white-space: nowrap;
+}
+
+/* Shorter text for smaller screens */
+@media (max-width: 1024px) {
+  .toggleText::after {
+    content: "Political Content";
+  }
+  .toggleText {
+    font-size: 0;
+  }
 }
 
 /* User Interests Display */
@@ -389,10 +465,32 @@
   
   .header {
     margin-bottom: 2rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
   }
   
   .title {
     font-size: 2rem;
+  }
+
+  .headerActions {
+    width: 100%;
+    justify-content: space-between;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .politicalToggle {
+    margin-right: 0;
+  }
+
+  .title {
+    margin-right: 0;
+  }
+
+  .toggleText {
+    font-size: 0.8rem;
   }
   
   .articlesGrid {

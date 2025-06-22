@@ -11,6 +11,7 @@ import NotificationBell from '@/components/NotificationBell'
 import MessageNotificationBell from '@/components/MessageNotificationBell'
 import LeftSidebar from '@/components/LeftSidebar'
 import ShareModal from '@/components/ShareModal'
+import ShareButton from '@/components/ShareButton'
 import CenterSearchBar from '@/components/CenterSearchBar'
 import Head from 'next/head'
 import TopLeftLogo from '@/components/TopLeftLogo'
@@ -56,66 +57,41 @@ interface SharingArticleDetails {
 // Adapter function to convert Firestore articles to match our UI format
 const adaptFirestoreArticle = (firestoreArticle: FirestoreArticle): Article => {
   // Enhanced image selection for better homepage appeal
-  const getEnhancedCoverImage = (article: FirestoreArticle): string => {
-    // If article has a good cover image, use it
-    if (article.coverImage && !article.coverImage.includes('unsplash.com/photo-1581091012184') && 
-        !article.coverImage.includes('unsplash.com/photo-1541051646')) {
+  const getEnhancedCoverImage = (article: FirestoreArticle): string | null => {
+    // Always use the real cover image if it exists
+    if (article.coverImage && article.coverImage.trim() !== '') {
       return article.coverImage;
     }
     
-    // Modern, engaging images based on article content/tags
-    const modernImages = [
-      // Tech & Innovation
-      'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80', // Space/tech
-      'https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=800&q=80', // Creative workspace
-      'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800&q=80', // Colorful abstract
+    // Fallback: Extract first image from article content
+    if (article.body) {
+      // Look for img tags in the content
+      const imgRegex = /<img[^>]+src=["']([^"']+)["'][^>]*>/i;
+      const match = article.body.match(imgRegex);
       
-      // Culture & Society  
-      'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80', // Mountain landscape
-      'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&q=80', // Nature/adventure
-      'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80', // Inspiring vista
-      
-      // Creative & Artistic
-      'https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=800&q=80', // Colorful paint
-      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80', // Abstract art
-      'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80', // Creative inspiration
-      
-      // Modern & Clean
-      'https://images.unsplash.com/photo-1497215728101-856f4ea42174?w=800&q=80', // Modern office
-      'https://images.unsplash.com/photo-1486312338219-ce68e2c6b696?w=800&q=80', // Clean workspace
-      'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&q=80', // Team collaboration
-    ];
-    
-    // Select image based on article characteristics
-    let imageIndex = 0;
-    
-    // Check tags for better image matching
-    if (article.tags) {
-      const tags = article.tags.map(tag => tag.toLowerCase());
-      if (tags.some(tag => ['tech', 'ai', 'technology', 'innovation'].includes(tag))) {
-        imageIndex = Math.floor(Math.random() * 3); // Tech images (0-2)
-      } else if (tags.some(tag => ['culture', 'society', 'politics', 'social'].includes(tag))) {
-        imageIndex = 3 + Math.floor(Math.random() * 3); // Culture images (3-5)
-      } else if (tags.some(tag => ['art', 'design', 'creative', 'culture'].includes(tag))) {
-        imageIndex = 6 + Math.floor(Math.random() * 3); // Creative images (6-8)
-      } else {
-        imageIndex = 9 + Math.floor(Math.random() * 3); // Modern/clean images (9-11)
+      if (match && match[1]) {
+        return match[1];
       }
-    } else {
-      // Use title-based selection if no tags
-      const title = article.title.toLowerCase();
-      if (title.includes('tech') || title.includes('ai') || title.includes('future')) {
-        imageIndex = Math.floor(Math.random() * 3);
-      } else if (title.includes('culture') || title.includes('society')) {
-        imageIndex = 3 + Math.floor(Math.random() * 3);
-      } else if (title.includes('art') || title.includes('creative')) {
-        imageIndex = 6 + Math.floor(Math.random() * 3);
-      } else {
-        imageIndex = 9 + Math.floor(Math.random() * 3);
+      
+      // Look for markdown-style images
+      const markdownImgRegex = /!\[.*?\]\(([^)]+)\)/;
+      const markdownMatch = article.body.match(markdownImgRegex);
+      
+      if (markdownMatch && markdownMatch[1]) {
+        return markdownMatch[1];
+      }
+      
+      // Look for standalone image URLs in the text
+      const urlRegex = /(https?:\/\/[^\s]+\.(?:jpg|jpeg|png|gif|webp|svg))/i;
+      const urlMatch = article.body.match(urlRegex);
+      
+      if (urlMatch && urlMatch[1]) {
+        return urlMatch[1];
       }
     }
     
-    return modernImages[imageIndex];
+    // Return null if no images found - let the card reshape itself
+    return null;
   };
 
   return {
@@ -299,13 +275,43 @@ export default function HomePage() {
                                guardianArticle.fields?.bodyText ||
                                'Read this article from The Guardian';
             
+            // Extract image from Guardian article content if no thumbnail/main image
+            const getGuardianImage = () => {
+              // First try the official Guardian image fields
+              if (guardianArticle.fields?.thumbnail) return guardianArticle.fields.thumbnail;
+              if (guardianArticle.fields?.main) return guardianArticle.fields.main;
+              
+              // Fallback: Extract from bodyText content
+              const bodyText = guardianArticle.fields?.bodyText || '';
+              if (bodyText) {
+                // Look for img tags in the content
+                const imgRegex = /<img[^>]+src=["']([^"']+)["'][^>]*>/i;
+                const match = bodyText.match(imgRegex);
+                
+                if (match && match[1]) {
+                  return match[1];
+                }
+                
+                // Look for Guardian's specific image patterns
+                const guardianImgRegex = /(https:\/\/media\.guim\.co\.uk\/[^\s"'<>]+)/i;
+                const guardianMatch = bodyText.match(guardianImgRegex);
+                
+                if (guardianMatch && guardianMatch[1]) {
+                  return guardianMatch[1];
+                }
+              }
+              
+              // Return null if no images found - let card reshape
+              return null;
+            };
+            
             articles.push({
               _id: `guardian-${guardianArticle.id}`,
               title: guardianArticle.fields?.headline || guardianArticle.webTitle,
               slug: `guardian-${guardianArticle.id}`,
               authorId: 'guardian',
               authorName: guardianArticle.fields?.byline || 'The Guardian',
-              coverImageUrl: guardianArticle.fields?.thumbnail || guardianArticle.fields?.main || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&q=80',
+              coverImageUrl: getGuardianImage(),
               tags: [guardianArticle.sectionName, guardianArticle.pillarName].filter(Boolean),
               content: [{
                 paragraphId: 'p1',
@@ -422,7 +428,7 @@ export default function HomePage() {
             <meta property="og:title" content={sharingArticleDetails.title} />
             <meta property="og:description" content={sharingArticleDetails.excerpt || 'Read this article on Journalite.'} />
             <meta property="og:image" content={sharingArticleDetails.coverImageUrl || '/default-image.jpg'} />
-            <meta property="og:url" content={`https://mvp.journalite.app/articles?slug=${encodeURIComponent(sharingArticleDetails.slug)}`} />
+            <meta property="og:url" content={`https://mvp.journalite.app/articles/${encodeURIComponent(sharingArticleDetails.slug)}`} />
             <meta property="og:type" content="article" />
           </>
         )}
@@ -589,20 +595,26 @@ export default function HomePage() {
                     
                     <div className={styles['article-actions']}>
                       <Link 
-                        href={article.isExternal ? (article.externalUrl || '#') : `/articles?slug=${encodeURIComponent(article.slug)}`} 
+                        href={article.isExternal ? (article.externalUrl || '#') : `/articles/${encodeURIComponent(article.slug)}`} 
                         className={styles['read-button']}
                       >
                         Read Article
                       </Link>
-                      <button 
-                        className={styles['share-button']} 
-                        aria-label="Share article"
-                        onClick={() => handleOpenShareModal(article)}
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
-                          <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/>
-                        </svg>
-                      </button>
+                      <ShareButton
+                        title={article.title}
+                        url={article.isExternal ? (article.externalUrl || '#') : `${baseUrl}/articles/${encodeURIComponent(article.slug)}`}
+                        description={getExcerpt(article)}
+                        articleData={{
+                          slug: article.slug,
+                          excerpt: getExcerpt(article),
+                          coverImageUrl: article.coverImageUrl || undefined,
+                          authorName: article.authorName,
+                          createdAt: article.createdAt,
+                          isExternal: article.isExternal,
+                          externalUrl: article.externalUrl
+                        }}
+                        iconOnly={true}
+                      />
                     </div>
                   </div>
                 </article>
@@ -716,7 +728,7 @@ export default function HomePage() {
             onClose={handleCloseShareModal}
             highlightText={sharingArticleDetails.excerpt || 'Check out this article'}
             articleTitle={sharingArticleDetails.title}
-            shareUrl={`${'https://mvp.journalite.app'}/articles?slug=${encodeURIComponent(sharingArticleDetails.slug)}`}
+            shareUrl={`${'https://mvp.journalite.app'}/articles/${encodeURIComponent(sharingArticleDetails.slug)}`}
           />
         )}
 
@@ -760,8 +772,8 @@ export default function HomePage() {
               display: 'block'
             }}
           >
-            <circle cx="50" cy="50" r="46" stroke="#fff" stroke-width="3" fill="none"/>
-            <text x="50" y="52" text-anchor="middle" fill="#fff" font-size="42" font-family="Georgia, serif" dominant-baseline="middle">G</text>
+            <circle cx="50" cy="50" r="46" stroke="#fff" strokeWidth="3" fill="none"/>
+            <text x="50" y="52" textAnchor="middle" fill="#fff" fontSize="42" fontFamily="Georgia, serif" dominantBaseline="middle">G</text>
           </svg>
         </Link>
 

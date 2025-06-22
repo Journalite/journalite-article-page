@@ -86,11 +86,226 @@
 
 /* Ensure videos display properly */
 .article-content video {
-  max-width: 100% !important;
+  width: 100% !important;
+  max-width: 800px !important;
   height: auto !important;
+  min-height: 400px !important;
   margin: 2em auto !important;
   display: block !important;
   border-radius: 8px !important;
+}
+
+/* YouTube and video embed styling */
+.article-content iframe[src*="youtube"],
+.article-content iframe[src*="youtu.be"],
+.article-content iframe[src*="vimeo"] {
+  width: 100% !important;
+  max-width: 900px !important;
+  height: 500px !important;
+  margin: 2em auto !important;
+  display: block !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15) !important;
+}
+
+/* Responsive video container */
+.video-container {
+  position: relative !important;
+  width: 100% !important;
+  max-width: 900px !important;
+  margin: 2em auto !important;
+  padding-bottom: 50.625% !important; /* 16:9 aspect ratio but larger */
+  height: 0 !important;
+  overflow: hidden !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15) !important;
+}
+
+.video-container iframe {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  border: 0 !important;
+}
+
+/* General iframe improvements */
+.article-content iframe {
+  max-width: 100% !important;
+  margin: 1em auto !important;
+  display: block !important;
+  border-radius: 8px !important;
+}
+
+/* Force larger video sizing on mobile */
+@media (max-width: 768px) {
+  .video-container {
+    max-width: 95% !important;
+    margin: 1.5em auto !important;
+    padding-bottom: 56.25% !important; /* Standard 16:9 on mobile */
+  }
+  
+  .article-content iframe[src*="youtube"],
+  .article-content iframe[src*="youtu.be"],
+  .article-content iframe[src*="vimeo"] {
+    max-width: 95% !important;
+    height: 250px !important;
+  }
+}
+
+/* Ensure videos are prominent on larger screens */
+@media (min-width: 769px) {
+  .video-container {
+    max-width: 1000px !important;
+    padding-bottom: 48% !important; /* Even larger on desktop */
+  }
+  
+  .article-content iframe[src*="youtube"],
+  .article-content iframe[src*="youtu.be"],
+  .article-content iframe[src*="vimeo"] {
+    max-width: 1000px !important;
+    height: 600px !important;
+  }
+}
+
+/* Social media embeds styling */
+.social-embed {
+  margin: 2em auto !important;
+  border-radius: 12px !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+  transition: box-shadow 0.3s ease !important;
+}
+
+.social-embed:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15) !important;
+}
+
+.twitter-embed {
+  max-width: 550px !important;
+  border: 1px solid #e1e8ed !important;
+  background: #f8f9fa !important;
+}
+
+.instagram-embed {
+  max-width: 400px !important;
+  border: 1px solid #dbdbdb !important;
+  background: #fafafa !important;
+}
+
+.facebook-embed {
+  max-width: 500px !important;
+  border: 1px solid #dddfe2 !important;
+  background: #f5f6f7 !important;
+}
+
+/* Live updates and news alerts */
+.live-update {
+  margin: 2em 0 !important;
+  padding: 1.5em !important;
+  background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%) !important;
+  border-left: 4px solid #f39c12 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 8px rgba(243, 156, 18, 0.1) !important;
+  animation: pulse-update 2s ease-in-out !important;
+}
+
+/* Article update timestamps */
+.article-update-timestamp {
+  margin: 2em 0 !important;
+  padding: 1em 1.5em !important;
+  background: linear-gradient(135deg, #e8f5e8 0%, #d4edda 100%) !important;
+  border-left: 4px solid #28a745 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.1) !important;
+  animation: slide-in 0.5s ease-out !important;
+}
+
+/* Live blog timestamps */
+.live-timestamp {
+  margin: 2em 0 !important;
+  padding: 1em 1.5em !important;
+  background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%) !important;
+  border-left: 4px solid #f39c12 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 8px rgba(243, 156, 18, 0.1) !important;
+  animation: pulse-update 2s ease-in-out !important;
+  font-weight: 600 !important;
+  color: #d68910 !important;
+  font-size: 0.95em !important;
+}
+
+/* Article updated styling */
+.article-updated {
+  margin: 2em 0 !important;
+  padding: 1em 1.5em !important;
+  background: linear-gradient(135deg, #e8f5e8 0%, #d4edda 100%) !important;
+  border-left: 4px solid #28a745 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.1) !important;
+  animation: slide-in 0.5s ease-out !important;
+  font-weight: 600 !important;
+  color: #155724 !important;
+  font-size: 0.95em !important;
+}
+
+.news-update {
+  margin: 2em 0 !important;
+  padding: 1.5em !important;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+  animation: slide-in 0.5s ease-out !important;
+}
+
+.news-update.breaking {
+  background: #ffebee !important;
+  border-left: 4px solid #f44336 !important;
+}
+
+.news-update.update {
+  background: #e3f2fd !important;
+  border-left: 4px solid #2196f3 !important;
+}
+
+.news-update.latest {
+  background: #f3e5f5 !important;
+  border-left: 4px solid #9c27b0 !important;
+}
+
+.news-update.developing {
+  background: #fff3e0 !important;
+  border-left: 4px solid #ff9800 !important;
+}
+
+/* Animations */
+@keyframes pulse-update {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+
+@keyframes slide-in {
+  from { 
+    opacity: 0; 
+    transform: translateY(20px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+/* Mobile responsiveness for special elements */
+@media (max-width: 768px) {
+  .social-embed {
+    margin: 1.5em 0.5em !important;
+    padding: 0.75em !important;
+  }
+  
+  .live-update,
+  .news-update {
+    margin: 1.5em 0 !important;
+    padding: 1em !important;
+  }
 }
 
 /* Allow Guardian's original content to display properly */ 

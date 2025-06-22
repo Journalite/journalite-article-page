@@ -44,7 +44,7 @@ const GradientPanel: React.FC<GradientPanelProps> = ({
   const canvasRef = useRef<HTMLDivElement>(null);
   const opacitySliderRef = useRef<HTMLDivElement>(null);
   const grainSliderRef = useRef<HTMLDivElement>(null);
-  const saveTimeout = useRef<NodeJS.Timeout>();
+  const saveTimeout = useRef<NodeJS.Timeout | null>(null);
 
   // Generate Journa Color-style gradient from color stops with grain effect
   const generateJournaColorGradient = (config: ThemeConfig) => {
@@ -111,7 +111,10 @@ const GradientPanel: React.FC<GradientPanelProps> = ({
           }
         });
 
-        clearTimeout(saveTimeout.current);
+        // Clear existing timeout
+        if (saveTimeout.current) {
+          clearTimeout(saveTimeout.current);
+        }
         saveTimeout.current = setTimeout(() => {
           localStorage.setItem('journaColorThemeConfig', JSON.stringify(config));
         }, 500);

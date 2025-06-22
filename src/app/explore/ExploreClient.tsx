@@ -13,6 +13,8 @@ import NotificationBell from '@/components/NotificationBell'
 import LeftSidebar from '@/components/LeftSidebar'
 import TopLeftLogo from '@/components/TopLeftLogo'
 import ShareModal from '@/components/ShareModal'
+import ShareButton from '@/components/ShareButton'
+import { logger, devLogger } from '@/utils/logger'
 
 // Types for mixed article data
 interface BaseArticle {
@@ -29,6 +31,8 @@ interface BaseArticle {
   url?: string; // For external articles
   likes?: string[];
   viewCount?: number;
+  isExternal?: boolean;
+  externalUrl?: string;
 }
 
 // Interface for article details to be passed to the modal
@@ -136,41 +140,113 @@ const adaptFirestoreArticle = (firestoreArticle: FirestoreArticle, cleanHtmlText
   // Extract clean text for excerpt
   const rawExcerpt = firestoreArticle.body.substring(0, 200) + '...';
   
+  // Extract image from article content if no cover image
+  const getArticleImage = () => {
+    // Always use the real cover image if it exists
+    if (firestoreArticle.coverImage && firestoreArticle.coverImage.trim() !== '') {
+      return firestoreArticle.coverImage;
+    }
+    
+    // Fallback: Extract first image from article content
+    if (firestoreArticle.body) {
+      // Look for img tags in the content
+      const imgRegex = /<img[^>]+src=["']([^"']+)["'][^>]*>/i;
+      const match = firestoreArticle.body.match(imgRegex);
+      
+      if (match && match[1]) {
+        return match[1];
+      }
+      
+      // Look for markdown-style images
+      const markdownImgRegex = /!\[.*?\]\(([^)]+)\)/;
+      const markdownMatch = firestoreArticle.body.match(markdownImgRegex);
+      
+      if (markdownMatch && markdownMatch[1]) {
+        return markdownMatch[1];
+      }
+      
+      // Look for standalone image URLs in the text
+      const urlRegex = /(https?:\/\/[^\s]+\.(?:jpg|jpeg|png|gif|webp|svg))/i;
+      const urlMatch = firestoreArticle.body.match(urlRegex);
+      
+      if (urlMatch && urlMatch[1]) {
+        return urlMatch[1];
+      }
+    }
+    
+    // Return null if no images found - let the card reshape itself
+    return null;
+  };
+  
   return {
     id: firestoreArticle.id || '',
     title: firestoreArticle.title,
     slug: firestoreArticle.slug || firestoreArticle.title.toLowerCase().replace(/[^\w\s]/gi, '').replace(/\s+/g, '-'),
     authorName: firestoreArticle.authorName,
     excerpt: cleanHtmlText(rawExcerpt),
-    coverImageUrl: firestoreArticle.coverImage || null,
+    coverImageUrl: getArticleImage(),
     tags: firestoreArticle.tags,
     createdAt: firestoreArticle.createdAt.toDate().toISOString(),
     readTime: Math.ceil(firestoreArticle.body.split(' ').length / 200),
     source: 'journalite',
     likes: firestoreArticle.likes || [],
-    viewCount: firestoreArticle.viewCount || 0
+    viewCount: firestoreArticle.viewCount || 0,
+    isExternal: false,
+    externalUrl: undefined
   };
 };
 
 // Adapter function to convert Guardian articles to BaseArticle format
 const adaptGuardianArticle = (guardianArticle: GuardianArticle, cleanHtmlText: (text: string) => string): BaseArticle => {
-  const rawExcerpt = guardianArticle.fields?.trailText || 
-                    guardianArticle.fields?.standfirst || 
-                    guardianArticle.fields?.bodyText?.substring(0, 200) + '...' || 
+  const rawExcerpt = guardianArticle.fields?.standfirst || 
+                    guardianArticle.fields?.trailText || 
+                    guardianArticle.fields?.bodyText ||
                     'Read this article from The Guardian';
 
+  // Extract image from Guardian article content if no thumbnail
+  const getGuardianImage = () => {
+    // First try the official Guardian image fields
+    if (guardianArticle.fields?.thumbnail) return guardianArticle.fields.thumbnail;
+    if (guardianArticle.fields?.main) return guardianArticle.fields.main;
+    
+    // Fallback: Extract from bodyText content
+    const bodyText = guardianArticle.fields?.bodyText || '';
+    if (bodyText) {
+      // Look for img tags in the content
+      const imgRegex = /<img[^>]+src=["']([^"']+)["'][^>]*>/i;
+      const match = bodyText.match(imgRegex);
+      
+      if (match && match[1]) {
+        return match[1];
+      }
+      
+      // Look for Guardian's specific image patterns
+      const guardianImgRegex = /(https:\/\/media\.guim\.co\.uk\/[^\s"'<>]+)/i;
+      const guardianMatch = bodyText.match(guardianImgRegex);
+      
+      if (guardianMatch && guardianMatch[1]) {
+        return guardianMatch[1];
+      }
+    }
+    
+    // Return null if no images found - let card reshape
+    return null;
+  };
+
   return {
-    id: `guardian-${guardianArticle.id}`,
-    title: guardianArticle.webTitle,
+    id: `guardian-${encodeURIComponent(guardianArticle.id)}`,
+    title: guardianArticle.fields?.headline || guardianArticle.webTitle,
     slug: `guardian-${encodeURIComponent(guardianArticle.id)}`,
     authorName: guardianArticle.fields?.byline || 'The Guardian',
     excerpt: cleanHtmlText(rawExcerpt),
-    coverImageUrl: guardianArticle.fields?.thumbnail || null,
+    coverImageUrl: getGuardianImage(),
     tags: [guardianArticle.sectionName, guardianArticle.pillarName].filter(Boolean),
     createdAt: guardianArticle.webPublicationDate,
     readTime: Math.ceil((guardianArticle.fields?.bodyText?.split(' ').length || 500) / 200),
     source: 'guardian',
-    url: `/guardian-news/${guardianArticle.id}`
+    url: `/guardian-news/${guardianArticle.id}`,
+    isExternal: true,
+    externalUrl: guardianArticle.webUrl
   };
 };
 
@@ -180,18 +256,49 @@ const adaptNewsApiArticle = (newsArticle: NewsArticle, cleanHtmlText: (text: str
                     newsArticle.content?.substring(0, 200) + '...' || 
                     'Read this article from the news source';
 
+  // Extract image from NewsAPI article content if no urlToImage
+  const getNewsApiImage = () => {
+    // First try the official NewsAPI image field
+    if (newsArticle.urlToImage) return newsArticle.urlToImage;
+    
+    // Fallback: Extract from content
+    const content = newsArticle.content || newsArticle.description || '';
+    if (content) {
+      // Look for img tags in the content
+      const imgRegex = /<img[^>]+src=["']([^"']+)["'][^>]*>/i;
+      const match = content.match(imgRegex);
+      
+      if (match && match[1]) {
+        return match[1];
+      }
+      
+      // Look for standalone image URLs in the text
+      const urlRegex = /(https?:\/\/[^\s]+\.(?:jpg|jpeg|png|gif|webp|svg))/i;
+      const urlMatch = content.match(urlRegex);
+      
+      if (urlMatch && urlMatch[1]) {
+        return urlMatch[1];
+      }
+    }
+    
+    // Return null if no images found - let card reshape
+    return null;
+  };
+
   return {
     id: `news-${encodeURIComponent(newsArticle.url)}`,
     title: newsArticle.title,
     slug: `news-${encodeURIComponent(newsArticle.url)}`,
     authorName: newsArticle.author || newsArticle.source.name,
     excerpt: cleanHtmlText(rawExcerpt),
-    coverImageUrl: newsArticle.urlToImage || null,
+    coverImageUrl: getNewsApiImage(),
     tags: [newsArticle.source.name],
     createdAt: newsArticle.publishedAt,
     readTime: Math.ceil((newsArticle.content?.split(' ').length || 300) / 200),
     source: 'newsapi',
-    url: `/news/${encodeURIComponent(newsArticle.url)}`
+    url: `/news/${encodeURIComponent(newsArticle.url)}`,
+    isExternal: true,
+    externalUrl: newsArticle.url
   };
 };
 
@@ -205,6 +312,7 @@ export default function ExploreClient() {
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [sharingArticleDetails, setSharingArticleDetails] = useState<SharingArticleDetails | null>(null);
   const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 0);
+  const [showPoliticalContent, setShowPoliticalContent] = useState(true);
 
   // Helper function to clean HTML from text
   const cleanHtmlText = (htmlText: string): string => {
@@ -232,6 +340,104 @@ export default function ExploreClient() {
     }
     
     return cleanText;
+  };
+
+  // Smart political content detection algorithm
+  const isPoliticalContent = (article: BaseArticle): boolean => {
+    const content = `${article.title} ${article.excerpt} ${article.tags?.join(' ') || ''}`.toLowerCase();
+    
+    // Political figures and personalities
+    const politicalFigures = [
+      'trump', 'biden', 'harris', 'obama', 'clinton', 'bush', 'reagan',
+      'pelosi', 'mcconnell', 'schumer', 'desantis', 'newsom', 'abbott',
+      'putin', 'zelensky', 'xi jinping', 'macron', 'merkel', 'johnson',
+      'modi', 'erdogan', 'bolsonaro', 'trudeau', 'albanese', 'sunak'
+    ];
+    
+    // Political terms and concepts
+    const politicalTerms = [
+      'election', 'voting', 'ballot', 'campaign', 'candidate', 'primary',
+      'democrat', 'republican', 'conservative', 'liberal', 'progressive',
+      'congress', 'senate', 'house', 'parliament', 'government', 'administration',
+      'policy', 'legislation', 'bill', 'law', 'regulation', 'executive order',
+      'supreme court', 'judiciary', 'constitutional', 'amendment',
+      'impeachment', 'scandal', 'investigation', 'hearing', 'testimony',
+      'political', 'partisan', 'bipartisan', 'caucus', 'filibuster'
+    ];
+    
+    // Military and conflict terms (often political)
+    const militaryTerms = [
+      'war', 'military', 'army', 'navy', 'air force', 'marines',
+      'bombing', 'bombs', 'missile', 'drone', 'attack', 'invasion',
+      'conflict', 'battle', 'combat', 'defense', 'security',
+      'nato', 'pentagon', 'weapons', 'nuclear', 'sanctions',
+      'terrorism', 'insurgency', 'coup', 'revolution'
+    ];
+    
+    // Government institutions and processes
+    const governmentTerms = [
+      'white house', 'capitol', 'pentagon', 'state department',
+      'treasury', 'federal reserve', 'fbi', 'cia', 'nsa',
+      'inauguration', 'cabinet', 'ambassador', 'diplomat',
+      'treaty', 'summit', 'g7', 'g20', 'un', 'united nations'
+    ];
+    
+    // International relations and geopolitics
+    const geopoliticalTerms = [
+      'china', 'russia', 'iran', 'north korea', 'israel', 'palestine',
+      'ukraine', 'taiwan', 'syria', 'afghanistan', 'iraq',
+      'diplomatic', 'embassy', 'foreign policy', 'trade war',
+      'tariff', 'embargo', 'alliance', 'sovereignty'
+    ];
+    
+    // Controversial political topics
+    const controversialTerms = [
+      'abortion', 'immigration', 'border', 'climate change', 'gun control',
+      'healthcare', 'medicare', 'social security', 'welfare',
+      'tax', 'budget', 'deficit', 'infrastructure', 'minimum wage',
+      'civil rights', 'discrimination', 'protest', 'riot', 'demonstration'
+    ];
+    
+    // Combine all political indicators
+    const allPoliticalTerms = [
+      ...politicalFigures,
+      ...politicalTerms,
+      ...militaryTerms,
+      ...governmentTerms,
+      ...geopoliticalTerms,
+      ...controversialTerms
+    ];
+    
+    // Check for political indicators
+    let politicalScore = 0;
+    
+    for (const term of allPoliticalTerms) {
+      if (content.includes(term)) {
+        politicalScore++;
+        
+        // Higher weight for certain terms
+        if (politicalFigures.includes(term)) politicalScore += 2;
+        if (militaryTerms.includes(term)) politicalScore += 1;
+        if (controversialTerms.includes(term)) politicalScore += 1;
+      }
+    }
+    
+    // Check for political tags/sections
+    const politicalTags = ['politics', 'government', 'election', 'policy', 'world news', 'us news'];
+    const hasPoliticalTag = article.tags?.some(tag => 
+      politicalTags.some(politicalTag => tag.toLowerCase().includes(politicalTag))
+    );
+    
+    if (hasPoliticalTag) politicalScore += 3;
+    
+    // Consider it political if score is 2 or higher
+    const isPolitical = politicalScore >= 2;
+    
+    if (isPolitical) {
+      devLogger.log(`🚫 Political content detected: "${article.title}" (score: ${politicalScore})`);
+    }
+    
+    return isPolitical;
   };
 
   // Check authentication status and load user profile
@@ -305,9 +511,11 @@ export default function ExploreClient() {
         
         console.log(`🔗 Total articles before deduplication: ${allArticles.length}`);
         
-        // Deduplicate articles
-        const deduplicatedArticles = deduplicateArticles(allArticles);
-        console.log(`✨ Articles after deduplication: ${deduplicatedArticles.length}`);
+        // Deduplicate articles and apply political filter if user preference is set
+        const deduplicatedArticles = deduplicateArticles(allArticles).filter(article => 
+          showPoliticalContent || !isPoliticalContent(article)
+        );
+        console.log(`✨ Articles after deduplication${showPoliticalContent ? '' : ' and political filtering'}: ${deduplicatedArticles.length}`);
         console.log('Final breakdown:', {
           journalite: deduplicatedArticles.filter(a => a.source === 'journalite').length,
           guardian: deduplicatedArticles.filter(a => a.source === 'guardian').length,
@@ -421,7 +629,7 @@ export default function ExploreClient() {
     };
     
     fetchMixedArticles();
-  }, [userInterests, isAuthenticated]);
+  }, [userInterests, isAuthenticated, showPoliticalContent]);
 
   // Fetch external articles based on user interests
   const fetchExternalArticles = async (interests: string[]): Promise<BaseArticle[]> => {
@@ -450,8 +658,10 @@ export default function ExploreClient() {
                 6 // Increased from 4 to 6 per interest
               );
               
-              const guardianArticles = guardianResponse.results.map(article => adaptGuardianArticle(article, cleanHtmlText));
-              console.log(`📰 Found ${guardianArticles.length} Guardian articles for ${interest}`);
+              const guardianArticles = guardianResponse.results
+                .map(article => adaptGuardianArticle(article, cleanHtmlText))
+                .filter(article => showPoliticalContent || !isPoliticalContent(article));
+              console.log(`📰 Found ${guardianArticles.length} Guardian articles for ${interest} (after political filtering)`);
               externalArticles.push(...guardianArticles);
             } catch (error) {
               console.error(`❌ Error fetching Guardian articles for ${interest}:`, error);
@@ -472,8 +682,10 @@ export default function ExploreClient() {
             try {
               console.log(`🔍 Fetching NewsAPI articles for: ${interest}`);
               const newsResponse = await newsService.getTopHeadlines(mapping.newsCategory);
-              const newsArticles = newsResponse.articles.slice(0, 6).map(article => adaptNewsApiArticle(article, cleanHtmlText)); // Increased from 4 to 6
-              console.log(`📺 Found ${newsArticles.length} NewsAPI articles for ${interest}`);
+              const newsArticles = newsResponse.articles.slice(0, 6)
+                .map(article => adaptNewsApiArticle(article, cleanHtmlText))
+                .filter(article => showPoliticalContent || !isPoliticalContent(article));
+              console.log(`📺 Found ${newsArticles.length} NewsAPI articles for ${interest} (after political filtering)`);
               externalArticles.push(...newsArticles);
             } catch (error) {
               console.error(`❌ Error fetching NewsAPI articles for ${interest}:`, error);
@@ -492,8 +704,10 @@ export default function ExploreClient() {
         if (guardianService.isConfigured()) {
           try {
             const generalGuardianResponse = await guardianService.searchArticles('', 'technology', 1, 10);
-            const generalGuardianArticles = generalGuardianResponse.results.map(article => adaptGuardianArticle(article, cleanHtmlText));
-            console.log(`📰 Found ${generalGuardianArticles.length} general Guardian articles`);
+            const generalGuardianArticles = generalGuardianResponse.results
+              .map(article => adaptGuardianArticle(article, cleanHtmlText))
+              .filter(article => showPoliticalContent || !isPoliticalContent(article));
+            console.log(`📰 Found ${generalGuardianArticles.length} general Guardian articles (after political filtering)`);
             externalArticles.push(...generalGuardianArticles);
           } catch (error) {
             console.error('❌ Error fetching general Guardian articles:', error);
@@ -504,8 +718,10 @@ export default function ExploreClient() {
         if (newsService.isConfigured()) {
           try {
             const generalNewsResponse = await newsService.getTopHeadlines('technology');
-            const generalNewsArticles = generalNewsResponse.articles.slice(0, 10).map(article => adaptNewsApiArticle(article, cleanHtmlText));
-            console.log(`📺 Found ${generalNewsArticles.length} general NewsAPI articles`);
+            const generalNewsArticles = generalNewsResponse.articles.slice(0, 10)
+              .map(article => adaptNewsApiArticle(article, cleanHtmlText))
+              .filter(article => showPoliticalContent || !isPoliticalContent(article));
+            console.log(`📺 Found ${generalNewsArticles.length} general NewsAPI articles (after political filtering)`);
             externalArticles.push(...generalNewsArticles);
           } catch (error) {
             console.error('❌ Error fetching general NewsAPI articles:', error);
@@ -746,7 +962,7 @@ export default function ExploreClient() {
 
   const getArticleLink = (article: BaseArticle) => {
     if (article.source === 'journalite') {
-      return `/articles?slug=${encodeURIComponent(article.slug)}`;
+      return `/articles/${encodeURIComponent(article.slug)}`;
     }
     return article.url || '#';
   };
@@ -777,6 +993,18 @@ export default function ExploreClient() {
         <div className={styles.header}>
           <h1 className={styles.title}>Explore</h1>
           <div className={styles.headerActions}>
+            <div className={styles.politicalToggle}>
+              <label className={styles.toggleLabel}>
+                <input
+                  type="checkbox"
+                  checked={showPoliticalContent}
+                  onChange={(e) => setShowPoliticalContent(e.target.checked)}
+                  className={styles.toggleInput}
+                />
+                <span className={styles.toggleSlider}></span>
+                <span className={styles.toggleText}>Show Political Content</span>
+              </label>
+            </div>
             {isAuthenticated && <NotificationBell />}
           </div>
         </div>
@@ -846,17 +1074,21 @@ export default function ExploreClient() {
                   </Link>
                   
                   <div className={styles.articleActions}>
-                          <button 
-                            onClick={() => handleOpenShareModal(article)}
-                      className={styles.shareButton}
-                      title="Share article"
-                    >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
-                        <polyline points="16,6 12,2 8,6"/>
-                        <line x1="12" y1="2" x2="12" y2="15"/>
-                            </svg>
-                          </button>
+                          <ShareButton
+                            title={article.title}
+                            url={article.isExternal ? article.externalUrl || '#' : `${typeof window !== 'undefined' ? window.location.origin : ''}/articles?slug=${encodeURIComponent(article.slug)}`}
+                            description={article.excerpt}
+                            articleData={{
+                              slug: article.slug,
+                              excerpt: article.excerpt,
+                              coverImageUrl: article.coverImageUrl || undefined,
+                              authorName: article.authorName,
+                              createdAt: article.createdAt,
+                              isExternal: article.isExternal,
+                              externalUrl: article.externalUrl
+                            }}
+                            iconOnly={true}
+                          />
                       </div>
                     </article>
                   ))}
@@ -872,7 +1104,7 @@ export default function ExploreClient() {
           onClose={handleCloseShareModal}
           highlightText={sharingArticleDetails.excerpt || 'Check out this article'}
           articleTitle={sharingArticleDetails.title}
-           shareUrl={`${typeof window !== 'undefined' ? window.location.origin : ''}/articles?slug=${encodeURIComponent(sharingArticleDetails.slug)}`}
+           shareUrl={`${typeof window !== 'undefined' ? window.location.origin : ''}/articles/${encodeURIComponent(sharingArticleDetails.slug)}`}
         />
       )}
     </div>

@@ -335,7 +335,7 @@ export default function ProfileClient({ username }: ProfileClientProps) {
             <div className="space-y-6">
               {articles.map((article) => (
                 <Link 
-                  href={`/articles?slug=${article.slug}`} 
+                  href={`/articles/${article.slug}`} 
                   key={article.id}
                   className={`${styles['glass-card']} block`}
                 >

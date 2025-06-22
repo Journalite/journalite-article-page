@@ -255,7 +255,7 @@ export default function MyProfilePage() {
             <div className="space-y-6">
               {userArticles.map(article => (
                 <Link 
-                  href={article.slug ? `/articles?slug=${article.slug}` : `/articles?slug=${article.id}`} 
+                  href={article.slug ? `/articles/${article.slug}` : `/articles/${article.id}`} 
                   key={article.id} 
                   className={`${styles['glass-card']} block`}
                 >

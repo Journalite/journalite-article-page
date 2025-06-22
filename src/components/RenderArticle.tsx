@@ -413,7 +413,7 @@ const RenderArticle: React.FC<RenderArticleProps> = ({ article }) => {
     return <div className="article-error">Article format not supported or missing ID.</div>;
   }
 
-  const ogUrl = `${baseUrl}/articles?slug=${encodeURIComponent(article.slug)}`;
+  const ogUrl = `${baseUrl}/articles/${encodeURIComponent(article.slug)}`;
   const ogTitle = article.title;
   const ogDescription = getExcerptForSharing(100);
   const ogImage = article.coverImageUrl || `${baseUrl}/default-journalite-og-image.png`; // Add a default OG image to your public folder

@@ -113,7 +113,7 @@ const NotificationBell = () => {
       return '/notifications';
     } else if (notification.articleSlug) {
       // For article-related notifications (comments, likes, etc.)
-      return `/articles?slug=${notification.articleSlug}`;
+      return `/articles/${notification.articleSlug}`;
     } else {
       // Default to notifications page
       return '/notifications';

@@ -183,7 +183,7 @@ const EditArticleForm = ({ articleId }: EditArticleFormProps) => {
       
       // Redirect to the appropriate page based on the status
       if (status === 'published') {
-        router.push(`/articles?slug=${updatedArticle.slug}`)
+        router.push(`/articles/${updatedArticle.slug}`)
       } else {
         router.push('/my-thoughts')
       }

@@ -254,7 +254,7 @@ const ArticleForm = () => {
       
       // Redirect to the appropriate page based on the status
       if (status === 'published') {
-        router.push(`/articles?slug=${article.slug}`)
+        router.push(`/articles/${article.slug}`)
       } else {
         router.push('/my-thoughts')
       }

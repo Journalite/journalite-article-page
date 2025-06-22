@@ -139,9 +139,13 @@ const ArticleWithHighlights: React.FC<ArticleWithHighlightsProps> = ({
   // Get the content to display
   const getContentToDisplay = () => {
     if (initialHtml) {
-      return initialHtml
+      const content = initialHtml
         .replace(/<div[^>]*>Content is loaded from HTML<\/div>/g, '')
         .replace(/<h1[^>]*>Untitled Article<\/h1>/g, '');
+      
+
+      
+      return content;
     }
     return article?.body || '';
   };
