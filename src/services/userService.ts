@@ -31,6 +31,9 @@ export interface UserProfile {
     followersCount?: number;
     followingCount?: number;
     interests?: string[];
+    lastInterestsUpdate?: any; // When user last updated their interests
+    needsInterestsUpdate?: boolean; // Flag to prompt for interest updates
+    interestsVersion?: number; // Version number to track when interests were last reviewed
 }
 
 /**
@@ -201,11 +204,92 @@ export async function updateUserInterests(uid: string, interests: string[]): Pro
     try {
         const userRef = doc(db, 'users', uid);
         await updateDoc(userRef, {
-            interests
+            interests,
+            lastInterestsUpdate: serverTimestamp(),
+            needsInterestsUpdate: false,
+            interestsVersion: getCurrentInterestsVersion()
         });
         console.log(`Interests updated for user ${uid}:`, interests);
     } catch (error) {
         console.error('Error updating user interests:', error);
+        throw error;
+    }
+}
+
+/**
+ * Gets the current interests version - increment this when you want to prompt all users
+ * @returns Current interests version number
+ */
+export function getCurrentInterestsVersion(): number {
+    // Increment this number when you want to prompt existing users for interest updates
+    // For example: when adding new interest categories, improving recommendation engine, etc.
+    return 2; // Updated from 1 to prompt existing users
+}
+
+/**
+ * Checks if a user needs to update their interests
+ * @param userProfile User's profile data
+ * @returns Boolean indicating if user should be prompted for interest updates
+ */
+export function shouldPromptForInterestsUpdate(userProfile: UserProfile): boolean {
+    const currentVersion = getCurrentInterestsVersion();
+
+    // Check if user has been flagged for interests update
+    if (userProfile.needsInterestsUpdate === true) {
+        return true;
+    }
+
+    // Check if user's interests version is outdated
+    if (!userProfile.interestsVersion || userProfile.interestsVersion < currentVersion) {
+        return true;
+    }
+
+    // Check if user has no interests set
+    if (!userProfile.interests || userProfile.interests.length === 0) {
+        return true;
+    }
+
+    return false;
+}
+
+/**
+ * Marks users for interest updates (admin function)
+ * @param uid User's Firebase Auth UID (optional - if not provided, marks all users)
+ * @returns A promise that resolves when users are marked
+ */
+export async function markUsersForInterestsUpdate(uid?: string): Promise<void> {
+    try {
+        if (uid) {
+            // Mark specific user
+            const userRef = doc(db, 'users', uid);
+            await updateDoc(userRef, {
+                needsInterestsUpdate: true
+            });
+        } else {
+            // This would mark all users - typically done via backend/admin script
+            console.log('To mark all users, use the admin script or increment getCurrentInterestsVersion()');
+        }
+    } catch (error) {
+        console.error('Error marking users for interests update:', error);
+        throw error;
+    }
+}
+
+/**
+ * Dismisses the interests update prompt for a user (if they choose to skip)
+ * @param uid User's Firebase Auth UID
+ * @returns A promise that resolves when the prompt is dismissed
+ */
+export async function dismissInterestsUpdatePrompt(uid: string): Promise<void> {
+    try {
+        const userRef = doc(db, 'users', uid);
+        await updateDoc(userRef, {
+            needsInterestsUpdate: false,
+            interestsVersion: getCurrentInterestsVersion()
+        });
+        console.log(`Interests update prompt dismissed for user ${uid}`);
+    } catch (error) {
+        console.error('Error dismissing interests update prompt:', error);
         throw error;
     }
 }

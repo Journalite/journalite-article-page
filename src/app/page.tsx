@@ -18,6 +18,7 @@ import TopLeftLogo from '@/components/TopLeftLogo'
 import MobileBottomNav from '@/components/MobileBottomNav'
 import MobileHeaderLogo from '@/components/MobileHeaderLogo'
 import EventsBar from '@/components/EventsBar'
+import InterestsReengagementWrapper from '@/components/InterestsReengagementWrapper'
 import { getUserProfile } from '@/services/userService'
 
 // Types for our article data based on actual API structure
@@ -421,7 +422,7 @@ export default function HomePage() {
   }, []);
 
   return (
-    <>
+    <InterestsReengagementWrapper>
       <Head>
         {sharingArticleDetails && (
           <>
@@ -572,7 +573,26 @@ export default function HomePage() {
                     </div>
                     <h3 className={styles['article-title']}>{article.title}</h3>
                     <div className={styles['article-meta']}>
-                      by {getAuthorName(article)} • {getReadingTime(article.content)} min read
+                      by {getAuthorName(article)} • 
+                      {(() => {
+                        const readingTime = getReadingTime(article.content);
+                        const isGuardianLongRead = article.authorId === 'guardian' && readingTime > 22;
+                        
+                        return isGuardianLongRead ? (
+                          <span style={{ 
+                            color: '#e65100', 
+                            fontWeight: '600',
+                            background: 'rgba(255, 152, 0, 0.15)',
+                            padding: '2px 6px',
+                            borderRadius: '8px',
+                            border: '1px solid rgba(255, 152, 0, 0.3)'
+                          }}>
+                            📖 {readingTime} min read
+                          </span>
+                        ) : (
+                          <span>{readingTime} min read</span>
+                        );
+                      })()}
                     </div>
                     <p className={styles['article-excerpt']}>
                       {getExcerpt(article)}
@@ -782,6 +802,6 @@ export default function HomePage() {
           <MobileBottomNav isAuthenticated={isAuthenticated} />
         )}
     </div>
-    </>
+    </InterestsReengagementWrapper>
   )
 }

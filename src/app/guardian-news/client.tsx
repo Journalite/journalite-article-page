@@ -251,13 +251,43 @@ const GuardianNewsClient: React.FC = () => {
                        article.tags.find(tag => tag.type === 'contributor')?.webTitle || 
                        'The Guardian'}
                     </span>
-                    <span>
-                      {new Date(article.webPublicationDate).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric'
-                      })}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      {(() => {
+                        // Calculate read time for display
+                        const wordCount = article.fields?.body 
+                          ? article.fields.body.replace(/<[^>]*>/g, '').split(/\s+/).length 
+                          : (article.fields?.bodyText 
+                            ? article.fields.bodyText.split(/\s+/).length 
+                            : 300);
+                        const readTime = Math.ceil(wordCount / 200);
+                        const isLongRead = readTime > 22;
+                        
+                        return (
+                          <>
+                            {isLongRead && (
+                              <span 
+                                className="inline-block px-2 py-1 text-xs font-semibold text-orange-700 rounded-full"
+                                style={{
+                                  background: 'rgba(255, 152, 0, 0.15)',
+                                  backdropFilter: 'blur(10px)',
+                                  border: '1px solid rgba(255, 152, 0, 0.3)'
+                                }}
+                                title="Extended article - Summary will be shown"
+                              >
+                                📖 {readTime} min
+                              </span>
+                            )}
+                            <span>
+                              {new Date(article.webPublicationDate).toLocaleDateString('en-US', {
+                                year: 'numeric',
+                                month: 'short',
+                                day: 'numeric'
+                              })}
+                            </span>
+                          </>
+                        );
+                      })()}
+                    </div>
                   </div>
                 </div>
               </Link>

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { doc, getDoc, collection, getDocs, query, limit, updateDoc } from 'firebase/firestore';
 import { auth, db } from '@/firebase/clientApp';
 import { onAuthStateChanged } from 'firebase/auth';
+import { getCurrentInterestsVersion, markUsersForInterestsUpdate } from '@/services/userService';
 import styles from '@/styles/home.module.css';
 import Link from 'next/link';
 
@@ -3637,6 +3638,132 @@ const docSections: DocSection[] = [
 ];
 
 // User Management Component
+function InterestsManagement() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
+  const [currentVersion, setCurrentVersion] = useState(0);
+
+  useEffect(() => {
+    setCurrentVersion(getCurrentInterestsVersion());
+  }, []);
+
+  const handlePromptAllUsers = async () => {
+    setIsLoading(true);
+    setMessage('');
+    setError('');
+    
+    try {
+      // In practice, you would increment the version in the service file
+      // For demo, we'll just show a message
+      setMessage(
+        `🎯 To prompt all existing users for interests update:
+        
+        1. Increment the version number in src/services/userService.ts in the getCurrentInterestsVersion() function
+        2. Deploy the changes
+        3. All existing users will be prompted on their next login
+        
+        Current version: ${currentVersion}
+        Next version should be: ${currentVersion + 1}`
+      );
+    } catch (err) {
+      setError('Failed to set up user prompting');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handlePromptSpecificUser = async () => {
+    const userId = prompt('Enter User ID to prompt for interests update:');
+    if (!userId) return;
+
+    setIsLoading(true);
+    setMessage('');
+    setError('');
+    
+    try {
+      await markUsersForInterestsUpdate(userId);
+      setMessage(`✅ User ${userId} has been marked for interests update and will be prompted on their next login.`);
+    } catch (err: any) {
+      setError(`Failed to mark user for interests update: ${err.message || err}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div style={{ padding: '1.5rem', backgroundColor: '#f8f9fa', borderRadius: '12px', marginBottom: '2rem' }}>
+      <h3 style={{ marginBottom: '1rem', color: '#2d3748', fontSize: '1.25rem', fontWeight: '600' }}>
+        📋 Interests Re-engagement Management
+      </h3>
+      
+      <div style={{ marginBottom: '1.5rem', padding: '1rem', backgroundColor: '#e6f3ff', borderRadius: '8px', border: '1px solid #b3d9ff' }}>
+        <p style={{ margin: 0, fontSize: '0.9rem', color: '#1a365d' }}>
+          <strong>Current Interests Version:</strong> {currentVersion}
+        </p>
+        <p style={{ margin: '0.5rem 0 0 0', fontSize: '0.85rem', color: '#4a5568' }}>
+          Users with version &lt; {currentVersion} will be prompted to update their interests.
+        </p>
+      </div>
+
+      <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
+        <button
+          onClick={handlePromptAllUsers}
+          disabled={isLoading}
+          style={{
+            padding: '0.75rem 1.5rem',
+            backgroundColor: '#667eea',
+            color: 'white',
+            border: 'none',
+            borderRadius: '8px',
+            cursor: isLoading ? 'not-allowed' : 'pointer',
+            fontWeight: '500',
+            opacity: isLoading ? 0.6 : 1
+          }}
+        >
+          {isLoading ? 'Processing...' : '🌍 Prompt All Users (Instructions)'}
+        </button>
+        
+        <button
+          onClick={handlePromptSpecificUser}
+          disabled={isLoading}
+          style={{
+            padding: '0.75rem 1.5rem',
+            backgroundColor: '#48bb78',
+            color: 'white',
+            border: 'none',
+            borderRadius: '8px',
+            cursor: isLoading ? 'not-allowed' : 'pointer',
+            fontWeight: '500',
+            opacity: isLoading ? 0.6 : 1
+          }}
+        >
+          {isLoading ? 'Processing...' : '👤 Prompt Specific User'}
+        </button>
+      </div>
+
+      {message && (
+        <div style={{ 
+          padding: '1rem', 
+          backgroundColor: '#f0fff4', 
+          border: '1px solid #9ae6b4', 
+          borderRadius: '8px', 
+          marginBottom: '1rem',
+          whiteSpace: 'pre-line'
+        }}>
+          <p style={{ margin: 0, color: '#22543d', fontSize: '0.9rem' }}>{message}</p>
+        </div>
+      )}
+
+      {error && (
+        <div style={{ padding: '1rem', backgroundColor: '#fed7d7', border: '1px solid #fc8181', borderRadius: '8px' }}>
+          <p style={{ margin: 0, color: '#822727', fontSize: '0.9rem' }}>{error}</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function UserManagement() {
   const [users, setUsers] = useState<UserData[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<UserData[]>([]);
@@ -4419,10 +4546,18 @@ export default function DevPage() {
           >
             User Management
           </button>
+          <button 
+            className={`${styles.tabButton} ${activeTab === 'interests' ? styles.activeTab : ''}`}
+            onClick={() => setActiveTab('interests')}
+          >
+            📋 Interests Management
+          </button>
         </div>
         
         {activeTab === 'docs' ? (
           <Documentation />
+        ) : activeTab === 'interests' ? (
+          <InterestsManagement />
         ) : (
           <UserManagement />
         )}

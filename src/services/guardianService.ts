@@ -360,8 +360,6 @@ class GuardianService {
                 }
             );
 
-
-
             // Handle general updates or breaking news markers
             bodyContent = bodyContent.replace(
                 /<p><strong>(UPDATE|BREAKING|LATEST|DEVELOPING):\s*(.*?)<\/strong><\/p>/gi,
@@ -474,6 +472,70 @@ class GuardianService {
             : 300;
         const readTime = Math.ceil(wordCount / 200);
 
+        // For articles with read time > 22 minutes, provide a summary and encourage full reading
+        if (readTime > 22) {
+            console.log(`📚 Long Guardian article detected (${readTime} min read) - providing summary`);
+
+            // Generate a brief summary from the standfirst, first paragraph, or body content
+            let summary = '';
+
+            if (article.fields?.standfirst) {
+                summary = article.fields.standfirst;
+            } else if (article.fields?.trailText) {
+                summary = article.fields.trailText;
+            } else if (article.fields?.body) {
+                // Extract first meaningful paragraph for summary
+                const bodyText = article.fields.body.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+                const sentences = bodyText.split(/[.!?]+/).filter(s => s.trim().length > 20);
+                summary = sentences.slice(0, 2).join('. ').trim();
+                if (summary && !summary.endsWith('.')) summary += '.';
+            }
+
+            // Fallback summary if none found
+            if (!summary) {
+                summary = `This is a comprehensive ${readTime}-minute article from The Guardian covering ${article.sectionName.toLowerCase()} news.`;
+            }
+
+            // Create summary section with call-to-action
+            const summaryHtml = `
+                <div class="long-article-summary" style="margin: 2em 0; padding: 2em; background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%); border-radius: 16px; border-left: 6px solid #ff9800; box-shadow: 0 4px 16px rgba(255, 152, 0, 0.15);">
+                    <div style="display: flex; align-items: center; margin-bottom: 1em;">
+                        <span style="background: #ff9800; color: white; padding: 0.5em 1em; border-radius: 25px; font-size: 0.9em; font-weight: 600; margin-right: 1em;">📖 ${readTime} MIN READ</span>
+                        <span style="color: #e65100; font-weight: 600; font-size: 1.1em;">Extended Article</span>
+                    </div>
+                    
+                    <h3 style="color: #bf360c; margin: 0 0 1em 0; font-size: 1.3em; line-height: 1.3;">Article Summary</h3>
+                    
+                    <p style="color: #3e2723; font-size: 1.05em; line-height: 1.6; margin: 0 0 1.5em 0; font-weight: 400;">
+                        ${summary}
+                    </p>
+                    
+                    <div style="background: rgba(255, 255, 255, 0.7); padding: 1.5em; border-radius: 12px; border: 2px solid #ffcc02; margin: 1.5em 0;">
+                        <p style="margin: 0 0 1em 0; color: #bf360c; font-weight: 600; font-size: 1.1em; text-align: center;">
+                            📰 <strong>Read the Full Article Here!</strong>
+                        </p>
+                        <p style="margin: 0 0 1em 0; color: #5d4037; font-size: 0.95em; text-align: center; line-height: 1.5;">
+                            This article contains extensive coverage and detailed analysis. For the complete story with all facts, quotes, and context, visit The Guardian's website.
+                        </p>
+                        <div style="text-align: center;">
+                            <a href="${article.webUrl}" target="_blank" rel="noopener noreferrer" 
+                               style="display: inline-block; background: linear-gradient(45deg, #ff9800 0%, #f57c00 100%); color: white; padding: 12px 24px; border-radius: 25px; text-decoration: none; font-weight: 600; font-size: 1em; box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3); transition: all 0.3s ease;"
+                               onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 16px rgba(255, 152, 0, 0.4)'"
+                               onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(255, 152, 0, 0.3)'">
+                                🔗 Read Full Article on The Guardian
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <p style="margin: 1em 0 0 0; color: #795548; font-size: 0.85em; font-style: italic; text-align: center;">
+                        Preview shown above • Full article: ${readTime} minutes • Source: The Guardian
+                    </p>
+                </div>`;
+
+            // Replace the article content with summary for long articles
+            articleHtml = summaryHtml;
+        }
+
         // Extract tags for categories
         const tags = [
             article.sectionName,
@@ -550,8 +612,6 @@ class GuardianService {
             .map(paragraph => {
                 const trimmed = paragraph.trim();
                 if (!trimmed) return '';
-
-
 
                 // Handle other live blog timestamps (with colons)
                 if (trimmed.match(/^\d{1,2}:\d{2}(?:am|pm)?\s+BST/i)) {
@@ -760,8 +820,6 @@ class GuardianService {
 
         return cleanContent;
     }
-
-
 
     private processRegularArticleContent(content: string): string {
         // Process regular article content - only updated timestamps

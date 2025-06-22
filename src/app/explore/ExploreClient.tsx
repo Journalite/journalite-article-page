@@ -1048,8 +1048,8 @@ export default function ExploreClient() {
                     <div className={styles.articleContent}>
                       <div className={styles.sourceBadgeContainer}>
                         {getSourceBadge(article.source)}
-                        <span className={styles.readTime}>
-                          {getReadingTime(article.readTime)}
+                                              <span className={`${styles.readTime} ${article.source === 'guardian' && article.readTime > 22 ? styles.longReadTime : ''}`}>
+                        {article.source === 'guardian' && article.readTime > 22 ? '📖 ' : ''}{getReadingTime(article.readTime)}
                         </span>
                       </div>
                       
