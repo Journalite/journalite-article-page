@@ -59,15 +59,18 @@ jobs:
       
       - name: Deploy to Vercel
         run: |
-          # Ensure no .vercel directory exists
+          # Remove any existing .vercel directory completely
           rm -rf .vercel
           
-          # Set Vercel environment variables and deploy directly
-          export VERCEL_ORG_ID="${{ secrets.VERCEL_ORG_ID }}"
-          export VERCEL_PROJECT_ID="${{ secrets.VERCEL_PROJECT_ID }}"
-          
-          # Deploy directly using environment variables (no linking required)
-          vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }} --yes
+          # Deploy using npx to avoid any cached CLI issues
+          # Use --name to target specific project without linking
+          npx vercel@latest \
+            --prod \
+            --token=${{ secrets.VERCEL_TOKEN }} \
+            --scope=${{ secrets.VERCEL_ORG_ID }} \
+            --name=mvp.journalite \
+            --yes \
+            --force
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
