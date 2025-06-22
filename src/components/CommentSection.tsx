@@ -138,15 +138,21 @@ const CommentSection: React.FC<CommentSectionProps> = ({ articleId, className = 
     setIsSubmitting(true);
     try {
       const commentsRef = collection(firestore, 'articles', articleId, 'comments');
-      await addDoc(commentsRef, {
+      const commentData: any = {
         text: newComment.trim(),
         authorId: currentUser.uid,
         authorName: currentUser.displayName || 'Anonymous',
         authorEmail: currentUser.email || '',
         createdAt: new Date(),
         likes: [],
-        mood: moodFeatureEnabled ? mood : undefined,
-      });
+      };
+
+      // Only add mood field if mood feature is enabled
+      if (moodFeatureEnabled) {
+        commentData.mood = mood;
+      }
+
+      await addDoc(commentsRef, commentData);
 
       setNewComment('');
       setFocusState(false);
@@ -164,7 +170,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({ articleId, className = 
     setIsSubmitting(true);
     try {
       const commentsRef = collection(firestore, 'articles', articleId, 'comments');
-      await addDoc(commentsRef, {
+      const replyData: any = {
         text: replyText.trim(),
         authorId: currentUser.uid,
         authorName: currentUser.displayName || 'Anonymous',
@@ -172,8 +178,14 @@ const CommentSection: React.FC<CommentSectionProps> = ({ articleId, className = 
         createdAt: new Date(),
         likes: [],
         parentId,
-        mood: moodFeatureEnabled ? getMoodFromText(replyText) : undefined,
-      });
+      };
+
+      // Only add mood field if mood feature is enabled
+      if (moodFeatureEnabled) {
+        replyData.mood = getMoodFromText(replyText);
+      }
+
+      await addDoc(commentsRef, replyData);
 
       setReplyText('');
       setReplyingTo(null);
@@ -209,11 +221,17 @@ const CommentSection: React.FC<CommentSectionProps> = ({ articleId, className = 
     setIsSubmitting(true);
     try {
       const commentRef = doc(firestore, 'articles', articleId, 'comments', commentId);
-      await updateDoc(commentRef, {
+      const updateData: any = {
         text: editText.trim(),
-        mood: moodFeatureEnabled ? getMoodFromText(editText) : undefined,
         editedAt: new Date()
-      });
+      };
+
+      // Only add mood field if mood feature is enabled
+      if (moodFeatureEnabled) {
+        updateData.mood = getMoodFromText(editText);
+      }
+
+      await updateDoc(commentRef, updateData);
 
       setEditingComment(null);
       setEditText('');
