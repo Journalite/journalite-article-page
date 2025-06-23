@@ -78,7 +78,12 @@ class GuardianService {
         userEmail?: string,
         forceNoCache: boolean = false
     ): Promise<GuardianResponse> {
-        // Use cached API route instead of direct Guardian API calls
+        // For server-side rendering, use shared cache directly to avoid HTTP calls
+        if (typeof window === 'undefined') {
+            return this.searchArticlesWithSharedCache(query, section, page, pageSize, userEmail, forceNoCache);
+        }
+
+        // Use cached API route for client-side
         const params = new URLSearchParams({
             'q': query,
             'pageSize': pageSize.toString()
@@ -96,12 +101,7 @@ class GuardianService {
             params.append('noCache', 'true');
         }
 
-        // Construct full URL for server-side rendering or relative URL for client-side
-        const baseUrl = typeof window === 'undefined'
-            ? (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
-            : '';
-        const url = `${baseUrl}/api/guardian/search?${params.toString()}`;
-        // console.log('🚀 Using cached Guardian API route:', url); // Removed for security
+        const url = `/api/guardian/search?${params.toString()}`;
 
         const response = await fetch(url);
 
@@ -113,15 +113,6 @@ class GuardianService {
 
         if (data.error) {
             throw new Error(data.error);
-        }
-
-        // Log cache performance
-        if (data.cacheDisabledForUser) {
-            console.log('🚫 Cache DISABLED for this user - Always fresh data');
-        } else if (data.cacheHit) {
-            console.log('⚡ Cache HIT - Fast response from in-memory cache');
-        } else {
-            console.log('🔄 Cache MISS - Fresh data fetched and cached');
         }
 
         return {
@@ -137,8 +128,83 @@ class GuardianService {
         };
     }
 
+    // Shared cache implementation for server-side search
+    private async searchArticlesWithSharedCache(
+        query: string = '',
+        section?: string,
+        page: number = 1,
+        pageSize: number = 50,
+        userEmail?: string,
+        forceNoCache: boolean = false
+    ): Promise<GuardianResponse> {
+        // Import the shared cache directly
+        const { guardianCache } = await import('@/lib/cache');
+
+        if (!this.apiKey || this.apiKey === 'YOUR_API_KEY_HERE') {
+            throw new Error('Guardian API key not configured');
+        }
+
+        // Create cache key for the search
+        const cacheKey = `guardian-search:${query}:${section || 'all'}:${page}:${pageSize}`;
+
+        // Check cache first (unless forced to skip)
+        if (!forceNoCache) {
+            const cachedResponse = guardianCache.get(cacheKey);
+            if (cachedResponse) {
+                return cachedResponse;
+            }
+        }
+
+        // Fetch fresh data from Guardian API
+        const params = new URLSearchParams({
+            'api-key': this.apiKey,
+            'q': query,
+            'page': page.toString(),
+            'page-size': pageSize.toString(),
+            'show-fields': 'headline,standfirst,body,main,thumbnail,byline,trailText,bodyText',
+            'show-tags': 'contributor,keyword,type',
+            'order-by': 'newest'
+        });
+
+        if (section) {
+            params.append('section', section);
+        }
+
+        const url = `${this.baseUrl}/search?${params.toString()}`;
+
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error(`Guardian API error: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        const searchResponse: GuardianResponse = {
+            status: data.response.status,
+            userTier: data.response.userTier,
+            total: data.response.total,
+            startIndex: data.response.startIndex || 1,
+            pageSize: data.response.pageSize || pageSize,
+            currentPage: data.response.currentPage || page,
+            pages: data.response.pages || 1,
+            orderBy: data.response.orderBy || 'newest',
+            results: data.response.results
+        };
+
+        // Cache the result for 5 minutes
+        guardianCache.set(cacheKey, searchResponse, 5);
+
+        return searchResponse;
+    }
+
     async getArticleById(articleId: string, userEmail?: string, forceNoCache: boolean = false): Promise<GuardianArticle> {
-        // Use cached API route instead of direct Guardian API calls
+        // For server-side rendering (metadata generation), use shared cache directly to avoid HTTP calls
+        if (typeof window === 'undefined') {
+            return this.getArticleByIdWithSharedCache(articleId, userEmail, forceNoCache);
+        }
+
+        // Use cached API route for client-side 
         const params = new URLSearchParams();
 
         if (userEmail) {
@@ -150,13 +216,7 @@ class GuardianService {
         }
 
         const queryString = params.toString();
-
-        // Construct full URL for server-side rendering or relative URL for client-side
-        const baseUrl = typeof window === 'undefined'
-            ? (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
-            : '';
-        const url = `${baseUrl}/api/guardian/article/${encodeURIComponent(articleId)}${queryString ? `?${queryString}` : ''}`;
-        // console.log('🚀 Using cached Guardian article API route:', url); // Removed for security
+        const url = `/api/guardian/article/${encodeURIComponent(articleId)}${queryString ? `?${queryString}` : ''}`;
 
         const response = await fetch(url);
 
@@ -170,16 +230,53 @@ class GuardianService {
             throw new Error(data.error);
         }
 
-        // Log cache performance
-        if (data.cacheDisabledForUser) {
-            console.log('🚫 Cache DISABLED for this user - Always fresh data');
-        } else if (data.cacheHit) {
-            console.log('⚡ Cache HIT - Fast article response from in-memory cache');
-        } else {
-            console.log('🔄 Cache MISS - Fresh article data fetched and cached');
+        return data.article;
+    }
+
+    // Shared cache implementation for server-side rendering
+    private async getArticleByIdWithSharedCache(articleId: string, userEmail?: string, forceNoCache: boolean = false): Promise<GuardianArticle> {
+        // Import the shared cache directly
+        const { guardianCache } = await import('@/lib/cache');
+
+        if (!this.apiKey || this.apiKey === 'YOUR_API_KEY_HERE') {
+            throw new Error('Guardian API key not configured');
         }
 
-        return data.article;
+        // Create cache key for the article
+        const cacheKey = `guardian-article:${articleId}`;
+
+        // Check cache first (unless forced to skip)
+        if (!forceNoCache) {
+            const cachedArticle = guardianCache.get(cacheKey);
+            if (cachedArticle) {
+                return cachedArticle;
+            }
+        }
+
+        // Fetch fresh data from Guardian API
+        const params = new URLSearchParams({
+            'api-key': this.apiKey,
+            'show-fields': 'headline,standfirst,body,main,thumbnail,byline,trailText,bodyText,liveBloggingNow,isLive',
+            'show-tags': 'contributor,keyword,type',
+            'show-elements': 'image,video,audio,embed,rich-link,comment,interactive',
+            'show-blocks': 'body,main'
+        });
+
+        const url = `${this.baseUrl}/${articleId}?${params.toString()}`;
+
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error(`Guardian API error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        const article = data.response.content;
+
+        // Cache the result for 8 minutes
+        guardianCache.set(cacheKey, article, 8);
+
+        return article;
     }
 
     async getSections(): Promise<Array<{ id: string, webTitle: string }>> {
