@@ -1266,14 +1266,14 @@
     }
 
     /* Message notification bell container alignment - mobile only */
-    :global(.message-bell-fixed-container) {
+    .mobile-layout :global(.message-bell-fixed-container) {
       top: 25px !important;
       right: 75px !important;
     }
 
     @media (min-width: 769px) {
       /* Reset to desktop positioning */
-      :global(.message-bell-fixed-container) {
+      .mobile-layout :global(.message-bell-fixed-container) {
         top: 30px !important;
         right: 90px !important;
       }
