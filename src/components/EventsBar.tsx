@@ -1,9 +1,30 @@
 "use client";
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './EventsBar.module.css';
 
 const EventsBar: React.FC = () => {
+  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 0);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Show mobile widget on screens smaller than 768px
+  if (windowWidth <= 768) {
+    return (
+      <div className={styles.mobileEventsWidget}>
+        <span className={styles.mobileEventsText}>Events</span>
+      </div>
+    );
+  }
+
+  // Desktop version
   return (
     <div 
       className={styles.eventsBar}

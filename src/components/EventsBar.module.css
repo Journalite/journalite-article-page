@@ -190,7 +190,84 @@
   }
 }
 
-/* Hide on mobile to maintain clean experience */
+/* Mobile Events Widget - Round floating button */
+.mobileEventsWidget {
+  position: fixed;
+  bottom: 152px; /* Right above Guardian widget (80px + 64px height + 8px gap) */
+  right: 20px; /* Aligned with Guardian widget */
+  z-index: 1000;
+  
+  /* Circular design matching Guardian widget */
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  
+  /* Enhanced frosted glass morphism background */
+  background: rgba(59, 130, 246, 0.08);
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  border: 1px solid rgba(59, 130, 246, 0.15);
+  
+  /* Modern shadow */
+  box-shadow: 
+    0 8px 32px rgba(59, 130, 246, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  
+  /* Layout */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  
+  /* Smooth transitions */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0.9;
+  
+  /* Subtle pulse animation */
+  animation: mobilePulse 4s ease-in-out infinite;
+}
+
+.mobileEventsWidget:hover,
+.mobileEventsWidget:active {
+  opacity: 1;
+  background: rgba(59, 130, 246, 0.12);
+  border-color: rgba(59, 130, 246, 0.25);
+  transform: scale(1.1);
+  backdrop-filter: blur(28px) saturate(220%);
+  -webkit-backdrop-filter: blur(28px) saturate(220%);
+  
+  box-shadow: 
+    0 12px 40px rgba(59, 130, 246, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.mobileEventsText {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: rgba(59, 130, 246, 1);
+  text-shadow: 0 0 12px rgba(59, 130, 246, 0.4);
+  text-align: center;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+/* Mobile pulse animation */
+@keyframes mobilePulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.02);
+    opacity: 0.9;
+  }
+}
+
+/* Remove icon twinkle animation as it's no longer needed */
+
+/* Keep desktop version hidden on mobile */
 @media (max-width: 768px) {
   .eventsBar {
     display: none;

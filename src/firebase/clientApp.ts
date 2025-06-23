@@ -27,10 +27,8 @@ if (!firebaseConfig.apiKey || !firebaseConfig.projectId) {
 let app;
 if (getApps().length === 0) {
     app = initializeApp(firebaseConfig);
-    console.log('🔥 Firebase app initialized with project:', firebaseConfig.projectId);
 } else {
     app = getApps()[0];
-    console.log('🔥 Using existing Firebase app');
 }
 
 // Initialize Analytics only in browser environment
@@ -67,9 +65,6 @@ if (typeof window !== 'undefined') {
 }
 
 // PRODUCTION FIREBASE ONLY - NO EMULATORS
-console.log('🔥 Using production Firebase services');
-console.log('📍 Auth Domain:', firebaseConfig.authDomain);
-console.log('📍 Project ID:', firebaseConfig.projectId);
 
 /////
 

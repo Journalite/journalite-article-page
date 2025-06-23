@@ -38,7 +38,9 @@ const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId, onUpdateCo
   const [originalReflectionTopic, setOriginalReflectionTopic] = useState<string>('');
   
   const titleRef = useRef<HTMLTextAreaElement>(null);
+  const coverImageRef = useRef<HTMLInputElement>(null);
   const tagInputRef = useRef<HTMLInputElement>(null);
+  const reflectionTopicRef = useRef<HTMLInputElement>(null);
   const editorRef = useRef<any>(null);
   
   // Auto-resize title textarea as content grows
@@ -219,7 +221,17 @@ const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId, onUpdateCo
   const handleTagInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' || e.key === ',') {
       e.preventDefault();
-      addTag();
+      // If there's a tag to add, add it first
+      if (currentTag.trim()) {
+        addTag();
+      } else {
+        // Move to reflection topic if visible, otherwise to editor
+        if (reflectionTopicRef.current && hasReflectionRoom && title.length > 5) {
+          reflectionTopicRef.current.focus();
+        } else if (editorRef.current && editorRef.current.focus) {
+          editorRef.current.focus();
+        }
+      }
     }
   };
   
@@ -242,13 +254,46 @@ const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId, onUpdateCo
     setCoverImage(e.target.value);
   };
   
-  // Handle focus moving from title to editor
+  // Handle focus moving from title to next field
   const handleTitleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    // When user presses Enter in the title field, move focus to the editor
     if (e.key === 'Enter') {
       e.preventDefault();
-      // Note: The new Editor component will handle its own focus
-      // when the user starts typing in the editor area
+      // Move to cover image if visible, otherwise to tags, then reflection topic, then editor
+      if (coverImageRef.current && (coverImage || title.length > 10)) {
+        coverImageRef.current.focus();
+      } else if (tagInputRef.current && (tags.length > 0 || title.length > 5)) {
+        tagInputRef.current.focus();
+      } else if (reflectionTopicRef.current && hasReflectionRoom && title.length > 5) {
+        reflectionTopicRef.current.focus();
+      } else if (editorRef.current && editorRef.current.focus) {
+        editorRef.current.focus();
+      }
+    }
+  };
+
+  // Handle cover image field navigation
+  const handleCoverImageKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      // Move to tags if visible, otherwise to reflection topic, then editor
+      if (tagInputRef.current && (tags.length > 0 || title.length > 5)) {
+        tagInputRef.current.focus();
+      } else if (reflectionTopicRef.current && hasReflectionRoom && title.length > 5) {
+        reflectionTopicRef.current.focus();
+      } else if (editorRef.current && editorRef.current.focus) {
+        editorRef.current.focus();
+      }
+    }
+  };
+
+  // Handle reflection topic field navigation
+  const handleReflectionTopicKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      // Move to editor
+      if (editorRef.current && editorRef.current.focus) {
+        editorRef.current.focus();
+      }
     }
   };
   
@@ -428,29 +473,30 @@ const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId, onUpdateCo
       {/* Glass highlight for entire page */}
       <div className={styles['glass-highlight']} />
 
-      {/* Floating Header */}
-      <header className={`${styles['glass-container']} fixed top-6 left-6 right-6 z-50 max-w-6xl mx-auto`} style={{
+      {/* Floating Header - Mobile Responsive */}
+      <header className={`${styles['glass-container']} fixed top-2 left-2 right-2 md:top-6 md:left-6 md:right-6 z-50 max-w-6xl mx-auto`} style={{
         backdropFilter: 'blur(20px) saturate(180%)',
       }}>
         <div className={styles['glass-highlight']} />
         
-        <div className={`${styles['glass-content']} flex items-center justify-between p-4`}>
-          <div className="flex items-center gap-4">
+        <div className={`${styles['glass-content']} flex items-center justify-between p-3 md:p-4`}>
+          <div className="flex items-center gap-2 md:gap-4">
             {backToArticleAction ? (
               <button
                 onClick={backToArticleAction}
-                className={`${styles['glass-button']} flex items-center gap-2 px-3 py-2 text-sm font-medium text-stone-700 hover:text-stone-900 transition-colors`}
+                className={`${styles['glass-button']} flex items-center gap-1 md:gap-2 px-2 md:px-3 py-2 text-xs md:text-sm font-medium text-stone-700 hover:text-stone-900 transition-colors`}
               >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" className="md:w-4 md:h-4">
                   <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.42-1.41L7.83 13H20v-2z" />
                 </svg>
-                Back to Article
+                <span className="hidden sm:inline">Back to Article</span>
+                <span className="sm:hidden">Back</span>
               </button>
             ) : (
-              <div className="text-xl font-bold text-stone-800 font-serif">Journalite</div>
+              <div className="text-lg md:text-xl font-bold text-stone-800 font-serif">Journalite</div>
             )}
             
-            <div className="text-stone-500 text-sm">
+            <div className="text-stone-500 text-xs md:text-sm hidden sm:block">
               {articleId ? (editingTitle ? `Editing: ${editingTitle}` : 'Editing') : 'Writing'}
             </div>
             
@@ -464,17 +510,18 @@ const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId, onUpdateCo
             )}
           </div>
           
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 md:gap-3">
             <button
-              className={`${styles['glass-button']} px-4 py-2 text-sm font-semibold disabled:opacity-50`}
+              className={`${styles['glass-button']} px-2 md:px-4 py-2 text-xs md:text-sm font-semibold disabled:opacity-50 min-h-[44px]`}
               onClick={handleSaveDraft}
               disabled={isSaving || isPublishing}
             >
-              {isSaving ? 'Saving...' : 'Save Draft'}
+              <span className="hidden sm:inline">{isSaving ? 'Saving...' : 'Save Draft'}</span>
+              <span className="sm:hidden">{isSaving ? 'Saving...' : 'Save'}</span>
             </button>
             
             <button
-              className={`${styles['glass-button']} ${styles['glass-button-primary']} px-4 py-2 text-sm font-semibold disabled:opacity-50`}
+              className={`${styles['glass-button']} ${styles['glass-button-primary']} px-2 md:px-4 py-2 text-xs md:text-sm font-semibold disabled:opacity-50 min-h-[44px]`}
               onClick={handlePublish}
               disabled={isSaving || isPublishing || !title.trim() || !content.trim()}
             >
@@ -484,9 +531,11 @@ const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId, onUpdateCo
         </div>
       </header>
       
-      {/* Glass content wrapper for seamless editor with Medium-style layout */}
-      <div className={`${styles['glass-content']} pt-32 pb-16 min-h-screen w-full max-w-4xl mx-auto`} style={{ paddingLeft: '64px', paddingRight: '64px' }}>
-        {/* Title - completely seamless */}
+      {/* Glass content wrapper for seamless editor with Medium-style layout - Mobile Responsive */}
+      <div className={`${styles['glass-content']} pt-24 md:pt-32 pb-32 md:pb-16 min-h-screen w-full max-w-4xl mx-auto px-4 md:px-16 lg:px-16`} style={{
+                  paddingTop: typeof window !== 'undefined' && window.innerWidth <= 768 ? '40px' : undefined // Reduced since title has its own margin
+      }}>
+        {/* Title - Mobile Responsive with Toolbar Clearance */}
         <textarea
           ref={titleRef}
           value={title}
@@ -494,22 +543,31 @@ const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId, onUpdateCo
           onKeyDown={handleTitleKeyDown}
           placeholder="Title"
           rows={1}
-          className="w-full bg-transparent border-none outline-none resize-none overflow-hidden text-5xl font-bold text-stone-800 placeholder-stone-400 font-serif leading-tight mb-8 focus:outline-none"
+          className="w-full bg-transparent border-none outline-none resize-none overflow-hidden text-4xl md:text-5xl lg:text-6xl font-bold text-stone-800 placeholder-stone-400 font-serif leading-tight mb-6 md:mb-8 focus:outline-none mobile-title-spacing"
           style={{
-            minHeight: '60px'
+            minHeight: '60px',
+            fontSize: typeof window !== 'undefined' && window.innerWidth <= 480 ? '28px' : 
+                     typeof window !== 'undefined' && window.innerWidth <= 768 ? '32px' : undefined,
+            lineHeight: typeof window !== 'undefined' && window.innerWidth <= 768 ? '1.2' : undefined,
+            // Add top margin on mobile to clear floating toolbar - extra space for single long lines
+            marginTop: typeof window !== 'undefined' && window.innerWidth <= 768 ? '120px' : '0px',
+            zIndex: typeof window !== 'undefined' && window.innerWidth <= 768 ? '1' : 'auto'
           }}
         />
 
-        {/* Cover Image - seamless integration */}
+        {/* Cover Image - Mobile Responsive */}
         {(coverImage || title.length > 10) && (
-          <div className="mb-8">
+          <div className="mb-6 md:mb-8">
             {!coverImage && (
               <input
+                ref={coverImageRef}
                 type="text"
                 value={coverImage}
                 onChange={handleCoverImageChange}
+                onKeyDown={handleCoverImageKeyDown}
                 placeholder="Add a cover image URL..."
-                className="w-full bg-transparent border-none outline-none text-stone-600 placeholder-stone-400 py-2 border-b border-stone-200 focus:border-stone-400 transition-colors"
+                className="w-full bg-transparent border-none outline-none text-stone-600 placeholder-stone-400 py-2 border-b border-stone-200 focus:border-stone-400 transition-colors mobile-optimized-input"
+                style={{ fontSize: '16px' }} // Prevent zoom on iOS
               />
             )}
             {coverImage && (
@@ -517,28 +575,31 @@ const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId, onUpdateCo
                 <img 
                   src={coverImage} 
                   alt="Cover" 
-                  className="w-full h-64 object-cover rounded-2xl mb-4"
+                  className="w-full h-48 md:h-64 object-cover rounded-xl md:rounded-2xl mb-3 md:mb-4"
                 />
                 <input
+                  ref={coverImageRef}
                   type="text"
                   value={coverImage}
                   onChange={handleCoverImageChange}
+                  onKeyDown={handleCoverImageKeyDown}
                   placeholder="Cover image URL..."
-                  className="w-full bg-white/70 backdrop-blur border border-stone-200 outline-none text-stone-600 placeholder-stone-400 py-1.5 px-3 rounded-md focus:border-stone-400 transition-colors"
+                  className="w-full bg-white/70 backdrop-blur border border-stone-200 outline-none text-stone-600 placeholder-stone-400 py-2 px-3 rounded-md focus:border-stone-400 transition-colors mobile-optimized-input"
+                  style={{ fontSize: '16px' }} // Prevent zoom on iOS
                 />
               </div>
             )}
           </div>
         )}
 
-        {/* Tags - seamless inline */}
+        {/* Tags - Mobile Responsive */}
         {(tags.length > 0 || title.length > 5) && (
-          <div className="mb-8 flex flex-wrap gap-2 items-center">
+          <div className="mb-6 md:mb-8 flex flex-wrap gap-2 items-center">
             {tags.map(tag => (
-              <div key={tag} className="px-2.5 py-0.5 bg-blue-100/50 backdrop-blur text-blue-700 rounded-full text-sm font-medium flex items-center gap-1.5">
+              <div key={tag} className="px-3 py-1.5 md:px-2.5 md:py-0.5 bg-blue-100/50 backdrop-blur text-blue-700 rounded-full text-sm font-medium flex items-center gap-1.5 min-h-[44px] md:min-h-auto">
                 {tag}
                 <button 
-                  className="text-blue-600 hover:text-blue-800 font-bold text-base leading-none"
+                  className="text-blue-600 hover:text-blue-800 font-bold text-lg md:text-base leading-none w-6 h-6 md:w-auto md:h-auto flex items-center justify-center"
                   onClick={() => removeTag(tag)}
                   aria-label={`Remove ${tag} tag`}
                 >
@@ -556,16 +617,17 @@ const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId, onUpdateCo
                 onKeyDown={handleTagInputKeyDown}
                 onBlur={addTag}
                 placeholder={tags.length === 0 ? "Add tags..." : "Add tag..."}
-                className="bg-transparent border-none outline-none text-stone-600 placeholder-stone-400 min-w-24 py-1"
+                className="bg-transparent border-none outline-none text-stone-600 placeholder-stone-400 min-w-24 py-2 md:py-1 mobile-optimized-input"
+                style={{ fontSize: '16px' }} // Prevent zoom on iOS
               />
             )}
           </div>
         )}
 
-        {/* Reflection Room Settings - appears when title has some content */}
+        {/* Reflection Room Settings - Mobile Responsive */}
         {title.length > 5 && (
-          <div className="mb-8 p-4 bg-white/50 backdrop-blur border border-stone-200/50 rounded-xl">
-            <div className="flex items-center gap-3 mb-3">
+          <div className="mb-6 md:mb-8 p-3 md:p-4 bg-white/50 backdrop-blur border border-stone-200/50 rounded-xl">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-3">
               <div className="flex items-center gap-2">
                 <input
                   type="checkbox"
@@ -577,7 +639,7 @@ const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId, onUpdateCo
                       setReflectionTopic('');
                     }
                   }}
-                  className="w-4 h-4 text-blue-600 bg-white border-stone-300 rounded focus:ring-blue-500 focus:ring-2"
+                  className="w-5 h-5 md:w-4 md:h-4 text-blue-600 bg-white border-stone-300 rounded focus:ring-blue-500 focus:ring-2"
                 />
                 <label htmlFor="hasReflectionRoom" className="text-sm font-medium text-stone-700 cursor-pointer">
                   Enable Reflection Room
@@ -593,18 +655,21 @@ const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId, onUpdateCo
                 <label className="block text-xs font-medium text-stone-600 mb-2">
                   Discussion Topic
                   {articleId && originalReflectionTopic && (
-                    <span className="ml-2 text-orange-600 font-normal">
+                    <span className="ml-2 text-orange-600 font-normal block sm:inline">
                       (⚠️ Changing this will clear all chat messages)
                     </span>
                   )}
                 </label>
                 <input
+                  ref={reflectionTopicRef}
                   type="text"
                   value={reflectionTopic}
                   onChange={(e) => setReflectionTopic(e.target.value)}
+                  onKeyDown={handleReflectionTopicKeyDown}
                   placeholder="What should readers discuss? (e.g., 'Share your thoughts on the main theme')"
                   maxLength={200}
-                  className="w-full bg-white/70 backdrop-blur border border-stone-200 outline-none text-stone-700 placeholder-stone-400 py-2 px-3 rounded-lg focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all text-sm"
+                  className="w-full bg-white/70 backdrop-blur border border-stone-200 outline-none text-stone-700 placeholder-stone-400 py-3 md:py-2 px-3 rounded-lg focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all text-sm mobile-optimized-input"
+                  style={{ fontSize: '16px' }} // Prevent zoom on iOS
                 />
                 <div className="text-xs text-stone-500 mt-1">
                   {reflectionTopic.length}/200 characters

@@ -532,4 +532,11 @@ input:focus:invalid {
   .apple-card::after {
     display: none;
   }
+}
+
+/* Mobile title spacing to clear floating toolbar */
+@media (max-width: 768px) {
+  .mobile-title-spacing {
+    margin-top: 120px !important;
+  }
 } 

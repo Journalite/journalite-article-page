@@ -8,6 +8,7 @@ import ArticleLayout from '@/components/ArticleLayout';
 import CommentSection from '@/components/CommentSection';
 import ShareButton from '@/components/ShareButton';
 import BackButton from '@/components/BackButton';
+import MobileBottomNav from '@/components/MobileBottomNav';
 import { guardianService, GuardianArticle } from '@/services/guardianService';
 import { getMoodFromText } from '@/utils/getMoodFromText';
 import { moodThemes } from '@/utils/moodThemes';
@@ -308,6 +309,9 @@ export default function GuardianArticleClient({ params }: GuardianArticleClientP
           articleId={firestoreArticleId}
         />
       </div>
+
+      {/* Bottom Navigation - shown on all screen sizes */}
+      <MobileBottomNav isAuthenticated={isAuthenticated} />
     </div>
   );
 } 

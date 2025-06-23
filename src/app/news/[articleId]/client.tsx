@@ -8,6 +8,7 @@ import ArticleLayout from '@/components/ArticleLayout';
 import CommentSection from '@/components/CommentSection';
 import ShareButton from '@/components/ShareButton';
 import BackButton from '@/components/BackButton';
+import MobileBottomNav from '@/components/MobileBottomNav';
 import { newsService, NewsArticle } from '@/services/newsService';
 import { getMoodFromText } from '@/utils/getMoodFromText';
 import { moodThemes } from '@/utils/moodThemes';
@@ -759,6 +760,9 @@ export default function NewsArticleClient({ params }: NewsArticleClientProps) {
           articleId={`news-${encodeURIComponent(article.url)}`}
         />
       </div>
+
+      {/* Bottom Navigation - shown on all screen sizes */}
+      <MobileBottomNav isAuthenticated={isAuthenticated} />
     </div>
   );
 } 

@@ -823,23 +823,57 @@ export default function HomePage() {
             justifyContent: 'center',
             width: '64px',
             height: '64px',
-            backgroundColor: '#052962',
-            border: 'none',
+            // Glass effect only on mobile/phone sizes
+            ...(windowWidth <= 768 ? {
+              background: 'rgba(5, 41, 98, 0.12)',
+              backdropFilter: 'blur(24px) saturate(200%)',
+              WebkitBackdropFilter: 'blur(24px) saturate(200%)',
+              border: '1px solid rgba(5, 41, 98, 0.18)',
+              boxShadow: '0 8px 32px rgba(5, 41, 98, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+              opacity: 0.9
+            } : {
+              // Solid style for desktop
+              backgroundColor: '#052962',
+              border: 'none',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+              opacity: 1
+            }),
             borderRadius: '50%',
             textDecoration: 'none',
-            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-            transition: 'all 0.3s ease',
+            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
             zIndex: 1000,
             padding: '0'
           }}
           title="The Guardian News"
           onMouseEnter={(e) => {
             e.currentTarget.style.transform = 'scale(1.1)';
-            e.currentTarget.style.boxShadow = '0 6px 20px rgba(0, 0, 0, 0.2)';
+            if (windowWidth <= 768) {
+              // Glass effect hover for mobile
+              e.currentTarget.style.background = 'rgba(5, 41, 98, 0.16)';
+              e.currentTarget.style.borderColor = 'rgba(5, 41, 98, 0.28)';
+              e.currentTarget.style.backdropFilter = 'blur(28px) saturate(220%)';
+              (e.currentTarget.style as any).webkitBackdropFilter = 'blur(28px) saturate(220%)';
+              e.currentTarget.style.boxShadow = '0 12px 40px rgba(5, 41, 98, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.4)';
+              e.currentTarget.style.opacity = '1';
+            } else {
+              // Solid effect hover for desktop
+              e.currentTarget.style.boxShadow = '0 6px 20px rgba(0, 0, 0, 0.2)';
+            }
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.transform = 'scale(1)';
-            e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
+            if (windowWidth <= 768) {
+              // Glass effect reset for mobile
+              e.currentTarget.style.background = 'rgba(5, 41, 98, 0.12)';
+              e.currentTarget.style.borderColor = 'rgba(5, 41, 98, 0.18)';
+              e.currentTarget.style.backdropFilter = 'blur(24px) saturate(200%)';
+              (e.currentTarget.style as any).webkitBackdropFilter = 'blur(24px) saturate(200%)';
+              e.currentTarget.style.boxShadow = '0 8px 32px rgba(5, 41, 98, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2)';
+              e.currentTarget.style.opacity = '0.9';
+            } else {
+              // Solid effect reset for desktop
+              e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
+            }
           }}
         >
           <svg 

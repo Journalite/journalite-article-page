@@ -158,7 +158,7 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({
       {isAuthenticated && (
         <>
           {/* Notification Bells Container */}
-          <div style={{
+          <div className="message-bell-fixed-container" style={{
             position: 'fixed',
             top: '30px',
             right: '90px',
