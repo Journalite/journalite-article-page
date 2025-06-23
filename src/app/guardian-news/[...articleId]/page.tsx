@@ -50,7 +50,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         tags: guardianArticle.tags?.map(tag => tag.webTitle) || []
       });
     } catch (error) {
-      console.error('Error fetching Guardian article for metadata:', error);
+      console.error('❌ Error fetching Guardian article for metadata:', error);
       
       // Fallback metadata
       return buildMetadata({
@@ -63,7 +63,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     }
     
   } catch (error) {
-    console.error('Error generating metadata:', error);
+    console.error('❌ Error generating metadata:', error);
     
     // Fallback metadata
     return buildMetadata({

@@ -217,9 +217,9 @@ const adaptGuardianArticle = (guardianArticle: GuardianArticle, cleanHtmlText: (
     createdAt: guardianArticle.webPublicationDate,
     readTime: Math.ceil((guardianArticle.fields?.bodyText?.split(' ').length || 500) / 200),
     source: 'guardian',
-    url: `/guardian-news/${guardianArticle.id}`,
+    url: `/guardian-news/${guardianArticle.id}/`,
     isExternal: true,
-    externalUrl: guardianArticle.webUrl
+    externalUrl: `/guardian-news/${guardianArticle.id}/`
   };
 };
 

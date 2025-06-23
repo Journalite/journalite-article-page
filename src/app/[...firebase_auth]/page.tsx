@@ -24,28 +24,10 @@ export async function generateStaticParams() {
   ]
 }
 
-function AuthHandler({ params }: { params: { firebase_auth: string[] } }) {
-  const authPath = params.firebase_auth?.join('/') || '';
+function AuthHandler({ params }: { params: Promise<{ firebase_auth: string[] }> }) {
+  // Note: Since this is a client component function, we need to handle this differently
+  // For now, we'll return a generic loading state and handle auth on the client side
   
-  // Log the path for debugging
-  console.log('Firebase auth handler triggered for path:', authPath);
-  
-  // Handle specific auth actions
-  if (authPath.includes('verify') || authPath.includes('action')) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-stone-100 to-amber-100">
-        <div className="text-center p-8">
-          <h1 className="text-2xl font-bold text-stone-800 mb-4">Email Verification</h1>
-          <p className="text-stone-600">Please wait while we verify your email...</p>
-          <div className="mt-4">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-stone-600 mx-auto"></div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-  
-  // For other auth-related paths
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-stone-100 to-amber-100">
       <div className="text-center p-8">
@@ -67,7 +49,7 @@ function AuthHandler({ params }: { params: { firebase_auth: string[] } }) {
   );
 }
 
-export default function FirebaseAuthPage({ params }: { params: { firebase_auth: string[] } }) {
+export default function FirebaseAuthPage({ params }: { params: Promise<{ firebase_auth: string[] }> }) {
   return (
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center">

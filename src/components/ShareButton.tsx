@@ -51,7 +51,7 @@ export default function ShareButton({
     // Enhanced sharing logic with better URL handling
     const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
     
-    let newUrl = articleData.externalUrl || '';
+    let newUrl = '';
     let enhancedText = shareText;
     
     // Add article title and description for better sharing
@@ -62,15 +62,26 @@ export default function ShareButton({
     if (articleData.externalUrl) {
       // External article sharing logic
       if (articleData.externalUrl.includes('theguardian.com')) {
-        // Guardian article
-        newUrl = `${baseUrl}/guardian-news/${encodeURIComponent(articleData.externalUrl)}/`;
+        // Guardian article - extract the article ID from the URL
+        const guardianUrl = articleData.externalUrl;
+        const urlParts = guardianUrl.split('/');
+        const pathParts = urlParts.slice(3); // Remove https://, empty, theguardian.com
+        const articleId = pathParts.join('/');
+        newUrl = `${baseUrl}/guardian-news/${articleId}/`; // Add trailing slash
+      } else if (articleData.externalUrl.startsWith('/guardian-news/')) {
+        // Already a guardian-news path - ensure trailing slash
+        const trimmedUrl = articleData.externalUrl.replace(/\/$/, '');
+        newUrl = `${baseUrl}${trimmedUrl}/`;
       } else if (articleData.externalUrl.includes('newsapi.org') || !articleData.externalUrl.includes('theguardian.com')) {
         // NewsAPI or other external article
-        newUrl = `${baseUrl}/news/${encodeURIComponent(articleData.externalUrl)}/`;
+        newUrl = `${baseUrl}/news/${encodeURIComponent(articleData.externalUrl)}`;
+      } else {
+        // Fallback for other external URLs
+        newUrl = `${baseUrl}/news/${encodeURIComponent(articleData.externalUrl)}`;
       }
     } else {
       // Internal Journalite article
-      newUrl = `${baseUrl}/articles/${articleData.slug || articleData.id}/`;
+      newUrl = `${baseUrl}/articles/${articleData.slug || articleData.id}`;
     }
     
     if (!enhancedText.includes('Read more on Journalite')) {

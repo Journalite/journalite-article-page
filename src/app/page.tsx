@@ -309,7 +309,7 @@ export default function HomePage() {
               createdAt: guardianArticle.webPublicationDate,
               updatedAt: guardianArticle.webPublicationDate,
               isExternal: true,
-              externalUrl: `/guardian-news/${guardianArticle.id}`
+              externalUrl: `/guardian-news/${guardianArticle.id}/`
             });
           }
         } catch (sectionError) {

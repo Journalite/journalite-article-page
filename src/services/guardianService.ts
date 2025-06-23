@@ -96,8 +96,12 @@ class GuardianService {
             params.append('noCache', 'true');
         }
 
-        const url = `/api/guardian/search?${params.toString()}`;
-        console.log('🚀 Using cached Guardian API route:', url);
+        // Construct full URL for server-side rendering or relative URL for client-side
+        const baseUrl = typeof window === 'undefined'
+            ? (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
+            : '';
+        const url = `${baseUrl}/api/guardian/search?${params.toString()}`;
+        // console.log('🚀 Using cached Guardian API route:', url); // Removed for security
 
         const response = await fetch(url);
 
@@ -146,8 +150,13 @@ class GuardianService {
         }
 
         const queryString = params.toString();
-        const url = `/api/guardian/article/${encodeURIComponent(articleId)}${queryString ? `?${queryString}` : ''}`;
-        console.log('🚀 Using cached Guardian article API route:', url);
+
+        // Construct full URL for server-side rendering or relative URL for client-side
+        const baseUrl = typeof window === 'undefined'
+            ? (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
+            : '';
+        const url = `${baseUrl}/api/guardian/article/${encodeURIComponent(articleId)}${queryString ? `?${queryString}` : ''}`;
+        // console.log('🚀 Using cached Guardian article API route:', url); // Removed for security
 
         const response = await fetch(url);
 
