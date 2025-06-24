@@ -4088,7 +4088,8 @@ function CacheMonitor() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
-      setCacheStats(data);
+      // The API returns the stats nested under `cache`, so store that subset
+      setCacheStats(data.cache);
     } catch (err) {
       console.error('Error fetching cache stats:', err);
       setError('Failed to fetch cache statistics: ' + (err instanceof Error ? err.message : 'Unknown error'));
