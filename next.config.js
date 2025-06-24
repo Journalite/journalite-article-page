@@ -65,7 +65,7 @@ const nextConfig = {
                                 "img-src 'self' data: https: blob:",
                                 "media-src 'self' https:",
                                 "connect-src 'self' https://firestore.googleapis.com https://firebase.googleapis.com https://firebaseinstallations.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://content.guardianapis.com https://newsapi.org wss://firestore.googleapis.com",
-                                "frame-src 'self' https://*.firebaseapp.com https://accounts.google.com https://*.google.com",
+                                "frame-src 'self' https://*.firebaseapp.com https://accounts.google.com https://*.google.com https://www.youtube.com https://youtube.com https://www.youtube-nocookie.com https://youtu.be https://player.vimeo.com https://vimeo.com",
                                 "object-src 'none'",
                                 "base-uri 'self'"
                             ].join('; ')
