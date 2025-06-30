@@ -50,7 +50,9 @@
     "react-firebase-hooks": "^5.1.1",
     "react-markdown": "^10.1.0",
     "remark-gfm": "^4.0.1",
-    "sentiment": "^5.0.2"
+    "sentiment": "^5.0.2",
+    "tweetnacl": "^1.0.3",
+    "tweetnacl-util": "^0.15.1"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^3.2.6",

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { auth } from '../../firebase/clientApp';
 import { onAuthStateChanged, User, signOut } from 'firebase/auth';
-import { updateUserInterests, getUserProfile, UserProfile, isUsernameTaken, createUserProfile, deleteUserAccount } from '../../services/userService';
+import { updateUserInterests, getUserProfile, UserProfile, isUsernameTaken, createUserProfile, deleteUserAccount, setEncryptionEnabled } from '../../services/userService';
 import TopLeftLogo from '@/components/TopLeftLogo';
 import styles from '@/styles/home.module.css';
 
@@ -54,6 +54,8 @@ export default function SettingsPage() {
   const [isSavingInterests, setIsSavingInterests] = useState(false);
   const [availableInterests] = useState(ALL_INTERESTS);
   
+  const [encryptionEnabled, setEncryptionEnabledState] = useState(true);
+  
   const router = useRouter();
 
   useEffect(() => {
@@ -75,6 +77,7 @@ export default function SettingsPage() {
               // Initial check for existing username (it should be available as it's theirs)
               checkUsernameAvailability(profile.username, true);
             }
+            setEncryptionEnabledState(profile.encryptionEnabled !== false);
           } else {
             setError('Could not load your profile. Please try again.');
           }
@@ -358,6 +361,17 @@ export default function SettingsPage() {
     }
   };
 
+  const handleEncryptionToggle = async () => {
+    if (!currentUser) return;
+    const next = !encryptionEnabled;
+    setEncryptionEnabledState(next);
+    try {
+      await setEncryptionEnabled(currentUser.uid, next);
+    } catch (e) {
+      console.error('Failed to update encryption preference', e);
+    }
+  };
+
   // --- Render Logic --- 
   if (isLoadingPage) {
     return (
@@ -563,6 +577,15 @@ export default function SettingsPage() {
               Delete Account
             </button>
           </div>
+        </div>
+
+        {/* Encryption Preference */}
+        <div className="mt-8 border-t pt-6">
+          <h2 className="text-lg font-medium mb-4">Secure Messaging</h2>
+          <label className="flex items-center space-x-3">
+            <input type="checkbox" checked={encryptionEnabled} onChange={handleEncryptionToggle} className="h-5 w-5" />
+            <span className="text-sm">Enable end-to-end encryption for all messages</span>
+          </label>
         </div>
       </main>
 

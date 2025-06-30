@@ -36,6 +36,7 @@ export interface UserProfile {
     interestsVersion?: number; // Version number to track when interests were last reviewed
     cacheEnabled?: boolean; // Flag to control caching behavior for this user
     cachePreferenceUpdatedAt?: any; // When cache preference was last updated
+    encryptionEnabled?: boolean;
 }
 
 // Session monitoring utilities
@@ -695,4 +696,9 @@ export async function getUserCachePreferenceByEmail(email: string): Promise<bool
         console.error('Error getting cache preference by email:', error);
         return true; // Default to cache enabled on error
     }
+}
+
+export async function setEncryptionEnabled(userId: string, enabled: boolean): Promise<void> {
+    const userDoc = doc(db, 'users', userId);
+    await updateDoc(userDoc, { encryptionEnabled: enabled });
 } 

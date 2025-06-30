@@ -11,6 +11,8 @@ import { getArticleBySlug } from '@/firebase/articles';
 import { getEncryptionService } from '@/services/encryptionService';
 import { fetchArticleMetadata, ArticleMetadata } from '@/services/linkPreviewService';
 import clsx from 'clsx';
+import { getUserProfile } from '@/services/userService';
+import { ENABLE_E2EE } from '@/config';
 
 interface ChatViewProps {
   conversation: ConversationWithUser;
@@ -18,8 +20,13 @@ interface ChatViewProps {
   isMobile?: boolean;
 }
 
+// Add a new type to hold decrypted content alongside the message
+interface DisplayMessage extends Message {
+  decryptedContent?: string;
+}
+
 export default function ChatView({ conversation, currentUserId, isMobile = false }: ChatViewProps) {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<DisplayMessage[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
@@ -46,25 +53,8 @@ export default function ChatView({ conversation, currentUserId, isMobile = false
   const footerRef = useRef<HTMLDivElement>(null);
   const [footerHeight, setFooterHeight] = useState(0);
 
-  // Measure footer height on mount and resize
-  useLayoutEffect(() => {
-    const measure = () => setFooterHeight(footerRef.current?.offsetHeight || 0);
-    measure();
-    window.addEventListener('resize', measure);
-    
-    // Add a ResizeObserver to handle content changes within the footer
-    const resizeObserver = new ResizeObserver(measure);
-    if (footerRef.current) {
-      resizeObserver.observe(footerRef.current);
-    }
-
-    return () => {
-      window.removeEventListener('resize', measure);
-      if (footerRef.current) {
-        resizeObserver.unobserve(footerRef.current);
-      }
-    };
-  }, []);
+  // Fetch user encryption preference
+  const [globalEncryptionEnabled, setGlobalEncryptionEnabled] = useState<boolean>(true);
 
   // Encryption state
   const [encryptionInitialized, setEncryptionInitialized] = useState(false);
@@ -76,61 +66,93 @@ export default function ChatView({ conversation, currentUserId, isMobile = false
 
   // Initialize encryption
   useEffect(() => {
-    const initEncryption = async () => {
-      try {
-        const encryptionService = getEncryptionService();
-        const initialized = await encryptionService.initializeEncryption();
-        setEncryptionInitialized(initialized);
-        setEncryptionAvailable(encryptionService.isEncryptionAvailable());
-        
-        if (initialized && conversation?.otherUser?.uid) {
-          const hasEncryption = await encryptionService.hasEncryptionEnabled(conversation.otherUser.uid);
-          setOtherUserHasEncryption(hasEncryption);
+    if (ENABLE_E2EE) {
+      const initEncryption = async () => {
+        try {
+          const encryptionService = getEncryptionService();
+          const initialized = await encryptionService.initializeEncryption();
+          setEncryptionInitialized(initialized);
+          setEncryptionAvailable(encryptionService.isEncryptionAvailable());
+          
+          if (initialized && conversation?.otherUser?.uid) {
+            const hasEncryption = await encryptionService.hasEncryptionEnabled(conversation.otherUser.uid);
+            setOtherUserHasEncryption(hasEncryption);
+          }
+        } catch (error) {
+          console.error('Error initializing encryption:', error);
         }
-      } catch (error) {
-        console.error('Error initializing encryption:', error);
-      }
-    };
+      };
 
-    if (currentUserId) {
-      initEncryption();
+      if (currentUserId) {
+        initEncryption();
+      }
+    } else {
+      // Encryption disabled – mark as ready but unavailable
+      setEncryptionInitialized(true);
+      setEncryptionAvailable(false);
+      setOtherUserHasEncryption(false);
     }
   }, [currentUserId, conversation?.otherUser?.uid]);
+
+  // Fetch user encryption preference
+  useEffect(() => {
+    const fetchPref = async () => {
+      try {
+        const profile = await getUserProfile(currentUserId);
+        if (profile && profile.encryptionEnabled === false) {
+          setGlobalEncryptionEnabled(false);
+        } else {
+          setGlobalEncryptionEnabled(true);
+        }
+      } catch (e) {
+        console.error('Failed to load encryption preference', e);
+        setGlobalEncryptionEnabled(true);
+      }
+    };
+    fetchPref();
+  }, [currentUserId]);
 
   // Subscribe to messages
   useEffect(() => {
     if (!conversation?.conversation?.id) return;
+    if (!encryptionInitialized) return; // wait until (fake) ready
 
     const unsubscribe = subscribeToMessages(
       conversation.conversation.id,
       async (newMessages) => {
-        // Decrypt encrypted messages
-        const decryptionPromises = newMessages.map(async (message) => {
-          if (message.isEncrypted && message.senderId !== currentUserId) {
-            try {
-              const encryptionService = getEncryptionService();
-              const decryptedContent = await encryptionService.decryptMessage(message.content);
-              if (decryptedContent) {
-                setDecryptedMessages(prev => new Map(prev.set(message.id, decryptedContent)));
+        const encryptionService = getEncryptionService();
+        const processedMessages: DisplayMessage[] = await Promise.all(
+          newMessages.map(async (message) => {
+            if (ENABLE_E2EE && message.isEncrypted) {
+              if (message.senderId === currentUserId && 'senderEncrypted' in message && (message as any).senderEncrypted) {
+                try {
+                  const decryptedContent = await encryptionService.decryptMessage((message as any).senderEncrypted as string, currentUserId);
+                  return { ...message, decryptedContent: decryptedContent || '🔒 Failed to decrypt' };
+                } catch {
+                  return { ...message, decryptedContent: '🔒 Failed to decrypt' };
+                }
               }
-            } catch (error) {
-              console.error('Error decrypting message:', error);
+              if (message.senderId !== currentUserId) {
+                try {
+                  const decryptedContent = await encryptionService.decryptMessage(message.content, message.senderId);
+                  return { ...message, decryptedContent: decryptedContent || '🔒 Failed to decrypt' };
+                } catch {
+                  return { ...message, decryptedContent: '🔒 Failed to decrypt' };
+                }
+              }
             }
-          }
-          return message;
-        });
+            return message;
+          })
+        );
 
-        await Promise.all(decryptionPromises);
-        setMessages(newMessages);
+        setMessages(processedMessages);
         setLoading(false);
-        
-        // Mark messages as read
         markMessagesAsRead(conversation.conversation.id, currentUserId);
       }
     );
 
     return unsubscribe;
-  }, [conversation?.conversation?.id, currentUserId]);
+  }, [conversation?.conversation?.id, currentUserId, encryptionInitialized]);
 
   // Smart auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -364,7 +386,9 @@ export default function ChatView({ conversation, currentUserId, isMobile = false
       await sendMessage(
         conversation.conversation.id,
         conversation.otherUser.uid,
-        newMessage.trim()
+        newMessage.trim(),
+        'text',
+        ENABLE_E2EE && globalEncryptionEnabled
       );
       setNewMessage('');
       setShowMentionDropdown(false);
@@ -552,9 +576,9 @@ export default function ChatView({ conversation, currentUserId, isMobile = false
                     )}>
                       <div className="flex items-start space-x-2">
                         <div className="flex-1">
-                          {message.isEncrypted && message.senderId !== currentUserId ? (
+                          {message.isEncrypted ? (
                             <p className="text-sm whitespace-pre-wrap break-words">
-                              {decryptedMessages.get(message.id) || (
+                              {message.decryptedContent || (
                                 <span className="text-gray-500 italic">🔒 Decrypting...</span>
                               )}
                             </p>
@@ -562,20 +586,6 @@ export default function ChatView({ conversation, currentUserId, isMobile = false
                             <p className="text-sm whitespace-pre-wrap break-words">{message.content}</p>
                           )}
                         </div>
-                        {message.isEncrypted && (
-                          <div title="This message is encrypted">
-                            <svg 
-                              className={`w-3 h-3 flex-shrink-0 mt-0.5 ${
-                                isOwnMessage ? 'text-blue-200' : 'text-gray-500'
-                              }`} 
-                              fill="none" 
-                              stroke="currentColor" 
-                              viewBox="0 0 24 24"
-                            >
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                            </svg>
-                          </div>
-                        )}
                       </div>
                       {!message.read && !isOwnMessage && (
                         <div className="text-xs text-blue-400 mt-1">New</div>
@@ -726,7 +736,7 @@ export default function ChatView({ conversation, currentUserId, isMobile = false
               value={newMessage}
               onChange={handleMessageChange}
               placeholder={
-                encryptionAvailable && otherUserHasEncryption 
+                ENABLE_E2EE && globalEncryptionEnabled
                   ? `🔒 Send encrypted message to ${conversation.otherUser.firstName}... (Type @ to mention someone or paste an article link)`
                   : `Message ${conversation.otherUser.firstName}... (Type @ to mention someone or paste an article link)`
               }

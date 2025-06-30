@@ -1,0 +1,1 @@
+export const ENABLE_E2EE = process.env.NEXT_PUBLIC_ENABLE_E2EE === 'true'; 

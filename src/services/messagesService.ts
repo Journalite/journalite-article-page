@@ -18,6 +18,7 @@ import {
 import { auth, db } from '@/firebase/clientApp';
 import { getUserProfile } from './userService';
 import { getEncryptionService } from './encryptionService';
+import { ENABLE_E2EE } from '@/config';
 
 // User profile cache to reduce Firebase queries
 const userProfileCache = new Map<string, { profile: any; timestamp: number }>();
@@ -70,6 +71,7 @@ export interface Message {
     timestamp: Timestamp;
     read: boolean;
     isEncrypted?: boolean; // Added encryption support
+    senderEncrypted?: string; // encrypted with sender's own public key
     editedAt?: Timestamp;
     profileAttachment?: {
         uid: string;
@@ -173,7 +175,8 @@ export async function sendMessage(
     conversationId: string,
     receiverId: string,
     content: string,
-    type: 'text' | 'image' = 'text'
+    type: 'text' | 'image' = 'text',
+    encrypt: boolean = true
 ): Promise<string> {
     const currentUser = auth.currentUser;
     if (!currentUser) {
@@ -188,9 +191,10 @@ export async function sendMessage(
         const encryptionService = getEncryptionService();
         let messageContent = content.trim();
         let isEncrypted = false;
+        let senderEncrypted: string | undefined;
 
         // Check if both users have encryption enabled
-        if (type === 'text' && encryptionService.isEncryptionAvailable()) {
+        if (encrypt && ENABLE_E2EE && type === 'text' && encryptionService.isEncryptionAvailable()) {
             const receiverHasEncryption = await encryptionService.hasEncryptionEnabled(receiverId);
 
             if (receiverHasEncryption) {
@@ -200,6 +204,9 @@ export async function sendMessage(
                 if (encryptedContent) {
                     messageContent = encryptedContent;
                     isEncrypted = true;
+
+                    // Also encrypt for sender so they can decrypt their own messages later
+                    senderEncrypted = await encryptionService.encryptMessage(content.trim(), currentUser.uid) || undefined;
                 }
             }
         }
@@ -219,12 +226,15 @@ export async function sendMessage(
         // Add encryption flag if message is encrypted
         if (isEncrypted) {
             newMessage.isEncrypted = true;
+            if (senderEncrypted) {
+                newMessage.senderEncrypted = senderEncrypted;
+            }
         }
 
         const messageDoc = await addDoc(messagesRef, newMessage);
 
         // Update conversation's last message
-        // For encrypted messages, show a placeholder in the conversation list
+        // Show placeholder if the message was encrypted
         const lastMessageContent = isEncrypted ? '🔒 Encrypted message' : messageContent;
 
         const conversationRef = doc(db, 'conversations', conversationId);
