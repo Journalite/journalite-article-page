@@ -14,6 +14,7 @@ import NewMessageModal from './messages/NewMessageModal';
 import EncryptionSetup from './EncryptionSetup';
 import { PlusIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
 import { getEncryptionService } from '@/services/encryptionService';
+import { ENABLE_E2EE } from '@/config';
 
 export default function MessagesClient() {
   const [user] = useAuthState(auth);
@@ -40,6 +41,12 @@ export default function MessagesClient() {
   // Check encryption setup
   useEffect(() => {
     const checkEncryptionSetup = async () => {
+      // Skip any encryption checks entirely if the feature flag is turned off
+      if (!ENABLE_E2EE) {
+        setEncryptionSetupChecked(true);
+        return;
+      }
+
       if (!user || encryptionSetupChecked) return;
       
       try {
