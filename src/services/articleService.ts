@@ -1,8 +1,8 @@
 // src/services/articleService.ts
-// // or wherever your interface lives
+// // or wherever the current interface lives
 
 export async function getArticle(slug: string): Promise<Article> {
-    // 1. Read your base URL (make sure .env.local has NEXT_PUBLIC_API_BASE_URL)
+    // 1. Base URL (make sure .env.local has NEXT_PUBLIC_API_BASE_URL)
     const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL
         || 'http://127.0.0.1:5001'
 
@@ -19,7 +19,7 @@ export async function getArticle(slug: string): Promise<Article> {
     return res.json()
 }
 
-// Get article comments
+// Get article comments - this is the list of comments for an article
 export async function getArticleComments(slug: string): Promise<ArticleComment[]> {
     const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:5001'
     const url = `${baseUrl}/api/prototype/v1/article/${slug}/comments`
@@ -74,7 +74,7 @@ export async function postReply(slug: string, commentId: string, userId: string,
 
 // Like or unlike a comment
 export async function likeComment(slug: string, commentId: string, userId: string): Promise<{ success: boolean, action: string, likes: string[], count: number }> {
-    const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:5001'
+    const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:5001' // this is just a port link only for local development
     const url = `${baseUrl}/api/prototype/v1/article/${slug}/comment/${commentId}/like`
 
     const res = await fetch(url, {

@@ -678,6 +678,12 @@ const ArticleHighlights: React.FC<ArticleHighlightsProps> = ({ articleId, childr
           highlightText={shareHighlightText}
           articleTitle={articleTitle}
           shareUrl={generateHighlightShareUrl(articleSlug, articleId)}
+          articleData={articleSlug ? {
+            slug: articleSlug,
+            title: articleTitle || 'Article',
+            excerpt: shareHighlightText.substring(0, 200),
+            isExternal: false
+          } : undefined}
         />
       )}
     </>

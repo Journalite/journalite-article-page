@@ -11,7 +11,9 @@ import {
 import ConversationsList from './messages/ConversationsList';
 import ChatView from './messages/ChatView';
 import NewMessageModal from './messages/NewMessageModal';
+import EncryptionSetup from './EncryptionSetup';
 import { PlusIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
+import { getEncryptionService } from '@/services/encryptionService';
 
 export default function MessagesClient() {
   const [user] = useAuthState(auth);
@@ -21,6 +23,8 @@ export default function MessagesClient() {
   const [loading, setLoading] = useState(true);
   const [totalUnreadCount, setTotalUnreadCount] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
+  const [showEncryptionSetup, setShowEncryptionSetup] = useState(false);
+  const [encryptionSetupChecked, setEncryptionSetupChecked] = useState(false);
 
   // Check if mobile
   useEffect(() => {
@@ -32,6 +36,41 @@ export default function MessagesClient() {
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
+
+  // Check encryption setup
+  useEffect(() => {
+    const checkEncryptionSetup = async () => {
+      if (!user || encryptionSetupChecked) return;
+      
+      try {
+        const encryptionService = getEncryptionService();
+        const isAvailable = encryptionService.isEncryptionAvailable();
+        
+        if (isAvailable) {
+          setEncryptionSetupChecked(true);
+          return;
+        }
+        
+        const initialized = await encryptionService.initializeEncryption();
+        
+        if (!initialized && typeof window !== 'undefined' && 'crypto' in window && 'subtle' in window.crypto) {
+          // Check if user has already skipped setup in this session
+          const hasSkipped = sessionStorage.getItem('encryptionSetupSkipped');
+          if (!hasSkipped) {
+            // Encryption is supported but not set up, show setup modal
+            setShowEncryptionSetup(true);
+          }
+        }
+        
+        setEncryptionSetupChecked(true);
+      } catch (error) {
+        console.error('Error checking encryption setup:', error);
+        setEncryptionSetupChecked(true);
+      }
+    };
+
+    checkEncryptionSetup();
+  }, [user, encryptionSetupChecked]);
 
   // Subscribe to conversations
   useEffect(() => {
@@ -76,6 +115,18 @@ export default function MessagesClient() {
   const handleNewConversation = (conversation: ConversationWithUser) => {
     setSelectedConversation(conversation);
     setShowNewMessage(false);
+  };
+
+  const handleEncryptionSetupComplete = () => {
+    setShowEncryptionSetup(false);
+    setEncryptionSetupChecked(true);
+  };
+
+  const handleEncryptionSetupSkip = () => {
+    setShowEncryptionSetup(false);
+    setEncryptionSetupChecked(true);
+    // Store that user skipped encryption setup for this session
+    sessionStorage.setItem('encryptionSetupSkipped', 'true');
   };
 
   if (!user) {
@@ -209,6 +260,18 @@ export default function MessagesClient() {
           onClose={() => setShowNewMessage(false)}
           onConversationCreated={handleNewConversation}
         />
+      )}
+
+      {/* Encryption Setup Modal */}
+      {showEncryptionSetup && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="max-w-md w-full mx-4">
+            <EncryptionSetup
+              onComplete={handleEncryptionSetupComplete}
+              onSkip={handleEncryptionSetupSkip}
+            />
+          </div>
+        </div>
       )}
     </div>
   );

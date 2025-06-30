@@ -1292,6 +1292,13 @@ export default function ExploreClient() {
           highlightText={sharingArticleDetails.excerpt || 'Check out this article'}
           articleTitle={sharingArticleDetails.title}
            shareUrl={`${typeof window !== 'undefined' ? window.location.origin : ''}/articles/${encodeURIComponent(sharingArticleDetails.slug)}`}
+           articleData={{
+             slug: sharingArticleDetails.slug,
+             title: sharingArticleDetails.title,
+             excerpt: sharingArticleDetails.excerpt,
+             coverImageUrl: sharingArticleDetails.coverImageUrl || undefined,
+             isExternal: false
+           }}
         />
       )}
     </div>

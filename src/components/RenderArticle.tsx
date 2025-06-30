@@ -571,6 +571,15 @@ const RenderArticle: React.FC<RenderArticleProps> = ({ article }) => {
             highlightText={getExcerptForSharing()}
             articleTitle={article.title}
             shareUrl={`${baseUrl}/articles/${encodeURIComponent(article.slug)}`}
+            articleData={{
+              slug: article.slug,
+              title: article.title,
+              excerpt: getExcerptForSharing(),
+              coverImageUrl: article.coverImageUrl,
+              authorName: article.authorName,
+              publishedDate: article.createdAt,
+              isExternal: false
+            }}
           />
         )}
 

@@ -808,6 +808,13 @@ export default function HomePage() {
             highlightText={sharingArticleDetails.excerpt || 'Check out this article'}
             articleTitle={sharingArticleDetails.title}
             shareUrl={`${'https://mvp.journalite.app'}/articles/${encodeURIComponent(sharingArticleDetails.slug)}`}
+            articleData={{
+              slug: sharingArticleDetails.slug,
+              title: sharingArticleDetails.title,
+              excerpt: sharingArticleDetails.excerpt,
+              coverImageUrl: sharingArticleDetails.coverImageUrl || undefined,
+              isExternal: false
+            }}
           />
         )}
 

@@ -17,6 +17,7 @@ import {
 } from 'firebase/firestore';
 import { auth, db } from '@/firebase/clientApp';
 import { getUserProfile } from './userService';
+import { getEncryptionService } from './encryptionService';
 
 // User profile cache to reduce Firebase queries
 const userProfileCache = new Map<string, { profile: any; timestamp: number }>();
@@ -65,9 +66,10 @@ export interface Message {
     senderId: string;
     receiverId: string;
     content: string;
-    type: 'text' | 'image' | 'profile'; // Added profile type
+    type: 'text' | 'image' | 'profile' | 'article'; // Added article type
     timestamp: Timestamp;
     read: boolean;
+    isEncrypted?: boolean; // Added encryption support
     editedAt?: Timestamp;
     profileAttachment?: {
         uid: string;
@@ -75,6 +77,17 @@ export interface Message {
         firstName: string;
         lastName: string;
         bio?: string;
+    };
+    articleAttachment?: {
+        slug: string;
+        title: string;
+        excerpt?: string;
+        coverImageUrl?: string;
+        authorName?: string;
+        readTime?: number;
+        publishedDate?: string;
+        isExternal?: boolean;
+        externalUrl?: string;
     };
 }
 
@@ -154,7 +167,7 @@ export async function getOrCreateConversation(currentUserId: string, otherUserId
 }
 
 /**
- * Send a message in a conversation
+ * Send a message in a conversation with optional encryption
  */
 export async function sendMessage(
     conversationId: string,
@@ -172,25 +185,52 @@ export async function sendMessage(
     }
 
     try {
+        const encryptionService = getEncryptionService();
+        let messageContent = content.trim();
+        let isEncrypted = false;
+
+        // Check if both users have encryption enabled
+        if (type === 'text' && encryptionService.isEncryptionAvailable()) {
+            const receiverHasEncryption = await encryptionService.hasEncryptionEnabled(receiverId);
+
+            if (receiverHasEncryption) {
+                // Encrypt the message
+                const encryptedContent = await encryptionService.encryptMessage(messageContent, receiverId);
+
+                if (encryptedContent) {
+                    messageContent = encryptedContent;
+                    isEncrypted = true;
+                }
+            }
+        }
+
         // Add message to messages collection
         const messagesRef = collection(db, 'messages');
-        const newMessage = {
+        const newMessage: any = {
             conversationId,
             senderId: currentUser.uid,
             receiverId,
-            content: content.trim(),
+            content: messageContent,
             type,
             timestamp: serverTimestamp(),
             read: false
         };
 
+        // Add encryption flag if message is encrypted
+        if (isEncrypted) {
+            newMessage.isEncrypted = true;
+        }
+
         const messageDoc = await addDoc(messagesRef, newMessage);
 
         // Update conversation's last message
+        // For encrypted messages, show a placeholder in the conversation list
+        const lastMessageContent = isEncrypted ? '🔒 Encrypted message' : messageContent;
+
         const conversationRef = doc(db, 'conversations', conversationId);
         await updateDoc(conversationRef, {
             lastMessage: {
-                content: content.trim(),
+                content: lastMessageContent,
                 senderId: currentUser.uid,
                 timestamp: serverTimestamp(),
                 read: false
@@ -267,6 +307,81 @@ export async function sendProfileMessage(
         return messageDoc.id;
     } catch (error) {
         console.error('Error sending profile message:', error);
+        throw error;
+    }
+}
+
+/**
+ * Send an article message in a conversation
+ */
+export async function sendArticleMessage(
+    conversationId: string,
+    receiverId: string,
+    articleData: {
+        slug: string;
+        title: string;
+        excerpt?: string;
+        coverImageUrl?: string;
+        authorName?: string;
+        readTime?: number;
+        publishedDate?: string;
+        isExternal?: boolean;
+        externalUrl?: string;
+    }
+): Promise<string> {
+    const currentUser = auth.currentUser;
+    if (!currentUser) {
+        throw new Error('User must be authenticated to send messages');
+    }
+
+    if (!articleData.slug || !articleData.title) {
+        throw new Error('Article data must include slug and title');
+    }
+
+    try {
+        // Sanitize articleData by removing undefined fields to comply with Firestore restrictions
+        const sanitizedArticleData: any = {};
+        (Object.keys(articleData) as (keyof typeof articleData)[]).forEach((key) => {
+            const value = articleData[key];
+            if (value !== undefined) {
+                sanitizedArticleData[key] = value;
+            }
+        });
+
+        // Add article message to messages collection
+        const messagesRef = collection(db, 'messages');
+        const newMessage = {
+            conversationId,
+            senderId: currentUser.uid,
+            receiverId,
+            content: `Shared article: "${sanitizedArticleData.title}"`,
+            type: 'article' as const,
+            timestamp: serverTimestamp(),
+            read: false,
+            articleAttachment: sanitizedArticleData
+        };
+
+        const messageDoc = await addDoc(messagesRef, newMessage);
+
+        // Update conversation's last message
+        const conversationRef = doc(db, 'conversations', conversationId);
+        await updateDoc(conversationRef, {
+            lastMessage: {
+                content: `Shared article: "${sanitizedArticleData.title}"`,
+                senderId: currentUser.uid,
+                timestamp: serverTimestamp(),
+                read: false
+            },
+            updatedAt: serverTimestamp()
+        });
+
+        // Invalidate unread count cache for receiver
+        const receiverCacheKey = `${conversationId}-${receiverId}`;
+        unreadCountCache.delete(receiverCacheKey);
+
+        return messageDoc.id;
+    } catch (error) {
+        console.error('Error sending article message:', error);
         throw error;
     }
 }

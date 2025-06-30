@@ -155,3 +155,7 @@ sentry.config.js
 error-monitoring.json
 
 .vercel
+
+# Encryption documentation and dev-only pages
+ENCRYPTION_GUIDE.md
+src/app/test-encryption/

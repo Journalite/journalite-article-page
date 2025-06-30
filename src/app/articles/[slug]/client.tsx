@@ -458,7 +458,8 @@ export default function ArticleSlugClient({ slug }: ArticleSlugClientProps) {
                 inset 0 -1px 0 ${moodThemes[mood].gradientStart}10
               `,
               transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-              border: `1px solid ${moodThemes[mood].gradientStart}15`,
+              borderLeft: `1px solid ${moodThemes[mood].gradientStart}15`,
+              borderRight: `1px solid ${moodThemes[mood].gradientStart}15`,
               borderTop: 'none'
             } : { 
               position: 'relative', 

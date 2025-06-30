@@ -48,6 +48,7 @@
     "react-dom": "^19.0.0",
     "react-firebase-hooks": "^5.1.1",
     "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1",
     "sentiment": "^5.0.2"
   },
   "devDependencies": {

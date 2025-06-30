@@ -201,6 +201,12 @@ const HighlightDisplay: React.FC<HighlightDisplayProps> = ({
         highlightText={highlight.text}
         articleTitle={articleTitle}
         shareUrl={shareUrl}
+        articleData={articleTitle ? {
+          slug: shareUrl.split('/').pop() || '',
+          title: articleTitle,
+          excerpt: highlight.text.substring(0, 200),
+          isExternal: false
+        } : undefined}
       />
     </>
   );

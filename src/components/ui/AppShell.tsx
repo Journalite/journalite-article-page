@@ -7,6 +7,7 @@ import TopBar from './TopBar'
 import RightOverlay from './RightOverlay'
 import BottomNav from './BottomNav'
 import GlobalBackground from './GlobalBackground'
+import { useEncryptionCleanup } from '@/hooks/useEncryptionCleanup'
 
 interface AppShellProps {
   children: React.ReactNode
@@ -47,6 +48,9 @@ const AppShell: React.FC<AppShellProps> = ({
     typeof window !== 'undefined' ? window.innerWidth : 1024
   )
   const backgroundInfo = useBackgroundAdaptive()
+  
+  // Handle encryption cleanup on logout
+  useEncryptionCleanup()
 
   // Handle window resize
   useEffect(() => {
