@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { ConversationWithUser, Message, subscribeToMessages, sendMessage, sendProfileMessage, sendArticleMessage, markMessagesAsRead } from '@/services/messagesService';
 import { searchUsers } from '@/services/userService';
 import { getInitials } from '@/utils/avatarUtils';
@@ -10,6 +10,7 @@ import UserMentionDropdown from './UserMentionDropdown';
 import { getArticleBySlug } from '@/firebase/articles';
 import { getEncryptionService } from '@/services/encryptionService';
 import { fetchArticleMetadata, ArticleMetadata } from '@/services/linkPreviewService';
+import clsx from 'clsx';
 
 interface ChatViewProps {
   conversation: ConversationWithUser;
@@ -41,11 +42,37 @@ export default function ChatView({ conversation, currentUserId, isMobile = false
   const [userInteracting, setUserInteracting] = useState(false);
   const [lastMessageCount, setLastMessageCount] = useState(0);
 
+  // Footer (input bar) height for dynamic padding
+  const footerRef = useRef<HTMLDivElement>(null);
+  const [footerHeight, setFooterHeight] = useState(0);
+
+  // Measure footer height on mount and resize
+  useLayoutEffect(() => {
+    const measure = () => setFooterHeight(footerRef.current?.offsetHeight || 0);
+    measure();
+    window.addEventListener('resize', measure);
+    
+    // Add a ResizeObserver to handle content changes within the footer
+    const resizeObserver = new ResizeObserver(measure);
+    if (footerRef.current) {
+      resizeObserver.observe(footerRef.current);
+    }
+
+    return () => {
+      window.removeEventListener('resize', measure);
+      if (footerRef.current) {
+        resizeObserver.unobserve(footerRef.current);
+      }
+    };
+  }, []);
+
   // Encryption state
   const [encryptionInitialized, setEncryptionInitialized] = useState(false);
   const [encryptionAvailable, setEncryptionAvailable] = useState(false);
   const [otherUserHasEncryption, setOtherUserHasEncryption] = useState(false);
   const [decryptedMessages, setDecryptedMessages] = useState<Map<string, string>>(new Map());
+
+  const MOBILE_INPUT_HEIGHT = 72; // px, approx after padding
 
   // Initialize encryption
   useEffect(() => {
@@ -386,6 +413,17 @@ export default function ChatView({ conversation, currentUserId, isMobile = false
     }
   };
 
+  useEffect(() => {
+    if (isMobile) {
+      document.body.classList.add('mobile-chat-view');
+    }
+    return () => {
+      if (isMobile) {
+        document.body.classList.remove('mobile-chat-view');
+      }
+    };
+  }, [isMobile]);
+
   if (loading) {
     return (
       <div className="flex-1 flex items-center justify-center">
@@ -398,10 +436,19 @@ export default function ChatView({ conversation, currentUserId, isMobile = false
   }
 
   return (
-    <div className="flex-1 flex flex-col h-full">
+    <div 
+      className={clsx(
+        "flex-1 flex flex-col h-full",
+        isMobile && "h-[100svh]" // Use dynamic viewport height for mobile
+      )}
+    >
       {/* Chat Header - Desktop only, mobile header is handled in MessagesClient */}
       {!isMobile && (
-        <div className="p-4 border-b border-gray-200 bg-white">
+        <div className={clsx(
+          "flex items-center justify-between",
+          "p-4 border-b border-gray-200 bg-white/80 backdrop-blur-lg",
+          isMobile && "sticky top-0 z-10"
+        )}>
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-medium text-sm">
               {getInitials(conversation.otherUser.firstName, conversation.otherUser.lastName)}
@@ -425,7 +472,9 @@ export default function ChatView({ conversation, currentUserId, isMobile = false
       )}
 
       {/* Messages Area */}
-      <div className={`flex-1 overflow-y-auto p-4 space-y-3 ${isMobile ? 'pb-20' : 'pb-4'}`}>
+      <div 
+        className="flex-1 overflow-y-auto overflow-x-hidden space-y-3 p-4"
+      >
         {messages.length === 0 ? (
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center">
@@ -466,7 +515,10 @@ export default function ChatView({ conversation, currentUserId, isMobile = false
                   </div>
                 )}
                 
-                <div className={`flex items-end ${isOwnMessage ? 'justify-end' : 'justify-start space-x-2'} mb-1`}>
+                <div className={clsx(
+                  `flex items-end mb-1`,
+                  isOwnMessage ? 'justify-end' : 'justify-start space-x-2'
+                )}>
                   {/* Show avatar only for other person's messages and only on the last message in a group */}
                   {showAvatar && (
                     <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-medium text-xs flex-shrink-0 mb-1">
@@ -485,16 +537,19 @@ export default function ChatView({ conversation, currentUserId, isMobile = false
                       isOwn={isOwnMessage}
                     />
                   ) : message.type === 'article' && message.articleAttachment ? (
-                    <ArticleCard 
-                      article={message.articleAttachment} 
-                      isOwn={isOwnMessage}
-                    />
+                    <div className="max-w-[85vw] sm:max-w-[75%] lg:max-w-md">
+                      <ArticleCard 
+                        article={message.articleAttachment} 
+                        isOwn={isOwnMessage}
+                      />
+                    </div>
                   ) : (
-                    <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-2xl ${
+                    <div className={clsx(
+                      "max-w-[85%] sm:max-w-[75%] lg:max-w-md px-4 py-2 rounded-[20px]",
                       isOwnMessage 
                         ? 'bg-blue-600 text-white' 
                         : 'bg-gray-100 text-gray-900'
-                    }`}>
+                    )}>
                       <div className="flex items-start space-x-2">
                         <div className="flex-1">
                           {message.isEncrypted && message.senderId !== currentUserId ? (
@@ -536,7 +591,10 @@ export default function ChatView({ conversation, currentUserId, isMobile = false
       </div>
 
       {/* Message Input */}
-      <div className={`p-4 border-t border-gray-200 bg-white ${isMobile ? 'pb-8' : ''}`}>
+      <div 
+        ref={footerRef}
+        className="p-4 border-t border-gray-200 bg-white"
+      >
         <div className="relative">
           {/* @mention dropdown */}
           {showMentionDropdown && (
@@ -661,7 +719,7 @@ export default function ChatView({ conversation, currentUserId, isMobile = false
             </div>
           )}
           
-          <form onSubmit={handleSendMessage} className="flex space-x-3">
+          <form onSubmit={handleSendMessage} className="flex space-x-2">
             <input
               ref={inputRef}
               type="text"
@@ -672,13 +730,13 @@ export default function ChatView({ conversation, currentUserId, isMobile = false
                   ? `🔒 Send encrypted message to ${conversation.otherUser.firstName}... (Type @ to mention someone or paste an article link)`
                   : `Message ${conversation.otherUser.firstName}... (Type @ to mention someone or paste an article link)`
               }
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="flex-1 px-4 py-3 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
               disabled={sending}
             />
             <button
               type="submit"
               disabled={!newMessage.trim() || sending}
-              className="px-6 py-2 bg-blue-600 text-white rounded-full font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-700 transition-colors"
+              className="px-5 py-3 bg-blue-600 text-white rounded-full font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-700 transition-colors text-sm"
             >
               {sending ? (
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>

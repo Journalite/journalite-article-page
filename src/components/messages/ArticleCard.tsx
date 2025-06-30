@@ -57,12 +57,12 @@ export default function ArticleCard({ article, isOwn }: ArticleCardProps) {
   const articleUrl = getArticleUrl();
 
   return (
-    <Link href={articleUrl} className="block max-w-sm">
+    <Link href={articleUrl} className="block w-full">
       <div 
-        className={`border rounded-lg overflow-hidden transition-all duration-200 hover:shadow-md ${
+        className={`border overflow-hidden transition-all duration-200 hover:shadow-md rounded-[20px] ${
           isOwn 
-            ? 'bg-blue-50 border-blue-200 hover:bg-blue-100' 
-            : 'bg-white border-gray-200 hover:bg-gray-50'
+            ? 'bg-blue-600 border-blue-700 hover:bg-blue-700' 
+            : 'bg-gray-100 border-gray-200 hover:bg-gray-200'
         }`}
       >
         {/* Article Image */}
@@ -84,15 +84,15 @@ export default function ArticleCard({ article, isOwn }: ArticleCardProps) {
         <div className="p-3">
           {/* Article Title */}
           <h3 className={`font-semibold text-sm line-clamp-2 mb-2 ${
-            isOwn ? 'text-blue-900' : 'text-gray-900'
+            isOwn ? 'text-white' : 'text-gray-900'
           }`}>
             {article.title}
           </h3>
           
           {/* Article Excerpt */}
           {article.excerpt && (
-            <p className={`text-xs line-clamp-3 mb-3 ${
-              isOwn ? 'text-blue-700' : 'text-gray-600'
+            <p className={`text-xs line-clamp-2 mb-3 ${
+              isOwn ? 'text-blue-100' : 'text-gray-600'
             }`}>
               {article.excerpt}
             </p>
@@ -100,7 +100,7 @@ export default function ArticleCard({ article, isOwn }: ArticleCardProps) {
           
           {/* Article Metadata */}
           <div className={`flex items-center justify-between text-xs ${
-            isOwn ? 'text-blue-600' : 'text-gray-500'
+            isOwn ? 'text-blue-200' : 'text-gray-500'
           }`}>
             <div className="flex items-center space-x-3">
               {/* Author */}
@@ -131,7 +131,7 @@ export default function ArticleCard({ article, isOwn }: ArticleCardProps) {
           {/* External Source Indicator */}
           {article.isExternal && (
             <div className={`mt-2 text-xs flex items-center ${
-              isOwn ? 'text-blue-500' : 'text-gray-400'
+              isOwn ? 'text-blue-200' : 'text-gray-400'
             }`}>
               <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />

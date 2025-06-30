@@ -82,21 +82,45 @@ async function fetchJournaliteArticle(slug: string): Promise<ArticleMetadata | n
     }
 }
 
-// Fetch Guardian article metadata (you can expand this to actually fetch from Guardian API)
+// Fetch Guardian article metadata from Guardian Content API
 async function fetchGuardianArticle(articleId: string): Promise<ArticleMetadata | null> {
-    try {
-        // For now, create a basic preview. In production, you'd fetch from Guardian API
-        // or your backend service that proxies Guardian API
-        const metadata: ArticleMetadata = {
+    const apiKey = process.env.NEXT_PUBLIC_GUARDIAN_API_KEY;
+    if (!apiKey) {
+        console.warn('Guardian API key missing; using fallback metadata');
+        return {
             slug: articleId,
             title: 'Guardian Article',
             excerpt: 'Read this article on The Guardian.',
-            coverImageUrl: undefined,
-            authorName: 'The Guardian',
-            readTime: 5,
-            publishedDate: new Date().toISOString(),
             isExternal: true,
             externalUrl: `https://theguardian.com/${articleId}`,
+            fetchedAt: Date.now()
+        };
+    }
+
+    try {
+        const endpoint = `https://content.guardianapis.com/${articleId}?api-key=${apiKey}&show-fields=trailText,thumbnail,headline,byline,wordcount,firstPublicationDate`;
+        const res = await fetch(endpoint);
+        if (!res.ok) throw new Error(`Guardian API ${res.status}`);
+
+        const json = await res.json();
+        const content = json.response?.content;
+        if (!content) throw new Error('No content');
+
+        const fields = content.fields || {};
+
+        const wordCount = parseInt(fields.wordcount || '0', 10);
+        const readTime = wordCount ? Math.max(1, Math.ceil(wordCount / 200)) : undefined;
+
+        const metadata: ArticleMetadata = {
+            slug: articleId,
+            title: fields.headline || content.webTitle || 'Guardian Article',
+            excerpt: fields.trailText?.replace(/<[^>]*>/g, '') || undefined,
+            coverImageUrl: fields.thumbnail,
+            authorName: fields.byline || 'The Guardian',
+            readTime,
+            publishedDate: fields.firstPublicationDate || content.webPublicationDate,
+            isExternal: true,
+            externalUrl: content.webUrl,
             fetchedAt: Date.now()
         };
 
