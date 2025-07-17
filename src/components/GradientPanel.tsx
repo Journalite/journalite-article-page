@@ -32,6 +32,7 @@ const GradientPanel: React.FC<GradientPanelProps> = ({
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isDragging, setIsDragging] = useState<string | null>(null);
+  const [windowDimensions, setWindowDimensions] = useState({ width: 0, height: 0 });
   const [themeConfig, setThemeConfig] = useState<ThemeConfig>({
     colorStops: [
       { id: '1', color: '#007AFF', x: 30, y: 40, isSelected: true }
@@ -45,6 +46,49 @@ const GradientPanel: React.FC<GradientPanelProps> = ({
   const opacitySliderRef = useRef<HTMLDivElement>(null);
   const grainSliderRef = useRef<HTMLDivElement>(null);
   const saveTimeout = useRef<NodeJS.Timeout | null>(null);
+
+  // Device detection with proper responsive breakpoints
+  const deviceInfo = useMemo(() => {
+    const width = windowDimensions.width;
+    const height = windowDimensions.height;
+    
+    return {
+      isMobile: width <= 768,
+      isTablet: width > 768 && width <= 1024,
+      isDesktop: width > 1024,
+      isSmallPhone: width <= 480,
+      isLandscape: width > height,
+      isIPad11: width >= 820 && width <= 1024,
+      // Safe area calculations for mobile bottom navigation
+      bottomSafeArea: Math.max(100, width <= 768 ? 120 : 80),
+      sideMargin: width <= 480 ? 16 : width <= 768 ? 20 : 40
+    };
+  }, [windowDimensions]);
+
+  // Window resize handler with debouncing
+  useEffect(() => {
+    const updateDimensions = () => {
+      setWindowDimensions({
+        width: window.innerWidth,
+        height: window.innerHeight
+      });
+    };
+
+    // Initial set
+    updateDimensions();
+
+    let timeoutId: NodeJS.Timeout;
+    const debouncedResize = () => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(updateDimensions, 100);
+    };
+
+    window.addEventListener('resize', debouncedResize);
+    return () => {
+      window.removeEventListener('resize', debouncedResize);
+      clearTimeout(timeoutId);
+    };
+  }, []);
 
   // Generate Journa Color-style gradient from color stops with grain effect
   const generateJournaColorGradient = (config: ThemeConfig) => {
@@ -269,36 +313,43 @@ const GradientPanel: React.FC<GradientPanelProps> = ({
     '#FF8E53', '#FFD93D', '#6BCF7F', '#4ECDC4', '#45B7D1'
   ];
 
+  // Memoized styles for mobile responsiveness
+  const containerStyles = useMemo(() => ({
+    position: 'fixed' as const,
+    bottom: deviceInfo.isMobile ? 
+      `max(${deviceInfo.bottomSafeArea + 20}px, calc(${deviceInfo.bottomSafeArea}px + env(safe-area-inset-bottom)))` : 
+      '40px',
+    left: deviceInfo.isMobile ? `${deviceInfo.sideMargin}px` : '40px',
+    zIndex: 1001,
+    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+  }), [deviceInfo]);
+
+  const buttonStyles = useMemo(() => ({
+    width: deviceInfo.isSmallPhone ? '48px' : deviceInfo.isMobile ? '52px' : '56px',
+    height: deviceInfo.isSmallPhone ? '48px' : deviceInfo.isMobile ? '52px' : '56px',
+    borderRadius: '50%',
+    border: 'none',
+    background: currentGradient || '#007AFF',
+    color: 'white',
+    fontSize: deviceInfo.isSmallPhone ? '16px' : '20px',
+    cursor: 'pointer',
+    boxShadow: isExpanded
+      ? '0 8px 25px rgba(0, 122, 255, 0.4), 0 0 0 2px rgba(0, 122, 255, 0.2)'
+      : '0 6px 20px rgba(0, 122, 255, 0.3)',
+    transform: isExpanded ? 'scale(1.05) rotate(45deg)' : 'scale(1) rotate(0deg)',
+    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backdropFilter: 'blur(10px)'
+  }), [deviceInfo, isExpanded, currentGradient]);
+
   return (
-    <div style={{
-      position: 'fixed',
-      bottom: '40px',
-      left: '40px',
-      zIndex: 1001,
-      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
-    }}>
+    <div style={containerStyles}>
       {/* Floating toggle button */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        style={{
-          width: '56px',
-          height: '56px',
-          borderRadius: '50%',
-          border: 'none',
-          background: currentGradient || '#007AFF',
-          color: 'white',
-          fontSize: '20px',
-          cursor: 'pointer',
-          boxShadow: isExpanded
-            ? '0 8px 25px rgba(0, 122, 255, 0.4), 0 0 0 2px rgba(0, 122, 255, 0.2)'
-            : '0 6px 20px rgba(0, 122, 255, 0.3)',
-          transform: isExpanded ? 'scale(1.05) rotate(45deg)' : 'scale(1) rotate(0deg)',
-          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          backdropFilter: 'blur(10px)'
-        }}
+        style={buttonStyles}
         title="Journa Color Editor"
       >
         <svg 
@@ -318,18 +369,23 @@ const GradientPanel: React.FC<GradientPanelProps> = ({
       {isExpanded && (
         <div style={{
           position: 'fixed',
-          bottom: '110px',
-          left: '40px',
-          width: '380px',
-          maxHeight: '500px',
+          bottom: deviceInfo.isMobile ? 
+            `max(${deviceInfo.bottomSafeArea + 80}px, calc(${deviceInfo.bottomSafeArea + 60}px + env(safe-area-inset-bottom)))` : 
+            '110px',
+          left: deviceInfo.isMobile ? `${deviceInfo.sideMargin}px` : '40px',
+          right: deviceInfo.isMobile ? `${deviceInfo.sideMargin}px` : 'auto',
+          width: deviceInfo.isMobile ? 'auto' : '380px',
+          maxWidth: deviceInfo.isMobile ? 'none' : '380px',
+          maxHeight: deviceInfo.isLandscape && deviceInfo.isMobile ? '60vh' : 
+                     deviceInfo.isMobile ? '50vh' : '500px',
           background: 'rgba(255, 255, 255, 0.95)',
           backdropFilter: 'blur(20px)',
-          borderRadius: '24px',
-          padding: '24px',
+          borderRadius: deviceInfo.isSmallPhone ? '16px' : deviceInfo.isMobile ? '18px' : '24px',
+          padding: deviceInfo.isSmallPhone ? '16px' : deviceInfo.isMobile ? '18px' : '24px',
           border: '1px solid rgba(255, 255, 255, 0.3)',
           boxShadow: '0 20px 60px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.2)',
           zIndex: 999,
-          overflow: 'hidden'
+          overflow: 'hidden auto'
         }}>
           {/* Theme mode toggles */}
           <div style={{

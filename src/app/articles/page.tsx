@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { Suspense } from 'react'
@@ -96,12 +96,20 @@ function Article() {
   
   // Initialize window width on client side for mobile detection
   useEffect(() => {
+    let resizeTimer: NodeJS.Timeout;
+    
     const handleResize = () => {
-      setWindowWidth(window.innerWidth)
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        setWindowWidth(window.innerWidth)
+      }, 100); // Debounce resize events by 100ms
     }
     
     window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
+    return () => {
+      window.removeEventListener('resize', handleResize)
+      clearTimeout(resizeTimer);
+    }
   }, [])
   
   // Load mood feature preference from localStorage (only for authenticated users)
@@ -235,45 +243,25 @@ function Article() {
     }
   }, [articleHtml, isAuthenticated])
   
-  const handleSignOut = async () => {
+  const handleSignOut = useCallback(async () => {
     try {
       await signOut(auth)
       setIsProfileMenuOpen(false)
     } catch (error) {
       console.error('Error signing out:', error)
     }
-  }
+  }, [])
   
   // const toggleSidebar = () => {
   //   setIsSidebarCollapsed(!isSidebarCollapsed)
   // }
 
-  const toggleProfileMenu = () => {
+  const toggleProfileMenu = useCallback(() => {
     setIsProfileMenuOpen(!isProfileMenuOpen)
-  }
-  
-  // Debug console for re-renders
-  console.log('🔄 Articles page Article component re-rendered at:', new Date().toLocaleTimeString());
-  
-  if (isLoading) {
-    return (
-      <div className={articleStyles.loadingContainer}>
-        <div className={articleStyles.loadingIndicator}></div>
-        <p>Loading article...</p>
-      </div>
-    )
-  }
-  
-  if (error) {
-    return (
-      <div className={articleStyles.errorContainer}>
-        <p className={articleStyles.errorMessage}>{error}</p>
-      </div>
-    )
-  }
-  
+  }, [isProfileMenuOpen])
+
   // Handle when editing is complete
-  const handleUpdateComplete = () => {
+  const handleUpdateComplete = useCallback(() => {
     console.log('Article update complete - refreshing content');
     
     // Set editing state to false
@@ -341,7 +329,24 @@ function Article() {
     };
     
     refetchArticle();
-  };
+  }, [slug]);
+  
+  if (isLoading) {
+    return (
+      <div className={articleStyles.loadingContainer}>
+        <div className={articleStyles.loadingIndicator}></div>
+        <p>Loading article...</p>
+      </div>
+    )
+  }
+  
+  if (error) {
+    return (
+      <div className={articleStyles.errorContainer}>
+        <p className={articleStyles.errorMessage}>{error}</p>
+      </div>
+    )
+  }
 
   if (isEditing && article) {
     return (

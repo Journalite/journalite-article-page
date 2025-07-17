@@ -331,10 +331,8 @@ class GuardianService {
 
                 if (!isHtml) {
                     // If it's plain text (bodyText field), format it properly
-                    console.log('📝 Processing as plain text');
                     bodyContent = this.formatPlainTextToHtml(bodyContent);
                 } else {
-                    console.log('🏷️ Processing as HTML');
                     // For HTML content, ensure it's not double-escaped
                     bodyContent = bodyContent
                         .replace(/&lt;/g, '<')

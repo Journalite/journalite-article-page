@@ -172,6 +172,11 @@ code {
     padding-bottom: max(120px, calc(100px + env(safe-area-inset-bottom))) !important;
   }
   
+  /* Article pages need additional bottom padding for comments sections */
+  .article-page-container, .guardian-article, .news-article {
+    padding-bottom: max(120px, calc(100px + env(safe-area-inset-bottom))) !important;
+  }
+  
   /* Form containers need extra bottom spacing */
   form, .form-container, .comment-form, .reflection-form,
   .message-form, .input-container {
@@ -180,8 +185,23 @@ code {
   
   /* Floating elements (reflection panels, modals) need proper positioning */
   .floating-panel, .reflection-panel, .side-reflection,
-  .inline-reflection, .comment-section {
+  .inline-reflection, .comment-section, .gradient-panel {
     bottom: max(120px, calc(100px + env(safe-area-inset-bottom))) !important;
+  }
+  
+  /* Gradient panel specific mobile positioning */
+  .gradient-panel-container {
+    bottom: max(120px, calc(100px + env(safe-area-inset-bottom))) !important;
+    left: max(16px, env(safe-area-inset-left)) !important;
+    right: auto !important;
+  }
+  
+  .gradient-panel-expanded {
+    bottom: max(180px, calc(160px + env(safe-area-inset-bottom))) !important;
+    left: max(16px, env(safe-area-inset-left)) !important;
+    right: max(16px, env(safe-area-inset-right)) !important;
+    width: auto !important;
+    max-height: 50vh !important;
   }
   
   /* Reflection room components need proper spacing */
@@ -195,6 +215,12 @@ code {
     margin-bottom: 20px;
     /* Ensure the input is visible when focused */
     scroll-margin-bottom: max(140px, calc(120px + env(safe-area-inset-bottom)));
+  }
+  
+  /* Comments sections in article pages need proper mobile spacing */
+  .article-comments-section {
+    padding-bottom: max(40px, calc(20px + env(safe-area-inset-bottom))) !important;
+    margin-bottom: max(40px, calc(20px + env(safe-area-inset-bottom))) !important;
   }
 }
 
@@ -325,6 +351,27 @@ code {
   z-index: 1000;
 }
 
+/* Mobile widget z-index stack */
+.gradient-panel-button {
+  z-index: 1001;
+}
+
+.gradient-panel-expanded {
+  z-index: 999;
+}
+
+.reflection-toggle-button {
+  z-index: 1002;
+}
+
+.reflection-toggle-panel {
+  z-index: 1001;
+}
+
+.side-reflection-container {
+  z-index: 1001;
+}
+
 /* Smooth transitions for better UX */
 .smooth-transition {
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -335,6 +382,20 @@ code {
   .floating-panel, .reflection-panel {
     max-height: 70vh;
     bottom: 80px !important;
+  }
+  
+  .gradient-panel-container {
+    bottom: max(80px, calc(60px + env(safe-area-inset-bottom))) !important;
+  }
+  
+  .gradient-panel-expanded {
+    bottom: max(120px, calc(100px + env(safe-area-inset-bottom))) !important;
+    max-height: 60vh !important;
+  }
+  
+  .side-reflection-container {
+    bottom: max(80px, calc(60px + env(safe-area-inset-bottom))) !important;
+    max-height: 50vh !important;
   }
   
   form {

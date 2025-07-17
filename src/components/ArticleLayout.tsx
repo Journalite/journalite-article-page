@@ -64,8 +64,6 @@ const ArticleLayout: React.FC<ArticleLayoutProps> = ({
   externalId,
   externalUrl
 }) => {
-  console.log('🏗️ ArticleLayout re-rendered at:', new Date().toLocaleTimeString());
-
   return (
     <div className={styles.pageContainer}>
       {/* Article header */}
@@ -193,10 +191,6 @@ export default React.memo(ArticleLayout, (prevProps, nextProps) => {
     prevProps.onEditClick === nextProps.onEditClick &&
     prevProps.onToggleMoodFeature === nextProps.onToggleMoodFeature
   );
-  
-  if (!shouldNotRerender) {
-    console.log('🏗️ ArticleLayout memo - will re-render because something changed');
-  }
   
   return shouldNotRerender;
 }); 

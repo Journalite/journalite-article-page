@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { auth } from '@/firebase/clientApp';
 import { ExternalArticleService } from '@/services/externalArticleService';
@@ -33,7 +33,8 @@ export default function GuardianArticleClient({ params }: GuardianArticleClientP
 
   // Navigation bar visibility state
   const [isNavVisible, setIsNavVisible] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
+  const lastScrollY = useRef(0);
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Guardian article IDs can have slashes, so we need to handle the full path
   const articleId = Array.isArray(params?.articleId) 
@@ -42,10 +43,6 @@ export default function GuardianArticleClient({ params }: GuardianArticleClientP
 
   // Create a safe Firestore-compatible ID by encoding slashes and other special characters
   const firestoreArticleId = `guardian-${encodeURIComponent(articleId)}`;
-
-  console.log('🔍 GuardianArticleClient - Raw params:', params);
-  console.log('🔍 GuardianArticleClient - articleId:', articleId);
-  console.log('🔍 GuardianArticleClient - firestoreArticleId:', firestoreArticleId);
 
   // Dynamic meta tags for client-side updates
   useEffect(() => {
@@ -104,12 +101,18 @@ export default function GuardianArticleClient({ params }: GuardianArticleClientP
     return () => unsubscribe();
   }, []);
 
-  // Handle scroll to show/hide navigation bar
-  useEffect(() => {
-    const handleScroll = () => {
+  // Handle scroll to show/hide navigation bar with debouncing
+  const handleScroll = useCallback(() => {
+    // Clear previous timeout
+    if (scrollTimeoutRef.current) {
+      clearTimeout(scrollTimeoutRef.current);
+    }
+    
+    // Debounce scroll events
+    scrollTimeoutRef.current = setTimeout(() => {
       const currentScrollY = window.scrollY;
       
-      if (currentScrollY < lastScrollY || currentScrollY < 100) {
+      if (currentScrollY < lastScrollY.current || currentScrollY < 100) {
         // Scrolling up or at top - show nav
         setIsNavVisible(true);
       } else {
@@ -117,13 +120,20 @@ export default function GuardianArticleClient({ params }: GuardianArticleClientP
         setIsNavVisible(false);
       }
       
-      setLastScrollY(currentScrollY);
-    };
+      lastScrollY.current = currentScrollY;
+    }, 10); // 10ms debounce
+  }, []);
 
+  useEffect(() => {
     window.addEventListener('scroll', handleScroll, { passive: true });
     
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [lastScrollY]);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+    };
+  }, [handleScroll]);
 
   // Load mood feature preference from localStorage (only for authenticated users)
   useEffect(() => {
@@ -139,45 +149,57 @@ export default function GuardianArticleClient({ params }: GuardianArticleClientP
     }
   }, [isAuthenticated]);
 
-  // Fetch the specific article
-  useEffect(() => {
-    const fetchArticle = async () => {
-      try {
-        setIsLoading(true);
-        setError('');
-        
-        console.log('Guardian Article Page - articleId:', articleId);
-        
-        if (!guardianService.isConfigured()) {
-          setError('Guardian API not configured. Please add your Guardian API key to environment variables.');
-          return;
-        }
-        
-        if (!articleId || articleId === '') {
-          setError('Invalid article ID. Please check the link and try again.');
-          return;
-        }
-        
-        // Use the specific getArticleById method
-        const foundArticle = await guardianService.getArticleById(articleId);
-        console.log('Guardian Article Page - foundArticle:', foundArticle);
-        setArticle(foundArticle);
-        
-        // Fetch likes for this Guardian article from our social system
-        await fetchLikesData(firestoreArticleId);
-        
-      } catch (error) {
-        console.error('Error fetching Guardian article:', error);
-        setError('Failed to load article. Please try again later.');
-      } finally {
-        setIsLoading(false);
+  // Fetch likes data for the Guardian article from our social system
+  const fetchLikesData = useCallback(async (guardianArticleId: string) => {
+    try {
+      const socialData = await ExternalArticleService.getSocialData(guardianArticleId, 'guardian');
+      if (socialData) {
+        setInitialLikes(socialData.likes || []);
+      } else {
+        setInitialLikes([]);
       }
-    };
+    } catch (error) {
+      console.error('Error fetching likes data:', error);
+      setInitialLikes([]);
+    }
+  }, []);
 
+  // Fetch the specific article
+  const fetchArticle = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      setError('');
+      
+      if (!guardianService.isConfigured()) {
+        setError('Guardian API not configured. Please add your Guardian API key to environment variables.');
+        return;
+      }
+      
+      if (!articleId || articleId === '') {
+        setError('Invalid article ID. Please check the link and try again.');
+        return;
+      }
+      
+      // Use the specific getArticleById method
+      const foundArticle = await guardianService.getArticleById(articleId);
+      setArticle(foundArticle);
+      
+      // Fetch likes for this Guardian article from our social system
+      await fetchLikesData(firestoreArticleId);
+      
+    } catch (error) {
+      console.error('Error fetching Guardian article:', error);
+      setError('Failed to load article. Please try again later.');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [articleId, firestoreArticleId, fetchLikesData]);
+
+  useEffect(() => {
     if (articleId) {
       fetchArticle();
     }
-  }, [articleId]);
+  }, [articleId, fetchArticle]);
 
   // Analyze mood when article is loaded (only for authenticated users)
   useEffect(() => {
@@ -192,29 +214,14 @@ export default function GuardianArticleClient({ params }: GuardianArticleClientP
     }
   }, [article, isAuthenticated]);
 
-  const handleToggleMoodFeature = (enabled: boolean) => {
+  const handleToggleMoodFeature = useCallback((enabled: boolean) => {
     setMoodFeatureEnabled(enabled);
     localStorage.setItem('moodFeatureEnabled', JSON.stringify(enabled));
-  };
+  }, []);
 
-  const handleBackToList = () => {
+  const handleBackToList = useCallback(() => {
     router.push('/guardian-news');
-  };
-
-  // Fetch likes data for the Guardian article from our social system
-  const fetchLikesData = async (guardianArticleId: string) => {
-    try {
-      const socialData = await ExternalArticleService.getSocialData(guardianArticleId, 'guardian');
-      if (socialData) {
-        setInitialLikes(socialData.likes || []);
-      } else {
-        setInitialLikes([]);
-      }
-    } catch (error) {
-      console.error('Error fetching likes data:', error);
-      setInitialLikes([]);
-    }
-  };
+  }, [router]);
 
   if (isLoading) {
     return (

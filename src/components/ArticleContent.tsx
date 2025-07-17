@@ -26,9 +26,6 @@ const ArticleContent: React.FC<ArticleContentProps> = ({
   onToggleMoodFeature,
   mood
 }) => {
-  // Debug re-renders
-  console.log('📝 ArticleContent re-rendered at:', new Date().toLocaleTimeString());
-  
   return (
     <ArticleWithHighlights 
       articleId={articleId} 
@@ -46,9 +43,10 @@ const ArticleContent: React.FC<ArticleContentProps> = ({
   );
 };
 
-// Use React.memo with deep comparison for props
+// Use React.memo with optimized comparison for props
 export default React.memo(ArticleContent, (prevProps, nextProps) => {
-  const shouldNotRerender = (
+  // Only check essential props that would actually cause different rendering
+  return (
     prevProps.articleId === nextProps.articleId &&
     prevProps.articleHtml === nextProps.articleHtml &&
     prevProps.isAuthenticated === nextProps.isAuthenticated &&
@@ -56,23 +54,8 @@ export default React.memo(ArticleContent, (prevProps, nextProps) => {
     prevProps.articleSlug === nextProps.articleSlug &&
     prevProps.hasReflectionRoom === nextProps.hasReflectionRoom &&
     prevProps.moodFeatureEnabled === nextProps.moodFeatureEnabled &&
-    prevProps.onToggleMoodFeature === nextProps.onToggleMoodFeature &&
     prevProps.mood === nextProps.mood
+    // Note: onToggleMoodFeature is a callback that might change on every render
+    // but doesn't affect the component's visual output directly
   );
-  
-  if (!shouldNotRerender) {
-    console.log('📝 ArticleContent memo comparison - will re-render because:', {
-      articleId: prevProps.articleId !== nextProps.articleId,
-      articleHtml: prevProps.articleHtml !== nextProps.articleHtml,
-      isAuthenticated: prevProps.isAuthenticated !== nextProps.isAuthenticated,
-      articleTitle: prevProps.articleTitle !== nextProps.articleTitle,
-      articleSlug: prevProps.articleSlug !== nextProps.articleSlug,
-      hasReflectionRoom: prevProps.hasReflectionRoom !== nextProps.hasReflectionRoom,
-      moodFeatureEnabled: prevProps.moodFeatureEnabled !== nextProps.moodFeatureEnabled,
-      onToggleMoodFeature: prevProps.onToggleMoodFeature !== nextProps.onToggleMoodFeature,
-      mood: prevProps.mood !== nextProps.mood
-    });
-  }
-  
-  return shouldNotRerender;
 }); 

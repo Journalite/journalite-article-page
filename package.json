@@ -65,6 +65,7 @@
     "@storybook/react": "^8.6.12",
     "@storybook/test": "^8.6.12",
     "@types/node": "^20",
+    "@types/prop-types": "^15.7.15",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/sentiment": "^5.0.4",
