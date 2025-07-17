@@ -31,6 +31,10 @@ export default function GuardianArticleClient({ params }: GuardianArticleClientP
   const [moodFeatureEnabled, setMoodFeatureEnabled] = useState(true);
   const [mood, setMood] = useState<'joyful' | 'reflective' | 'sad' | 'angry' | 'peaceful' | 'energetic'>('reflective');
 
+  // Navigation bar visibility state
+  const [isNavVisible, setIsNavVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
   // Guardian article IDs can have slashes, so we need to handle the full path
   const articleId = Array.isArray(params?.articleId) 
     ? params.articleId.join('/')
@@ -99,6 +103,27 @@ export default function GuardianArticleClient({ params }: GuardianArticleClientP
     
     return () => unsubscribe();
   }, []);
+
+  // Handle scroll to show/hide navigation bar
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      
+      if (currentScrollY < lastScrollY || currentScrollY < 100) {
+        // Scrolling up or at top - show nav
+        setIsNavVisible(true);
+      } else {
+        // Scrolling down - hide nav
+        setIsNavVisible(false);
+      }
+      
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [lastScrollY]);
 
   // Load mood feature preference from localStorage (only for authenticated users)
   useEffect(() => {
@@ -247,8 +272,17 @@ export default function GuardianArticleClient({ params }: GuardianArticleClientP
       style={{ position: 'relative', backgroundColor: '#ffffff' }}
     >
       {/* Navigation Header */}
-      <div className="sticky top-0 z-20 bg-white/90 backdrop-blur-sm border-b border-gray-200">
-        <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div 
+        className="fixed top-2 left-4 right-4 z-20 rounded-2xl border border-white/40 shadow-lg transition-transform duration-300 ease-in-out" 
+        style={{ 
+          height: '70px',
+          transform: isNavVisible ? 'translateY(0)' : 'translateY(-100px)',
+          background: 'rgba(255, 255, 255, 0.15)',
+          backdropFilter: 'blur(20px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(20px) saturate(180%)'
+        }}
+      >
+        <div className="max-w-4xl mx-auto px-3 h-full flex items-center justify-between">
           <BackButton fallbackUrl="/guardian-news">
             Back to Guardian News
           </BackButton>
@@ -284,6 +318,7 @@ export default function GuardianArticleClient({ params }: GuardianArticleClientP
         />
       )}
 
+      <div style={{ marginTop: '90px' }}>
       <ArticleLayout
         articleId={firestoreArticleId}
         articleHtml={articleData.html}
@@ -302,6 +337,7 @@ export default function GuardianArticleClient({ params }: GuardianArticleClientP
         externalId={articleId}
         externalUrl={article.webUrl}
       />
+      </div>
       
       {/* Comments Section */}
       <div style={{ maxWidth: '800px', margin: '0 auto', padding: '2rem 1rem' }}>

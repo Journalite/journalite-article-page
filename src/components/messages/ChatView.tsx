@@ -1,11 +1,10 @@
 'use client'
 
 import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
+import Link from 'next/link';
 import { ConversationWithUser, Message, subscribeToMessages, sendMessage, sendProfileMessage, sendArticleMessage, markMessagesAsRead } from '@/services/messagesService';
 import { searchUsers } from '@/services/userService';
-import { getInitials } from '@/utils/avatarUtils';
-import ProfileCard from './ProfileCard';
-import ArticleCard from './ArticleCard';
+import { getInitials, getUserGradient } from '@/utils/avatarUtils';
 import UserMentionDropdown from './UserMentionDropdown';
 import { getArticleBySlug } from '@/firebase/articles';
 import { getEncryptionService } from '@/services/encryptionService';
@@ -13,6 +12,7 @@ import { fetchArticleMetadata, ArticleMetadata } from '@/services/linkPreviewSer
 import clsx from 'clsx';
 import { getUserProfile } from '@/services/userService';
 import { ENABLE_E2EE } from '@/config';
+import { PaperAirplaneIcon, PhotoIcon, FaceSmileIcon, PlusIcon } from '@heroicons/react/24/outline';
 
 interface ChatViewProps {
   conversation: ConversationWithUser;
@@ -64,6 +64,8 @@ export default function ChatView({ conversation, currentUserId, isMobile = false
 
   const MOBILE_INPUT_HEIGHT = 72; // px, approx after padding
 
+
+
   // Initialize encryption
   useEffect(() => {
     if (ENABLE_E2EE) {
@@ -99,288 +101,179 @@ export default function ChatView({ conversation, currentUserId, isMobile = false
     const fetchPref = async () => {
       try {
         const profile = await getUserProfile(currentUserId);
-        if (profile && profile.encryptionEnabled === false) {
-          setGlobalEncryptionEnabled(false);
-        } else {
-          setGlobalEncryptionEnabled(true);
-        }
-      } catch (e) {
-        console.error('Failed to load encryption preference', e);
-        setGlobalEncryptionEnabled(true);
+        setGlobalEncryptionEnabled(profile?.encryptionEnabled ?? true);
+      } catch (error) {
+        console.error('Error fetching user encryption preference:', error);
       }
     };
+
+    if (currentUserId) {
     fetchPref();
+    }
   }, [currentUserId]);
 
   // Subscribe to messages
   useEffect(() => {
     if (!conversation?.conversation?.id) return;
-    if (!encryptionInitialized) return; // wait until (fake) ready
 
-    const unsubscribe = subscribeToMessages(
-      conversation.conversation.id,
-      async (newMessages) => {
-        const encryptionService = getEncryptionService();
-        const processedMessages: DisplayMessage[] = await Promise.all(
-          newMessages.map(async (message) => {
-            if (ENABLE_E2EE && message.isEncrypted) {
-              if (message.senderId === currentUserId && 'senderEncrypted' in message && (message as any).senderEncrypted) {
-                try {
-                  const decryptedContent = await encryptionService.decryptMessage((message as any).senderEncrypted as string, currentUserId);
-                  return { ...message, decryptedContent: decryptedContent || '🔒 Failed to decrypt' };
-                } catch {
-                  return { ...message, decryptedContent: '🔒 Failed to decrypt' };
-                }
-              }
-              if (message.senderId !== currentUserId) {
-                try {
-                  const decryptedContent = await encryptionService.decryptMessage(message.content, message.senderId);
-                  return { ...message, decryptedContent: decryptedContent || '🔒 Failed to decrypt' };
-                } catch {
-                  return { ...message, decryptedContent: '🔒 Failed to decrypt' };
-                }
-              }
-            }
-            return message;
-          })
-        );
-
-        setMessages(processedMessages);
+    const unsubscribe = subscribeToMessages(conversation.conversation.id, (newMessages) => {
+      setMessages(newMessages);
         setLoading(false);
-        markMessagesAsRead(conversation.conversation.id, currentUserId);
-      }
-    );
+    });
 
     return unsubscribe;
-  }, [conversation?.conversation?.id, currentUserId, encryptionInitialized]);
+  }, [conversation?.conversation?.id]);
 
-  // Smart auto-scroll to bottom when new messages arrive
+  // Mark messages as read when conversation is selected
   useEffect(() => {
-    const shouldAutoScroll = () => {
-      // Always scroll on initial load
-      if (lastMessageCount === 0) {
-        return true;
+    if (!conversation?.conversation?.id || !currentUserId) return;
+    
+    const markAsRead = async () => {
+      try {
+        await markMessagesAsRead(conversation.conversation.id, currentUserId);
+      } catch (error) {
+        console.error('Error marking messages as read:', error);
       }
-      
-      // Don't auto-scroll if user is actively interacting (typing, sending)
-      if (userInteracting) {
-        return false;
-      }
-      
-      // Auto-scroll if it's a new message (message count increased)
-      if (messages.length > lastMessageCount) {
-        const latestMessage = messages[messages.length - 1];
-        // Only auto-scroll for new messages from others or if it's our own message
-        return latestMessage?.senderId !== currentUserId || (latestMessage?.senderId === currentUserId);
-      }
-      
-      return false;
     };
 
-    if (shouldAutoScroll()) {
-      // Use a small delay to ensure DOM is updated
-      setTimeout(() => {
-        scrollToBottom();
-      }, 100);
-    }
-    
-    setLastMessageCount(messages.length);
-  }, [messages, currentUserId, userInteracting, lastMessageCount]);
+    markAsRead();
+  }, [conversation?.conversation?.id, currentUserId]);
 
-  // @mention search effect
-  useEffect(() => {
-    const delayDebounceFn = setTimeout(async () => {
-      if (mentionSearchTerm.length >= 2) {
-        setIsMentionSearching(true);
-        try {
-          const results = await searchUsers(mentionSearchTerm);
-          // Filter out current user and the user they're chatting with
-          const filteredResults = results.filter(user => 
-            user.uid !== currentUserId && user.uid !== conversation.otherUser.uid
-          );
-          setMentionSearchResults(filteredResults);
-        } catch (error) {
-          console.error('Error searching users for mention:', error);
-          setMentionSearchResults([]);
-        } finally {
-          setIsMentionSearching(false);
-        }
+  // Handle input change for @ mentions and article detection
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setNewMessage(value);
+
+    // Check for @ mentions
+    const atIndex = value.lastIndexOf('@');
+    if (atIndex !== -1) {
+      const afterAt = value.substring(atIndex + 1);
+      const spaceIndex = afterAt.indexOf(' ');
+      const searchTerm = spaceIndex === -1 ? afterAt : afterAt.substring(0, spaceIndex);
+      
+      if (searchTerm.length > 0) {
+        setMentionSearchTerm(searchTerm);
+        setShowMentionDropdown(true);
+        handleMentionSearch(searchTerm);
       } else {
-        setMentionSearchResults([]);
+        setShowMentionDropdown(false);
       }
-    }, 300);
+    } else {
+      setShowMentionDropdown(false);
+    }
 
-    return () => clearTimeout(delayDebounceFn);
-  }, [mentionSearchTerm, currentUserId, conversation.otherUser.uid]);
-
-  // Article URL detection and metadata fetching effect
-  useEffect(() => {
-    const detectAndFetchArticleUrl = async () => {
-      const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
-      
-      // Regex patterns for Journalite article URLs
-      const journaliteArticlePattern = new RegExp(`${baseUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}/articles/([^\\s]+)`);
-      const guardianArticlePattern = new RegExp(`${baseUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}/guardian-news/([^\\s]+)`);
-      const newsArticlePattern = new RegExp(`${baseUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}/news/([^\\s]+)`);
-      
-      const journaliteMatch = newMessage.match(journaliteArticlePattern);
-      const guardianMatch = newMessage.match(guardianArticlePattern);
-      const newsMatch = newMessage.match(newsArticlePattern);
-      
-      if (journaliteMatch || guardianMatch || newsMatch) {
-        const detectedUrl = newMessage.trim();
-        setDetectedArticleUrl(detectedUrl);
+    // Check for article URLs (including localhost)
+    const articleRegex = /https?:\/\/[^\s]+/g;
+    const matches = value.match(articleRegex);
+    if (matches && matches.length > 0) {
+      const url = matches[0];
+      // Check if it's a supported article URL
+      if (url.includes('/articles/') || url.includes('/guardian-news/') || url.includes('/news/')) {
+        setDetectedArticleUrl(url);
         setShowArticlePreview(true);
-        setIsLoadingArticle(true);
-        
-        // Fetch article metadata
-        try {
-          const metadata = await fetchArticleMetadata(detectedUrl);
-          setArticleMetadata(metadata);
-        } catch (error) {
-          console.error('Error fetching article metadata:', error);
-          setArticleMetadata(null);
-        } finally {
-          setIsLoadingArticle(false);
-        }
+        handleArticleUrlDetection(url);
       } else {
         setDetectedArticleUrl(null);
         setShowArticlePreview(false);
         setArticleMetadata(null);
-        setIsLoadingArticle(false);
       }
-    };
-
-    if (newMessage.trim()) {
-      detectAndFetchArticleUrl();
     } else {
       setDetectedArticleUrl(null);
       setShowArticlePreview(false);
       setArticleMetadata(null);
-      setIsLoadingArticle(false);
     }
-  }, [newMessage]);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const handleMessageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setNewMessage(value);
-    
-    // Set user interaction when typing
-    setUserInteracting(true);
-    
-    // Reset user interaction after typing stops
-    setTimeout(() => setUserInteracting(false), 2000);
-    
-    // Check for @mention
-    const atIndex = value.lastIndexOf('@');
-    if (atIndex !== -1 && atIndex === value.length - 1) {
-      // Just typed @, show empty dropdown
-      setShowMentionDropdown(true);
-      setMentionSearchTerm('');
-    } else if (atIndex !== -1) {
-      const afterAt = value.substring(atIndex + 1);
-      if (afterAt.length > 0 && !afterAt.includes(' ')) {
-        // There's text after @ and no spaces, search for users
-        setShowMentionDropdown(true);
-        setMentionSearchTerm(afterAt);
-      } else if (afterAt.includes(' ')) {
-        // Space after @mention, hide dropdown
-        setShowMentionDropdown(false);
-        setMentionSearchTerm('');
+  // Handle @ mention search
+  const handleMentionSearch = async (searchTerm: string) => {
+    if (!searchTerm.trim()) {
+      setMentionSearchResults([]);
+      return;
+    }
+
+    setIsMentionSearching(true);
+    try {
+      const results = await searchUsers(searchTerm);
+      // Filter out current user
+      const filteredResults = results.filter(user => user.uid !== currentUserId);
+      setMentionSearchResults(filteredResults);
+    } catch (error) {
+      console.error('Error searching users:', error);
+      setMentionSearchResults([]);
+    } finally {
+      setIsMentionSearching(false);
       }
-    } else {
-      // No @ in message, hide dropdown
-      setShowMentionDropdown(false);
-      setMentionSearchTerm('');
-    }
   };
 
-  const handleUserMentionSelect = async (user: any) => {
+  // Handle user selection from mention dropdown
+  const handleUserSelect = async (user: any) => {
     setSending(true);
     try {
       await sendProfileMessage(
         conversation.conversation.id,
         conversation.otherUser.uid,
-        {
-          uid: user.uid,
-          username: user.username,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          bio: user.bio
-        }
+        user
       );
-      
       setNewMessage('');
       setShowMentionDropdown(false);
-      setMentionSearchTerm('');
-      
-      // Focus input after sending
-      if (inputRef.current) {
-        inputRef.current.focus();
-      }
     } catch (error) {
       console.error('Error sending profile message:', error);
-      alert('Failed to send profile. Please try again.');
     } finally {
       setSending(false);
     }
   };
 
-  const handleShareArticle = async () => {
-    if (!detectedArticleUrl || !articleMetadata) return;
-    
-    setUserInteracting(true);
-    setSending(true);
-    
+  // Handle article URL detection and metadata fetching
+  const handleArticleUrlDetection = async (url: string) => {
+    if (!url.trim()) return;
+
+    setIsLoadingArticle(true);
     try {
-      // Use the pre-fetched metadata
-      const articleData = {
-        slug: articleMetadata.slug,
-        title: articleMetadata.title,
-        excerpt: articleMetadata.excerpt,
-        coverImageUrl: articleMetadata.coverImageUrl,
-        authorName: articleMetadata.authorName,
-        readTime: articleMetadata.readTime,
-        publishedDate: articleMetadata.publishedDate,
-        isExternal: articleMetadata.isExternal,
-        externalUrl: articleMetadata.externalUrl
-      };
-      
+      const metadata = await fetchArticleMetadata(url);
+      setArticleMetadata(metadata);
+    } catch (error) {
+      console.error('Error fetching article metadata:', error);
+      setArticleMetadata(null);
+    } finally {
+      setIsLoadingArticle(false);
+    }
+  };
+
+  // Send article message
+  const handleSendArticle = async () => {
+    if (!articleMetadata || sending) return;
+
+    setSending(true);
+    try {
       await sendArticleMessage(
         conversation.conversation.id,
         conversation.otherUser.uid,
-        articleData
+        articleMetadata
       );
-      
       setNewMessage('');
       setDetectedArticleUrl(null);
       setShowArticlePreview(false);
       setArticleMetadata(null);
-      
-      // Focus input after sending
-      if (inputRef.current) {
-        inputRef.current.focus();
-      }
     } catch (error) {
-      console.error('Error sharing article:', error);
-      alert('Failed to share article. Please try again.');
+      console.error('Error sending article message:', error);
     } finally {
       setSending(false);
-      // Reset user interaction after a delay to allow auto-scroll for the new message
-      setTimeout(() => setUserInteracting(false), 500);
     }
   };
 
+  // Handle message sending
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!newMessage.trim() || sending) return;
+    if (sending) return;
 
-    setUserInteracting(true);
+    // If there's an article preview, send the article instead
+    if (showArticlePreview && articleMetadata) {
+      await handleSendArticle();
+      return;
+    }
+    
+    if (!newMessage.trim()) return;
+
     setSending(true);
     try {
       await sendMessage(
@@ -391,371 +284,433 @@ export default function ChatView({ conversation, currentUserId, isMobile = false
         ENABLE_E2EE && globalEncryptionEnabled
       );
       setNewMessage('');
-      setShowMentionDropdown(false);
-      setMentionSearchTerm('');
-      
-      // Focus input after sending (especially important on mobile)
-      if (inputRef.current) {
-        inputRef.current.focus();
-      }
     } catch (error) {
       console.error('Error sending message:', error);
-      alert('Failed to send message. Please try again.');
     } finally {
       setSending(false);
-      // Reset user interaction after a delay to allow auto-scroll for the new message
-      setTimeout(() => setUserInteracting(false), 500);
     }
   };
 
-  const formatMessageTime = (timestamp: any) => {
+  // Auto-scroll to bottom
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages]);
+
+  const formatTime = (timestamp: any) => {
     if (!timestamp) return '';
     
     try {
       const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
-      const now = new Date();
-      const diffInHours = (now.getTime() - date.getTime()) / (1000 * 60 * 60);
-      
-      if (diffInHours < 24) {
         return date.toLocaleTimeString('en-US', { 
           hour: 'numeric', 
           minute: '2-digit',
           hour12: true 
         });
-      } else {
-        return date.toLocaleDateString('en-US', { 
-          month: 'short', 
-          day: 'numeric',
-          hour: 'numeric',
-          minute: '2-digit',
-          hour12: true
-        });
-      }
     } catch (error) {
-      console.warn('Error formatting timestamp:', error);
-      return 'Just now';
+      return '';
     }
   };
 
-  useEffect(() => {
-    if (isMobile) {
-      document.body.classList.add('mobile-chat-view');
-    }
-    return () => {
-      if (isMobile) {
-        document.body.classList.remove('mobile-chat-view');
+  const formatDate = (timestamp: any) => {
+    if (!timestamp) return '';
+    
+    try {
+      const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+      const today = new Date();
+      const yesterday = new Date(today);
+      yesterday.setDate(yesterday.getDate() - 1);
+      
+      if (date.toDateString() === today.toDateString()) {
+        return 'Today';
+      } else if (date.toDateString() === yesterday.toDateString()) {
+        return 'Yesterday';
+      } else {
+        return date.toLocaleDateString('en-US', { 
+          weekday: 'long',
+          month: 'short', 
+          day: 'numeric' 
+        });
       }
-    };
-  }, [isMobile]);
+    } catch (error) {
+      return '';
+    }
+  };
+
+  // Group messages by date
+  const groupedMessages = messages.reduce((groups: { [key: string]: DisplayMessage[] }, message) => {
+    const date = formatDate(message.timestamp);
+    if (!groups[date]) {
+      groups[date] = [];
+    }
+    groups[date].push(message);
+    return groups;
+  }, {});
 
   if (loading) {
     return (
       <div className="flex-1 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
-          <p className="text-gray-600 text-sm">Loading conversation...</p>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-400 mx-auto mb-4"></div>
+          <p className="text-slate-600">Loading messages...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div 
-      className={clsx(
-        "flex-1 flex flex-col h-full",
-        isMobile && "h-[100svh]" // Use dynamic viewport height for mobile
-      )}
-    >
-      {/* Chat Header - Desktop only, mobile header is handled in MessagesClient */}
-      {!isMobile && (
-        <div className={clsx(
-          "flex items-center justify-between",
-          "p-4 border-b border-gray-200 bg-white/80 backdrop-blur-lg",
-          isMobile && "sticky top-0 z-10"
-        )}>
+    <div className="flex-1 flex flex-col h-full">
+      {/* Chat Header */}
+      <div className="p-4 border-b border-slate-200/50">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-medium text-sm">
+          <div className="w-10 h-10 rounded-full flex items-center justify-center font-semibold text-white text-sm" style={{
+            background: `linear-gradient(135deg, ${getUserGradient(conversation.otherUser.uid, conversation.otherUser.username)})`,
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)'
+          }}>
               {getInitials(conversation.otherUser.firstName, conversation.otherUser.lastName)}
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-gray-900 flex items-center space-x-2">
-                <span>{conversation.otherUser.firstName} {conversation.otherUser.lastName}</span>
-                {encryptionAvailable && otherUserHasEncryption && (
-                  <div className="flex items-center space-x-1">
-                    <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                    </svg>
-                    <span className="text-xs text-green-600 font-medium">Encrypted</span>
-                  </div>
-                )}
+            <h2 className="text-lg font-semibold text-slate-800">
+              {conversation.otherUser.firstName} {conversation.otherUser.lastName}
               </h2>
-              <p className="text-sm text-gray-500">@{conversation.otherUser.username}</p>
-            </div>
+            <p className="text-sm text-slate-600">@{conversation.otherUser.username}</p>
           </div>
         </div>
-      )}
+      </div>
 
       {/* Messages Area */}
-      <div 
-        className="flex-1 overflow-y-auto overflow-x-hidden space-y-3 p-4"
-      >
-        {messages.length === 0 ? (
-          <div className="flex-1 flex items-center justify-center">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-xl mx-auto mb-4">
-                {getInitials(conversation.otherUser.firstName, conversation.otherUser.lastName)}
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        {Object.entries(groupedMessages).map(([date, dateMessages]) => (
+          <div key={date}>
+            {/* Date separator */}
+            <div className="flex items-center justify-center mb-4">
+              <div className="px-3 py-1 rounded-full text-xs font-medium text-slate-600" style={{
+                background: 'rgba(148, 163, 184, 0.2)',
+                backdropFilter: 'blur(10px)'
+              }}>
+                {date}
               </div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
-                {conversation.otherUser.firstName} {conversation.otherUser.lastName}
-              </h3>
-              <p className="text-gray-500 mb-4">@{conversation.otherUser.username}</p>
-              <p className="text-sm text-gray-400">Start the conversation with a message.</p>
             </div>
-          </div>
-        ) : (
-          messages.map((message, index) => {
-            const isOwnMessage = message.senderId === currentUserId;
-            const prevMessage = messages[index - 1];
-            const nextMessage = messages[index + 1];
-            
-            const showTime = index === 0 || 
-              (prevMessage && message.timestamp && prevMessage.timestamp &&
-                Math.abs(message.timestamp.toMillis() - prevMessage.timestamp.toMillis()) > 300000); // 5 minutes
-            
-            // Show avatar only for the OTHER person's messages and only on the LAST message in a group
-            // This means: it's not our message AND (it's the last message OR the next message is from us OR there's a time gap coming up)
-            const showAvatar = !isOwnMessage && (
-              !nextMessage || 
-              nextMessage.senderId !== message.senderId ||
-              (nextMessage && nextMessage.timestamp && message.timestamp &&
-                Math.abs(nextMessage.timestamp.toMillis() - message.timestamp.toMillis()) > 300000)
-            );
 
-            return (
-              <div key={message.id}>
-                {showTime && message.timestamp && (
-                  <div className="text-center text-xs text-gray-400 my-4">
-                    {formatMessageTime(message.timestamp)}
-                  </div>
-                )}
+            {/* Messages for this date */}
+            <div className="space-y-3">
+              {dateMessages.map((message) => {
+            const isOwnMessage = message.senderId === currentUserId;
                 
-                <div className={clsx(
-                  `flex items-end mb-1`,
-                  isOwnMessage ? 'justify-end' : 'justify-start space-x-2'
-                )}>
-                  {/* Show avatar only for other person's messages and only on the last message in a group */}
-                  {showAvatar && (
-                    <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-medium text-xs flex-shrink-0 mb-1">
+                return (
+                  <div
+                    key={message.id}
+                    className={`flex ${isOwnMessage ? 'justify-end' : 'justify-start'} items-end space-x-2`}
+                  >
+                    {/* Avatar for received messages */}
+                    {!isOwnMessage && (
+                      <div className="w-8 h-8 rounded-full flex items-center justify-center font-semibold text-white text-xs" style={{
+                        background: `linear-gradient(135deg, ${getUserGradient(conversation.otherUser.uid, conversation.otherUser.username)})`,
+                        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)'
+                      }}>
                       {getInitials(conversation.otherUser.firstName, conversation.otherUser.lastName)}
                     </div>
                   )}
                   
-                  {/* Invisible spacer for grouped messages from other person */}
-                  {!isOwnMessage && !showAvatar && (
-                    <div className="w-8 h-8 flex-shrink-0"></div>
-                  )}
-                  
-                  {message.type === 'profile' && message.profileAttachment ? (
-                    <ProfileCard 
-                      profile={message.profileAttachment} 
-                      isOwn={isOwnMessage}
-                    />
-                  ) : message.type === 'article' && message.articleAttachment ? (
-                    <div className="max-w-[85vw] sm:max-w-[75%] lg:max-w-md">
-                      <ArticleCard 
-                        article={message.articleAttachment} 
-                        isOwn={isOwnMessage}
-                      />
-                    </div>
-                  ) : (
-                    <div className={clsx(
-                      "max-w-[85%] sm:max-w-[75%] lg:max-w-md px-4 py-2 rounded-[20px]",
-                      isOwnMessage 
-                        ? 'bg-blue-600 text-white' 
-                        : 'bg-gray-100 text-gray-900'
-                    )}>
-                      <div className="flex items-start space-x-2">
-                        <div className="flex-1">
-                          {message.isEncrypted ? (
-                            <p className="text-sm whitespace-pre-wrap break-words">
-                              {message.decryptedContent || (
-                                <span className="text-gray-500 italic">🔒 Decrypting...</span>
-                              )}
+                    {/* Message bubble */}
+                    <div
+                      className={`max-w-xs lg:max-w-md rounded-2xl ${
+                        isOwnMessage ? 'rounded-br-md' : 'rounded-bl-md'
+                      } ${message.type === 'profile' || message.type === 'article' ? 'p-0' : 'px-4 py-2'}`}
+                      style={{
+                        background: isOwnMessage 
+                          ? 'linear-gradient(135deg, #3b82f6, #1d4ed8)'
+                          : 'rgba(255, 255, 255, 0.8)',
+                        backdropFilter: !isOwnMessage ? 'blur(10px)' : 'none',
+                        WebkitBackdropFilter: !isOwnMessage ? 'blur(10px)' : 'none',
+                        border: !isOwnMessage ? '1px solid rgba(0, 0, 0, 0.1)' : 'none',
+                        boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)',
+                        wordWrap: 'break-word',
+                        overflowWrap: 'break-word',
+                        wordBreak: 'break-word',
+                        hyphens: 'auto'
+                      }}
+                    >
+                      {/* Profile Message */}
+                      {message.type === 'profile' && message.profileAttachment && (
+                        <div className="p-4">
+                          <div className="flex items-center space-x-3 mb-3">
+                            <div className="w-10 h-10 rounded-full flex items-center justify-center font-semibold text-white text-sm" style={{
+                              background: isOwnMessage 
+                                ? 'linear-gradient(135deg, #1e40af, #1e3a8a)'
+                                : 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)'
+                            }}>
+                              {getInitials(message.profileAttachment.firstName, message.profileAttachment.lastName)}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <h3 className={`font-semibold ${isOwnMessage ? 'text-white' : 'text-slate-800'}`}>
+                                {message.profileAttachment.firstName} {message.profileAttachment.lastName}
+                              </h3>
+                              <p className={`text-sm ${isOwnMessage ? 'text-white/80' : 'text-slate-600'}`}>
+                                @{message.profileAttachment.username}
+                              </p>
+                            </div>
+                          </div>
+                          
+                          {message.profileAttachment.bio && (
+                            <p className={`text-sm mb-3 ${isOwnMessage ? 'text-white/90' : 'text-slate-700'}`}>
+                              {message.profileAttachment.bio}
                             </p>
-                          ) : (
-                            <p className="text-sm whitespace-pre-wrap break-words">{message.content}</p>
                           )}
+                          
+                          <Link
+                            href={`/user/${encodeURIComponent(message.profileAttachment.username.toLowerCase())}`}
+                            className={`inline-flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                              isOwnMessage 
+                                ? 'bg-white/20 text-white hover:bg-white/30' 
+                                : 'bg-blue-600 text-white hover:bg-blue-700'
+                            }`}
+                          >
+                            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                            View Profile
+                          </Link>
                         </div>
-                      </div>
-                      {!message.read && !isOwnMessage && (
-                        <div className="text-xs text-blue-400 mt-1">New</div>
                       )}
+                      
+                      {/* Article Message */}
+                      {message.type === 'article' && message.articleAttachment && (
+                        <div className="overflow-hidden">
+                          {/* Article Image */}
+                          {message.articleAttachment.coverImageUrl && (
+                            <div className="aspect-video w-full overflow-hidden">
+                              <img 
+                                src={message.articleAttachment.coverImageUrl} 
+                                alt={message.articleAttachment.title}
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  e.currentTarget.style.display = 'none';
+                                }}
+                              />
+                            </div>
+                          )}
+                          
+                          <div className="p-4">
+                            <div className="flex items-start space-x-3 mb-3">
+                              <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                                isOwnMessage ? 'bg-white/20' : 'bg-blue-100'
+                              }`}>
+                                <svg className={`w-5 h-5 ${isOwnMessage ? 'text-white' : 'text-blue-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <h3 className={`font-semibold text-sm leading-tight mb-1 ${isOwnMessage ? 'text-white' : 'text-slate-800'}`}>
+                                  {message.articleAttachment.title}
+                                </h3>
+                                
+                                {message.articleAttachment.excerpt && (
+                                  <p className={`text-xs mb-2 line-clamp-2 ${isOwnMessage ? 'text-white/80' : 'text-slate-600'}`}>
+                                    {message.articleAttachment.excerpt}
+                                  </p>
+                                )}
+                                
+                                <div className={`flex items-center space-x-3 text-xs ${isOwnMessage ? 'text-white/70' : 'text-slate-500'}`}>
+                                  {message.articleAttachment.authorName && (
+                                    <div className="flex items-center">
+                                      <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                      </svg>
+                                      {message.articleAttachment.authorName}
+                                    </div>
+                      )}
+                                  
+                                  {message.articleAttachment.readTime && (
+                                    <div className="flex items-center">
+                                      <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                      </svg>
+                                      {message.articleAttachment.readTime} min read
                     </div>
                   )}
                 </div>
+                              </div>
+                            </div>
+                            
+                            <Link
+                              href={message.articleAttachment.isExternal && message.articleAttachment.externalUrl 
+                                ? message.articleAttachment.externalUrl.includes('theguardian.com')
+                                  ? `/guardian-news/${message.articleAttachment.externalUrl.split('/').slice(3).join('/')}`
+                                  : `/news/${encodeURIComponent(message.articleAttachment.externalUrl)}`
+                                : `/articles/${message.articleAttachment.slug}`
+                              }
+                              className={`inline-flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                                isOwnMessage 
+                                  ? 'bg-white/20 text-white hover:bg-white/30' 
+                                  : 'bg-blue-600 text-white hover:bg-blue-700'
+                              }`}
+                            >
+                              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                              </svg>
+                              Read Article
+                            </Link>
+                          </div>
+                        </div>
+                      )}
+                      
+                      {/* Regular Text Message */}
+                      {message.type === 'text' && (
+                        <>
+                          <p 
+                            className={`text-sm ${isOwnMessage ? 'text-white' : 'text-slate-800'}`}
+                            style={{
+                              wordWrap: 'break-word',
+                              overflowWrap: 'break-word',
+                              wordBreak: 'break-word',
+                              whiteSpace: 'pre-wrap',
+                              hyphens: 'auto'
+                            }}
+                          >
+                            {message.content}
+                          </p>
+                          <p className={`text-xs mt-1 ${isOwnMessage ? 'text-white/70' : 'text-slate-600'}`}>
+                            {formatTime(message.timestamp)}
+                          </p>
+                        </>
+                      )}
+                      
+                      {/* Timestamp for special message types */}
+                      {(message.type === 'profile' || message.type === 'article') && (
+                        <div className="px-3 pb-2">
+                          <p className={`text-xs ${isOwnMessage ? 'text-white/70' : 'text-slate-600'}`}>
+                            {formatTime(message.timestamp)}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Spacer for sent messages */}
+                    {isOwnMessage && <div className="w-8"></div>}
               </div>
             );
-          })
-        )}
+              })}
+            </div>
+          </div>
+        ))}
         <div ref={messagesEndRef} />
       </div>
 
       {/* Message Input */}
-      <div 
-        ref={footerRef}
-        className="p-4 border-t border-gray-200 bg-white"
-      >
-        <div className="relative">
-          {/* @mention dropdown */}
+      <div className="p-4 border-t border-slate-200/50">
+        <form onSubmit={handleSendMessage} className="flex items-center space-x-3">
+          <div className="flex-1 relative">
+            <input
+              ref={inputRef}
+              type="text"
+              value={newMessage}
+              onChange={handleInputChange}
+              placeholder="Type a message... (@ to mention users)"
+              className="w-full px-4 py-3 rounded-2xl text-slate-800 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+              style={{
+                background: 'rgba(255, 255, 255, 0.8)',
+                backdropFilter: 'blur(10px)',
+                WebkitBackdropFilter: 'blur(10px)',
+                border: '1px solid rgba(0, 0, 0, 0.1)'
+              }}
+              disabled={sending}
+            />
+            
+            {/* User Mention Dropdown */}
           {showMentionDropdown && (
             <UserMentionDropdown
               users={mentionSearchResults}
-              onUserSelect={handleUserMentionSelect}
+                onUserSelect={handleUserSelect}
               isLoading={isMentionSearching}
               searchTerm={mentionSearchTerm}
             />
           )}
           
-          {/* Article preview */}
-          {showArticlePreview && detectedArticleUrl && (
-            <div className="mb-3 bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
-              <div className="flex items-center justify-between p-3 border-b border-gray-100">
-                <div className="flex items-center space-x-2">
-                  <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                  <span className="text-sm font-medium text-gray-800">Article Preview</span>
-                </div>
-                <button
-                  onClick={() => {
-                    setShowArticlePreview(false);
-                    setDetectedArticleUrl(null);
-                    setArticleMetadata(null);
-                  }}
-                  className="text-gray-400 hover:text-gray-600"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
-              
+            {/* Article Preview */}
+            {showArticlePreview && (
+              <div className="absolute bottom-full left-0 right-0 mb-2 rounded-2xl" style={{
+                background: 'rgba(255, 255, 255, 0.95)',
+                backdropFilter: 'blur(10px)',
+                WebkitBackdropFilter: 'blur(10px)',
+                border: '1px solid rgba(0, 0, 0, 0.1)',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.15)'
+              }}>
               {isLoadingArticle ? (
-                <div className="p-4 flex items-center space-x-3">
-                  <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-                  <span className="text-sm text-gray-600">Loading article preview...</span>
+                  <div className="p-4 text-center">
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600 mx-auto mb-2"></div>
+                    <p className="text-sm text-slate-600">Loading article preview...</p>
                 </div>
               ) : articleMetadata ? (
-                <div className="p-3">
-                  {/* Article Preview Card */}
-                  <div className="flex space-x-3">
-                    {/* Article Image */}
-                    {articleMetadata.coverImageUrl && (
-                      <div className="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
-                        <img 
-                          src={articleMetadata.coverImageUrl} 
-                          alt={articleMetadata.title}
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            e.currentTarget.style.display = 'none';
-                          }}
-                        />
+                  <div className="p-4">
+                    <div className="flex items-start space-x-3">
+                      <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                        <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
                       </div>
-                    )}
-                    
-                    {/* Article Info */}
                     <div className="flex-1 min-w-0">
-                      <h4 className="text-sm font-semibold text-gray-900 line-clamp-2 mb-1">
+                        <h3 className="font-semibold text-slate-800 text-sm leading-tight mb-1">
                         {articleMetadata.title}
-                      </h4>
+                        </h3>
+                        
                       {articleMetadata.excerpt && (
-                        <p className="text-xs text-gray-600 line-clamp-2 mb-2">
+                          <p className="text-xs text-slate-600 mb-2 line-clamp-2">
                           {articleMetadata.excerpt}
                         </p>
                       )}
-                      <div className="flex items-center space-x-3 text-xs text-gray-500">
+                        
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-3 text-xs text-slate-500">
                         {articleMetadata.authorName && (
                           <span>{articleMetadata.authorName}</span>
                         )}
                         {articleMetadata.readTime && (
                           <span>{articleMetadata.readTime} min read</span>
                         )}
-                        {articleMetadata.isExternal && (
-                          <span className="text-blue-600">External</span>
-                        )}
+                          </div>
+                          
+                          <button
+                            onClick={handleSendArticle}
+                            disabled={sending}
+                            className="px-3 py-1 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+                          >
+                            Share
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
-                  
-                  {/* Action Buttons */}
-                  <div className="flex space-x-2 mt-3 pt-3 border-t border-gray-100">
-                    <button
-                      onClick={handleShareArticle}
-                      disabled={sending || !articleMetadata}
-                      className="flex-1 px-3 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 disabled:opacity-50 flex items-center justify-center space-x-1"
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" />
-                      </svg>
-                      <span>Share Rich Preview</span>
-                    </button>
-                    <button
-                      onClick={() => {
-                        setShowArticlePreview(false);
-                        setDetectedArticleUrl(null);
-                        setArticleMetadata(null);
-                      }}
-                      className="px-3 py-2 bg-gray-100 text-gray-700 text-sm rounded-lg hover:bg-gray-200"
-                    >
-                      Cancel
-                    </button>
+                ) : (
+                  <div className="p-4 text-center">
+                    <p className="text-sm text-slate-500">Unable to load article preview</p>
                   </div>
-                </div>
-              ) : (
-                <div className="p-4 text-center">
-                  <p className="text-sm text-gray-500">Unable to load article preview</p>
-                  <button
-                    onClick={() => {
-                      setShowArticlePreview(false);
-                      setDetectedArticleUrl(null);
-                      setArticleMetadata(null);
-                    }}
-                    className="mt-2 text-xs text-blue-600 hover:text-blue-800"
-                  >
-                    Send as text instead
-                  </button>
+                )}
                 </div>
               )}
             </div>
-          )}
-          
-          <form onSubmit={handleSendMessage} className="flex space-x-2">
-            <input
-              ref={inputRef}
-              type="text"
-              value={newMessage}
-              onChange={handleMessageChange}
-              placeholder={
-                ENABLE_E2EE && globalEncryptionEnabled
-                  ? `🔒 Send encrypted message to ${conversation.otherUser.firstName}... (Type @ to mention someone or paste an article link)`
-                  : `Message ${conversation.otherUser.firstName}... (Type @ to mention someone or paste an article link)`
-              }
-              className="flex-1 px-4 py-3 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
-              disabled={sending}
-            />
             <button
               type="submit"
               disabled={!newMessage.trim() || sending}
-              className="px-5 py-3 bg-blue-600 text-white rounded-full font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-700 transition-colors text-sm"
-            >
-              {sending ? (
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-              ) : (
-                'Send'
-              )}
+            className={`p-3 rounded-full transition-all duration-200 ${
+              newMessage.trim() && !sending
+                ? 'hover:scale-110 shadow-lg'
+                : 'opacity-50 cursor-not-allowed'
+            }`}
+            style={{
+              background: newMessage.trim() && !sending
+                ? 'linear-gradient(135deg, #3b82f6, #1d4ed8)'
+                : 'rgba(148, 163, 184, 0.3)',
+              boxShadow: newMessage.trim() && !sending
+                ? '0 4px 16px rgba(59, 130, 246, 0.4)'
+                : 'none'
+            }}
+          >
+            <PaperAirplaneIcon className={`h-5 w-5 ${newMessage.trim() && !sending ? 'text-white' : 'text-slate-500'}`} />
             </button>
           </form>
-        </div>
       </div>
     </div>
   );

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { getInitials } from '@/utils/avatarUtils';
+import { getInitials, getUserGradient } from '@/utils/avatarUtils';
 
 interface ProfileCardProps {
   profile: {
@@ -22,7 +22,10 @@ export default function ProfileCard({ profile, isOwn = false }: ProfileCardProps
         {/* Profile Header */}
         <div className="p-4 bg-gradient-to-r from-blue-50 to-purple-50 border-b border-gray-100">
           <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+            <div className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg" style={{
+              background: `linear-gradient(135deg, ${getUserGradient(profile.uid, profile.username)})`,
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)'
+            }}>
               {getInitials(profile.firstName, profile.lastName)}
             </div>
             <div className="flex-1 min-w-0">

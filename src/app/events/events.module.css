@@ -1,0 +1,174 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Caveat:wght@700&display=swap');
+
+.pageWrapper {
+  /* --- Color Variables --- */
+  --page-bg: #EAEAEA;
+  --paper-bg: #FFFFFF;
+  --text-primary: #1c1c1e;
+  --text-secondary: #6b6b6b;
+  --accent-color: #007AFF;
+  --shadow-color: rgba(0, 0, 0, 0.12);
+  --paper-texture: url('data:image/svg+xml,%3Csvg width="50" height="50" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noise"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%" height="100%" filter="url(%23noise)" opacity="0.02"/%3E%3C/svg%3E');
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: var(--page-bg);
+  padding: 2rem;
+  transition: background-color 0.3s ease;
+  position: relative;
+}
+
+.darkMode {
+  --page-bg: #121212;
+  --paper-bg: #1E1E1E;
+  --text-primary: #E0E0E0;
+  --text-secondary: #9e9e9e;
+  --accent-color: #0A84FF;
+  --shadow-color: rgba(0, 0, 0, 0.4);
+  --paper-texture: url('data:image/svg+xml,%3Csvg width="50" height="50" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noise"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%" height="100%" filter="url(%23noise)" opacity="0.04"/%3E%3C/svg%3E');
+}
+
+.themeToggleContainer {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+}
+
+.themeToggleButton {
+  background-color: var(--paper-bg);
+  border: 1px solid rgba(128, 128, 128, 0.1);
+  border-radius: 30px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px;
+  position: relative;
+  width: 60px;
+  height: 34px;
+  box-shadow: 0 2px 5px var(--shadow-color);
+}
+
+.toggleIcon {
+  width: 20px;
+  height: 20px;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.sunIcon {
+  color: #f59e0b;
+  opacity: 0;
+}
+
+.moonIcon {
+  color: #8b5cf6;
+  opacity: 1;
+}
+
+.darkMode .sunIcon {
+  opacity: 1;
+}
+
+.darkMode .moonIcon {
+  opacity: 0;
+}
+
+.toggleThumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 28px;
+  height: 28px;
+  background-color: var(--accent-color);
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+}
+
+.darkMode .toggleThumb {
+  transform: translateX(26px);
+}
+
+.letterContainer {
+  width: 100%;
+  max-width: 700px; /* Reduced max-width */
+  background-color: var(--paper-bg);
+  background-image: var(--paper-texture);
+  border-radius: 12px;
+  box-shadow: 0 15px 35px var(--shadow-color);
+  padding: clamp(2rem, 8vw, 4rem);
+  border: 1px solid rgba(128, 128, 128, 0.1);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.letterContent {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: var(--text-primary);
+  transition: color 0.3s ease;
+}
+
+.date {
+  text-align: right;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 3rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.salutation {
+  font-family: 'Caveat', cursive;
+  font-size: 2.6rem;
+  font-weight: 700;
+  color: var(--accent-color);
+  margin-bottom: 2rem;
+  transition: color 0.3s ease;
+}
+
+.paragraph {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 2rem 0;
+}
+
+.listItem {
+  display: block;
+  padding-left: 2rem;
+  margin-bottom: 1rem;
+  position: relative;
+  font-size: 1.05rem;
+}
+
+.listItem::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  color: var(--accent-color);
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+.closing {
+  margin-top: 3rem;
+}
+
+.closing p {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.signature {
+  font-family: 'Caveat', cursive;
+  font-size: 2.2rem;
+  color: var(--accent-color);
+  margin-top: 0.5rem;
+  transition: color 0.3s ease;
+}

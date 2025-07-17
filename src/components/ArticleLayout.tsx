@@ -5,6 +5,7 @@ import ArticleContent from './ArticleContent';
 import LikeButton from './LikeButton';
 import ExternalLikeButton from './ExternalLikeButton';
 import ActiveReaders from './ActiveReaders';
+import { getUserGradient } from '@/utils/avatarUtils';
 import styles from '@/styles/ArticlePage.module.css';
 
 interface ArticleLayoutProps {
@@ -81,7 +82,17 @@ const ArticleLayout: React.FC<ArticleLayoutProps> = ({
           
           <div className={styles.articleMeta}>
             <div className={styles.authorInfo}>
-              <div className={styles.authorAvatar}>{article.authorName.charAt(0)}</div>
+              <div 
+                className={styles.authorAvatar}
+                style={{
+                  background: article.authorId 
+                    ? `linear-gradient(135deg, ${getUserGradient(article.authorId, article.authorName)})` 
+                    : '#1a8917', // fallback to original color if no authorId
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)'
+                }}
+              >
+                {article.authorName.charAt(0)}
+              </div>
               <div className={styles.authorDetails}>
                 <div className={styles.authorName}>{article.authorName}</div>
                 <div className={styles.articleDetails}>

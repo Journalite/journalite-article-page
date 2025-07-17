@@ -1,15 +1,13 @@
 'use client'
 
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, memo } from 'react';
 import { useRouter } from 'next/navigation';
-import { doc, collection, addDoc, query, orderBy, onSnapshot, updateDoc, deleteDoc, where, getDocs } from 'firebase/firestore';
+import { doc, collection, addDoc, query, orderBy, onSnapshot, updateDoc, deleteDoc, where, getDocs, limit, startAfter } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth, db as firestore } from '@/firebase/clientApp';
 import styles from '@/styles/comment.module.css';
 import { HeartIcon, ReplyIcon, DotsVerticalIcon, TrashIcon, EditIcon } from './icons/CustomIcons';
-import { getUserAvatar } from '@/utils/avatarUtils';
-import { getMoodFromText } from '@/utils/getMoodFromText';
-import { moodThemes } from '@/utils/moodThemes';
+import { getUserGradientStyle } from '@/utils/avatarUtils';
 
 interface Comment {
   id: string;
@@ -19,9 +17,9 @@ interface Comment {
   authorEmail: string;
   createdAt: any;
   likes: string[];
-  mood?: string;
-  replies?: Comment[];
   parentId?: string;
+  depth: number;
+  replyCount?: number;
 }
 
 interface CommentSectionProps {
@@ -29,325 +27,117 @@ interface CommentSectionProps {
   className?: string;
 }
 
-const CommentSection: React.FC<CommentSectionProps> = ({ articleId, className = '' }) => {
-  const router = useRouter();
-  
-  // State management
-  const [comments, setComments] = useState<Comment[]>([]);
-  const [newComment, setNewComment] = useState('');
-  const [currentUser, setCurrentUser] = useState<any>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+const COMMENTS_PER_PAGE = 10;
+
+// Memoized Comment Component for better performance
+const CommentItem = memo(({ 
+  comment, 
+  currentUser,
+  isAuthenticated,
+  onLike,
+  onReply,
+  onEdit,
+  onDelete,
+  formatTimestamp,
+  getReplies,
+  expandedReplies,
+  showReplies,
+  onToggleReplies,
+  replyingTo,
+  onCancelReply,
+  onReplySubmit
+}: {
+  comment: Comment;
+  currentUser: any;
+  isAuthenticated: boolean;
+  onLike: (commentId: string, currentLikes: string[]) => void;
+  onReply: (commentId: string) => void;
+  onEdit: (commentId: string, text: string) => void;
+  onDelete: (commentId: string) => void;
+  formatTimestamp: (timestamp: any) => string;
+  getReplies: (commentId: string) => Comment[];
+  expandedReplies: Set<string>;
+  showReplies: boolean;
+  onToggleReplies: (commentId: string) => void;
+  replyingTo: string | null;
+  onCancelReply: () => void;
+  onReplySubmit: (parentId: string, text: string) => Promise<void>;
+}) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editText, setEditText] = useState(comment.text);
+  const [showMenu, setShowMenu] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [replyingTo, setReplyingTo] = useState<string | null>(null);
-  const [replyText, setReplyText] = useState('');
-  const [editingComment, setEditingComment] = useState<string | null>(null);
-  const [editText, setEditText] = useState('');
-  const [expandedMenus, setExpandedMenus] = useState<Set<string>>(new Set());
-  const [focusState, setFocusState] = useState(false);
-  const [windowWidth, setWindowWidth] = useState(0);
 
-  // Mood feature toggle
-  const moodFeatureEnabled = process.env.NODE_ENV === 'development';
+  const replies = getReplies(comment.id);
+  const isOwner = currentUser?.uid === comment.authorId;
+  const isLiked = comment.likes?.includes(currentUser?.uid);
+  const hasReplies = replies.length > 0;
 
-  // Device detection and responsive state
-  const deviceInfo = useMemo(() => {
-    return {
-      isMobile: windowWidth <= 768,
-      isTablet: windowWidth > 768 && windowWidth <= 1024,
-      isSmallPhone: windowWidth <= 480,
-      bottomSafeArea: windowWidth <= 768 ? 120 : 40
-    };
-  }, [windowWidth]);
-
-  // Optimized window resize handler
-  useEffect(() => {
-    const updateWidth = () => setWindowWidth(window.innerWidth);
-    updateWidth();
-
-    let timeoutId: NodeJS.Timeout;
-    const debouncedResize = () => {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(updateWidth, 100);
-    };
-
-    window.addEventListener('resize', debouncedResize);
-    return () => {
-      window.removeEventListener('resize', debouncedResize);
-      clearTimeout(timeoutId);
-    };
-  }, []);
-
-  // Authentication state management
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setCurrentUser(user);
-      setIsAuthenticated(!!user);
-    });
-    return () => unsubscribe();
-  }, []);
-
-  // Real-time comments subscription
-  useEffect(() => {
-    if (!articleId) return;
-
-    const commentsRef = collection(firestore, 'articles', articleId, 'comments');
-    const q = query(commentsRef, orderBy('createdAt', 'desc'));
-
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const fetchedComments: Comment[] = [];
-      snapshot.forEach((doc) => {
-        const data = doc.data();
-        fetchedComments.push({
-          id: doc.id,
-          ...data,
-        } as Comment);
-      });
-      
-      // Organize comments with replies
-      const organizedComments = organizeCommentsWithReplies(fetchedComments);
-      setComments(organizedComments);
-    });
-
-    return () => unsubscribe();
-  }, [articleId]);
-
-  // Organize comments into threads
-  const organizeCommentsWithReplies = useCallback((allComments: Comment[]): Comment[] => {
-    const topLevelComments = allComments.filter(comment => !comment.parentId);
-    const replies = allComments.filter(comment => comment.parentId);
-
-    return topLevelComments.map(comment => ({
-      ...comment,
-      replies: replies.filter(reply => reply.parentId === comment.id)
-        .sort((a, b) => a.createdAt?.toDate() - b.createdAt?.toDate())
-    }));
-  }, []);
-
-  // Get mood for styling
-  const mood = useMemo(() => {
-    if (!moodFeatureEnabled) return 'calm';
-    return getMoodFromText(newComment || replyText || editText);
-  }, [moodFeatureEnabled, newComment, replyText, editText]);
-
-  // Optimized comment submission
-  const handleCommentSubmit = useCallback(async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleEdit = useCallback(async () => {
+    if (!editText.trim() || isSubmitting) return;
     
-    if (!newComment.trim() || !currentUser || isSubmitting) return;
-
     setIsSubmitting(true);
     try {
-      const commentsRef = collection(firestore, 'articles', articleId, 'comments');
-      const commentData: any = {
-        text: newComment.trim(),
-        authorId: currentUser.uid,
-        authorName: currentUser.displayName || 'Anonymous',
-        authorEmail: currentUser.email || '',
-        createdAt: new Date(),
-        likes: [],
-      };
-
-      // Only add mood field if mood feature is enabled
-      if (moodFeatureEnabled) {
-        commentData.mood = mood;
-      }
-
-      await addDoc(commentsRef, commentData);
-
-      setNewComment('');
-      setFocusState(false);
-    } catch (error) {
-      console.error('Error adding comment:', error);
+      await onEdit(comment.id, editText.trim());
+      setIsEditing(false);
     } finally {
       setIsSubmitting(false);
     }
-  }, [newComment, currentUser, isSubmitting, articleId, mood, moodFeatureEnabled]);
+  }, [comment.id, editText, onEdit, isSubmitting]);
 
-  // Reply submission
-  const handleReplySubmit = useCallback(async (parentId: string) => {
-    if (!replyText.trim() || !currentUser || isSubmitting) return;
-
-    setIsSubmitting(true);
-    try {
-      const commentsRef = collection(firestore, 'articles', articleId, 'comments');
-      const replyData: any = {
-        text: replyText.trim(),
-        authorId: currentUser.uid,
-        authorName: currentUser.displayName || 'Anonymous',
-        authorEmail: currentUser.email || '',
-        createdAt: new Date(),
-        likes: [],
-        parentId,
-      };
-
-      // Only add mood field if mood feature is enabled
-      if (moodFeatureEnabled) {
-        replyData.mood = getMoodFromText(replyText);
-      }
-
-      await addDoc(commentsRef, replyData);
-
-      setReplyText('');
-      setReplyingTo(null);
-    } catch (error) {
-      console.error('Error adding reply:', error);
-    } finally {
-      setIsSubmitting(false);
-    }
-  }, [replyText, currentUser, isSubmitting, articleId, moodFeatureEnabled]);
-
-  // Like/unlike functionality
-  const handleLike = useCallback(async (commentId: string, currentLikes: string[]) => {
-    if (!currentUser) return;
-
-    try {
-      const commentRef = doc(firestore, 'articles', articleId, 'comments', commentId);
-      const userLiked = currentLikes.includes(currentUser.uid);
-      
-      const updatedLikes = userLiked
-        ? currentLikes.filter(uid => uid !== currentUser.uid)
-        : [...currentLikes, currentUser.uid];
-
-      await updateDoc(commentRef, { likes: updatedLikes });
-    } catch (error) {
-      console.error('Error updating like:', error);
-    }
-  }, [currentUser, articleId]);
-
-  // Comment editing
-  const handleEditSubmit = useCallback(async (commentId: string) => {
-    if (!editText.trim() || !currentUser || isSubmitting) return;
-
-    setIsSubmitting(true);
-    try {
-      const commentRef = doc(firestore, 'articles', articleId, 'comments', commentId);
-      const updateData: any = {
-        text: editText.trim(),
-        editedAt: new Date()
-      };
-
-      // Only add mood field if mood feature is enabled
-      if (moodFeatureEnabled) {
-        updateData.mood = getMoodFromText(editText);
-      }
-
-      await updateDoc(commentRef, updateData);
-
-      setEditingComment(null);
-      setEditText('');
-    } catch (error) {
-      console.error('Error editing comment:', error);
-    } finally {
-      setIsSubmitting(false);
-    }
-  }, [editText, currentUser, isSubmitting, articleId, moodFeatureEnabled]);
-
-  // Comment deletion
-  const handleDelete = useCallback(async (commentId: string) => {
-    if (!currentUser || isSubmitting) return;
-
+  const handleDelete = useCallback(async () => {
     if (!confirm('Are you sure you want to delete this comment?')) return;
-
     setIsSubmitting(true);
     try {
-      // Delete the comment
-      const commentRef = doc(firestore, 'articles', articleId, 'comments', commentId);
-      await deleteDoc(commentRef);
-
-      // Delete all replies to this comment
-      const repliesQuery = query(
-        collection(firestore, 'articles', articleId, 'comments'),
-        where('parentId', '==', commentId)
-      );
-      const repliesSnapshot = await getDocs(repliesQuery);
-      
-      const deletePromises = repliesSnapshot.docs.map(replyDoc => 
-        deleteDoc(doc(firestore, 'articles', articleId, 'comments', replyDoc.id))
-      );
-      
-      await Promise.all(deletePromises);
-      
-      setExpandedMenus(prev => {
-        const newSet = new Set(prev);
-        newSet.delete(commentId);
-        return newSet;
-      });
-    } catch (error) {
-      console.error('Error deleting comment:', error);
+      await onDelete(comment.id);
     } finally {
       setIsSubmitting(false);
     }
-  }, [currentUser, isSubmitting, articleId]);
+  }, [comment.id, onDelete]);
 
-  // Format timestamp
-  const formatTimestamp = useCallback((timestamp: any) => {
-    if (!timestamp) return 'Just now';
-    
-    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
-    const now = new Date();
-    const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
-    
-    if (diffInMinutes < 1) return 'Just now';
-    if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
-    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h ago`;
-    return `${Math.floor(diffInMinutes / 1440)}d ago`;
-  }, []);
-
-  // Memoized container styles
-  const containerStyles = useMemo(() => ({
-    marginBottom: deviceInfo.isMobile ? 
-      `max(${deviceInfo.bottomSafeArea + 40}px, calc(${deviceInfo.bottomSafeArea}px + env(safe-area-inset-bottom)))` :
-      '2rem',
-    paddingBottom: deviceInfo.isMobile ? '20px' : '0'
-  }), [deviceInfo]);
-
-  // Render individual comment
-  const renderComment = useCallback((comment: Comment, isReply = false) => (
-    <div key={comment.id} className={`${styles.comment} ${isReply ? styles.reply : ''}`}>
+  return (
+    <div className={`${styles.comment} ${styles[`depth${comment.depth}`]}`}>
       <div className={styles.commentHeader}>
         <div className={styles.commentAvatar}>
-          {getUserAvatar(comment.authorName, comment.authorId)}
+          <div 
+            className="w-full h-full rounded-full flex items-center justify-center text-white font-semibold text-sm"
+            style={getUserGradientStyle(comment.authorId, comment.authorName)}
+          >
+            {comment.authorName.charAt(0).toUpperCase()}
+          </div>
         </div>
         <div className={styles.commentMeta}>
           <span className={styles.commentAuthor}>{comment.authorName}</span>
           <span className={styles.commentTime}>{formatTimestamp(comment.createdAt)}</span>
         </div>
-        {currentUser?.uid === comment.authorId && (
-          <div className={styles.commentActions}>
-            <button
-              onClick={() => {
-                const newExpanded = new Set(expandedMenus);
-                if (expandedMenus.has(comment.id)) {
-                  newExpanded.delete(comment.id);
-                } else {
-                  newExpanded.add(comment.id);
-                }
-                setExpandedMenus(newExpanded);
-              }}
+        {isOwner && (
+          <div className={styles.commentMenu}>
+            <button 
+              onClick={() => setShowMenu(!showMenu)}
               className={styles.menuButton}
-              aria-label="Comment options"
             >
-              <DotsVerticalIcon size={16} color="#64748b" />
+              <DotsVerticalIcon size={16} />
             </button>
-            {expandedMenus.has(comment.id) && (
-              <div className={styles.dropdownMenu}>
-                <button
+            {showMenu && (
+              <div className={styles.menuDropdown}>
+                <button 
                   onClick={() => {
-                    setEditingComment(comment.id);
-                    setEditText(comment.text);
-                    setExpandedMenus(new Set());
+                    setIsEditing(true);
+                    setShowMenu(false);
                   }}
                   className={styles.menuItem}
                 >
-                  <EditIcon size={14} color="#3b82f6" />
+                  <EditIcon size={14} />
                   Edit
                 </button>
-                <button
-                  onClick={() => handleDelete(comment.id)}
+                <button 
+                  onClick={() => {
+                    handleDelete();
+                    setShowMenu(false);
+                  }}
                   className={styles.menuItem}
-                  disabled={isSubmitting}
                 >
-                  <TrashIcon size={14} color="#ef4444" />
+                  <TrashIcon size={14} />
                   Delete
                 </button>
               </div>
@@ -355,22 +145,21 @@ const CommentSection: React.FC<CommentSectionProps> = ({ articleId, className = 
           </div>
         )}
       </div>
-
-      {editingComment === comment.id ? (
+      
+      {isEditing ? (
         <div className={styles.editForm}>
           <textarea
             value={editText}
             onChange={(e) => setEditText(e.target.value)}
-            className={`${styles.editInput} mobile-optimized-input`}
-            data-mobile="true"
+            className={styles.editInput}
             rows={3}
             autoFocus
           />
           <div className={styles.editActions}>
             <button
               onClick={() => {
-                setEditingComment(null);
-                setEditText('');
+                setIsEditing(false);
+                setEditText(comment.text);
               }}
               className={styles.cancelButton}
               disabled={isSubmitting}
@@ -378,7 +167,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({ articleId, className = 
               Cancel
             </button>
             <button
-              onClick={() => handleEditSubmit(comment.id)}
+              onClick={handleEdit}
               className={styles.saveButton}
               disabled={!editText.trim() || isSubmitting}
             >
@@ -391,21 +180,16 @@ const CommentSection: React.FC<CommentSectionProps> = ({ articleId, className = 
           <p className={styles.commentText}>{comment.text}</p>
           <div className={styles.commentFooter}>
             <button
-              onClick={() => handleLike(comment.id, comment.likes || [])}
-              className={`${styles.likeButton} ${
-                comment.likes?.includes(currentUser?.uid) ? styles.liked : ''
-              }`}
+              onClick={() => onLike(comment.id, comment.likes || [])}
+              className={`${styles.likeButton} ${isLiked ? styles.liked : ''}`}
               disabled={!isAuthenticated}
             >
-              <HeartIcon
-                size={14}
-                color={comment.likes?.includes(currentUser?.uid) ? '#ef4444' : '#64748b'}
-              />
-              {comment.likes?.length ? comment.likes.length : ''}
+              <HeartIcon size={14} color={isLiked ? '#ef4444' : '#64748b'} />
+              {comment.likes?.length || ''}
             </button>
-            {!isReply && (
+            {comment.depth < 2 && (
               <button
-                onClick={() => setReplyingTo(comment.id)}
+                onClick={() => onReply(comment.id)}
                 className={styles.replyButton}
                 disabled={!isAuthenticated}
               >
@@ -413,69 +197,417 @@ const CommentSection: React.FC<CommentSectionProps> = ({ articleId, className = 
                 Reply
               </button>
             )}
+            
+            {/* YouTube-style Replies Toggle Button */}
+            {hasReplies && (
+              <button
+                onClick={() => onToggleReplies(comment.id)}
+                className={styles.toggleRepliesButton}
+              >
+                <span className={styles.toggleIcon}>
+                  {showReplies ? '▼' : '▶'}
+                </span>
+                {replies.length} {replies.length === 1 ? 'reply' : 'replies'}
+              </button>
+            )}
           </div>
         </>
       )}
-
-      {/* Reply form */}
+      
+      {/* Reply Form - Only show if replying to this comment */}
       {replyingTo === comment.id && (
-        <div className={styles.replyForm}>
-          <div className={styles.replyInputContainer}>
-            <div className={styles.commentAvatar}>
-              {getUserAvatar(currentUser?.displayName || 'User', currentUser?.uid)}
-            </div>
-            <textarea
-              value={replyText}
-              onChange={(e) => setReplyText(e.target.value)}
-              placeholder="Write a reply..."
-              className={`${styles.replyInput} mobile-optimized-input`}
-              data-mobile="true"
-              rows={2}
-              autoFocus
-            />
-          </div>
-          <div className={styles.replyActions}>
-            <button
-              onClick={() => {
-                setReplyingTo(null);
-                setReplyText('');
-              }}
-              className={styles.cancelButton}
-              disabled={isSubmitting}
-            >
-              Cancel
-            </button>
-            <button
-              onClick={() => handleReplySubmit(comment.id)}
-              className={styles.submitButton}
-              disabled={!replyText.trim() || isSubmitting}
-            >
-              {isSubmitting ? 'Replying...' : 'Reply'}
-            </button>
-          </div>
-        </div>
-      )}
+        <ReplyForm
+          parentId={comment.id}
+          currentUser={currentUser}
+          onSubmit={async (parentId: string, text: string) => {
+            // Handle reply submission
+            if (!currentUser) return;
 
-      {/* Render replies */}
-      {comment.replies && comment.replies.length > 0 && (
+                         try {
+               await onReplySubmit(parentId, text);
+               onCancelReply();
+             } catch (error) {
+               console.error('Error adding reply:', error);
+             }
+          }}
+          onCancel={onCancelReply}
+          isSubmitting={isSubmitting}
+          depth={Math.min(comment.depth + 1, 2)}
+        />
+      )}
+      
+      {/* Recursive Replies - Only show when expanded */}
+      {showReplies && hasReplies && (
         <div className={styles.repliesContainer}>
-          {comment.replies.map(reply => renderComment(reply, true))}
+          {replies.map(reply => (
+            <CommentItem
+              key={reply.id}
+              comment={reply}
+              currentUser={currentUser}
+              isAuthenticated={isAuthenticated}
+              onLike={onLike}
+              onReply={onReply}
+              onEdit={onEdit}
+              onDelete={onDelete}
+              formatTimestamp={formatTimestamp}
+              getReplies={getReplies}
+              expandedReplies={expandedReplies}
+              showReplies={expandedReplies.has(reply.id)}
+              onToggleReplies={onToggleReplies}
+              replyingTo={replyingTo}
+              onCancelReply={onCancelReply}
+              onReplySubmit={onReplySubmit}
+            />
+          ))}
         </div>
       )}
     </div>
-  ), [
-    currentUser, expandedMenus, editingComment, editText, replyingTo, replyText,
-    isSubmitting, isAuthenticated, formatTimestamp, handleLike, handleDelete,
-    handleEditSubmit, handleReplySubmit
-  ]);
+  );
+});
+
+// Memoized Reply Form Component
+const ReplyForm = memo(({ 
+  parentId,
+  currentUser,
+  onSubmit,
+  onCancel,
+  isSubmitting,
+  depth
+}: {
+  parentId: string;
+  currentUser: any;
+  onSubmit: (parentId: string, text: string) => Promise<void>;
+  onCancel: () => void;
+  isSubmitting: boolean;
+  depth: number;
+}) => {
+  const [replyText, setReplyText] = useState('');
+
+  const handleSubmit = useCallback(async () => {
+    if (!replyText.trim() || isSubmitting) return;
+    
+    try {
+      await onSubmit(parentId, replyText.trim());
+      setReplyText('');
+    } catch (error) {
+      console.error('Error submitting reply:', error);
+    }
+  }, [parentId, replyText, onSubmit, isSubmitting]);
 
   return (
-    <div 
-      className={`${styles.commentsSection} ${className} comment-section`} 
-      style={containerStyles}
-    >
+    <div className={`${styles.replyForm} ${styles[`depth${depth}`]}`}>
+      <div className={styles.replyInputContainer}>
+        <div className={styles.commentAvatar}>
+          <div 
+            className="w-full h-full rounded-full flex items-center justify-center text-white font-semibold text-sm"
+            style={getUserGradientStyle(currentUser.uid, currentUser.displayName)}
+          >
+            {(currentUser.displayName || 'User').charAt(0).toUpperCase()}
+          </div>
+        </div>
+        <textarea
+          value={replyText}
+          onChange={(e) => setReplyText(e.target.value)}
+          placeholder="Write a reply..."
+          className={styles.replyInput}
+          rows={2}
+          autoFocus
+        />
+      </div>
+      <div className={styles.replyActions}>
+        <button
+          onClick={onCancel}
+          className={styles.cancelButton}
+          disabled={isSubmitting}
+        >
+          Cancel
+        </button>
+        <button
+          onClick={handleSubmit}
+          className={styles.submitButton}
+          disabled={!replyText.trim() || isSubmitting}
+        >
+          {isSubmitting ? 'Replying...' : 'Reply'}
+        </button>
+      </div>
+    </div>
+  );
+});
+
+// Enhanced organizeComments to support nested replies up to depth 2
+const organizeComments = (comments: Comment[]): { mainComments: Comment[], repliesMap: Map<string, Comment[]> } => {
+  // Build a quick lookup map for comments
+  const commentLookup = new Map<string, Comment>();
+  comments.forEach(c => commentLookup.set(c.id, { ...c }));
+
+  // Helper to compute depth recursively (capped at 2)
+  const computeDepth = (comment: Comment): number => {
+    if (!comment.parentId) return 0;
+    const parent = commentLookup.get(comment.parentId);
+    if (!parent) return 0;
+    return Math.min(computeDepth(parent) + 1, 2);
+  };
+
+  // Assign depth to each comment
+  commentLookup.forEach(c => {
+    c.depth = computeDepth(c);
+  });
+
+  const mainComments: Comment[] = [];
+  const repliesMap = new Map<string, Comment[]>();
+
+  commentLookup.forEach(comment => {
+    if (comment.depth === 0) {
+      mainComments.push(comment);
+    } else {
+      const parentId = comment.parentId!;
+      if (!repliesMap.has(parentId)) {
+        repliesMap.set(parentId, []);
+      }
+      repliesMap.get(parentId)!.push(comment);
+    }
+  });
+
+  // Sort main comments by newest first
+  mainComments.sort((a, b) => b.createdAt?.seconds - a.createdAt?.seconds);
+
+  // Sort replies by oldest first
+  repliesMap.forEach(r => r.sort((a, b) => a.createdAt?.seconds - b.createdAt?.seconds));
+
+  return { mainComments, repliesMap };
+};
+
+const CommentSection: React.FC<CommentSectionProps> = ({ articleId, className = '' }) => {
+  const router = useRouter();
+  
+  // State management
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [newComment, setNewComment] = useState('');
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [replyingTo, setReplyingTo] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [hasMore, setHasMore] = useState(true);
+  const [lastDoc, setLastDoc] = useState<any>(null);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [expandedReplies, setExpandedReplies] = useState<Set<string>>(new Set());
+
+  // Authentication state management
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user);
+      setIsAuthenticated(!!user);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  // Load initial comments
+  useEffect(() => {
+    if (!articleId) return;
+
+    const commentsRef = collection(firestore, 'articles', articleId, 'comments');
+    const q = query(
+      commentsRef, 
+      orderBy('createdAt', 'desc'), 
+      limit(COMMENTS_PER_PAGE)
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const fetchedComments: Comment[] = [];
+      snapshot.forEach((doc) => {
+        const data = doc.data();
+        fetchedComments.push({
+          id: doc.id,
+          ...data,
+          depth: 0,
+        } as Comment);
+      });
+      
+      setComments(fetchedComments);
+      setLoading(false);
+      setHasMore(fetchedComments.length === COMMENTS_PER_PAGE);
+      setLastDoc(snapshot.docs[snapshot.docs.length - 1]);
+    });
+
+    return () => unsubscribe();
+  }, [articleId]);
+
+  // Load more comments
+  const loadMoreComments = useCallback(async () => {
+    if (!hasMore || loadingMore || !lastDoc) return;
+    
+    setLoadingMore(true);
+    try {
+      const commentsRef = collection(firestore, 'articles', articleId, 'comments');
+      const q = query(
+        commentsRef, 
+        orderBy('createdAt', 'desc'), 
+        startAfter(lastDoc),
+        limit(COMMENTS_PER_PAGE)
+      );
+
+      const snapshot = await getDocs(q);
+      const newComments: Comment[] = [];
+      
+      snapshot.forEach((doc) => {
+        const data = doc.data();
+        newComments.push({
+          id: doc.id,
+          ...data,
+          depth: 0,
+        } as Comment);
+      });
+
+      if (newComments.length > 0) {
+        setComments(prev => [...prev, ...newComments]);
+        setLastDoc(snapshot.docs[snapshot.docs.length - 1]);
+        setHasMore(newComments.length === COMMENTS_PER_PAGE);
+      } else {
+        setHasMore(false);
+      }
+    } catch (error) {
+      console.error('Error loading more comments:', error);
+    } finally {
+      setLoadingMore(false);
+    }
+  }, [articleId, hasMore, lastDoc, loadingMore]);
+
+  // Submit new comment
+  const handleCommentSubmit = useCallback(async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newComment.trim() || !currentUser || isSubmitting) return;
+
+    setIsSubmitting(true);
+    try {
+      const commentsRef = collection(firestore, 'articles', articleId, 'comments');
+      await addDoc(commentsRef, {
+        text: newComment.trim(),
+        authorId: currentUser.uid,
+        authorName: currentUser.displayName || 'Anonymous',
+        authorEmail: currentUser.email || '',
+        createdAt: new Date(),
+        likes: [],
+        parentId: null,
+      });
+      setNewComment('');
+    } catch (error) {
+      console.error('Error adding comment:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, [articleId, newComment, currentUser, isSubmitting]);
+
+  // Submit reply
+  const handleReplySubmit = useCallback(async (parentId: string, text: string) => {
+    if (!currentUser || isSubmitting) return;
+
+    setIsSubmitting(true);
+    try {
+      const commentsRef = collection(firestore, 'articles', articleId, 'comments');
+      await addDoc(commentsRef, {
+        text,
+        authorId: currentUser.uid,
+        authorName: currentUser.displayName || 'Anonymous',
+        authorEmail: currentUser.email || '',
+        createdAt: new Date(),
+        likes: [],
+        parentId,
+      });
+      setReplyingTo(null);
+    } catch (error) {
+      console.error('Error adding reply:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, [articleId, currentUser, isSubmitting]);
+
+  // Handle like/unlike
+  const handleLike = useCallback(async (commentId: string, currentLikes: string[]) => {
+    if (!currentUser) return;
+
+    try {
+      const commentRef = doc(firestore, 'articles', articleId, 'comments', commentId);
+      const userLiked = currentLikes.includes(currentUser.uid);
+      
+      const updatedLikes = userLiked 
+        ? currentLikes.filter(uid => uid !== currentUser.uid)
+        : [...currentLikes, currentUser.uid];
+
+      await updateDoc(commentRef, { likes: updatedLikes });
+    } catch (error) {
+      console.error('Error updating like:', error);
+    }
+  }, [articleId, currentUser]);
+
+  // Handle edit comment
+  const handleEditComment = useCallback(async (commentId: string, newText: string) => {
+    try {
+      const commentRef = doc(firestore, 'articles', articleId, 'comments', commentId);
+      await updateDoc(commentRef, { text: newText });
+    } catch (error) {
+      console.error('Error editing comment:', error);
+    }
+  }, [articleId]);
+
+  // Handle delete comment
+  const handleDeleteComment = useCallback(async (commentId: string) => {
+    try {
+      const commentRef = doc(firestore, 'articles', articleId, 'comments', commentId);
+      await deleteDoc(commentRef);
+    } catch (error) {
+      console.error('Error deleting comment:', error);
+    }
+  }, [articleId]);
+
+  // Toggle replies visibility
+  const handleToggleReplies = useCallback((commentId: string) => {
+    setExpandedReplies(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(commentId)) {
+        newSet.delete(commentId);
+      } else {
+        newSet.add(commentId);
+      }
+      return newSet;
+    });
+  }, []);
+
+  // Format timestamp
+  const formatTimestamp = useCallback((timestamp: any) => {
+    if (!timestamp) return 'Just now';
+    
+    const now = new Date();
+    const commentDate = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+    const diffMs = now.getTime() - commentDate.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMins / 60);
+    const diffDays = Math.floor(diffHours / 24);
+
+    if (diffMins < 1) return 'Just now';
+    if (diffMins < 60) return `${diffMins}m ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    if (diffDays < 7) return `${diffDays}d ago`;
+    
+    return commentDate.toLocaleDateString();
+  }, []);
+
+  // Organize comments for display
+  const { mainComments, repliesMap } = useMemo(() => organizeComments(comments), [comments]);
+
+  // Helper to fetch replies for a given comment id
+  const getReplies = useCallback((commentId: string) => {
+    return repliesMap.get(commentId) || [];
+  }, [repliesMap]);
+
+  if (loading) {
+    return <div className={styles.commentsSection}>Loading comments...</div>;
+  }
+
+  return (
+    <div className={`${styles.commentsSection} ${className}`}>
       <h3 className={styles.commentsTitle}>
-        Comments ({comments.length})
+        Comments ({mainComments.length})
       </h3>
 
       {/* Comment Form */}
@@ -483,34 +615,20 @@ const CommentSection: React.FC<CommentSectionProps> = ({ articleId, className = 
         {isAuthenticated ? (
           <div className={styles.commentInputContainer}>
             <div className={styles.commentAvatar}>
-              {getUserAvatar(currentUser.displayName || currentUser.name, currentUser.uid || currentUser.id)}
+              <div 
+                className="w-full h-full rounded-full flex items-center justify-center text-white font-semibold text-sm"
+                style={getUserGradientStyle(currentUser.uid, currentUser.displayName)}
+              >
+                {(currentUser.displayName || 'User').charAt(0).toUpperCase()}
+              </div>
             </div>
             <textarea
               className={styles.commentInput}
               placeholder="Share your thoughts..."
               value={newComment}
               onChange={e => setNewComment(e.target.value)}
-              onFocus={() => setFocusState(true)}
-              onBlur={() => setFocusState(false)}
-              rows={4}
+              rows={3}
             />
-            <div className={styles.commentActions}>
-              <button
-                type="button"
-                onClick={() => setNewComment('')}
-                className={styles.cancelButton}
-                disabled={isSubmitting}
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className={styles.submitButton}
-                disabled={!newComment.trim() || isSubmitting}
-              >
-                <span>{isSubmitting ? 'Posting...' : 'Post Comment'}</span>
-              </button>
-            </div>
           </div>
         ) : (
           <div className={styles.loginPromptContainer}>
@@ -525,21 +643,75 @@ const CommentSection: React.FC<CommentSectionProps> = ({ articleId, className = 
             </button>
           </div>
         )}
+        
+        {isAuthenticated && (
+          <div className={styles.commentActions}>
+            <button
+              type="button"
+              onClick={() => setNewComment('')}
+              className={styles.cancelButton}
+              disabled={isSubmitting}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className={styles.submitButton}
+              disabled={!newComment.trim() || isSubmitting}
+            >
+              {isSubmitting ? 'Posting...' : 'Post Comment'}
+            </button>
+          </div>
+        )}
       </form>
 
-      {/* Comments List */}
+      {/* Comments List - YouTube Style */}
       <div className={styles.commentsList}>
-        {comments.length === 0 ? (
+        {mainComments.length === 0 ? (
           <div className={styles.noComments}>
             <h4>No comments yet</h4>
             <p>Be the first to share your thoughts!</p>
           </div>
         ) : (
-          comments.map(comment => renderComment(comment))
+          <>
+            {mainComments.map(comment => (
+              <CommentItem
+                key={comment.id}
+                comment={comment}
+                currentUser={currentUser}
+                isAuthenticated={isAuthenticated}
+                onLike={handleLike}
+                onReply={setReplyingTo}
+                onEdit={handleEditComment}
+                onDelete={handleDeleteComment}
+                formatTimestamp={formatTimestamp}
+                getReplies={getReplies}
+                expandedReplies={expandedReplies}
+                showReplies={expandedReplies.has(comment.id)}
+                onToggleReplies={handleToggleReplies}
+                replyingTo={replyingTo}
+                onCancelReply={() => setReplyingTo(null)}
+                onReplySubmit={handleReplySubmit}
+              />
+            ))}
+            
+            {/* Load More Button */}
+            {hasMore && (
+              <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+                <button
+                  onClick={loadMoreComments}
+                  disabled={loadingMore}
+                  className={styles.submitButton}
+                >
+                  {loadingMore ? 'Loading...' : 'Load More Comments'}
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
   );
 };
 
-export default React.memo(CommentSection); 
+export default memo(CommentSection); 

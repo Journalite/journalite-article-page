@@ -6,7 +6,6 @@ export async function GET() {
         const stats = guardianCache.getStats();
 
         // Simple stats from the cache
-        const totalKeys = stats.totalSize;
         const activeItems = stats.activeItems;
 
         return NextResponse.json({

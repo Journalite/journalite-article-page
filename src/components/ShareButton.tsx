@@ -143,15 +143,32 @@ export default function ShareButton({
       return (
         <button
           onClick={handleCopyLink}
-          className={`w-9 h-9 bg-white/90 backdrop-blur-sm border border-white/40 rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 hover:bg-white hover:scale-110 hover:shadow-lg ${className}`}
+          className={`flex items-center gap-1 px-3 py-2 border-radius-24 bg-transparent border border-gray-300 text-gray-700 font-medium cursor-pointer transition-all duration-200 hover:bg-gray-50 ${className}`}
           disabled={copied}
           title={copied ? "Copied!" : "Copy Link"}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            padding: '8px 12px',
+            borderRadius: '24px',
+            backgroundColor: 'transparent',
+            border: '1px solid #ccc',
+            color: '#292929',
+            fontSize: '16px',
+            fontWeight: '500',
+            cursor: 'pointer',
+            transition: 'all 0.2s ease'
+          }}
+          onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.05)'}
+          onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
         >
           {copied ? (
             <CheckIcon className="w-4 h-4 text-green-600" />
           ) : (
             <LinkIcon className="w-4 h-4 text-gray-600" />
           )}
+          {copied ? 'Copied!' : 'Copy'}
         </button>
       );
     }
@@ -159,10 +176,26 @@ export default function ShareButton({
     return (
       <button
         onClick={handleShare}
-        className={`w-9 h-9 bg-white/90 backdrop-blur-sm border border-white/40 rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 hover:bg-white hover:scale-110 hover:shadow-lg ${className}`}
+        className={`flex items-center gap-1 px-3 py-2 border-radius-24 bg-transparent border border-gray-300 text-gray-700 font-medium cursor-pointer transition-all duration-200 hover:bg-gray-50 ${className}`}
         title="Share article"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '6px',
+          padding: '8px 12px',
+          borderRadius: '24px',
+          backgroundColor: 'transparent',
+          border: '1px solid #ccc',
+          color: '#292929',
+          fontSize: '16px',
+          fontWeight: '500',
+          cursor: 'pointer',
+          transition: 'all 0.2s ease'
+        }}
+        onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.05)'}
+        onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
       >
-        <ShareIcon className="w-4 h-4 text-gray-600" />
+        <ShareIcon className="w-4 h-4" />
       </button>
     );
   }

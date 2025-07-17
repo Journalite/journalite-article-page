@@ -2,6 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { guardianCache } from '@/lib/cache';
 import { getUserCachePreferenceByEmail } from '@/services/userService';
 
+interface GuardianElement {
+    type: 'image' | 'video' | 'audio' | 'embed' | 'rich-link' | 'comment' | 'interactive';
+    [key: string]: any;
+}
+
 interface GuardianArticle {
     id: string;
     webTitle: string;
@@ -19,7 +24,7 @@ interface GuardianArticle {
         liveBloggingNow?: boolean;
         isLive?: boolean;
     };
-    elements?: Array<any>;
+    elements?: GuardianElement[];
     tags: Array<{
         id: string;
         type: string;

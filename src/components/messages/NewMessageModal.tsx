@@ -5,7 +5,7 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '@/firebase/clientApp';
 import { searchUsers, UserProfile } from '@/services/userService';
 import { getOrCreateConversation, ConversationWithUser } from '@/services/messagesService';
-import { getInitials } from '@/utils/avatarUtils';
+import { getInitials, getUserGradient } from '@/utils/avatarUtils';
 
 interface NewMessageModalProps {
   onClose: () => void;
@@ -141,7 +141,10 @@ export default function NewMessageModal({ onClose, onConversationCreated }: NewM
                     className="w-full text-left p-3 hover:bg-gray-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-medium text-sm">
+                      <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-medium text-sm" style={{
+                        background: `linear-gradient(135deg, ${getUserGradient(result.uid, result.username)})`,
+                        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)'
+                      }}>
                         {getInitials(result.firstName, result.lastName)}
                       </div>
                       <div className="flex-1 min-w-0">

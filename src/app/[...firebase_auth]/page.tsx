@@ -1,33 +1,9 @@
-import { Metadata, Viewport } from 'next'
-import { Suspense } from 'react'
+'use client';
 
-export const metadata: Metadata = {
-  title: 'Firebase Auth | Journalite',
-  description: 'Firebase authentication redirect handler',
-}
+import { Suspense } from 'react';
+import Link from 'next/link';
 
-export const viewport: Viewport = {
-  width: 'device-width',
-  initialScale: 1,
-}
-
-// This generates static paths for pre-rendering
-export async function generateStaticParams() {
-  // Only handle specific Firebase auth-related paths
-  return [
-    { firebase_auth: ['auth'] },
-    { firebase_auth: ['verify'] },
-    { firebase_auth: ['action'] },
-    { firebase_auth: ['signin'] },
-    { firebase_auth: ['signout'] },
-    { firebase_auth: ['reset'] },
-  ]
-}
-
-function AuthHandler({ params }: { params: Promise<{ firebase_auth: string[] }> }) {
-  // Note: Since this is a client component function, we need to handle this differently
-  // For now, we'll return a generic loading state and handle auth on the client side
-  
+function AuthHandler() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-stone-100 to-amber-100">
       <div className="text-center p-8">
@@ -37,26 +13,23 @@ function AuthHandler({ params }: { params: Promise<{ firebase_auth: string[] }> 
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-stone-600 mx-auto"></div>
         </div>
         <div className="mt-6">
-          <a 
-            href="/" 
-            className="text-blue-600 hover:text-blue-800 underline"
-          >
-            Return to homepage
-          </a>
+          <Link href="/">
+            <a className="text-blue-600 hover:text-blue-800 underline">Return to homepage</a>
+          </Link>
         </div>
       </div>
     </div>
   );
 }
 
-export default function FirebaseAuthPage({ params }: { params: Promise<{ firebase_auth: string[] }> }) {
+export default function FirebaseAuthPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-stone-600"></div>
       </div>
     }>
-      <AuthHandler params={params} />
+      <AuthHandler />
     </Suspense>
   );
 } 

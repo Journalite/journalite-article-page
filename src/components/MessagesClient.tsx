@@ -12,7 +12,7 @@ import ConversationsList from './messages/ConversationsList';
 import ChatView from './messages/ChatView';
 import NewMessageModal from './messages/NewMessageModal';
 import EncryptionSetup from './EncryptionSetup';
-import { PlusIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
+import { PlusIcon, ArrowLeftIcon, ChatBubbleLeftRightIcon } from '@heroicons/react/24/outline';
 import { getEncryptionService } from '@/services/encryptionService';
 import { ENABLE_E2EE } from '@/config';
 
@@ -138,42 +138,61 @@ export default function MessagesClient() {
 
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-600">Please log in to view messages.</p>
+      <div className="min-h-screen flex items-center justify-center" style={{
+        background: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #f8fafc 100%)'
+      }}>
+        <div className="text-center text-slate-700">
+          <ChatBubbleLeftRightIcon className="h-16 w-16 mx-auto mb-4 opacity-60" />
+          <p className="text-lg font-medium">Please log in to view messages</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="h-screen flex bg-white">
+    <div className="min-h-screen" style={{
+      background: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #f8fafc 100%)'
+    }}>
+      {/* Background decoration */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl"></div>
+      </div>
+
+      <div className="relative z-10 h-screen flex">
       {/* Mobile Header */}
       {isMobile && (
-        <div className="absolute top-0 left-0 right-0 z-10 bg-white border-b border-gray-200 px-4 py-3">
+                     <div className="absolute top-0 left-0 right-0 z-20 px-4 py-3" style={{
+             background: 'rgba(255, 255, 255, 0.8)',
+             backdropFilter: 'blur(20px)',
+             WebkitBackdropFilter: 'blur(20px)',
+             borderBottom: '1px solid rgba(0, 0, 0, 0.1)'
+           }}>
           <div className="flex items-center justify-between">
             {selectedConversation ? (
               <>
                 <button
                   onClick={handleBackToList}
-                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                     className="p-2 hover:bg-slate-200/50 rounded-full transition-all duration-200"
                 >
-                  <ArrowLeftIcon className="h-6 w-6 text-gray-700" />
+                     <ArrowLeftIcon className="h-6 w-6 text-slate-700" />
                 </button>
                 <div className="flex-1 text-center">
-                  <h1 className="text-lg font-semibold text-gray-900">
+                     <h1 className="text-lg font-semibold text-slate-800">
                     {selectedConversation.otherUser.firstName} {selectedConversation.otherUser.lastName}
                   </h1>
-                  <p className="text-sm text-gray-500">@{selectedConversation.otherUser.username}</p>
+                     <p className="text-sm text-slate-600">@{selectedConversation.otherUser.username}</p>
                 </div>
                 <div className="w-10"></div>
               </>
             ) : (
               <>
-                <h1 className="text-xl font-semibold text-gray-900">Messages</h1>
+                   <h1 className="text-xl font-bold text-slate-800">Messages</h1>
                 <button
                   onClick={() => setShowNewMessage(true)}
-                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                     className="p-2 hover:bg-slate-200/50 rounded-full transition-all duration-200"
                 >
-                  <PlusIcon className="h-6 w-6 text-blue-600" />
+                     <PlusIcon className="h-6 w-6 text-slate-700" />
                 </button>
               </>
             )}
@@ -185,70 +204,105 @@ export default function MessagesClient() {
       {!isMobile ? (
         <>
           {/* Conversations Sidebar */}
-          <div className="w-80 border-r border-gray-200 flex flex-col">
+                         <div className="w-80 flex flex-col">
+               <div className="m-4 rounded-3xl overflow-hidden" style={{
+                 background: 'rgba(255, 255, 255, 0.7)',
+                 backdropFilter: 'blur(20px)',
+                 WebkitBackdropFilter: 'blur(20px)',
+                 border: '1px solid rgba(0, 0, 0, 0.1)',
+                 boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+               }}>
             {/* Header */}
-            <div className="p-4 border-b border-gray-200">
-              <div className="flex items-center justify-between mb-2">
-                <h1 className="text-xl font-semibold text-gray-900">Messages</h1>
+                 <div className="p-6 border-b border-slate-200/50">
+                   <div className="flex items-center justify-between mb-3">
+                     <h1 className="text-2xl font-bold text-slate-800">Messages</h1>
                 <button
                   onClick={() => setShowNewMessage(true)}
-                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                       className="p-2 hover:bg-slate-200/50 rounded-full transition-all duration-200 group"
                   title="New message"
                 >
-                  <PlusIcon className="h-5 w-5 text-blue-600" />
+                       <PlusIcon className="h-6 w-6 text-slate-700 group-hover:scale-110 transition-transform" />
                 </button>
               </div>
               {totalUnreadCount > 0 && (
-                <p className="text-sm text-blue-600 font-medium">
+                     <div className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium" style={{
+                       background: 'rgba(59, 130, 246, 0.15)',
+                       color: '#2563eb',
+                       border: '1px solid rgba(59, 130, 246, 0.3)'
+                     }}>
                   {totalUnreadCount} unread message{totalUnreadCount !== 1 ? 's' : ''}
-                </p>
+                     </div>
               )}
             </div>
 
             {/* Conversations List */}
-            <div className="flex-1 overflow-y-auto">
+                <div className="flex-1 overflow-y-auto max-h-[calc(100vh-200px)]">
               <ConversationsList
                 conversations={conversations}
                 selectedConversation={selectedConversation}
                 onConversationSelect={handleConversationSelect}
                 loading={loading}
               />
+                </div>
             </div>
           </div>
 
           {/* Chat Area */}
-          <div className="flex-1 flex flex-col">
+                         <div className="flex-1 flex flex-col p-4 pl-0">
+               <div className="flex-1 rounded-3xl overflow-hidden" style={{
+                 background: 'rgba(255, 255, 255, 0.7)',
+                 backdropFilter: 'blur(20px)',
+                 WebkitBackdropFilter: 'blur(20px)',
+                 border: '1px solid rgba(0, 0, 0, 0.1)',
+                 boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+               }}>
             {selectedConversation ? (
               <ChatView 
                 conversation={selectedConversation}
                 currentUserId={user.uid}
               />
             ) : (
-              <div className="flex-1 flex items-center justify-center bg-gray-50">
+                   <div className="flex-1 flex items-center justify-center">
                 <div className="text-center">
-                  <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg className="w-8 h-8 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                    </svg>
+                       <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6" style={{
+                         background: 'rgba(59, 130, 246, 0.1)',
+                         backdropFilter: 'blur(10px)'
+                       }}>
+                         <ChatBubbleLeftRightIcon className="w-10 h-10 text-slate-500" />
                   </div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">Select a conversation</h3>
-                  <p className="text-gray-500">Choose from your existing conversations or start a new one.</p>
+                       <h3 className="text-xl font-semibold text-slate-800 mb-3">Select a conversation</h3>
+                       <p className="text-slate-600 max-w-md">Choose from your existing conversations or start a new one to begin messaging.</p>
                 </div>
               </div>
             )}
+               </div>
           </div>
         </>
       ) : (
         /* Mobile Layout */
         <div className="flex-1 flex flex-col pt-16">
           {selectedConversation ? (
+               <div className="flex-1 m-4 mt-2 rounded-3xl overflow-hidden" style={{
+                 background: 'rgba(255, 255, 255, 0.7)',
+                 backdropFilter: 'blur(20px)',
+                 WebkitBackdropFilter: 'blur(20px)',
+                 border: '1px solid rgba(0, 0, 0, 0.1)',
+                 boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+               }}>
             <ChatView 
               conversation={selectedConversation}
               currentUserId={user.uid}
               isMobile={true}
             />
+               </div>
           ) : (
-            <div className="flex-1 overflow-y-auto">
+               <div className="flex-1 m-4 mt-2 rounded-3xl overflow-hidden" style={{
+                 background: 'rgba(255, 255, 255, 0.7)',
+                 backdropFilter: 'blur(20px)',
+                 WebkitBackdropFilter: 'blur(20px)',
+                 border: '1px solid rgba(0, 0, 0, 0.1)',
+                 boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+               }}>
               <ConversationsList
                 conversations={conversations}
                 selectedConversation={selectedConversation}
@@ -271,7 +325,7 @@ export default function MessagesClient() {
 
       {/* Encryption Setup Modal */}
       {showEncryptionSetup && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 backdrop-blur-sm">
           <div className="max-w-md w-full mx-4">
             <EncryptionSetup
               onComplete={handleEncryptionSetupComplete}
@@ -280,6 +334,7 @@ export default function MessagesClient() {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 } 

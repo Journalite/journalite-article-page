@@ -346,6 +346,14 @@
   border-color: rgba(229, 57, 53, 0.3);
 }
 
+/* Share button */
+.shareButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
 .likeIcon {
   width: 18px;
   height: 18px;

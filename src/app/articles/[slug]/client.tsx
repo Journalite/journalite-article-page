@@ -16,11 +16,13 @@ import ArticleComposer from '@/components/ArticleComposer'
 import LikeButton from '@/components/LikeButton'
 import ActiveReaders from '@/components/ActiveReaders'
 import { ReflectionRoom } from '@/components/ReflectionRoom'
+import ShareButton from '@/components/ShareButton'
 
 // Import Firestore article service
 import { getArticleBySlug } from '@/firebase/articles'
 import { getMoodFromText } from '@/utils/getMoodFromText'
 import { moodThemes } from '@/utils/moodThemes'
+import { getUserGradient } from '@/utils/avatarUtils'
 
 interface ArticleSlugClientProps {
   slug: string;
@@ -540,7 +542,17 @@ export default function ArticleSlugClient({ slug }: ArticleSlugClientProps) {
             
             <div className={articleStyles.articleMeta}>
               <div className={articleStyles.authorInfo}>
-                <div className={articleStyles.authorAvatar}>{article.authorName.charAt(0)}</div>
+                <div 
+                  className={articleStyles.authorAvatar}
+                  style={{
+                    background: article.authorId 
+                      ? `linear-gradient(135deg, ${getUserGradient(article.authorId, article.authorName)})` 
+                      : '#1a8917', // fallback to original color if no authorId
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)'
+                  }}
+                >
+                  {article.authorName.charAt(0)}
+                </div>
                 <div className={articleStyles.authorDetails}>
                   <Link 
                     href={`/user/${article.authorName.toLowerCase().replace(/\s+/g, '')}`} 
@@ -560,6 +572,22 @@ export default function ArticleSlugClient({ slug }: ArticleSlugClientProps) {
                   initialLikes={likes}
                   className={`${articleStyles.likeButton}`}
                   styles={articleStyles}
+                />
+                
+                <ShareButton
+                  title={article.title}
+                  url={typeof window !== 'undefined' ? window.location.href : ''}
+                  text={`Check out "${article.title}" by ${article.authorName}`}
+                  className={articleStyles.shareButton}
+                  iconOnly={true}
+                  articleData={{
+                    slug: article.slug,
+                    id: article.id,
+                    excerpt: articleHtml?.replace(/<[^>]*>/g, '').substring(0, 200) + '...',
+                    authorName: article.authorName,
+                    createdAt: article.createdAt,
+                    isExternal: false
+                  }}
                 />
                 
                 {isAuthenticated && article.authorId === currentUser?.uid && (

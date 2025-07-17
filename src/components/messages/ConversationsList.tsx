@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { ConversationWithUser } from '@/services/messagesService';
-import { getInitials } from '@/utils/avatarUtils';
+import { getInitials, getUserGradient } from '@/utils/avatarUtils';
 
 interface ConversationsListProps {
   conversations: ConversationWithUser[];
@@ -54,14 +54,23 @@ export default function ConversationsList({
 
   if (loading) {
     return (
-      <div className="p-4">
+      <div className="p-4 space-y-3">
         {/* Loading skeleton */}
         {[...Array(5)].map((_, i) => (
-          <div key={i} className="flex items-center space-x-3 p-3 mb-2">
-            <div className="w-12 h-12 bg-gray-200 rounded-full animate-pulse"></div>
-            <div className="flex-1">
-              <div className="h-4 bg-gray-200 rounded w-3/4 mb-2 animate-pulse"></div>
-              <div className="h-3 bg-gray-200 rounded w-1/2 animate-pulse"></div>
+          <div key={i} className="flex items-center space-x-4 p-4 rounded-2xl" style={{
+            background: 'rgba(255, 255, 255, 0.5)',
+            backdropFilter: 'blur(10px)'
+          }}>
+            <div className="w-12 h-12 rounded-full animate-pulse" style={{
+              background: 'rgba(148, 163, 184, 0.3)'
+            }}></div>
+            <div className="flex-1 space-y-2">
+              <div className="h-4 rounded w-3/4 animate-pulse" style={{
+                background: 'rgba(148, 163, 184, 0.3)'
+              }}></div>
+              <div className="h-3 rounded w-1/2 animate-pulse" style={{
+                background: 'rgba(148, 163, 184, 0.2)'
+              }}></div>
             </div>
           </div>
         ))}
@@ -73,71 +82,89 @@ export default function ConversationsList({
     return (
       <div className="flex-1 flex items-center justify-center p-8">
         <div className="text-center">
-          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{
+            background: 'rgba(59, 130, 246, 0.1)',
+            backdropFilter: 'blur(10px)'
+          }}>
+            <svg className="w-8 h-8 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
             </svg>
           </div>
-          <h3 className="text-sm font-medium text-gray-900 mb-1">No conversations yet</h3>
-          <p className="text-xs text-gray-500">Start a new conversation to get messaging.</p>
+          <h3 className="text-lg font-semibold text-slate-800 mb-2">No conversations</h3>
+          <p className="text-slate-600 text-sm">Start a new conversation to begin messaging.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className={`${isMobile ? 'px-0' : 'p-0'}`}>
+    <div className="p-4 space-y-2">
       {conversations.map((item) => {
         const isSelected = selectedConversation?.conversation.id === item.conversation.id;
+        const hasUnreadMessages = item.unreadCount > 0;
         const lastMessage = item.conversation.lastMessage;
         
         return (
           <button
             key={item.conversation.id}
             onClick={() => onConversationSelect(item)}
-            className={`w-full text-left p-4 border-b border-gray-100 hover:bg-gray-50 transition-colors ${
-              isSelected ? 'bg-blue-50 border-blue-200' : ''
+            className={`w-full text-left p-4 rounded-2xl transition-all duration-200 hover:scale-[1.02] ${
+              isSelected ? 'shadow-lg transform scale-[1.02]' : ''
             }`}
+            style={{
+              background: isSelected 
+                ? 'rgba(59, 130, 246, 0.15)' 
+                : 'rgba(255, 255, 255, 0.5)',
+              backdropFilter: 'blur(10px)',
+              WebkitBackdropFilter: 'blur(10px)',
+              border: `1px solid ${isSelected ? 'rgba(59, 130, 246, 0.3)' : 'rgba(0, 0, 0, 0.1)'}`,
+              boxShadow: isSelected ? '0 8px 32px rgba(59, 130, 246, 0.2)' : '0 4px 16px rgba(0, 0, 0, 0.1)'
+            }}
           >
             <div className="flex items-center space-x-3">
               {/* Avatar */}
-              <div className="flex-shrink-0">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-medium text-sm">
+              <div className="relative">
+                <div className="w-12 h-12 rounded-full flex items-center justify-center font-semibold text-white" style={{
+                  background: `linear-gradient(135deg, ${getUserGradient(item.otherUser.uid, item.otherUser.username)})`,
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)'
+                }}>
                   {getInitials(item.otherUser.firstName, item.otherUser.lastName)}
                 </div>
+                
+
               </div>
 
-              {/* Content */}
+              {/* Conversation info */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between mb-1">
-                  <p className={`text-sm font-medium truncate ${
-                    item.unreadCount > 0 ? 'text-gray-900' : 'text-gray-700'
-                  }`}>
+                  <h3 className={`font-semibold ${hasUnreadMessages ? 'text-slate-800' : 'text-slate-700'}`}>
                     {item.otherUser.firstName} {item.otherUser.lastName}
-                  </p>
+                  </h3>
                   <div className="flex items-center space-x-2">
-                    {item.unreadCount > 0 && (
-                      <span className="bg-blue-600 text-white text-xs rounded-full px-2 py-1 min-w-[20px] text-center">
-                        {item.unreadCount > 99 ? '99+' : item.unreadCount}
-                      </span>
+                    {hasUnreadMessages && (
+                      <div className="w-2 h-2 rounded-full" style={{
+                        background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)'
+                      }}></div>
                     )}
-                    <span className="text-xs text-gray-500">
-                      {formatTime(lastMessage.timestamp)}
+                    <span className="text-xs text-slate-500">
+                      {formatTime(lastMessage?.timestamp)}
                     </span>
                   </div>
                 </div>
                 
-                <div className="flex items-center">
-                  <p className={`text-sm truncate ${
-                    item.unreadCount > 0 ? 'text-gray-900 font-medium' : 'text-gray-500'
-                  }`}>
-                    {lastMessage.content ? truncateMessage(lastMessage.content) : 'No messages yet'}
+                <div className="flex items-center justify-between">
+                  <p className={`text-sm truncate ${hasUnreadMessages ? 'text-slate-700 font-medium' : 'text-slate-600'}`}>
+                    {lastMessage?.content ? truncateMessage(lastMessage.content) : 'No messages yet'}
                   </p>
+                  {hasUnreadMessages && (
+                    <div className="ml-2 px-2 py-1 rounded-full text-xs font-bold text-white min-w-[20px] text-center" style={{
+                      background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                      boxShadow: '0 2px 8px rgba(59, 130, 246, 0.4)'
+                    }}>
+                      {item.unreadCount > 99 ? '99+' : item.unreadCount}
+                    </div>
+                  )}
                 </div>
-                
-                <p className="text-xs text-gray-400 mt-1">
-                  @{item.otherUser.username}
-                </p>
               </div>
             </div>
           </button>
@@ -146,3 +173,5 @@ export default function ConversationsList({
     </div>
   );
 } 
+
+ 
