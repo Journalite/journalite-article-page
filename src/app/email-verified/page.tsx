@@ -13,7 +13,7 @@ export default function EmailVerified() {
             <h1 className="text-5xl md:text-6xl font-serif font-normal text-slate-900">Journalite</h1>
             <div className="mt-4 text-lg md:text-xl text-slate-800 italic">
               <p>Your email has been verified.</p>
-              <p>Welcome to Journalite.</p>
+              <p>Welcome to Oriteria.</p>
             </div>
           </div>
 

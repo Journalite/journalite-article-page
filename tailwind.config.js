@@ -2,6 +2,7 @@ const colors = require('tailwindcss/colors');
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+    darkMode: 'class',
     content: [
         './src/**/*.{js,ts,jsx,tsx,mdx,css}',
         './pages/**/*.{js,ts,jsx,tsx,mdx}',
@@ -37,5 +38,7 @@ module.exports = {
             },
         },
     },
-    plugins: [],
+    plugins: [
+        require('@tailwindcss/typography'),
+    ],
 } 
