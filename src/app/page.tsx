@@ -110,7 +110,8 @@ export default function HomePage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [userProfile, setUserProfile] = useState<any>(null);
-  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 0);
+  const [windowWidth, setWindowWidth] = useState(0); // Always start with 0 to avoid hydration mismatch
+  const [isClient, setIsClient] = useState(false); // Track if we're on the client
   
   // Trending tags (static list, no need for state)
   const tags = ['Journalism', 'Technology', 'Politics', 'Science', 'Culture'];
@@ -140,8 +141,12 @@ export default function HomePage() {
     return () => unsubscribe();
   }, []);
 
-  // Set up window resize listener
+  // Set up window resize listener and client-side initialization
   useEffect(() => {
+    // Set initial window width and mark as client-side
+    setWindowWidth(window.innerWidth);
+    setIsClient(true);
+    
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
     };
@@ -152,8 +157,10 @@ export default function HomePage() {
 
   // Use different default sidebar state based on screen size
   useEffect(() => {
-    setIsSidebarCollapsed(windowWidth < 768);
-  }, [windowWidth]);
+    if (isClient) {
+      setIsSidebarCollapsed(windowWidth < 768);
+    }
+  }, [windowWidth, isClient]);
 
         // Fetch featured articles (mix of Oriteria, Guardian, and NewsAPI)
   useEffect(() => {
@@ -425,7 +432,7 @@ export default function HomePage() {
       </Head>
     <div className={styles['three-column-layout']}>
       {/* Background overlay for mobile */}
-      {windowWidth < 768 && !isSidebarCollapsed && (
+      {isClient && windowWidth < 768 && !isSidebarCollapsed && (
         <div className={`${styles['menu-overlay']} ${styles['active']}`} onClick={toggleSidebar}></div>
       )}
     
@@ -433,7 +440,7 @@ export default function HomePage() {
       <TopLeftLogo />
       
       {/* MOBILE HEADER LOGO - Mobile only */}
-      {windowWidth < 768 && (
+      {isClient && windowWidth < 768 && (
         <MobileHeaderLogo />
       )}
     
@@ -449,7 +456,7 @@ export default function HomePage() {
       <EventsBar />
 
       {/* Mobile sidebar toggle button - only shown on mobile */}
-      {windowWidth < 768 && (
+      {isClient && windowWidth < 768 && (
         <button 
           className={styles['toggle-button']} 
           onClick={toggleSidebar}
@@ -898,7 +905,7 @@ export default function HomePage() {
         </Link>
 
         {/* Mobile Bottom Navigation - only shown on mobile */}
-        {windowWidth < 768 && (
+        {isClient && windowWidth < 768 && (
           <MobileBottomNav isAuthenticated={isAuthenticated} />
         )}
     </div>

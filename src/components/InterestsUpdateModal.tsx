@@ -25,10 +25,12 @@ export default function InterestsUpdateModal({
   userUid,
   userName 
 }: InterestsUpdateModalProps) {
+  // Always call hooks first, before any early returns
   const [selectedInterests, setSelectedInterests] = useState<string[]>(currentInterests);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
 
+  // Early return after all hooks are called
   if (!isOpen) return null;
 
   const toggleInterest = (interest: string) => {

@@ -30,6 +30,9 @@ const GradientPanel: React.FC<GradientPanelProps> = ({
   isVisible,
   moodFeatureEnabled
 }) => {
+  // Early return BEFORE any hooks are called
+  if (!isVisible || !moodFeatureEnabled) return null;
+
   const [isExpanded, setIsExpanded] = useState(false);
   const [isDragging, setIsDragging] = useState<string | null>(null);
   const [windowDimensions, setWindowDimensions] = useState({ width: 0, height: 0 });
@@ -302,8 +305,6 @@ const GradientPanel: React.FC<GradientPanelProps> = ({
       }
     };
   }, []);
-
-  if (!isVisible || !moodFeatureEnabled) return null;
 
   const currentGradient = generateJournaColorGradient(themeConfig);
   const selectedStop = themeConfig.colorStops.find(stop => stop.isSelected) || themeConfig.colorStops[0];

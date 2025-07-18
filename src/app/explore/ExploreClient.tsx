@@ -284,7 +284,8 @@ export default function ExploreClient() {
   const [userInterests, setUserInterests] = useState<string[]>([]);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [sharingArticleDetails, setSharingArticleDetails] = useState<SharingArticleDetails | null>(null);
-  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 0);
+  const [windowWidth, setWindowWidth] = useState(0); // Always start with 0 to avoid hydration mismatch
+  const [isClient, setIsClient] = useState(false); // Track if we're on the client
   const [showPoliticalContent, setShowPoliticalContent] = useState(true);
 
   // Helper function to clean HTML from text
@@ -436,8 +437,12 @@ export default function ExploreClient() {
     return () => unsubscribe();
   }, []);
 
-  // Set up window resize listener
+  // Set up window resize listener and client-side initialization
   useEffect(() => {
+    // Set initial window width and mark as client-side
+    setWindowWidth(window.innerWidth);
+    setIsClient(true);
+    
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
     };
@@ -448,8 +453,10 @@ export default function ExploreClient() {
 
   // Use different default sidebar state based on screen size
   useEffect(() => {
-    setIsSidebarCollapsed(windowWidth < 768);
-  }, [windowWidth]);
+    if (isClient) {
+      setIsSidebarCollapsed(windowWidth < 768);
+    }
+  }, [windowWidth, isClient]);
   
   // Fetch mixed articles when component mounts or user interests change
   useEffect(() => {

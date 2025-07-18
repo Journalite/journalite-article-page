@@ -24,15 +24,17 @@ export default function MyThoughtsPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
   const [windowWidth, setWindowWidth] = useState(0)
+  const [isClient, setIsClient] = useState(false)
   const [view, setView] = useState<'published' | 'drafts'>('published')
   const [articles, setArticles] = useState<Article[]>([])
   const [articleToDelete, setArticleToDelete] = useState<string | null>(null)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const router = useRouter()
 
-  // Set up window resize listener
+  // Set up window resize listener and client-side initialization
   useEffect(() => {
     setWindowWidth(window.innerWidth)
+    setIsClient(true)
     
     const handleResize = () => {
       setWindowWidth(window.innerWidth)
@@ -44,8 +46,10 @@ export default function MyThoughtsPage() {
 
   // Use different default sidebar state based on screen size
   useEffect(() => {
-    setIsSidebarCollapsed(windowWidth < 768)
-  }, [windowWidth])
+    if (isClient) {
+      setIsSidebarCollapsed(windowWidth < 768)
+    }
+  }, [windowWidth, isClient])
 
   // Check authentication status
   useEffect(() => {

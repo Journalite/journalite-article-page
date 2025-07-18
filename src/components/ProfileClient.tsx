@@ -76,6 +76,7 @@ export default function ProfileClient({ username }: ProfileClientProps) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [windowWidth, setWindowWidth] = useState(0);
+  const [isClient, setIsClient] = useState(false);
 
   // Check authentication status
   useEffect(() => {
@@ -89,6 +90,7 @@ export default function ProfileClient({ username }: ProfileClientProps) {
   // Set window width for responsive design
   useEffect(() => {
     setWindowWidth(window.innerWidth);
+    setIsClient(true);
     
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
@@ -215,7 +217,7 @@ export default function ProfileClient({ username }: ProfileClientProps) {
     }}>
       <div className={styles['three-column-layout']}>
         {/* Background overlay for mobile */}
-        {windowWidth < 768 && !isSidebarCollapsed && (
+        {isClient && windowWidth < 768 && !isSidebarCollapsed && (
           <div className={`${styles['menu-overlay']} ${styles['active']}`} onClick={toggleSidebar}></div>
         )}
 
@@ -231,7 +233,7 @@ export default function ProfileClient({ username }: ProfileClientProps) {
         />
 
         {/* Mobile sidebar toggle button */}
-        {windowWidth < 768 && (
+        {isClient && windowWidth < 768 && (
           <button 
             className={styles['toggle-button']} 
             onClick={toggleSidebar}

@@ -60,7 +60,7 @@ export default function InterestsReengagementWrapper({ children }: InterestsReen
   // Don't show modal while auth is still loading
   const showModal = shouldShowModal && !isAuthLoading && user && userProfile;
 
-  // Show session error if there is one
+  // Show session error if there is one - but all hooks have been called first
   if (sessionError) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 to-red-100">

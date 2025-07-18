@@ -19,6 +19,11 @@ const ReflectionRoom: React.FC<ReflectionRoomProps> = ({
   hasReflectionRoom,
   authorId
 }) => {
+  // Early return for feature flag before any hooks are called
+  if (!hasReflectionRoom) {
+    return null;
+  }
+
   const [isOpen, setIsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -69,8 +74,8 @@ const ReflectionRoom: React.FC<ReflectionRoomProps> = ({
     return topic || 'Join the discussion';
   }, [topic]);
 
-  // Early return if feature is not enabled or user is not authenticated
-  if (!hasReflectionRoom || !isAuthenticated) {
+  // Return null if user is not authenticated, but all hooks have been called
+  if (!isAuthenticated) {
     return null;
   }
 
