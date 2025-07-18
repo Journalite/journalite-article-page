@@ -34,7 +34,7 @@ export default function ArticleCard({ article, isOwn }: ArticleCardProps) {
         return `/news/${encodeURIComponent(article.externalUrl)}`;
       }
     } else {
-      // Internal Journalite article
+      // Internal Oriteria article
       return `/articles/${article.slug}`;
     }
   };

@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { searchUsers, UserProfile } from '@/services/userService';
+import { getUserGradient, getInitials } from '@/utils/avatarUtils';
 import styles from '@/styles/home.module.css';
 
 const CenterSearchBar: React.FC = () => {
@@ -114,8 +115,14 @@ const CenterSearchBar: React.FC = () => {
                 setIsFocused(false);
               }}
             >
-              <div className={styles.resultUserAvatar}>
-                {user.firstName.charAt(0)}{user.lastName.charAt(0)}
+              <div 
+                className={styles.resultUserAvatar}
+                style={{
+                  background: `linear-gradient(135deg, ${getUserGradient(user.uid, user.username)})`,
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)'
+                }}
+              >
+                {getInitials(user.firstName, user.lastName)}
               </div>
               <div className={styles.resultUserInfo}>
                 <div className={styles.resultUserName}>{user.firstName} {user.lastName}</div>

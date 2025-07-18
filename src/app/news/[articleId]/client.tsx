@@ -66,7 +66,7 @@ export default function NewsArticleClient({ params }: NewsArticleClientProps) {
       
       updateMetaTag('og:title', article.title);
       updateMetaTag('og:description', article.description || 'Read this article on Journalite');
-      updateMetaTag('og:image', article.urlToImage || '/images/journalite-social-banner.png');
+      updateMetaTag('og:image', article.urlToImage || '/images/oriteria-social-banner.svg');
       updateMetaTag('og:url', window.location.href);
       updateMetaTag('og:type', 'article');
       
@@ -84,7 +84,7 @@ export default function NewsArticleClient({ params }: NewsArticleClientProps) {
       updateTwitterTag('twitter:card', 'summary_large_image');
       updateTwitterTag('twitter:title', article.title);
       updateTwitterTag('twitter:description', article.description || 'Read this article on Journalite');
-      updateTwitterTag('twitter:image', article.urlToImage || '/images/journalite-social-banner.png');
+      updateTwitterTag('twitter:image', article.urlToImage || '/images/oriteria-social-banner.svg');
     }
   }, [article]);
 

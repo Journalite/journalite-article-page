@@ -487,7 +487,7 @@ export default function ArticleSlugClient({ slug }: ArticleSlugClientProps) {
                   fontWeight: '700'
                 }}
               >
-                Journalite
+                                  Oriteria
               </div>
             </Link>
             

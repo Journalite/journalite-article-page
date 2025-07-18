@@ -7,7 +7,7 @@ import styles from '@/styles/home.module.css';
 const MobileHeaderLogo: React.FC = () => {
   return (
     <Link href="/" className={styles['mobile-header-logo']}>
-      Journalite
+      Oriteria
     </Link>
   );
 };

@@ -40,8 +40,8 @@ export function extractSlugFromUrl(url: string): string | null {
     }
 }
 
-// Fetch article metadata from internal Journalite articles
-async function fetchJournaliteArticle(slug: string): Promise<ArticleMetadata | null> {
+// Fetch article metadata from internal Oriteria articles
+async function fetchOriteriaArticle(slug: string): Promise<ArticleMetadata | null> {
     try {
         const article = await getArticleBySlug(slug);
 
@@ -77,7 +77,7 @@ async function fetchJournaliteArticle(slug: string): Promise<ArticleMetadata | n
 
         return metadata;
     } catch (error) {
-        console.error('Error fetching Journalite article:', error);
+        console.error('Error fetching Oriteria article:', error);
         return null;
     }
 }
@@ -174,10 +174,10 @@ export async function fetchArticleMetadata(url: string): Promise<ArticleMetadata
 
     try {
         if (url.includes('/articles/')) {
-            // Internal Journalite article
+            // Internal Oriteria article
             const slug = extractSlugFromUrl(url);
             if (slug) {
-                metadata = await fetchJournaliteArticle(slug);
+                metadata = await fetchOriteriaArticle(slug);
             }
         } else if (url.includes('/guardian-news/')) {
             // Guardian article

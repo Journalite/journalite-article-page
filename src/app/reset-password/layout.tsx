@@ -1,8 +1,8 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Reset Password | Journalite',
-  description: 'Create a new password for your Journalite account',
+  title: 'Reset Password | Oriteria',
+  description: 'Create a new password for your Oriteria account',
 };
 
 export const viewport = {

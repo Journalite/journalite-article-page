@@ -147,8 +147,8 @@ const adaptFirestoreArticle = (firestoreArticle: FirestoreArticle, cleanHtmlText
   const getArticleImage_Enhanced = () => {
     // Use the helper function from buildMeta.ts for consistent image handling
     const image = getArticleImage(firestoreArticle.coverImage, firestoreArticle.body);
-    // Return null if only default image is available to let the card reshape
-    return image === '/images/journalite-social-banner.png' ? null : image;
+    // Always return the image (including the new article cover for articles without images)
+    return image;
   };
   
   return {

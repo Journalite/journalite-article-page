@@ -272,7 +272,7 @@ The authentication pages (Login, Register, Forgot Password, Reset Password) have
     *   A new \`AuthLayout\` component (\`src/components/AuthLayout.tsx\`) has been created to provide a consistent wrapper for all auth-related pages.
     *   This layout includes:
         *   A clean, centered card for the form content.
-        *   The Journalite logo.
+        *   The Oriteria logo.
         *   A brief introductory text or page title.
         *   Links for alternative actions (e.g., "Don't have an account? Sign Up" or "Back to Login").
     *   The layout uses CSS Modules (\`AuthLayout.module.css\`) for styling.
@@ -281,7 +281,7 @@ The authentication pages (Login, Register, Forgot Password, Reset Password) have
     *   A dedicated CSS Module (\`AuthForm.module.css\`) is used to style the forms within auth pages.
     *   Inputs, buttons, and error messages now have a more refined and modern appearance.
     *   Focus states are improved for better accessibility.
-    *   The color scheme aligns with the Journalite theme (amber and stone).
+    *   The color scheme aligns with the Oriteria theme (amber and stone).
 
 3.  **Improved User Experience:**
     *   Clearer visual hierarchy and spacing.
@@ -310,7 +310,7 @@ import styles from '@/styles/AuthForm.module.css'; // For form elements
 export default function LoginPage() {
   // ... login logic ...
   return (
-    <AuthLayout title="Welcome Back" description="Log in to continue to Journalite.">
+    <AuthLayout title="Welcome Back" description="Log in to continue to Oriteria.">
       <form onSubmit={handleLogin} className={styles.form}>
         {/* ... form inputs and button ... */}
       </form>
@@ -327,7 +327,7 @@ const articleSystemDoc: DocSection = {
   content: `
 ## Article Lifecycle
 
-Articles in Journalite follow this lifecycle:
+Articles in Oriteria follow this lifecycle:
 1. **Creation**: Author creates content using the ArticleForm component
 2. **Draft**: Article is saved but not visible to other users
 3. **Published**: Article is made available to all users
@@ -507,7 +507,7 @@ const userProfilesDoc: DocSection = {
   content: `
 ## User Profile System
 
-The user profile system in Journalite provides comprehensive functionality for viewing user information, their published articles, and social connections.
+The user profile system in Oriteria provides comprehensive functionality for viewing user information, their published articles, and social connections.
 
 ### Profile Pages Structure
 
@@ -690,7 +690,7 @@ const routingDoc: DocSection = {
   content: `
 ## Next.js App Router Architecture
 
-Journalite uses Next.js App Router for all routing with a clean, logical structure:
+Oriteria uses Next.js App Router for all routing with a clean, logical structure:
 
 \`\`\`
 /app
@@ -852,7 +852,7 @@ export default function ProtectedRoute({ children }) {
 
 ## Dynamic Routes & Server Components
 
-Journalite uses both static and dynamic rendering:
+Oriteria uses both static and dynamic rendering:
 - Static rendering for content that doesn't change often
 - Dynamic rendering for personalized content
 - Streaming for improved user experience with large pages
@@ -872,7 +872,7 @@ const deploymentDoc: DocSection = {
   content: `
 ## Deployment Overview
 
-Journalite is configured for seamless deployment to Vercel with:
+Oriteria is configured for seamless deployment to Vercel with:
 - Optimized production builds
 - Environment variable configuration
 - Image optimization
@@ -972,7 +972,7 @@ The build process is optimized for performance:
 
 ## Caching Strategy
 
-Journalite implements a hybrid caching strategy:
+Oriteria implements a hybrid caching strategy:
 - Static generation for non-personalized content
 - Incremental Static Regeneration (ISR) for semi-dynamic content
 - Client-side fetching for user-specific data
@@ -1260,7 +1260,7 @@ const featureUpdatesDoc: DocSection = {
   content: `
 ## Explore Page Implementation
 
-A new "Explore" page has been added to Journalite, designed to help users discover a wide range of articles.
+A new "Explore" page has been added to Oriteria, designed to help users discover a wide range of articles.
 
 ### Key Features:
 
@@ -1649,7 +1649,7 @@ export const generateHighlightShareUrl = (
 
 // Usage example
 const shareUrl = generateHighlightShareUrl('my-article', 'highlight123');
-// Result: https://journalite.com/articles?slug=my-article#highlight=highlight123
+// Result: https://oriteria.com/articles?slug=my-article#highlight=highlight123
 \`\`\`
 
 ### Auto-Scroll & Flash Animation
@@ -3140,11 +3140,11 @@ const externalArticleIntegrationDoc: DocSection = {
 ### **Integrated News Sources**
 1. **The Guardian API** - High-quality journalism
 2. **NewsAPI.org** - Global news aggregation  
-3. **Journalite** - Internal articles
+3. **Oriteria** - Internal articles
 
 ### **Content Distribution Strategy**
 \`\`\`typescript
-// Homepage: 2 Journalite + 1 Guardian + 1 NewsAPI
+// Homepage: 2 Oriteria + 1 Guardian + 1 NewsAPI
 // Explore: Balanced mix with external priority
 // Categories: Interest-based article matching
 \`\`\`
@@ -3181,7 +3181,7 @@ await newsService.searchArticles('artificial intelligence');
 \`\`\`
 
 ### **Content Adaptation**
-All external articles are converted to Journalite format:
+All external articles are converted to Oriteria format:
 \`\`\`typescript
 interface BaseArticle {
   id: string;
@@ -3191,7 +3191,7 @@ interface BaseArticle {
   excerpt: string; // HTML cleaned
   coverImageUrl?: string;
   tags: string[];
-  source: 'journalite' | 'guardian' | 'newsapi';
+      source: 'oriteria' | 'guardian' | 'newsapi';
   isExternal: boolean;
   externalUrl?: string;
 }
@@ -3226,11 +3226,11 @@ const INTEREST_MAPPING = {
 - **Visual Badges**: Color-coded source indicators
 - **Guardian**: Dark blue (#052962)  
 - **NewsAPI**: Green (#10B981)
-- **Journalite**: Purple (#7C3AED)
+- **Oriteria**: Purple (#7C3AED)
 
 ### **Error Handling**
 - Graceful API failures
-- Fallback to Journalite content
+- Fallback to Oriteria content
 - Retry mechanisms for network issues
 - Cache-first strategy
   `
@@ -3249,7 +3249,7 @@ const homepageRedesignDoc: DocSection = {
 ### **Hero Section (Unauthenticated)**
 \`\`\`tsx
 <section className="hero-section">
-  <h1>Welcome to Journalite</h1>
+  <h1>Welcome to Oriteria</h1>
   <p>Where stories come alive through reflection</p>
   <div className="cta-buttons">
     <Link href="/register">Get Started</Link>
@@ -3271,7 +3271,7 @@ const homepageRedesignDoc: DocSection = {
 \`\`\`
 
 ### **Featured Articles**
-- **Mixed Content**: 2 Journalite + 1 Guardian + 1 NewsAPI
+- **Mixed Content**: 2 Oriteria + 1 Guardian + 1 NewsAPI
 - **Smart Image Selection**: Content-aware Unsplash images
 - **Glassmorphism Design**: Backdrop blur effects
 - **Hover Animations**: Smooth transitions

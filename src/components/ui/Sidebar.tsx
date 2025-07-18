@@ -175,7 +175,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
                 <span className="text-white font-bold text-sm">J</span>
               </div>
               <span className="text-xl font-bold text-gradient-warm">
-                Journalite
+                Oriteria
               </span>
             </Link>
             {onClose && (
@@ -270,7 +270,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
         {/* Footer */}
         <div className="flex-shrink-0 p-4 border-t border-white/20 dark:border-gray-700/30">
           <div className="text-xs text-gray-500 dark:text-gray-400 text-center">
-            <p>&copy; 2024 Journalite</p>
+            <p>&copy; 2024 Oriteria</p>
             <p className="mt-1">Your trusted journalism source</p>
           </div>
         </div>

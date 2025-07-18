@@ -2,7 +2,7 @@ import { Metadata, Viewport } from 'next'
 
 // Export metadata for better SEO
 export const metadata: Metadata = {
-  title: 'User Profile | Journalite',
+  title: 'User Profile | Oriteria',
   description: 'View user profile and articles',
 }
 

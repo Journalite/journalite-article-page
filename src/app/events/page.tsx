@@ -72,7 +72,7 @@ const EventsPage: React.FC = () => {
           <h1 className={styles.salutation}>A Note on What’s to Come,</h1>
           <p className={styles.paragraph}>
             We wanted to share a glimpse into a new dimension we're building for
-            Journalite—something we call Events. It’s a feature born from a
+            Oriteria—something we call Events. It’s a feature born from a
             simple idea: that stories shouldn’t just end on the page. They
             should be a starting point for connection, discussion, and
             real-world action.
@@ -104,7 +104,7 @@ const EventsPage: React.FC = () => {
           </ul>
           <p className={styles.paragraph}>
             This is more than just a feature; it’s our commitment to making
-            Journalite a place where the lines between reading, learning, and
+            Oriteria a place where the lines between reading, learning, and
             living are beautifully blurred.
           </p>
           <p className={styles.paragraph}>
@@ -114,7 +114,7 @@ const EventsPage: React.FC = () => {
           <div className={styles.closing}>
             <p>Warmly,</p>
             <p className={styles.signature}>
-              The Journalite Team At Dovrel & Company
+              The Oriteria Team At Dovrel & Company
             </p>
           </div>
         </div>

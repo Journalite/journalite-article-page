@@ -80,7 +80,7 @@ const HighlightDemo: React.FC = () => {
           fontSize: '0.875rem',
           color: '#1F2937'
         }}>
-          https://journalite.com/articles?slug=example#highlight=abc123
+                      https://oriteria.com/articles?slug=example#highlight=abc123
         </div>
         <p style={{ color: '#6B7280', fontSize: '0.875rem', marginTop: '0.5rem' }}>
           Clicking the link scrolls to the highlight and flashes it once ✨

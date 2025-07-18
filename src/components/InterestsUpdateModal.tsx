@@ -84,7 +84,7 @@ export default function InterestsUpdateModal({
               Welcome back{userName ? `, ${userName}` : ''}!
             </h2>
             <p className="text-stone-600 text-lg">
-              We've made some exciting updates to Journalite. Let's refresh your interests to get you the best personalized content.
+              We've made some exciting updates to Oriteria. Let's refresh your interests to get you the best personalized content.
             </p>
           </div>
 

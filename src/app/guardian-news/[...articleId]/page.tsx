@@ -19,8 +19,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     if (!guardianService.isConfigured()) {
       console.warn('Guardian API not configured for metadata generation');
       return buildMetadata({
-        title: 'Guardian Article | Journalite',
-        description: 'Read articles from The Guardian on Journalite',
+        title: 'Guardian Article | Oriteria',
+        description: 'Read articles from The Guardian on Oriteria',
         pathname: `/guardian-news/${articleId}`,
         type: 'article'
       });
@@ -37,10 +37,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
                         'Read this article from The Guardian';
       const image = guardianArticle.fields?.thumbnail || 
                    guardianArticle.fields?.main || 
-                   '/images/journalite-social-banner.png';
+                   '/images/oriteria-social-banner.svg';
       
       return buildMetadata({
-        title: `${title} | Journalite`,
+        title: `${title} | Oriteria`,
         description,
         image,
         pathname: `/guardian-news/${articleId}`,
@@ -54,9 +54,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       
       // Fallback metadata
       return buildMetadata({
-        title: 'Guardian Article | Journalite',
-        description: 'Read articles from The Guardian on Journalite',
-        image: '/images/journalite-social-banner.png',
+        title: 'Guardian Article | Oriteria',
+        description: 'Read articles from The Guardian on Oriteria',
+        image: '/images/oriteria-social-banner.svg',
         pathname: `/guardian-news/${articleId}`,
         type: 'article'
       });
@@ -67,9 +67,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     
     // Fallback metadata
     return buildMetadata({
-      title: 'Guardian Article | Journalite',
-      description: 'Read articles from The Guardian on Journalite',
-      image: '/images/journalite-social-banner.png',
+          title: 'Guardian Article | Oriteria',
+    description: 'Read articles from The Guardian on Oriteria',
+    image: '/images/oriteria-social-banner.svg',
       type: 'article'
     });
   }

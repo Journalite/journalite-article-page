@@ -8,12 +8,12 @@ export interface SEODefaults {
 }
 
 export const seoDefaults: SEODefaults = {
-    title: "Journalite - Your Trusted Journalism Source",
-    description: "A revolutionary social platform delivering reliable journalism, thoughtful analysis, and community-driven discussions. Join the future of news.",
-    siteName: "Journalite",
-    siteUrl: process.env.NEXT_PUBLIC_SITE_URL || "https://journalite.abdisalam.blog",
-    defaultImage: "/images/journalite-social-banner.svg", // Using SVG for now
-    twitterHandle: "@journalite"
+    title: "Oriteria - Your Trusted Journalism Source",
+    description: "Discover insightful articles, breaking news, and expert analysis on Oriteria. Your go-to platform for quality journalism and thought-provoking content.",
+    siteName: "Oriteria",
+    siteUrl: process.env.NEXT_PUBLIC_SITE_URL || "https://oriteria.abdisalam.blog",
+    defaultImage: "/images/oriteria-social-banner.svg",
+    twitterHandle: "@oriteria"
 };
 
 export const getDefaultMetadata = () => ({

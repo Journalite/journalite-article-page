@@ -48,12 +48,12 @@ export default function GuardianArticleClient({ params }: GuardianArticleClientP
   useEffect(() => {
     if (article) {
       // Update document title
-      document.title = `${article.webTitle} | Journalite`;
+      document.title = `${article.webTitle} | Oriteria`;
       
       // Update meta description
       const metaDescription = document.querySelector('meta[name="description"]');
       if (metaDescription) {
-        metaDescription.setAttribute('content', article.fields?.standfirst || article.fields?.trailText || 'Read this article from The Guardian on Journalite');
+        metaDescription.setAttribute('content', article.fields?.standfirst || article.fields?.trailText || 'Read this article from The Guardian on Oriteria');
       }
       
       // Update Open Graph meta tags
@@ -68,8 +68,8 @@ export default function GuardianArticleClient({ params }: GuardianArticleClientP
       };
       
       updateMetaTag('og:title', article.webTitle);
-      updateMetaTag('og:description', article.fields?.standfirst || article.fields?.trailText || 'Read this article from The Guardian on Journalite');
-      updateMetaTag('og:image', article.fields?.thumbnail || article.fields?.main || '/images/journalite-social-banner.png');
+      updateMetaTag('og:description', article.fields?.standfirst || article.fields?.trailText || 'Read this article from The Guardian on Oriteria');
+      updateMetaTag('og:image', article.fields?.thumbnail || article.fields?.main || '/images/oriteria-social-banner.svg');
       updateMetaTag('og:url', window.location.href);
       updateMetaTag('og:type', 'article');
       
@@ -86,8 +86,8 @@ export default function GuardianArticleClient({ params }: GuardianArticleClientP
       
       updateTwitterTag('twitter:card', 'summary_large_image');
       updateTwitterTag('twitter:title', article.webTitle);
-      updateTwitterTag('twitter:description', article.fields?.standfirst || article.fields?.trailText || 'Read this article from The Guardian on Journalite');
-      updateTwitterTag('twitter:image', article.fields?.thumbnail || article.fields?.main || '/images/journalite-social-banner.png');
+      updateTwitterTag('twitter:description', article.fields?.standfirst || article.fields?.trailText || 'Read this article from The Guardian on Oriteria');
+      updateTwitterTag('twitter:image', article.fields?.thumbnail || article.fields?.main || '/images/oriteria-social-banner.svg');
     }
   }, [article]);
 
@@ -271,7 +271,7 @@ export default function GuardianArticleClient({ params }: GuardianArticleClientP
   // Generate the current page URL for sharing
   const currentUrl = typeof window !== 'undefined' 
     ? window.location.href 
-    : `https://journalite.abdisalam.blog/guardian-news/${articleId}`;
+          : `https://oriteria.abdisalam.blog/guardian-news/${articleId}`;
 
   return (
     <div 

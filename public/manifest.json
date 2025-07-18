@@ -1,11 +1,11 @@
 {
-  "name": "Journalite",
-  "short_name": "Journalite",
-  "description": "Your Trusted Journalism Source",
+  "name": "Oriteria",
+  "short_name": "Oriteria",
+  "description": "Your Trusted Source for Quality Journalism",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#000000",
+  "background_color": "#0f2027",
+  "theme_color": "#2c5364",
   "icons": [
     {
       "src": "/icon-512x512.svg",
@@ -16,6 +16,21 @@
     {
       "src": "/apple-touch-icon.svg",
       "sizes": "180x180",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/favicon-48x48.svg",
+      "sizes": "48x48",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/favicon-32x32.svg",
+      "sizes": "32x32",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/favicon-16x16.svg",
+      "sizes": "16x16",
       "type": "image/svg+xml"
     }
   ]

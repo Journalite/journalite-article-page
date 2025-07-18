@@ -125,7 +125,7 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({
               </Link>
               
               <Link 
-                href="https://journalite.app/" 
+                href="https://oriteria.app/" 
                 className={`${styles['nav-link']} ${styles['nav-learn']}`}
                 title="Learn More"
                 target="_blank"
@@ -169,8 +169,8 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({
           }}>
             <div 
               style={{
-                width: '48px',
-                height: '48px',
+                width: '52px',
+                height: '52px',
                 borderRadius: '50%',
                 background: 'rgba(255, 255, 255, 0.06)',
                 backdropFilter: 'blur(16px) saturate(180%)',
@@ -200,10 +200,15 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({
               <style jsx>{`
                 .message-bell-container :global(button),
                 .message-bell-container :global(a) {
-                  padding: 0 !important;
+                  padding: 4px !important;
                   background: transparent !important;
                   border-radius: 0 !important;
                   position: relative !important;
+                  min-width: 44px !important;
+                  min-height: 44px !important;
+                  display: flex !important;
+                  align-items: center !important;
+                  justify-content: center !important;
                 }
                 .message-bell-container :global(button:hover),
                 .message-bell-container :global(a:hover) {
@@ -211,10 +216,15 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({
                 }
                 .message-bell-container :global(span) {
                   position: absolute !important;
-                  top: -6px !important;
-                  right: -6px !important;
+                  top: -4px !important;
+                  right: -4px !important;
                   z-index: 20 !important;
                   transform: translate(50%, -50%) !important;
+                  min-width: 18px !important;
+                  height: 18px !important;
+                  font-size: 11px !important;
+                  border-radius: 9px !important;
+                  padding: 0 4px !important;
                 }
               `}</style>
               <div style={{ 

@@ -80,12 +80,12 @@ export default function ShareButton({
         newUrl = `${baseUrl}/news/${encodeURIComponent(articleData.externalUrl)}`;
       }
     } else {
-      // Internal Journalite article
+              // Internal Oriteria article
       newUrl = `${baseUrl}/articles/${articleData.slug || articleData.id}`;
     }
     
-    if (!enhancedText.includes('Read more on Journalite')) {
-      enhancedText += '\n\nRead more on Journalite 📖';
+          if (!enhancedText.includes('Read more on Oriteria')) {
+        enhancedText += '\n\nRead more on Oriteria 📖';
     }
     
     setShareUrl(newUrl);

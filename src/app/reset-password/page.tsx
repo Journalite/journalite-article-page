@@ -142,7 +142,7 @@ function ResetPasswordForm() {
         <div className="w-full max-w-sm mx-auto px-6 md:px-0 md:ml-20 xl:ml-32">
           {/* Logo and tagline */}
           <div className="mb-12">
-            <h1 className="text-5xl md:text-6xl font-serif font-normal text-slate-900">Journalite</h1>
+                          <h1 className="text-5xl md:text-6xl font-serif font-normal text-slate-900">Oriteria</h1>
             <div className="mt-4 text-lg md:text-xl text-slate-800 italic">
               <p>Reset your password to</p>
               <p>return to your Thoughtspace.</p>
@@ -336,7 +336,7 @@ export default function ResetPassword() {
     <Suspense fallback={
       <div className="min-h-screen bg-[#f5efe0] flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-3xl font-serif font-normal text-slate-900 mb-4">Journalite</h1>
+                        <h1 className="text-3xl font-serif font-normal text-slate-900 mb-4">Oriteria</h1>
           <p className="text-slate-700">Loading reset password page...</p>
         </div>
       </div>

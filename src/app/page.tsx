@@ -61,9 +61,9 @@ const adaptFirestoreArticle = (firestoreArticle: FirestoreArticle): Article => {
   // Enhanced image selection for better homepage appeal
   const getEnhancedCoverImage = (article: FirestoreArticle): string | null => {
     // Use the helper function from buildMeta.ts for consistent image handling
-    return getArticleImage(article.coverImage, article.body) === '/images/journalite-social-banner.png' 
-      ? null // Return null if only default image is available
-      : getArticleImage(article.coverImage, article.body);
+    const image = getArticleImage(article.coverImage, article.body);
+    // Always return the image (including the new article cover for articles without images)
+    return image;
   };
 
   // Helper function to clean HTML and create excerpt
@@ -155,15 +155,15 @@ export default function HomePage() {
     setIsSidebarCollapsed(windowWidth < 768);
   }, [windowWidth]);
 
-  // Fetch featured articles (mix of Journalite, Guardian, and NewsAPI)
+        // Fetch featured articles (mix of Oriteria, Guardian, and NewsAPI)
   useEffect(() => {
     const fetchFeaturedArticles = async () => {
       try {
         setIsLoading(true);
         
         // Fetch content from different sources in parallel
-        const [journaliteArticles, guardianArticles] = await Promise.all([
-          // Get 2 Journalite articles
+              const [oriteriaArticles, guardianArticles] = await Promise.all([
+        // Get 2 Oriteria articles
           getArticles({ limit: 2 }),
           // Get 2 Guardian articles from different sections
           fetchMultipleGuardianArticles()
@@ -171,10 +171,10 @@ export default function HomePage() {
 
         const mixedArticles = [];
 
-        // Add Journalite articles
-        if (journaliteArticles && journaliteArticles.length > 0) {
-          const adaptedJournalite = journaliteArticles.map(adaptFirestoreArticle);
-          mixedArticles.push(...adaptedJournalite);
+        // Add Oriteria articles
+        if (oriteriaArticles && oriteriaArticles.length > 0) {
+          const adaptedOriteria = oriteriaArticles.map(adaptFirestoreArticle);
+          mixedArticles.push(...adaptedOriteria);
         }
 
         // Add Guardian articles
@@ -188,7 +188,7 @@ export default function HomePage() {
         
       } catch (error) {
         console.error('Error fetching featured articles:', error);
-        // Fallback to just Journalite articles
+        // Fallback to just Oriteria articles
         try {
           const fallbackArticles = await getArticles({ limit: 4 });
           const adaptedFallback = fallbackArticles.map(adaptFirestoreArticle);
@@ -416,9 +416,9 @@ export default function HomePage() {
         {sharingArticleDetails && (
           <>
             <meta property="og:title" content={sharingArticleDetails.title} />
-            <meta property="og:description" content={sharingArticleDetails.excerpt || 'Read this article on Journalite.'} />
+                            <meta property="og:description" content={sharingArticleDetails.excerpt || 'Read this article on Oriteria.'} />
             <meta property="og:image" content={sharingArticleDetails.coverImageUrl || '/default-image.jpg'} />
-            <meta property="og:url" content={`https://mvp.journalite.app/articles/${encodeURIComponent(sharingArticleDetails.slug)}`} />
+                          <meta property="og:url" content={`https://mvp.oriteria.app/articles/${encodeURIComponent(sharingArticleDetails.slug)}`} />
             <meta property="og:type" content="article" />
           </>
         )}
@@ -479,7 +479,7 @@ export default function HomePage() {
         {!isAuthenticated && (
           <div className={styles['hero-section']}>
             <div className={styles['hero-content']}>
-              <h1 className={styles['hero-title']}>Welcome to Journalite</h1>
+              <h1 className={styles['hero-title']}>Welcome to Oriteria</h1>
               <p className={styles['hero-subtitle']}>
                 Discover thoughtful articles, engage with diverse perspectives, and connect with a community of curious minds.
               </p>
@@ -618,7 +618,7 @@ export default function HomePage() {
                         )}
                         {!article.isExternal && (
                           <span className={styles['source-badge']} style={{backgroundColor: '#7C3AED', color: 'white'}}>
-                            Journalite
+                            Oriteria
                           </span>
                         )}
                       </div>
@@ -705,7 +705,7 @@ export default function HomePage() {
         {/* Platform Features Section for Unauthenticated Users */}
         {!isAuthenticated && (
           <div className={styles['features-section']}>
-            <h2 className={styles['features-title']}>Why Choose Journalite?</h2>
+                            <h2 className={styles['features-title']}>Why Choose Oriteria?</h2>
             <div className={styles['features-grid']}>
               <div className={styles['feature-card']}>
                 <div className={styles['feature-icon']}>
@@ -807,7 +807,7 @@ export default function HomePage() {
             onClose={handleCloseShareModal}
             highlightText={sharingArticleDetails.excerpt || 'Check out this article'}
             articleTitle={sharingArticleDetails.title}
-            shareUrl={`${'https://mvp.journalite.app'}/articles/${encodeURIComponent(sharingArticleDetails.slug)}`}
+                            shareUrl={`${'https://mvp.oriteria.app'}/articles/${encodeURIComponent(sharingArticleDetails.slug)}`}
             articleData={{
               slug: sharingArticleDetails.slug,
               title: sharingArticleDetails.title,

@@ -1,8 +1,8 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Login | Journalite',
-  description: 'Sign in to your Journalite account',
+  title: 'Login | Oriteria',
+  description: 'Sign in to your Oriteria account',
 };
 
 export const viewport = {

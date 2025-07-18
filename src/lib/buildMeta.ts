@@ -183,6 +183,6 @@ export function getArticleImage(coverImage?: string | null, content?: string): s
         }
     }
 
-    // Final fallback
-    return seoDefaults.defaultImage;
+    // Final fallback - use article cover for articles without images
+    return '/images/oriteria-article-cover.svg';
 } 

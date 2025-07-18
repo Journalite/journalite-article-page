@@ -23,6 +23,7 @@ export const metadata: Metadata = {
   // Favicon and app icons
   icons: {
     icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
       { url: '/favicon-16x16.svg', sizes: '16x16', type: 'image/svg+xml' },
       { url: '/favicon-32x32.svg', sizes: '32x32', type: 'image/svg+xml' },
       { url: '/favicon-48x48.svg', sizes: '48x48', type: 'image/svg+xml' },

@@ -48,6 +48,7 @@ export default function ChatView({ conversation, currentUserId, isMobile = false
   // Smart scrolling state
   const [userInteracting, setUserInteracting] = useState(false);
   const [lastMessageCount, setLastMessageCount] = useState(0);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   // Footer (input bar) height for dynamic padding
   const footerRef = useRef<HTMLDivElement>(null);
@@ -116,9 +117,16 @@ export default function ChatView({ conversation, currentUserId, isMobile = false
   useEffect(() => {
     if (!conversation?.conversation?.id) return;
 
+    // Reset state when conversation changes
+    setIsInitialLoad(true);
+    setLastMessageCount(0);
+
     const unsubscribe = subscribeToMessages(conversation.conversation.id, (newMessages) => {
       setMessages(newMessages);
-        setLoading(false);
+      setLoading(false);
+      
+      // Set message count for comparison
+      setLastMessageCount(newMessages.length);
     });
 
     return unsubscribe;
@@ -291,12 +299,19 @@ export default function ChatView({ conversation, currentUserId, isMobile = false
     }
   };
 
-  // Auto-scroll to bottom
+  // Smart auto-scroll to bottom
   useEffect(() => {
-    if (messagesEndRef.current) {
+    if (!messagesEndRef.current) return;
+
+    if (isInitialLoad) {
+      // For initial load, scroll immediately to bottom without animation
+      messagesEndRef.current.scrollIntoView({ behavior: 'instant' });
+      setIsInitialLoad(false);
+    } else if (messages.length > lastMessageCount) {
+      // Only scroll smoothly for new messages after initial load
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [messages]);
+  }, [messages, isInitialLoad, lastMessageCount]);
 
   const formatTime = (timestamp: any) => {
     if (!timestamp) return '';

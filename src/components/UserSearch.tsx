@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { searchUsers, UserProfile } from '@/services/userService';
+import { getUserGradient, getInitials } from '@/utils/avatarUtils';
 import styles from '@/styles/home.module.css';
 
 const UserSearch: React.FC = () => {
@@ -88,8 +89,14 @@ const UserSearch: React.FC = () => {
               className={styles.searchResultItem}
               onClick={() => setShowResults(false)}
             >
-              <div className={styles.userAvatar}>
-                {user.firstName.charAt(0)}{user.lastName.charAt(0)}
+              <div 
+                className={styles.userAvatar}
+                style={{
+                  background: `linear-gradient(135deg, ${getUserGradient(user.uid, user.username)})`,
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)'
+                }}
+              >
+                {getInitials(user.firstName, user.lastName)}
               </div>
               <div className={styles.userInfo}>
                 <div className={styles.userName}>{user.firstName} {user.lastName}</div>

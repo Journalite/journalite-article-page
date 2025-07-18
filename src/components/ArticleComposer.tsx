@@ -493,7 +493,7 @@ const ArticleComposer: React.FC<ArticleComposerProps> = ({ articleId, onUpdateCo
                 <span className="sm:hidden">Back</span>
               </button>
             ) : (
-              <div className="text-lg md:text-xl font-bold text-stone-800 font-serif">Journalite</div>
+                              <div className="text-lg md:text-xl font-bold text-stone-800 font-serif">Oriteria</div>
             )}
             
             <div className="text-stone-500 text-xs md:text-sm hidden sm:block">

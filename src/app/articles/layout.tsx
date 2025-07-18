@@ -1,8 +1,8 @@
 import { Metadata, Viewport } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Articles | Journalite',
-  description: 'Explore the latest articles from Journalite',
+  title: 'Articles | Oriteria',
+  description: 'Explore the latest articles from Oriteria',
 };
 
 export const viewport: Viewport = {

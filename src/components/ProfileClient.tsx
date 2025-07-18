@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { collection, query, where, getDocs, orderBy, Timestamp } from 'firebase/firestore';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { auth, db } from '@/firebase/clientApp';
@@ -12,6 +12,7 @@ import FollowersList from './FollowersList';
 import FollowingList from './FollowingList';
 import TopLeftLogo from './TopLeftLogo';
 import styles from '@/styles/home.module.css';
+import { getUserGradient, getInitials } from '@/utils/avatarUtils';
 
 // Create an interface to represent articles from Firestore
 interface ArticleData {
@@ -264,11 +265,12 @@ export default function ProfileClient({ username }: ProfileClientProps) {
                   <div 
                     className="w-32 h-32 sm:w-40 sm:h-40 rounded-full flex items-center justify-center text-white text-5xl sm:text-6xl font-semibold shadow-lg"
                     style={{
-                      background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
-                      border: '4px solid rgba(255, 255, 255, 0.3)'
+                      background: `linear-gradient(135deg, ${getUserGradient(user.uid, user.username)})`,
+                      border: '4px solid rgba(255, 255, 255, 0.3)',
+                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)'
                     }}
                   >
-                    {user.firstName.charAt(0)}{user.lastName.charAt(0)}
+                    {getInitials(user.firstName, user.lastName)}
                   </div>
                 </div>
                 
@@ -344,26 +346,13 @@ export default function ProfileClient({ username }: ProfileClientProps) {
                   <div className="relative z-10 md:flex">
                     {/* Cover Image */}
                     <div className="md:w-1/3 h-48 md:h-64 relative overflow-hidden">
-                      {article.coverImage ? (
-                        <Image 
-                          src={article.coverImage} 
-                          alt={article.title} 
-                          layout="fill"
-                          objectFit="cover"
-                          className="transition-transform duration-500 ease-in-out hover:scale-105"
-                        />
-                      ) : (
-                        <div 
-                          className="w-full h-full flex items-center justify-center"
-                          style={{
-                            background: 'linear-gradient(135deg, rgba(156, 163, 175, 0.2), rgba(209, 213, 219, 0.2))'
-                          }}
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-stone-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                          </svg>
-                        </div>
-                      )}
+                      <Image 
+                        src={article.coverImage || '/images/oriteria-article-cover.svg'} 
+                        alt={article.title} 
+                        layout="fill"
+                        objectFit="cover"
+                        className="transition-transform duration-500 ease-in-out hover:scale-105"
+                      />
                     </div>
                     
                     {/* Content */}

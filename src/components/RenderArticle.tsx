@@ -200,7 +200,7 @@ const RenderArticle: React.FC<RenderArticleProps> = ({ article }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(article.likes?.length || 0);
-  const [baseUrl, setBaseUrl] = useState('https://mvp.journalite.app/');
+  const [baseUrl, setBaseUrl] = useState('https://mvp.oriteria.app/');
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(user => {
@@ -550,7 +550,7 @@ const RenderArticle: React.FC<RenderArticleProps> = ({ article }) => {
     return (
     <>
       <Head>
-        <title>{ogTitle} | Journalite</title>
+        <title>{ogTitle} | Oriteria</title>
         <meta property="og:title" content={ogTitle} />
         <meta property="og:description" content={ogDescription} />
         <meta property="og:image" content={ogImage} />

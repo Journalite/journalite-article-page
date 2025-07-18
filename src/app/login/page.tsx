@@ -158,7 +158,7 @@ function LoginForm() {
         <div className="w-full max-w-md mx-auto">
           {/* Logo and tagline */}
           <div className="mb-10 text-center md:text-left">
-            <h1 className="text-5xl md:text-6xl font-serif font-medium text-stone-800">Journalite</h1>
+            <h1 className="text-5xl md:text-6xl font-serif font-medium text-stone-800">Oriteria</h1>
             <div className="mt-3 text-lg text-stone-600">
               <p>Welcome back. Your thoughts await.</p>
             </div>

@@ -534,7 +534,7 @@ function Article() {
                     fontWeight: '700'
                   }}
                 >
-                  Journalite
+                  Oriteria
                 </div>
               </Link>
               

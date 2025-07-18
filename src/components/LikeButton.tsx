@@ -13,7 +13,7 @@ interface LikeButtonProps {
   // Guardian article tracking metadata
   articleMetadata?: {
     title: string;
-    source: 'journalite' | 'guardian' | 'newsapi';
+    source: 'oriteria' | 'guardian' | 'newsapi';
     section?: string;
     tags?: string[];
     url?: string;

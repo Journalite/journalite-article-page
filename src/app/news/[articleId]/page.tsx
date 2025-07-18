@@ -38,7 +38,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
                             'Read this article from The Guardian';
           const image = guardianArticle.fields?.thumbnail || 
                        guardianArticle.fields?.main || 
-                       '/images/journalite-social-banner.png';
+                       '/images/oriteria-social-banner.svg';
           
           return buildMetadata({
             title: `${title} | Journalite`,
@@ -78,7 +78,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
                 const description = foundArticle.description || 
                                   foundArticle.content?.substring(0, 160) + '...' || 
                                   'Read this news article';
-                const image = foundArticle.urlToImage || '/images/journalite-social-banner.png';
+                const image = foundArticle.urlToImage || '/images/oriteria-social-banner.svg';
                 
                 return buildMetadata({
                   title: `${title} | Journalite`,
@@ -103,7 +103,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     return buildMetadata({
       title: 'News Article | Journalite',
       description: 'Read the latest news and articles on Journalite',
-      image: '/images/journalite-social-banner.png',
+      image: '/images/oriteria-social-banner.svg',
       pathname: `/news/${encodeURIComponent(articleUrl)}`,
       type: 'article'
     });
@@ -115,7 +115,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     return buildMetadata({
       title: 'News Article | Journalite',
       description: 'Read the latest news and articles on Journalite',
-      image: '/images/journalite-social-banner.png',
+      image: '/images/oriteria-social-banner.svg',
       type: 'article'
     });
   }

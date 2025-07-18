@@ -2,13 +2,13 @@
 
 import React, { useEffect, useState } from 'react';
 import { SparkleIcon } from './icons/CustomIcons';
-// import styles from './ShareModal.module.css'; // Unused
+import styles from './ShareModal.module.css'; // Unused
 import { createPortal } from 'react-dom';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '@/firebase/clientApp';
-import { searchUsers } from '@/services/userService';
+import { searchUsers, UserProfile } from '@/services/userService';
 import { getOrCreateConversation, sendArticleMessage } from '@/services/messagesService';
-import { getInitials } from '@/utils/avatarUtils';
+import { getUserGradient, getInitials } from '@/utils/avatarUtils';
 
 interface ShareModalProps {
   isOpen: boolean;
@@ -467,13 +467,14 @@ const ShareModal: React.FC<ShareModalProps> = ({
                       width: '40px',
                       height: '40px',
                       borderRadius: '50%',
-                      backgroundColor: '#3B82F6',
+                      background: `linear-gradient(135deg, ${getUserGradient(result.uid, result.username)})`,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       color: 'white',
                       fontSize: '0.875rem',
-                      fontWeight: '500'
+                      fontWeight: '500',
+                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)'
                     }}>
                       {getInitials(result.firstName, result.lastName)}
                     </div>
